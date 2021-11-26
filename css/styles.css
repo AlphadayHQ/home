@@ -1,0 +1,132 @@
+@font-face {}
+
+/* COMMON STYLES
+  -------------------------------- */
+
+	/* LAYOUT */
+		/* {position:absolute;} */
+		/* {position:relative;} */
+		/* {float:left;} */
+		/* {float:right;} */
+		/* {overflow:hidden;} */
+		/* {display:block;} */
+		/* {display:inline;} */
+		/* {display:none;} */
+		/* {margin:0} */
+		/* {padding:0;} */
+		/* {width:100%;} */
+
+	/* TYPOGRAPHY */
+		/* {line-height:1;} */
+		/* {list-style-type:none;} */
+		/* {font-size:1em;} */
+		/* {font-style:italic;} */
+		/* {font-style:normal;} */
+		/* {font-weight:bold;} */
+		/* {font-weight:normal;} */
+		/* {text-align:center;} */
+		/* {text-align:right;} */
+		/* {text-align:left;} */
+		/* {text-decoration:underline;} */
+		/* {text-decoration:none;} */
+		/* {text-transform:uppercase;} */
+		/* {text-transform:none;} */
+
+	/* COLOR */
+		/* {background-color: #fff;} */
+		/* {background-color: transparent;} */
+		/* {border: 1px solid #000;} */
+		/* {border: none;} */
+		/* {color: #000;} */
+		/* {border-radius: 0px;} */
+		/* {transition: all 0.3s ease-in-out;} */
+
+
+/* BASE
+	-------------------------------- */
+	body{}
+	::selection, ::moz-selection{}
+	.wrapper{}
+
+
+/* HEADER
+	-------------------------------- */
+	.site-header{}
+
+
+/* FOOTER
+	-------------------------------- */
+	.site-footer{}
+
+
+/* CONTENT
+	-------------------------------- */
+	.site-content{}
+
+	/* LAYOUT */
+
+	/* BASIC ELEMENTS */
+		div{}
+		p{}
+		blockquote{}
+		code{}
+		img{}
+		a{}
+		em{}
+		strong{}
+		pre{}
+
+	/* HEADINGS */
+		h1{}
+		h2{}
+		h3{}
+		h4{}
+		h5{}
+		h6{}
+
+	/* FORMS & BUTTONS */
+		form{}
+		fieldset{}
+		legend{}
+		label{}
+		input{}
+		textarea{}
+		select{}
+
+	/* TABLES */
+		table{}
+		caption{}
+		tr{}
+		thead{}
+		th{}
+		tbody{}
+		td{}
+		tfoot{}
+
+	/* LISTS */
+		dl{}
+		dt{}
+		dd{}
+		ol{}
+		ol li{}
+		ul{}
+		ul li{}
+
+	/* … */
+
+body {
+  background-color: #111;
+}
+
+.logo-wrapper {
+  height: 90vh;
+  display: flex;
+  justify-items: center;
+  align-items: center;
+}
+
+#logo {
+  width: 25vw;
+  margin: 0 auto;
+  /* text-align: center; */
+}
