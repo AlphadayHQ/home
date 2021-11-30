@@ -128,5 +128,11 @@ body {
 #logo {
   width: 25vw;
   margin: 0 auto;
-  /* text-align: center; */
+}
+
+#footer {
+	color: #555;
+	font-size: 10px;
+	font-family: Sans-Serif;
+	text-align: center;
 }
