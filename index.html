@@ -83,12 +83,12 @@
                   if (!isValidEmail($form)) {
                       var error =  "A valid email address must be provided.";
                       $resultElement.html(error);
-                      $resultElement.css("color", "red");
+                      $resultElement.css("color", "#cc0000");
                       $resultElement.css("margin", "50px 50px");
                   } else {
-                      $resultElement.css("color", "white");
                       // hijacked this code, which was old and didn't work without https,
                       // and inserted the success message here:
+                      $resultElement.css("color", "#FAA109");
                       $resultElement.html("Thank you! Subscribed.");
                       $resultElement.css("margin", "50px 50px");
                       submitSubscribeForm($form, $resultElement);
