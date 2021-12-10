@@ -25,7 +25,7 @@
   <meta name="twitter:domain" content="alphaday.com">
   <meta name="twitter:image" content="https://s3.eu-west-1.amazonaws.com/alphaday.com/logo-twitter.png" />
   <meta property="og:image" content="https://s3.eu-west-1.amazonaws.com/alphaday.com/logo-twitter.png" />
-  <meta property="og:url" content="http://alphaday.com" />
+  <meta property="og:url" content="https://alphaday.com" />
   <meta property="og:title" content="alphaday" />
   <meta property="og:description" content="@AlphadayHQ" />
 
@@ -39,33 +39,23 @@
 <body>
   <div id="main">
       <img id="logo" src="img/logo.png" alt="alphaday logo">
+
+      <!-- NEW -->
+      <!-- Begin Mailchimp Signup Form -->
       <div id="mc_embed_signup">
-        <!-- Begin Mailchimp Signup Form -->
-        <!-- Form is hijacked and transformed into AJAX form in script on bottom -->
-        <form
-            id="mc-embedded-subscribe-form"
-            action="http://alphaday.us20.list-manage.com/subscribe/post-json?u=a526fcf0309d049cc366e94e0&amp;id=6279b67a6a"
-            method="get"
-            class="validate">
-
-            <div id="mc_embed_signup_scroll">
-              <label for="mce-EMAIL">Subscribe</label>
-              <input class="email" type="email" placeholder="email address" value="" name="EMAIL" >
-              <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
-              <div style="position: absolute; left: -5000px;" aria-hidden="true">
-                <input type="text" name="b_a526fcf0309d049cc366e94e0_6279b67a6a" tabindex="-1" value="">
-              </div>
-
-              <div class="clear">
-                  <input type="submit" value="GO" name="subscribe" class="button">
-              </div>
-
-            </div>
-            <div id="subscribe-result">
-            </div>
-
-        </form>
-      </div> <!-- mc_embed_signup -->
+      <form action="https://alphaday.us20.list-manage.com/subscribe/post?u=a526fcf0309d049cc366e94e0&amp;id=6279b67a6a" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+          <div id="mc_embed_signup_scroll">
+      	<label for="mce-EMAIL">Subscribe</label>
+      	<input type="email" value="" name="EMAIL" class="email" id="mce-EMAIL" placeholder="email address" required>
+          <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+          <div style="position: absolute; left: -5000px;" aria-hidden="true"><input type="text" name="b_a526fcf0309d049cc366e94e0_6279b67a6a" tabindex="-1" value=""></div>
+          <div class="clear"><input type="submit" value="Go" name="subscribe" id="mc-embedded-subscribe" class="button"></div>
+          </div>
+      </form>
+      </div>
+      <!-- /NEW -->
+      <div id="subscribe-result">
+      </div>
   </div>
 
   <footer>
@@ -73,7 +63,7 @@
         &copy; Alphaday <script>document.write( new Date().getFullYear() );</script> - v0.3
     </div>
   </footer>
-  <script src="http://code.jquery.com/jquery-1.11.3.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
 
   <!-- MAILCHIMP STUFF: -->
   <script type="text/javascript">
@@ -97,7 +87,9 @@
                       $resultElement.css("margin", "50px 50px");
                   } else {
                       $resultElement.css("color", "white");
-                      $resultElement.html("Subscribing...");
+                      // hijacked this code, which was old and didn't work without https,
+                      // and inserted the success message here:
+                      $resultElement.html("Thank you! Subscribed.");
                       $resultElement.css("margin", "50px 50px");
                       submitSubscribeForm($form, $resultElement);
                   }
@@ -119,7 +111,7 @@
           }
 
           // Submit the form with an ajax/jsonp request.
-          // Based on http://stackoverflow.com/a/15120409/215821
+          // Based on https://stackoverflow.com/a/15120409/215821
           function submitSubscribeForm($form, $resultElement) {
               $.ajax({
                   type: "GET",
