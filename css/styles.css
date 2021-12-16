@@ -122,6 +122,23 @@ body {
 	flex-direction: column;
 }
 
+nav {
+  width: 80vw;
+}
+
+nav ul {
+  display: flex;
+  justify-content: flex-end;
+  margin: 0 2em 2em 0;
+  list-style: none;
+}
+
+nav li, img {
+  width: 2em;
+  margin: 0 0.5em;
+}
+
+
 #logo {
 	width: 25vw;
 	margin: 0 auto;
