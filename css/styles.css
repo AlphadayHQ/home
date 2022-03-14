@@ -123,13 +123,13 @@ body {
 }
 
 nav {
-  /* width: 80vw; */
+  width: 80vw;
 }
 
 nav ul {
   display: flex;
-  justify-content: center;
-  /* margin: 0 2em 2em 0; */
+  justify-content: flex-end;
+  margin: 0 2em 2em 0;
   list-style: none;
 }
 
