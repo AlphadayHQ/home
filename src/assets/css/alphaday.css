@@ -1,0 +1,20 @@
+@import "./main.css";
+
+
+
+:root {
+    --color-california: #FAA202;
+    --color-platinum: #E2E3E9;
+    --color-aluminium: #A3A7B3;
+    --color-shark: #1D1F20;
+    --color-palatinate-blue: #0B39DF;
+    --color-eerie-black: #171A1C;
+
+    --color-black: #000000;
+    --color-white: #ffffff;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
