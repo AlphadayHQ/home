@@ -1,14 +1,20 @@
 import React from 'react'
 import { Footer, Navbar } from '../components';
-import { Hero, Partners } from '../components/home';
-import {Layout} from "../shared";
+import { Hero, Partners, Team, FAQ, Getfeatures, Workflow } from '../components/home';
+import {Layout, Nav} from "../shared";
 
 function HomeContainer() {
   return (
-    <Layout>      
+    <>  
+      <Navbar/>   
       <Hero/>
+      <Workflow/>
       <Partners/>
-    </Layout>
+      <Team/>
+      <FAQ/>
+      <Getfeatures/>
+      <Footer/>
+    </>
   )
 }
 
