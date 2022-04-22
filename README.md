@@ -8,3 +8,5 @@ A landing Page for alphaday web3 project
 * Run `yarn dev` to start the development server.
 
 * Run `yarn build` to create a build folder with static files for prod.
+
+* Run `yarn preview` to start a local production server.
