@@ -4,7 +4,7 @@ import { Section, Div } from '../../shared';
 
 function Partners() {
   return (
-    <Section className="bg-errie">
+    <Section className="bg-eerie">
         <Div>
             <div className="">
                 <div className="mb-8">
