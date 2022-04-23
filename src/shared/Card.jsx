@@ -11,7 +11,7 @@ function Card({className, children}){
 
 function CardTitle({className, children}) {
   return(
-    <h3 className={`text-white mb-4 text-xl md:text-3xl font-bold ${className}`}>
+    <h3 className={`text-white mb-4 text-xl lg:text-2xl font-bold ${className}`}>
         {children}
     </h3>
   )

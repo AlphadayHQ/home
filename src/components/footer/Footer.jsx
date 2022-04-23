@@ -30,17 +30,17 @@ function Footer() {
             <Anchor href="#">Privacy policy</Anchor>
           </Col>
 
-          <Col className="">
+          <Col className="place-self-center">
             <Anchor className="mb-4" href="#">Docs</Anchor>
             <Anchor href="#">Blog</Anchor>
           </Col>
 
-          <Col className="">
+          <Col className="md:place-self-center">
             <Anchor className="mb-4" href="#">Contact</Anchor>
             <Anchor href="#">Give feedback</Anchor>
           </Col>
 
-          <div className="flex justify-between items-center w-[90px]"> 
+          <div className="place-self-end flex justify-between items-center w-[90px]"> 
             <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
               <img src={twitter} alt="twitter"/>
             </figure>
@@ -50,6 +50,10 @@ function Footer() {
             </figure>
           </div>
 
+        </div>
+
+        <div className="w-full flex justify-center items-center text-aluminium border-t border-[#A3A7B380] mt-8">
+          <small className="mt-4"><sup>&copy;</sup> 2022 Alphaday</small>
         </div>
      </Div>
    </Section>

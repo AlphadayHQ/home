@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Div, Section } from "../../shared";
 import hero from "../../images/home/hero.png";
+import "./textScroller.css";
 
 const Dashboard = () => {
     return(
@@ -21,15 +22,15 @@ export default function () {
         <div className="mx-auto w-11/12 max-w-7xl">
             <div className=" md:mx-auto max-w-5xl pt-16 md:pt-16">
                 <div>
-                    <h1 className="text-black text-center m-0 md:text-left text-[38px] md:text-7xl lg:text-8xl font-bold mt-[-10px]">
-                        <span>Everything NFT.</span>
-                        {/* <div className="h-[65px] w-fit relative border pt-4 mt-[-60px] right-[-380px] overflow-hidden">
-                            <ul className="animate-textFade flex flex-col">
-                                <li className="h-[45px] mb-2 block">NFT.</li>
-                                <li className="h-[45px] mb-2 block">DeFi.</li>
-                                <li className="h-[45px] mb-2 block">Crypto.</li>
-                                <li className="h-[45px] mb-2 block">Etherum</li>
-                            </ul>
+                    <h1 className="card flex text-black text-center m-0 md:text-left text-[38px] md:text-7xl lg:text-8xl font-bold mt-[-10px]">
+                        Everything NFT.
+                        {/* <div className="scroller">
+                            <span>
+                                NFT. <br/>
+                                DeFi. <br/>
+                                Crypto. <br/>
+                                Ethereum.
+                            </span>
                         </div> */}
                     </h1>
                     <h1 className="text-black text-[38px] m-0 text-center md:text-left md:text-7xl lg:text-8xl font-bold">All in one place.</h1>

@@ -1,0 +1,36 @@
+.card {
+    
+  }
+  
+  
+  /* Scroller styling */
+  .scroller {
+    height: 100px;
+    border: 1px solid magenta;
+    line-height: 1.2em;
+    position: relative;
+    overflow: hidden;
+    width: 10em;
+  }
+  .scroller > span {
+    position: absolute;
+    top: 0;
+    border: 1px solid magenta;
+    animation: slide 10s infinite;
+    font-weight: bold;
+    
+  }
+  @keyframes slide {
+    0% {
+      top: 0;
+    }
+    25% {
+      top: -1.2em;
+    }
+    50% {
+      top: -2.4em;
+    }
+    75% {
+      top: -3.6em;
+    }
+  }
