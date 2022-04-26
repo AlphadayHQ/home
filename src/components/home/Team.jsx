@@ -7,65 +7,106 @@ import member4 from "../../images/team/member-4.jpg";
 import member5 from "../../images/team/member-5.jpg";
 import member6 from "../../images/team/member-6.jpg";
 import member7 from "../../images/team/member-7.jpg";
+import member8 from "../../images/team/member-8.jpg";
 
 const teamData = [
   {
     img: member1,
-    classnames: "rounded-[26px] w-[137px] h-[137px]",
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[54px] sm:w-[137px]",
+    infoPosClassnames:
+      "left-[30%] bottom-[-140%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Gideon Anyalewechi",
-    position: "CO-FOUNDER & CMO",
+    position: "Backend Engineer",
+    twitter: "https://twitter.com/get_giddy",
+    linkedin: "https://www.linkedin.com/in/getgiddy/",
   },
   {
     img: member2,
-    classnames: "rounded-[26px] w-[158px] h-[158px]",
-    name: "DeFi Dude",
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
+    infoPosClassnames:
+      "bottom-[-110%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+    name: "https://twitter.com/defidude",
     position: "CO-FOUNDER & CMO",
+    twitter: "",
+    linkedin: "https://www.linkedin.com/in/defi-dude-72296b221/",
   },
   {
     img: member3,
-    classnames: "rounded-[26px] w-[183px] h-[183px]",
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[73px] sm:w-[183px]",
+    infoPosClassnames:
+      "bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Felipe Faraggi",
-    position: "CO-FOUNDER & CMO",
+    position: "CO-FOUNDER & CTO",
+    twitter: "https://twitter.com/felipefaraggi",
+    linkedin: "https://www.linkedin.com/in/faraggi/",
   },
   {
     img: member4,
-    classnames: "rounded-[26px] w-[151px] h-[151px]",
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[151px]",
+    infoPosClassnames:
+      "right-[30%] bottom-[-120%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Vicente Almonacid",
-    position: "CO-FOUNDER & CMO",
+    position: "Frontend Engineer",
+    twitter: "",
+    linkedin: "https://www.linkedin.com/in/vicente-almonacid/",
   },
   {
     img: member5,
-    classnames: "rounded-[26px] w-[196px] h-[196px]",
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
+    infoPosClassnames:
+      "left-[30%] bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Pablo Palomo",
-    position: "CO-FOUNDER & CMO",
+    position: "Backend Engineer",
+    twitter: "https://twitter.com/ppalomo",
+    linkedin: "https://www.linkedin.com/in/pablo-palomo-07127711/",
   },
   {
     img: member6,
-    classnames: "rounded-[26px] w-[222px] h-[222px]",
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[88px] sm:w-[222px]",
+    infoPosClassnames:
+      "bottom-[-80%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Deniz Omar",
-    position: "CO-FOUNDER & CMO",
+    position: "CO-FOUNDER & CEO",
+    twitter: "https://twitter.com/DenizOmer",
+    linkedin: "https://www.linkedin.com/in/denizomer/",
   },
   {
     img: member7,
-    classnames: "rounded-[26px] w-[151px] h-[151px]",
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[151px]",
+    infoPosClassnames:
+      "bottom-[-120%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Charles Nwankwo",
-    position: "CO-FOUNDER & CMO",
+    position: "Frontend Engineer",
+    twitter: "https://twitter.com/Chadnium",
+    linkedin: "https://www.linkedin.com/in/getgiddy/",
+  },
+  {
+    img: member8,
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[54px] sm:w-[137px]",
+    infoPosClassnames:
+      "right-[30%] bottom-[-140%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+    name: "Paris Giannakou",
+    position: "Content Editor",
+    twitter: "",
+    linkedin: "https://www.linkedin.com/in/paris-charanas-giannakou-788386231/",
   },
 ];
 
 function TeamCard({ data, type }) {
   return (
-    <div
-      className={`${type === "bottom" ? "self-start mt-5" : "self-end"} group`}
-    >
+    <div className={`${type === "bottom" ? "self-start" : "self-end"} group`}>
       <figure className="relative flex justify-center items-center">
         <span className="absolute w-full h-full bg-[#1D1F2090] group-hover:bg-transparent transition-all duration-300"></span>
         <img src={data.img} className={data.classnames} alt={data.name} />
 
-        <div className="scale-0 group-hover:scale-100 transition-all duration-300 rounded-xl absolute z-20 text-white py-2 px-4 bg-black min-w-max left-[70%]">
+        <div
+          className={`scale-0 group-hover:scale-100 transition-all duration-300 rounded-xl absolute z-20 text-white py-2 px-4 bg-black min-w-max ${data.infoPosClassnames}`}
+        >
           <div className="mb-4">
             <h4 className="text-[16px]">{data.name}</h4>
-            <p className="text-[10px] tracking-[.2em]">{data.position}</p>
+            <p className="text-[9.5px] tracking-[.2em] uppercase">
+              {data.position}
+            </p>
           </div>
 
           <div className="flex">
@@ -108,203 +149,25 @@ function Team() {
           </div>
 
           <div className="flex justify-center items-center relative">
-            <p
-              className="absolute z-10 top-[50%] left-[50%] font-medium text-aluminium text-[22px] tracking-[1px]"
+            {/* <p
+              className="absolute z-10 top-[47%] left-[50%] font-medium text-aluminium text-[22px] tracking-[1px]"
               style={{ transform: "translate(-50%, -50%)" }}
             >
               OUR TEAM
-            </p>
-            <div className="">
-              <div className="flex gap-x-2">
+            </p> */}
+            <div className="flex flex-col">
+              <div className="flex gap-x-2 justify-center">
                 {teamData.slice(0, 4).map((data) => (
                   <TeamCard data={data} type="top" />
                 ))}
-                {/* <div className="self-end group">
-                  <figure className="relative flex justify-center items-center">
-                    <span className="absolute w-full h-full bg-[#1D1F2090] group-hover:bg-transparent transition-all duration-300"></span>
-                    <img src={member1} alt="member1" />
-                  </figure>
-
-                  <div className="scale-0 group-hover:scale-100 transition-all duration-300 rounded-xl absolute z-20 top-[70px] left-0 md:top-[50px] lg:left-[150px] lg:top-[150px] xl:top-[100px] xl:left-[350px] text-white py-2 px-4 bg-black">
-                    <div className="mb-4">
-                      <h4 className="text-[16px]">DeFi Dude</h4>
-                      <p className="text-[10px] tracking-[.2em]">
-                        CO-FOUNDER & CMO
-                      </p>
-                    </div>
-
-                    <div className="flex">
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue mr-2">
-                        <i className="text-white text-xs ri-twitter-fill"></i>
-                      </a>
-
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue">
-                        <i class="text-white text-xs ri-linkedin-fill"></i>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="self-end group">
-                  <figure className="relative flex justify-center items-center">
-                    <span className="absolute w-full h-full bg-[#1D1F2090] group-hover:bg-transparent transition-all duration-300"></span>
-                    <img src={member2} alt="member2" />
-                  </figure>
-
-                  <div className="scale-0 group-hover:scale-100 transition-all duration-300 rounded-xl absolute z-20 top-[70px] left-[20px] md:top-[100px] md:left-[150px] lg:left-[350px] xl:top-[90px] xl:left-[500px] text-white py-2 px-4 bg-black">
-                    <div className="mb-4">
-                      <h4 className="text-[16px]">DeFi Dude</h4>
-                      <p className="text-[10px] tracking-[.2em]">
-                        CO-FOUNDER & CMO
-                      </p>
-                    </div>
-
-                    <div className="flex">
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue mr-2">
-                        <i className="text-white text-xs ri-twitter-fill"></i>
-                      </a>
-
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue">
-                        <i class="text-white text-xs ri-linkedin-fill"></i>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mb-4 group">
-                  <figure className="relative flex justify-center items-center">
-                    <span className="absolute w-full h-full bg-[#1D1F2090] group-hover:bg-transparent transition-all duration-300"></span>
-                    <img src={member3} alt="member3" />
-                  </figure>
-
-                  <div className="scale-0 group-hover:scale-100 transition-all duration-300 rounded-xl absolute z-20 top-[50px] left-[70px] md:left-[400px] md:top-[80px] lg:left-[500px] xl:top-[60px] xl:left-[700px] text-white py-2 px-4 bg-black">
-                    <div className="mb-4">
-                      <h4 className="text-[16px]">DeFi Dude</h4>
-                      <p className="text-[10px] tracking-[.2em]">
-                        CO-FOUNDER & CMO
-                      </p>
-                    </div>
-
-                    <div className="flex">
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue mr-2">
-                        <i className="text-white text-xs ri-twitter-fill"></i>
-                      </a>
-
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue">
-                        <i class="text-white text-xs ri-linkedin-fill"></i>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="self-end mb-4 group">
-                  <figure className="relative flex justify-center items-center">
-                    <span className="absolute w-full h-full bg-[#1D1F2090] group-hover:bg-transparent transition-all duration-300"></span>
-                    <img src={member4} alt="member4" />
-                  </figure>
-
-                  <div className="scale-0 group-hover:scale-100 transition-all duration-300 rounded-xl absolute z-20 top-[70px] left-[180px] md:left-[500px] md:top-[130px] lg:left-[600px] xl:top-[120px] xl:left-[750px] text-white py-2 px-4 bg-black">
-                    <div className="mb-4">
-                      <h4 className="text-[16px]">DeFi Dude</h4>
-                      <p className="text-[10px] tracking-[.2em]">
-                        CO-FOUNDER & CMO
-                      </p>
-                    </div>
-
-                    <div className="flex">
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue mr-2">
-                        <i className="text-white text-xs ri-twitter-fill"></i>
-                      </a>
-
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue">
-                        <i class="text-white text-xs ri-linkedin-fill"></i>
-                      </a>
-                    </div>
-                  </div>
-                </div> */}
               </div>
-
-              <div className="flex gap-x-2 justify-end items-center">
-                {teamData.slice(4, 7).map((data) => (
+              <p className=" z-10 flex font-medium text-aluminium mt-1 sm:mt-2 sm:mb-1 sm:text-[22px] tracking-[1px] self-center">
+                OUR TEAM
+              </p>
+              <div className="flex gap-x-2 justify-center items-center">
+                {teamData.slice(4, 8).map((data) => (
                   <TeamCard data={data} type="bottom" />
                 ))}
-                {/* <div className="group">
-                  <figure className="relative flex justify-center items-center">
-                    <span className="absolute w-full h-full bg-[#1D1F2090] group-hover:bg-transparent transition-all duration-300"></span>
-                    <img src={member5} alt="member5" />
-                  </figure>
-
-                  <div className="scale-0 group-hover:scale-100 transition-all duration-300 rounded-xl absolute z-20 bottom-[-35px] left-[20px] md:left-[70px] md:bottom-[0px] lg:left-[200px] xl:bottom-[30px] xl:left-[300px] text-white py-2 px-4 bg-black">
-                    <div className="mb-4">
-                      <h4 className="text-[16px]">DeFi Dude</h4>
-                      <p className="text-[10px] tracking-[.2em]">
-                        CO-FOUNDER & CMO
-                      </p>
-                    </div>
-
-                    <div className="flex">
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue mr-2">
-                        <i className="text-white text-xs ri-twitter-fill"></i>
-                      </a>
-
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue">
-                        <i class="text-white text-xs ri-linkedin-fill"></i>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="group">
-                  <figure className="relative flex justify-center items-center">
-                    <span className="absolute w-full h-full bg-[#1D1F2090] group-hover:bg-transparent transition-all duration-300"></span>
-                    <img src={member6} alt="member6" />
-                  </figure>
-
-                  <div className="scale-0 group-hover:scale-100 transition-all duration-300 rounded-xl absolute z-20 left-[50px] bottom-[-35px] md:left-[300px] md:bottom-[0px] lg:left-[400px] xl:bottom-[0px] xl:left-[550px] text-white py-2 px-4 bg-black">
-                    <div className="mb-4">
-                      <h4 className="text-[16px]">DeFi Dude</h4>
-                      <p className="text-[10px] tracking-[.2em]">
-                        CO-FOUNDER & CMO
-                      </p>
-                    </div>
-
-                    <div className="flex">
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue mr-2">
-                        <i className="text-white text-xs ri-twitter-fill"></i>
-                      </a>
-
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue">
-                        <i class="text-white text-xs ri-linkedin-fill"></i>
-                      </a>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="self-start group">
-                  <figure className="relative flex justify-center items-center">
-                    <span className="absolute w-full h-full bg-[#1D1F2090] group-hover:bg-transparent transition-all duration-300"></span>
-                    <img src={member7} alt="member7" />
-                  </figure>
-
-                  <div className="scale-0 group-hover:scale-100 transition-all duration-300 rounded-xl absolute z-20 left-[150px] bottom-[-25px] md:left-[500px] md:bottom-[20px] lg:left-[600px] xl:bottom-[30px] xl:left-[700px] text-white py-2 px-4 bg-black">
-                    <div className="mb-4">
-                      <h4 className="text-[16px]">DeFi Dude</h4>
-                      <p className="text-[10px] tracking-[.2em]">
-                        CO-FOUNDER & CMO
-                      </p>
-                    </div>
-
-                    <div className="flex">
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue mr-2">
-                        <i className="text-white text-xs ri-twitter-fill"></i>
-                      </a>
-
-                      <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue">
-                        <i class="text-white text-xs ri-linkedin-fill"></i>
-                      </a>
-                    </div>
-                  </div>
-                </div> */}
               </div>
             </div>
           </div>
