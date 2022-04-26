@@ -5,6 +5,7 @@ import Track from './Track';
 import Stats from './Stats';
 import Gasandoptions from './Gasandoptions';
 import Triplet from './Triplet';
+import Searchandfilter from './Searchandfilter';
 
 function Workflow() {
   return (
@@ -17,6 +18,7 @@ function Workflow() {
                     <Childoneworkflow/>
                     <Track/>
                     <Stats/>
+                    <Searchandfilter/>
                     <Gasandoptions/>
                     <Triplet/>
                 </div>

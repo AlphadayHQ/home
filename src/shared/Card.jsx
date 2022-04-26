@@ -1,4 +1,53 @@
 import React from "react";
+import "../utils/flippy.css";
+
+function FlipCard({className, children}){
+    return(
+        <div className={`flip-card overflow-hidden ${className}`}>
+            {children}
+        </div>
+    )
+}
+
+function FlipCardInner({className, children}){
+    return(
+        <div className={`flip-card-inner rounded-2xl bg-black ${className}`}>
+            {children}
+        </div>
+    )
+}
+
+function FlipCardFront({className, children}){
+    return(
+        <div className={`flip-card-front px-8 pt-8 pb-0 bg-black rounded-2xl ${className}`}>
+            {children}
+        </div>
+    )
+}
+
+function FlipCardBack({className, children}){
+    return(
+        <div className={`flip-card-back px-8 pt-8 pb-0 bg-black rounded-2xl ${className}`}>
+            {children}
+        </div>
+    )
+}
+
+function FlipCardButton({children, handler}) {
+    return(
+        <div onClick={() => handler()} className="cursor-pointer border border-aluminium text-[10px] text-aluminium w-fit px-2 pt-1 pb-0.5 rounded-md uppercase tracking-[.12em]">
+            {children}
+        </div>
+    )
+}
+
+function FlipCardClose({children, handler}){
+    return(
+        <p onClick={() => handler()} className={`cursor-pointer flex justify-between items-center border border-aluminium text-[10px] text-aluminium w-fit px-2 py-2 rounded-md uppercase tracking-[.15em]`}>
+            {children}
+        </p>
+    )
+}
 
 function Card({className, children}){
     return(
@@ -19,12 +68,22 @@ function CardTitle({className, children}) {
   );
 }
 
-function CardText({children}) {
+function CardText({children, className}) {
     return(
-        <p className="border border-aluminium text-[10px] text-aluminium w-fit px-2 pt-1 pb-0.5 rounded-md uppercase">
+        <p className={`text-aluminium text-sm ${className}`}>
             {children}
         </p>
     )
 }
 
-export {Card, CardTitle, CardText};
+export {
+    Card, 
+    CardTitle, 
+    CardText,
+    FlipCard,
+    FlipCardInner,
+    FlipCardFront,
+    FlipCardBack,
+    FlipCardButton,
+    FlipCardClose
+};

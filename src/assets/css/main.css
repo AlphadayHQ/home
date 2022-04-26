@@ -7,3 +7,14 @@
 body {
     background-color: #1D1F20;
 }
+
+.scroll-show {
+    opacity: 1;
+    transition-property: opacity;
+    transition: 0.3s all ease-in-out;
+}
+  
+.scroll-hide {
+    opacity: 0;
+    transition: 0.3s all ease-in-out;
+}
