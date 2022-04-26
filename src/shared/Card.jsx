@@ -10,16 +10,18 @@ function Card({className, children}){
 
 
 function CardTitle({className, children}) {
+
   return(
-    <h3 className={`text-white mb-4 text-xl lg:text-2xl font-bold ${className}`}>
+    <h3 className={`text-white mb-4 text-xl lg:text-2xl font-medium ${className}`}>
         {children}
+
     </h3>
-  )
+  );
 }
 
 function CardText({children}) {
     return(
-        <p className="border border-aluminium text-sm text-aluminium w-fit px-2 rounded-md">
+        <p className="border border-aluminium text-[10px] text-aluminium w-fit px-2 pt-1 pb-0.5 rounded-md uppercase">
             {children}
         </p>
     )
