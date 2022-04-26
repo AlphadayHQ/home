@@ -13,7 +13,7 @@ const Col = ({children, className}) => {
 
 const Anchor = ({children, href, className}) => {
   return(
-    <a href={href} className={`text-aluminium font-medium text-sm ${className}`}>
+    <a href={href} className={`text-aluminium text-sm ${className}`}>
       {children}
     </a>
   )
@@ -52,8 +52,9 @@ function Footer() {
 
         </div>
 
-        <div className="w-full flex justify-center items-center text-aluminium border-t border-[#A3A7B380] mt-8">
-          <small className="mt-4"><sup>&copy;</sup> 2022 Alphaday</small>
+        <div className="w-full flex justify-center items-center text-aluminium border-t border-[#A3A7B380] mt-16">
+          <small className="mt-4">&copy; 2022 Alphaday</small>
+
         </div>
      </Div>
    </Section>
