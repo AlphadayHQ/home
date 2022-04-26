@@ -18,3 +18,15 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+    font-family: titling;
+    font-weight: 400;
+    src: url("../fonts/Titling/TitlingGothicFBNar-Reg.otf");
+}
+
+@font-face {
+    font-family: titling;
+    font-weight: 500;
+    src: url("../fonts/Titling/TitlingGothicFBNar-Med.otf");
+}
+
