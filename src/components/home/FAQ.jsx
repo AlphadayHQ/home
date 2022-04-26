@@ -6,7 +6,7 @@ const Card = ({ index, handleToggle, toggleDrawer, data }) => {
   const { question, answer } = data;
 
   return (
-    <div className="bg-black rounded-xl p-4 md:p-8 transform-all duration-300">
+    <div className="bg-black rounded-xl p-4 md:p-8">
       <div
         onClick={() => handleToggle(index)}
         className={`flex justify-between items-center cursor-pointer ${
@@ -28,19 +28,22 @@ const Card = ({ index, handleToggle, toggleDrawer, data }) => {
         </span>
       </div>
 
-      {toggleDrawer == index &&
-        answer.map((el, index) => {
-          return (
-            <p
-              key={index}
-              className={`text-aluminium px-4 text-sm md:px-8 md:text-base ${
-                index == answer.length - 1 && "mt-4"
-              } transform-all duration-300`}
-            >
-              {el}
-            </p>
-          );
-        })}
+      <div className={`${toggleDrawer == index ? "overflow-hidden h-auto max-h-[9999px] transition-all duration-300 ease-[cubic-bezier(1,0,1,0)]" : "overflow-hidden max-h-[0px] transition-all duration-300  ease-[cubic-bezier(0,1,0,1)]" }`}>
+        {toggleDrawer == index &&
+          answer.map((el, i) => {
+            return (
+              <p
+                key={i}
+                className={`text-aluminium px-4 text-sm md:px-8 md:text-base ${
+                  i == answer.length - 1 && "mt-4"
+                }`}
+              >
+                {el}
+              </p>
+            );
+          })
+        }
+      </div>
     </div>
   );
 };
