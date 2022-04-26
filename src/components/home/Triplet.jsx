@@ -10,7 +10,7 @@ function Triplet() {
         <Card className="overflow-hidden h-[370px] lg:h-[420px]">
             <div>
                 <CardTitle className="w-full max-w-[200px]">Use your favourite dapps</CardTitle>
-                <p className="text-california tracking-[.1em] font-bold text-xs">COMING SOON</p>
+                <p className="text-california tracking-[.1em] text-xs">COMING SOON</p>
             </div>
 
             <div className="mt-8 md:mt-16">
@@ -23,7 +23,7 @@ function Triplet() {
         <Card className="overflow-hidden h-[370px] lg:h-[420px]">
             <div>
                 <CardTitle className="w-full max-w-[200px]">Code your own widgets</CardTitle>
-                <p className="text-california tracking-[.1em] font-bold text-xs">COMING SOON</p>
+                <p className="text-california tracking-[.1em] text-xs">COMING SOON</p>
             </div>
 
             <div className="mt-8 lg:mt-16">
@@ -37,7 +37,7 @@ function Triplet() {
         <Card className="overflow-hidden h-[370px] lg:h-[420px]">
             <div>
                 <CardTitle className="w-full max-w-[250px]">Track NFT floors and project updates</CardTitle>
-                <p className="text-california tracking-[.1em] font-bold text-xs">COMING SOON</p>
+                <p className="text-california tracking-[.1em] text-xs">COMING SOON</p>
             </div>
 
             <div className="mt-16 lg:mt-24">

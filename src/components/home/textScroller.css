@@ -17,7 +17,7 @@
     top: 0;
     border: 1px solid magenta;
     animation: slide 10s infinite;
-    font-weight: bold;
+    /* font-weight: 400; */
     
   }
   @keyframes slide {
