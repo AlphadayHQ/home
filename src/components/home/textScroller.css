@@ -1,36 +1,40 @@
-.card {
-    
+/* inspired by EricPorter/pen/JjPmOOb */
+/* may add 3d effect later check later kanishkkunal/pen/wgEBgX */
+
+.flip4 {
+  -webkit-animation: flip4 10s cubic-bezier(0.23, 1, 0.32, 1.2) infinite;
+  animation: flip4 10s cubic-bezier(0.23, 1, 0.32, 1.2) infinite;
+}
+
+@keyframes flip4 {
+  0% {
+    margin-top: -560px;
   }
-  
-  
-  /* Scroller styling */
-  .scroller {
-    height: 100px;
-    border: 1px solid magenta;
-    line-height: 1.2em;
-    position: relative;
-    overflow: hidden;
-    width: 10em;
+  5% {
+    margin-top: -420px;
   }
-  .scroller > span {
-    position: absolute;
-    top: 0;
-    border: 1px solid magenta;
-    animation: slide 10s infinite;
-    /* font-weight: 400; */
-    
+  25% {
+    margin-top: -420px;
   }
-  @keyframes slide {
-    0% {
-      top: 0;
-    }
-    25% {
-      top: -1.2em;
-    }
-    50% {
-      top: -2.4em;
-    }
-    75% {
-      top: -3.6em;
-    }
+  30% {
+    margin-top: -280px;
   }
+  50% {
+    margin-top: -280px;
+  }
+  55% {
+    margin-top: -140px;
+  }
+  75% {
+    margin-top: -140px;
+  }
+  80% {
+    margin-top: -0px;
+  }
+  99.99% {
+    margin-top: -0px;
+  }
+  100% {
+    margin-top: -560px;
+  }
+}
