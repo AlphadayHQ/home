@@ -42,7 +42,12 @@ export default function () {
               The one tool you need to stay up to date in crypto with easily
               customisable workflows.
             </p>
-            <Button className="mt-4 md:mt-0 bg-blue">Launch app</Button>
+            <Button
+              link={"https://app.alphaday.com"}
+              className="mt-4 md:mt-0 bg-blue"
+            >
+              Launch app
+            </Button>
           </div>
           <Dashboard />
         </div>

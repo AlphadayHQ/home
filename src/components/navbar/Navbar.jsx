@@ -50,30 +50,33 @@ function Navbar() {
         <div className="flex justify-between items-center">
           <div className="flex justify-between items-center">
             <figure>
-              <img src={alphaday} className="w-full" alt="alphaday"/>
+              <img src={alphaday} className="w-full" alt="alphaday" />
             </figure>
           </div>
 
-         
-          <div ref={element} className={`fixed w-[90%] mx-auto lg:max-w-7xl flex justify-end scroll-hide`}>
-            <div className='justify-end md:w-[220px] flex justify-between'>
-              <div className="hidden md:flex justify-between items-center w-[90px]"> 
+          <div
+            ref={element}
+            className={`fixed w-[90%] mx-auto lg:max-w-7xl flex justify-end scroll-hide`}
+          >
+            <div className="justify-end md:w-[220px] flex justify-between">
+              <div className="hidden md:flex justify-between items-center w-[90px]">
                 <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
-                  <img src={twitter} alt="twitter"/>
+                  <img src={twitter} alt="twitter" />
                 </figure>
-                
+
                 <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
-                  <img src={discord} alt="discord"/>
-                </figure>  
+                  <img src={discord} alt="discord" />
+                </figure>
               </div>
-              <Button className={`bg-blue`}>Launch app</Button>
+              <Button link={"https://app.alphaday.com"} className={`bg-blue`}>
+                Launch app
+              </Button>
             </div>
           </div>
-          
         </div>
       </Nav>
     </div>
-  )
+  );
 }
 
 export default Navbar;
