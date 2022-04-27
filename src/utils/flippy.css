@@ -2,17 +2,14 @@
     position: relative;
     width: 100%;
     height: 100%;
-    transition: transform 0.6s;
+    transition: transform 0.7s;
+    transition-timing-function: ease-in-out;
     transform-style: preserve-3d;
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
 
-/* .flip-card:hover .flip-card-inner {
-    transform: rotateY(180deg);
-} */
-
 .flipThis {
-    transform: rotateY(180deg);
+    transform: rotateX(180deg);
 }
 
 .flip-card-front, .flip-card-back {
@@ -24,5 +21,5 @@
 }
 
 .flip-card-back {
-    transform: rotateY(180deg);
+    transform: rotateX(180deg);
 }

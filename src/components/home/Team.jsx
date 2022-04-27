@@ -161,7 +161,7 @@ function Team() {
                   <TeamCard data={data} type="top" />
                 ))}
               </div>
-              <p className=" z-10 flex font-medium text-aluminium mt-1 sm:mt-2 sm:mb-1 sm:text-[22px] tracking-[1px] self-center">
+              <p className=" z-10 flex font-medium text-aluminium mt-1 sm:mt-[10px] sm:mb-1 sm:text-[22px] tracking-[1px] self-center">
                 OUR TEAM
               </p>
               <div className="flex gap-x-2 justify-center items-center">
