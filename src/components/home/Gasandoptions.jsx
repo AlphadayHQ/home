@@ -16,8 +16,8 @@ function Gasandoptions() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[.65fr_1fr] gap-8">
-      <FlipCard className="overflow-hidden h-[350px] lg:h-[490px]">
+    <div className="grid grid-cols-1 md:grid-cols-[.8fr_1fr] gap-8">
+      <FlipCard className="overflow-hidden h-[350px] md:h-[450px] lg:h-[490px]">
         <FlipCardInner className={`${gasToggler ? "flipThis" : ""}`}>
           <FlipCardFront>
             <div>
@@ -25,11 +25,11 @@ function Gasandoptions() {
               <FlipCardButton handler={handleGasToggle}>DETAILS</FlipCardButton>
             </div>
 
-            <div className="mt-8 lg:mt-16 relative">
-              <figure className="absolute left-[-80px] lg:top-[20px] flex justify-center items-center mt-4">
+            <div className="mt-8 lg:mt-16 md:relative">
+              <figure className="absolute left-[-80px] lg:top-[20px] flex justify-center items-center mt-2">
                 <img
                   src={gas}
-                  className="w-[80%] md:w-[100%] object-fit"
+                  className="w-[100%] md:w-[100%] object-fit"
                   alt="gas"
                 />
               </figure>
@@ -42,7 +42,7 @@ function Gasandoptions() {
               You can search for specific events, and filter them by category and location.
             </CardTitle>
           
-            <div className="relative h-[60%] md:h-[65%] lg:h-[63%] xl:h-[65%] flex flex-col justify-between items-start mt-4">
+            <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-2">
               <CardText className="w-full max-w-[450px]">
                 Our calendar widget lets you stay on top of events, meetups, important upgrades, and other notable things happening in the future.
                 <br/><br/>
@@ -62,7 +62,7 @@ function Gasandoptions() {
 
       
 
-      <FlipCard className="overflow-hidden h-[350px] lg:h-[490px]">
+      <FlipCard className="overflow-hidden h-[350px] md:h-[450px] lg:h-[490px]">
         <FlipCardInner className={`${optionToggler ? "flipThis" : ""}`}>
           <FlipCardFront>
             <div>
@@ -89,7 +89,7 @@ function Gasandoptions() {
               You can search for specific events, and filter them by category and location.
             </CardTitle>
           
-            <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-8">
+            <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-2">
               <CardText className="w-full max-w-[450px]">
                 Our calendar widget lets you stay on top of events, meetups, important upgrades, and other notable things happening in the future.
                 <br/><br/>
