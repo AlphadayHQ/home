@@ -1,50 +1,46 @@
 import React from "react";
 
 function Stats() {
+  const Item = ({ text, className, count }) => (
+    <div
+      className={`flex justify-start items-start w-[305px] mb-2 md:mb-0 ${className}`}
+    >
+      <h2 className="h-16 text-right md:text-left md:h-20 w-[100px] md:w-auto self-center lg:self-start text-4xl lg:text-7xl font-bold mr-2 xl:mr-0 md:pt-2">
+        {count}
+      </h2>
+      <div className="w-[180px] sm:w-[210px] md:w-auto ml-1 md:ml-2.5 xl:ml-[17px] font-medium">
+        <p className="h-16 md:h-20 flex items-center mb-3 text-lg lg:text-xl">
+          {text}
+        </p>
+        <p className="text-[10px] border rounded px-2 pt-[1.5px] w-fit mt-1 lg:mt-4">
+          FULL LIST
+        </p>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="bg-california rounded-xl p-4 lg:px-8 lg:py-8">
+    <div className="bg-california rounded-xl p-4 md:px-10 pb-8 lg:px-14 lg:py-10 xl:px-24 xl:py-14">
+      <div
+        className={`mx-auto flex flex-col md:flex-row justify-between items-center md:items-start flex-1`}
+      >
+        <Item
+          count="30+"
+          text="widgets"
+          className="md:w-auto lg:w-[220px] md:mr-6"
+        />
 
-      <div className="mx-auto w-fit grid grid-cols-[140px_.8fr] place-content-center gap-4 md:gap-8 md:grid-cols-[140px_180px_280px] xl:gap-16 lg:grid-cols-[210px_270px_330px] xl:grid-cols-[220px_340px_440px]">
+        <Item
+          count="500+"
+          text="projects tracked"
+          className="md:w-auto lg:w-[280px] md:mr-6"
+        />
 
-        <div className="flex justify-between items-start">
-          <h2 className="text-4xl lg:text-7xl font-bold mr-2 xl:mr-0">30+</h2>
-          <div className="">
-            <span className="text-lg lg:text-xl">
-              widgets
-            </span>
-
-            <p className="text-[10px] border rounded px-2 w-fit mt-1 lg:mt-4">
-              FULL LIST
-            </p>
-          </div>
-        </div>
-
-        <div className="flex justify-between items-start">
-
-          <h2 className="text-4xl lg:text-7xl font-bold mr-2 xl:mr-0">500+</h2>
-          <div className="">
-            <span className="text-lg lg:text-xl">
-              projects tracked
-            </span>
-            <p className="text-[10px] border rounded px-2 w-fit mt-1 lg:mt-4">
-              FULL LIST
-            </p>
-          </div>
-        </div>
-
-        <div className="col-span-2 md:col-span-1 flex justify-between items-start">
-
-          <h2 className="text-4xl lg:text-7xl font-bold mr-2 xl:mr-0">159</h2>
-          <div className="">
-            <span className="text-lg lg:text-xl">
-              sources of information aggregated
-
-            </span>
-            <p className="text-[10px] border rounded px-2 w-fit mt-1 lg:mt-4">
-              FULL LIST
-            </p>
-          </div>
-        </div>
+        <Item
+          count="159"
+          text="sources of information aggregated"
+          className="lg:w-[360px]"
+        />
       </div>
     </div>
   );

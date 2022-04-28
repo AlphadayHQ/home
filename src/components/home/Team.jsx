@@ -87,7 +87,7 @@ const teamData = [
       "right-[30%] bottom-[-140%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Paris Giannakou",
     position: "Content Editor",
-    twitter: "https://twitter.com/v_almonacid",
+    twitter: "https://twitter.com/GrifousG",
     linkedin: "https://www.linkedin.com/in/paris-charanas-giannakou-788386231/",
   },
 ];
