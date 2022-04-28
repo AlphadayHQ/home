@@ -4,22 +4,25 @@ import { CardText, CardTitle, FlipCard, FlipCardInner, FlipCardFront, FlipCardBa
 
 
 const Form = () => {
-    return(
-        <form className="flex justify-between font-sans items-center w-full lg:w-[560px] bg-[#0A0A0B] rounded-[25px] py-2 px-2 border-[15px] border-[#1E2024]" style={{boxShadow: "0px 2px 60px rgba(255, 255, 255, 0.15)"}}>
-            <button className="bg-[#263964] text-white rounded-[10px] py-2 px-2 flex justify-between items-center">
-                <small className="mr-2 tracking-[.1em]">Uniswap</small>
-                <i className="text-xs ri-close-fill"></i>
-            </button>
+  return (
+    <form
+      className="flex justify-between font-sans items-center w-full lg:w-[560px] bg-[#0A0A0B] rounded-[25px] py-2 px-2 border-[15px] border-[#1E2024]"
+      style={{ boxShadow: "0px 2px 60px rgba(255, 255, 255, 0.15)" }}
+    >
+      <button className="bg-[#263964] font-light text-white rounded-[10px] pt-2 pb-1.5 px-2 flex justify-between items-center">
+        <small className="mr-2 tracking-[.1em]">Uniswap</small>
+        <i className="text-xs ri-close-fill"></i>
+      </button>
 
-            <input
-                className="py-1 text-black outline-0 placeholder:text-[#505562] w-full bg-[#0A0A0B] px-2 text-sm " 
-                placeholder="search for assets, projects, events, etc..."
-            />
+      <input
+        className="pt-1 pb-0.5 font-inter text-black outline-0 placeholder:text-[#505562] w-full bg-[#0A0A0B] px-2 text-sm "
+        placeholder="Search for assets, projects, events, etc..."
+      />
 
-            <i className="text-xl text-[#505562] ri-search-2-line"></i>
-        </form>
-    )
-}
+      <i className="text-xl text-[#505562] ri-search-2-line"></i>
+    </form>
+  );
+};
 
 
 function Searchandfilter() {
