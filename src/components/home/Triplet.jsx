@@ -6,7 +6,7 @@ import code from "../../images/workflow/code.png";
 
 function Triplet() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <Card className="overflow-hidden h-[370px] lg:h-[420px]">
             <div>
                 <CardTitle className="w-full max-w-[200px]">Use your favourite dapps</CardTitle>
