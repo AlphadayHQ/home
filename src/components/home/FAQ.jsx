@@ -1,16 +1,19 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { Button, Div, Section, Title } from "../../shared";
 import { data } from "./faqData";
 
 const Card = ({ index, handleToggle, toggleDrawer, data }) => {
+  const answerRef = useRef(null);
   const { question, answer } = data;
+
+  const answerHeight = answerRef?.current?.scrollHeight;
 
   return (
     <div className="bg-black rounded-xl p-4 md:p-8">
       <div
         onClick={() => handleToggle(index)}
         className={`flex justify-between items-center cursor-pointer ${
-          toggleDrawer == index ? "mb-4 text-platinum" : "mb-0 text-aluminium"
+          toggleDrawer == index ? "text-platinum" : "text-aluminium"
         }`}
       >
         <h4 className="font-medium text-sm md:text-xl">{question}</h4>
@@ -28,9 +31,20 @@ const Card = ({ index, handleToggle, toggleDrawer, data }) => {
         </span>
       </div>
 
-      <div className={`${toggleDrawer == index ? "overflow-hidden h-auto max-h-[9999px] transition-all duration-300 ease-[cubic-bezier(1,0,1,0)]" : "overflow-hidden max-h-[0px] transition-all duration-300  ease-[cubic-bezier(0,1,0,1)]" }`}>
-        {toggleDrawer == index &&
-          answer.map((el, i) => {
+      <div
+        className={`overflow-hidden transition-[height] duration-400 h-auto will-change-[height] ease-[cubic-bezier(0.65,0.05,0.36,1)]`}
+        style={{
+          height: `${toggleDrawer == index ? answerHeight + 16 : 0}px`,
+        }}
+      >
+        <div
+          ref={answerRef}
+          className={`mt-4 ${
+            toggleDrawer == index ? "opacity-100" : "opacity-0"
+          }`}
+          style={{ transition: "opacity 0.1s linear 0.18s" }}
+        >
+          {answer.map((el, i) => {
             return (
               <p
                 key={i}
@@ -41,15 +55,15 @@ const Card = ({ index, handleToggle, toggleDrawer, data }) => {
                 {el}
               </p>
             );
-          })
-        }
+          })}
+        </div>
       </div>
     </div>
   );
 };
 
 function FAQ() {
-  let [toggleDrawer, setToggleDrawer] = useState(false);
+  let [toggleDrawer, setToggleDrawer] = useState(0);
 
   function handleToggle(arg) {
     if (toggleDrawer === arg) {
