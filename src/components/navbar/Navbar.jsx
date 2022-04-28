@@ -1,13 +1,13 @@
-import React, {useRef, useEffect} from 'react'
+import React, { useRef, useEffect } from "react";
 import { Nav, Button } from "../../shared";
 import alphaday from "../../images/alphaday.svg";
 import discord from "../../images/socials/discord.svg";
 import twitter from "../../images/socials/twitter.svg";
 
 function Navbar() {
-  
-  const showPosition = 500;
+  const showPosition = 492;
   const element = useRef(null);
+  const element2 = useRef(null);
 
   useEffect(() => {
     window.addEventListener("scroll", () => {
@@ -17,6 +17,8 @@ function Navbar() {
         element?.current
       ) {
         element?.current?.classList.remove("scroll-hide");
+        element2?.current?.classList.remove("translate-x-[100px]");
+        element2?.current?.classList.add("translate-x-[0px]");
         element?.current?.classList.add("scroll-show");
       }
 
@@ -27,10 +29,13 @@ function Navbar() {
       ) {
         element?.current?.classList.remove("scroll-show");
         element?.current?.classList.add("scroll-hide");
+        setTimeout(() => {
+          element2?.current?.classList.add("translate-x-[100px]");
+          element2?.current?.classList.remove("translate-x-[0px]");
+        }, 300);
       }
     });
   }, []);
-
 
   // const handleScroll = () => {
   //   setPosition(window.pageYOffset);
@@ -40,8 +45,6 @@ function Navbar() {
 
   // useEffect(() => {
   //   window.addEventListener("scroll", handleScroll);
-
-    
   // });
 
   return (
@@ -50,16 +53,22 @@ function Navbar() {
         <div className="flex justify-between items-center">
           <div className="flex justify-between items-center">
             <figure>
-              <img src={alphaday} className="w-full" alt="alphaday" />
+              <img
+                src={alphaday}
+                className="w-[80%] md:w-[100%] object-fit"
+                alt="alphaday"
+              />
             </figure>
           </div>
 
           <div
-            ref={element}
-            className={`fixed w-[90%] mx-auto lg:max-w-7xl flex justify-end scroll-hide`}
+            className={`fixed w-[91%] z-10 mx-auto lg:max-w-7xl flex justify-end`}
           >
-            <div className="justify-end md:w-[220px] flex justify-between">
-              <div className="hidden md:flex justify-between items-center w-[90px]">
+            <div
+              ref={element2}
+              className="items-center w-[200px] md:w-[240px] flex justify-between ease-in-out translate-x-[100px]"
+            >
+              <div className="flex justify-between items-center w-[90px]">
                 <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
                   <img src={twitter} alt="twitter" />
                 </figure>
@@ -68,9 +77,11 @@ function Navbar() {
                   <img src={discord} alt="discord" />
                 </figure>
               </div>
-              <Button link={"https://app.alphaday.com"} className={`bg-blue`}>
-                Launch app
-              </Button>
+              <div ref={element} className="scroll-hide">
+                <Button link={"https://app.alphaday.com"} className={`bg-blue`}>
+                  Launch app
+                </Button>
+              </div>
             </div>
           </div>
         </div>
