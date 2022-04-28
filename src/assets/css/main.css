@@ -4,6 +4,10 @@
     box-sizing: border-box;
 }
 
+html {
+    -webkit-tap-highlight-color: transparent;
+}
+
 body {
     background-color: #1D1F20;
 }
