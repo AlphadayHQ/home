@@ -18,7 +18,7 @@ const Dashboard = () => {
 export default function () {
   const textOptions = ["NFT", "DeFi", "Crypto", "Ethereum"];
   return (
-    <Section className="bg-california overflow-hidden h-auto w-full border-t border-california">
+    <Section className="bg-california overflow-hidden h-auto w-full border-california">
       <div className="mx-auto w-11/12 max-w-7xl">
         <div className=" md:mx-auto flex flex-col max-w-5xl sm:pt-8 md:pt-16 mt-14">
           <h1 class="flex text-black self-start text-center m-0 md:text-left font-medium leading-[80px] md:leading-[110px] text-[28px] sm:text-5xl md:text-7xl lg:text-[98px]">
@@ -38,7 +38,7 @@ export default function () {
           </h1>
 
           <div className="w-full md:w-[600px] flex flex-col md:flex-row justify-between items-center mt-4 md:mt-8">
-            <p className="self-center pt-2.5 w-full text-sm md:w-[430px] md:text-lg text-left text-[#00000090]">
+            <p className="self-center pt-2.5 w-full text-sm md:w-[430px] md:text-[19px] leading-6 text-left text-[#000000]">
               The one tool you need to stay up to date in crypto with easily
               customisable workflows.
             </p>

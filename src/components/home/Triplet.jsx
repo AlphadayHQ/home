@@ -1,8 +1,8 @@
 import React from 'react'
 import { Card, CardText, CardTitle } from '../../shared';
-import nft from "../../images/workflow/nft.png";
-import dapps from "../../images/workflow/dapps.png";
-import code from "../../images/workflow/code.png";
+import nft from "../../images/workflow/nft2.png";
+import dapps from "../../images/workflow/dapps2.png";
+import code from "../../images/workflow/code2.png";
 
 function Triplet() {
   return (
@@ -15,7 +15,7 @@ function Triplet() {
 
             <div className="mt-8 md:mt-16">
                 <figure className="flex justify-center items-center mt-4">
-                    <img src={dapps} className="w-[80%] md:w-[80%] object-fit drop-shadow-[0px_20px_60px_rgba(255, 255, 255, 0.15)]" alt="dapps"/>
+                    <img src={dapps} className="" alt="dapps"/>
                 </figure>
             </div>
         </Card>
@@ -26,7 +26,7 @@ function Triplet() {
                 <p className="text-california tracking-[.1em] text-xs">COMING SOON</p>
             </div>
 
-            <div className="mt-8 lg:mt-16">
+            <div className="mt-4 lg:mt-10">
                 <figure className="flex justify-center items-center">
                     <img src={code} className="w-[70%] md:w-[70%]" alt="code"/>
                 </figure>
@@ -40,7 +40,7 @@ function Triplet() {
                 <p className="text-california tracking-[.1em] text-xs">COMING SOON</p>
             </div>
 
-            <div className="mt-16 lg:mt-24">
+            <div className="mt-4 lg:mt-14">
                 <figure className="flex justify-center items-center">
                     <img src={nft} className="w-[100%] md:w-[80%]" alt="nft"/>
                 </figure>

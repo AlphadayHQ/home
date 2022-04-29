@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { Nav, Button } from "../../shared";
-import alphaday from "../../images/alphaday.svg";
+// import alphaday from "../../images/alphaday.svg";
+import alphaday from "../../images/logo.png";
 import discord from "../../images/socials/discord.svg";
 import twitter from "../../images/socials/twitter.svg";
 
@@ -43,7 +44,7 @@ function Navbar() {
             <figure>
               <img
                 src={alphaday}
-                className="w-[80%] md:w-[100%] object-fit"
+                className="w-[126px] md:w-[158px] object-fit"
                 alt="alphaday"
               />
             </figure>
