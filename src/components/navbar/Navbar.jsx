@@ -17,9 +17,9 @@ function Navbar() {
         element?.current
       ) {
         element?.current?.classList.remove("scroll-hide");
-        element2?.current?.classList.remove("translate-x-[100px]");
-        element2?.current?.classList.add("translate-x-[0px]");
         element?.current?.classList.add("scroll-show");
+        element2?.current?.classList.add("scroll-hide");
+        element2?.current?.classList.remove("scroll-show");
       }
 
       if (
@@ -29,23 +29,11 @@ function Navbar() {
       ) {
         element?.current?.classList.remove("scroll-show");
         element?.current?.classList.add("scroll-hide");
-        setTimeout(() => {
-          element2?.current?.classList.add("translate-x-[100px]");
-          element2?.current?.classList.remove("translate-x-[0px]");
-        }, 300);
+        element2?.current?.classList.add("scroll-show");
+        element2?.current?.classList.remove("scroll-hide");
       }
     });
   }, []);
-
-  // const handleScroll = () => {
-  //   setPosition(window.pageYOffset);
-  // }
-
-  // console.log(position);
-
-  // useEffect(() => {
-  //   window.addEventListener("scroll", handleScroll);
-  // });
 
   return (
     <div className="bg-california">
@@ -64,11 +52,11 @@ function Navbar() {
           <div
             className={`fixed w-[91%] z-10 mx-auto lg:max-w-7xl flex justify-end`}
           >
-            <div
-              ref={element2}
-              className="items-center w-[200px] md:w-[240px] flex justify-between ease-in-out translate-x-[100px]"
-            >
-              <div className="flex justify-between items-center w-[90px]">
+            <div className="relative items-center w-[100px] md:w-[140px] flex justify-end ease-in-out">
+              <div
+                ref={element2}
+                className="scroll-show flex justify-between items-center w-[90px]"
+              >
                 <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
                   <img src={twitter} alt="twitter" />
                 </figure>
@@ -77,7 +65,7 @@ function Navbar() {
                   <img src={discord} alt="discord" />
                 </figure>
               </div>
-              <div ref={element} className="scroll-hide">
+              <div ref={element} className="scroll-hide absolute mb-1">
                 <Button link={"https://app.alphaday.com"} className={`bg-blue`}>
                   Launch app
                 </Button>
