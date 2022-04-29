@@ -1,7 +1,15 @@
-import React, {useState} from "react";
-import { CardText, CardTitle, FlipCard, FlipCardInner, FlipCardFront, FlipCardBack, FlipCardClose, FlipCardButton} from "../../shared/index";
+import React, { useState } from "react";
+import {
+  CardText,
+  CardTitle,
+  FlipCard,
+  FlipCardInner,
+  FlipCardFront,
+  FlipCardBack,
+  FlipCardClose,
+  FlipCardButton,
+} from "../../shared/index";
 // import searchbg from "../../images/bg-text.png";
-
 
 const Form = () => {
   return (
@@ -24,41 +32,63 @@ const Form = () => {
   );
 };
 
-
 function Searchandfilter() {
-    const [searchToggle, setSearchToggle] = useState(false);
+  const [searchToggle, setSearchToggle] = useState(false);
 
-    function handleSearchToggle(){
-        setSearchToggle(!searchToggle);
-    }
+  function handleSearchToggle() {
+    setSearchToggle(!searchToggle);
+  }
 
-    return (
-        <div className="grid grid-cols-1">
-            <FlipCard className="overflow-hidden h-[300px]">
-                <FlipCardInner>
-                    <FlipCardFront className="pt-8 pb-8">
-                        <div className="relative h-full w-full md:bg-[url('../../images/bg-text.png')] bg-no-repeat bg-center flex flex-col xl:flex-row">
-                            <div>
-                                <CardTitle className="w-full md:w-[300px]">
-                                    Search data and filter by projects
-                                </CardTitle>
-                                <FlipCardButton>How it works</FlipCardButton>
-                            </div>
+  return (
+    <div className="grid grid-cols-1">
+      <FlipCard className="overflow-hidden h-[300px]">
+        <FlipCardInner className={`${searchToggle ? "flipThis" : ""}`}>
+          <FlipCardFront className="pt-8 pb-8">
+            <div className="relative h-full w-full md:bg-[url('../../images/bg-text.png')] bg-no-repeat bg-center flex flex-col xl:flex-row">
+              <div>
+                <CardTitle className="w-full md:w-[300px]">
+                  Search by any project, blockchain, token, person
+                </CardTitle>
+                <FlipCardButton handler={handleSearchToggle}>
+                  How it works
+                </FlipCardButton>
+              </div>
 
-                            <div className="flex items-center justify-center mt-8 sm:mt-4 lg:mt-0">
-                                <Form/>
-                            </div>
-                            
-                        </div>
-                    </FlipCardFront>
+              <div className="flex items-center justify-center mt-8 sm:mt-4 lg:mt-0">
+                <Form />
+              </div>
+            </div>
+          </FlipCardFront>
 
-                    <FlipCardBack>
-                        <p>Back</p>
-                    </FlipCardBack>
-                </FlipCardInner>
-            </FlipCard>
-        </div>
-    )
+          <FlipCardBack>
+            <CardTitle className="w-full max-w-[475px]">
+              You can search for specific events, and filter them by category
+              and location.
+            </CardTitle>
+
+            <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-8">
+              <CardText className="w-full max-w-[450px]">
+                Our calendar widget lets you stay on top of events, meetups,
+                important upgrades, and other notable things happening in the
+                future.
+                <br />
+                <br />
+                With the calendar widget you’ll never fall behind on important
+                events, meetups and protocol upgrades.
+              </CardText>
+
+              <div className="absolute bottom-11">
+                <FlipCardClose handler={handleSearchToggle}>
+                  <p className="mr-2">CLOSE</p>
+                  <i className="ri-close-fill"></i>
+                </FlipCardClose>
+              </div>
+            </div>
+          </FlipCardBack>
+        </FlipCardInner>
+      </FlipCard>
+    </div>
+  );
 }
 
 export default Searchandfilter;

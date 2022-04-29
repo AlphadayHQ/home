@@ -1,12 +1,20 @@
-import React, {useState} from 'react'
-import { CardText, CardTitle, FlipCard, FlipCardInner, FlipCardFront, FlipCardButton, FlipCardClose, FlipCardBack } from '../../shared';
+import React, { useState } from "react";
+import {
+  CardText,
+  CardTitle,
+  FlipCard,
+  FlipCardInner,
+  FlipCardFront,
+  FlipCardButton,
+  FlipCardClose,
+  FlipCardBack,
+} from "../../shared";
 import track from "../../images/workflow/track.png";
-
 
 function Track() {
   const [trackCardToggler, setTrackCardToggler] = useState(false);
 
-  function handleTrackToggler(){
+  function handleTrackToggler() {
     setTrackCardToggler(!trackCardToggler);
   }
 
@@ -17,10 +25,12 @@ function Track() {
           <FlipCardFront>
             <div>
               <CardTitle className="w-full md:w-[570px]">
-                Keep track of your portfolio's balances, performance, activity, and
-                other metrics for all your wallets in one place
+                Keep track of your portfolio's balances, performance, activity,
+                and other metrics for all your wallets in one place
               </CardTitle>
-              <FlipCardButton handler={handleTrackToggler}>See what you can do</FlipCardButton>
+              <FlipCardButton handler={handleTrackToggler}>
+                See what you can do
+              </FlipCardButton>
             </div>
 
             <div className="mt-16">
@@ -35,18 +45,22 @@ function Track() {
           </FlipCardFront>
 
           <FlipCardBack>
-            
             <CardTitle className="w-full max-w-[475px]">
-              You can search for specific events, and filter them by category and location.
+              You can search for specific events, and filter them by category
+              and location.
             </CardTitle>
-          
+
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-8">
               <CardText className="w-full max-w-[450px]">
-                Our calendar widget lets you stay on top of events, meetups, important upgrades, and other notable things happening in the future.
-                <br/><br/>
-                With the calendar widget you’ll never fall behind on important events, meetups and protocol upgrades.
+                Our calendar widget lets you stay on top of events, meetups,
+                important upgrades, and other notable things happening in the
+                future.
+                <br />
+                <br />
+                With the calendar widget you’ll never fall behind on important
+                events, meetups and protocol upgrades.
               </CardText>
-              
+
               <div className="absolute bottom-0">
                 <FlipCardClose handler={handleTrackToggler}>
                   <p className="mr-2">CLOSE</p>
@@ -54,7 +68,6 @@ function Track() {
                 </FlipCardClose>
               </div>
             </div>
-
           </FlipCardBack>
         </FlipCardInner>
       </FlipCard>
@@ -62,4 +75,4 @@ function Track() {
   );
 }
 
-export default Track
+export default Track;
