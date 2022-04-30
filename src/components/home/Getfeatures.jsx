@@ -25,7 +25,7 @@ const Form = () => {
           event.preventDefault();
           handleSubmit(fields);
         }}
-        className="bg-black px-2 md:px-4 py-1 rounded-2xl w-full mx-auto md:w-[450px] lg:w-[550px] md:ml-4 flex justify-end items-center"
+        className="bg-black px-2.5 md:px-3 py-1 rounded-2xl w-full mx-auto md:w-[450px] lg:w-[550px] md:ml-4 flex justify-end items-center"
       >
         <input
           id="EMAIL"
