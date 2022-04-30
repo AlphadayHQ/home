@@ -11,6 +11,7 @@ import member8 from "../../images/team/member-8.jpg";
 
 const teamData = [
   {
+    id: 1,
     img: member1,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[54px] sm:w-[137px]",
     infoPosClassnames:
@@ -21,6 +22,7 @@ const teamData = [
     linkedin: "https://www.linkedin.com/in/getgiddy/",
   },
   {
+    id: 2,
     img: member2,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
     infoPosClassnames:
@@ -31,6 +33,7 @@ const teamData = [
     linkedin: "https://www.linkedin.com/in/defi-dude-72296b221/",
   },
   {
+    id: 3,
     img: member3,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[73px] sm:w-[183px]",
     infoPosClassnames:
@@ -41,6 +44,7 @@ const teamData = [
     linkedin: "https://www.linkedin.com/in/faraggi/",
   },
   {
+    id: 4,
     img: member4,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[151px]",
     infoPosClassnames:
@@ -51,6 +55,7 @@ const teamData = [
     linkedin: "https://www.linkedin.com/in/vicente-almonacid/",
   },
   {
+    id: 5,
     img: member5,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
     infoPosClassnames:
@@ -61,6 +66,7 @@ const teamData = [
     linkedin: "https://www.linkedin.com/in/pablo-palomo-07127711/",
   },
   {
+    id: 6,
     img: member6,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[88px] sm:w-[222px]",
     infoPosClassnames:
@@ -71,6 +77,7 @@ const teamData = [
     linkedin: "https://www.linkedin.com/in/denizomer/",
   },
   {
+    id: 7,
     img: member7,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[151px]",
     infoPosClassnames:
@@ -81,6 +88,7 @@ const teamData = [
     linkedin: "https://www.linkedin.com/in/getgiddy/",
   },
   {
+    id: 8,
     img: member8,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[54px] sm:w-[137px]",
     infoPosClassnames:
@@ -115,7 +123,7 @@ function TeamCard({ data, type }) {
             </a>
 
             <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue">
-              <i class="text-white text-xs ri-linkedin-fill"></i>
+              <i className="text-white text-xs ri-linkedin-fill"></i>
             </a>
           </div>
         </div>
@@ -158,7 +166,7 @@ function Team() {
             <div className="flex flex-col">
               <div className="flex gap-x-2 justify-center">
                 {teamData.slice(0, 4).map((data) => (
-                  <TeamCard data={data} type="top" />
+                  <TeamCard key={data.id} data={data} type="top" />
                 ))}
               </div>
               <p className=" z-10 flex font-medium text-aluminium mt-1 sm:mt-[10px] sm:mb-1 sm:text-[22px] tracking-[1px] self-center">
@@ -166,7 +174,7 @@ function Team() {
               </p>
               <div className="flex gap-x-2 justify-center items-center">
                 {teamData.slice(4, 8).map((data) => (
-                  <TeamCard data={data} type="bottom" />
+                  <TeamCard key={data.id} data={data} type="bottom" />
                 ))}
               </div>
             </div>
@@ -178,4 +186,3 @@ function Team() {
 }
 
 export default Team;
- 

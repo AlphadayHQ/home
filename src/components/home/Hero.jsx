@@ -21,12 +21,15 @@ export default function () {
     <Section className="bg-california overflow-hidden h-auto w-full border-california">
       <div className="mx-auto w-11/12 max-w-7xl">
         <div className=" md:mx-auto flex flex-col max-w-5xl sm:pt-8 md:pt-16 mt-14">
-          <h1 class="flex text-black self-start text-center m-0 md:text-left font-medium leading-[80px] md:leading-[110px] text-[28px] sm:text-5xl md:text-7xl lg:text-[98px]">
+          <h1 className="flex text-black self-start text-center m-0 md:text-left font-medium leading-[80px] md:leading-[110px] text-[28px] sm:text-5xl md:text-7xl lg:text-[98px]">
             <span>Everything</span>
             <div className="overflow-hidden relative h-[80px] md:h-[125px] pt-2.5 -mt-2.5 flex">
-              <ul class="flip4 max-w-[500px] inline-block">
+              <ul className="flip4 max-w-[500px] inline-block">
                 {textOptions.map((text) => (
-                  <li className="pl-3 md:pl-6 h-[125px] mb-[15px] flex">
+                  <li
+                    key={text}
+                    className="pl-3 md:pl-6 h-[125px] mb-[15px] flex"
+                  >
                     {text}.
                   </li>
                 ))}

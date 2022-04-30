@@ -48,12 +48,12 @@ function FlipCardButton({ children, handler, className }) {
 
 function FlipCardClose({ children, handler, className }) {
   return (
-    <p
+    <div
       onClick={() => handler()}
       className={`cursor-pointer flex justify-between items-center border border-aluminium text-[10px] text-aluminium w-fit px-2 py-1.5 rounded-md uppercase tracking-[.15em] ${className}`}
     >
       {children}
-    </p>
+    </div>
   );
 }
 

@@ -126,7 +126,7 @@ function Stats() {
         <FlipCardBack
           className={`bg-california pt-4 md:pt-5 lg:pt-6 px-4 sm:px-8 xl:px-20 overflow-y-scroll no-scrollbar`}
         >
-          <div class="grid sm:grid-cols-3 gap-4 align-items-center text-sm lg:text-base h-full">
+          <div className="grid sm:grid-cols-3 gap-4 align-items-center text-sm lg:text-base h-full">
             <div className="sm:border-r border-black pr-2">
               <Title text={"Widgets"} />
               <p className="flex flex-wrap">

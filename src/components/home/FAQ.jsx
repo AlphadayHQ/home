@@ -24,7 +24,7 @@ const Card = ({ index, handleToggle, toggleDrawer, data }) => {
           }`}
         >
           <i
-            class={`${
+            className={`${
               toggleDrawer == index ? "ri-subtract-line" : "ri-add-fill"
             } `}
           ></i>
@@ -46,14 +46,14 @@ const Card = ({ index, handleToggle, toggleDrawer, data }) => {
         >
           {answer.map((el, i) => {
             return (
-              <p
+              <div
                 key={i}
                 className={`text-aluminium px-4 text-sm md:px-8 md:text-base ${
                   i == answer.length - 1 && "mt-4"
                 }`}
               >
                 {el}
-              </p>
+              </div>
             );
           })}
         </div>
