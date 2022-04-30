@@ -10,67 +10,88 @@ import anthony from "../../images/contributors/anthony.svg";
 import mariano from "../../images/contributors/mariano.svg";
 import pierre from "../../images/contributors/pierre.svg";
 
-
 const partners = [
-    {
-        id: "1",
-        partner: ventures
-    },
+  {
+    id: "1",
+    img: ventures,
+    partner: "IOSG Ventures",
+    link: "https://iosg.vc/",
+    size: "w-[100px]",
+  },
 
-    {
-        id: "2",
-        partner: dfg
-    },
+  {
+    id: "2",
+    partner: "Kyber Network",
+    img: kyber,
+    link: "https://www.kyber.ventures/",
+    size: "w-[100px]",
+  },
 
-    {
-        id: "3",
-        partner: jsquare
-    },
+  {
+    id: "3",
+    partner: "DFG",
+    img: dfg,
+    link: "https://dfg.group/",
+    size: "w-[100px]",
+  },
 
-    {
-        id: "4",
-        partner: kyber
-    },
+  {
+    id: "4",
+    partner: "Jsquare",
+    img: jsquare,
+    link: "https://jsquare.co/",
+    size: "w-[114px]",
+  },
 
-    {
-        id: "5",
-        partner: signum
-    },
+  {
+    id: "5",
+    partner: "Signum Capital",
+    img: signum,
+    link: "https://www.signum.capital/",
+    size: "w-[114px]",
+  },
 
-    {
-        id: "6",
-        partner: trader
-    },
-]
+  {
+    id: "6",
+    partner: "TechMeetsTrader",
+    img: trader,
+    link: "https://techmeetstrader.com/",
+    size: "w-[114px]",
+  },
+];
 
 const contributors = [
-    {
-        id: "1",
-        img: jordi,
-        contributor: "Jordi Alexander",
-        handle: "@gametheorizon"
-    },
-    
-    {
-        id: "2",
-        img: anthony,
-        contributor: "Anthony Sassano",
-        handle: "@sassal0x"
-    },
-    
-    {
-        id: "3",
-        img: mariano,
-        contributor: "Mariano Conti",
-        handle: "@nanexcool"
-    },
+  {
+    id: "1",
+    img: jordi,
+    contributor: "Jordi Alexander",
+    handle: "@gametheorizon",
+    link: "https://twitter.com/gametheorizing",
+  },
 
-    {
-        id: "4",
-        img: pierre,
-        contributor: "Pierre Laurent",
-        handle: "@pierrelaurent"
-    }
-]
+  {
+    id: "2",
+    img: anthony,
+    contributor: "Anthony Sassano",
+    handle: "@sassal0x",
+    link: "https://twitter.com/sassal0x",
+  },
 
-export { partners, contributors};
+  {
+    id: "3",
+    img: mariano,
+    contributor: "Mariano Conti",
+    handle: "@nanexcool",
+    link: "https://twitter.com/nanexcool",
+  },
+
+  {
+    id: "4",
+    img: pierre,
+    contributor: "Pierre Laurent",
+    handle: "@pierrelaurent",
+    link: "https://www.linkedin.com/in/pierrelaurent789/",
+  },
+];
+
+export { partners, contributors };
