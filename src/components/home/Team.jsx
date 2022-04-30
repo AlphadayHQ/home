@@ -137,41 +137,43 @@ function Team() {
     <Section>
       <Div>
         <div className="">
-          <div className="mb-24">
+          <div className="mb-24 w-full flex flex-col items-center">
+            {/* <div className="w-[300px]"> */}
             <Title>Our Mission</Title>
             <div className="md:w-[500px]">
-              <p className="text-aluminium text-xs md:text-sm">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-                enim ad minim veniam, quis nostrud exercitation ullamco laboris
-                nisi ut aliquip ex ea commodo consequat.
+              <p className="text-aluminium text-xs md:text-base text-center">
+                Crypto has exploded in popularity over the last decade and it is
+                now impossible to keep up with this crazy, chaotic space many of
+                us call home. We jump from site to site for hours trying to
+                track news, follow tweets, look for alpha, and not get rugged.
               </p>
 
-              <p className="text-aluminium text-xs md:text-sm mt-4">
-                Duis aute irure dolor in reprehenderit in voluptate velit esse
-                cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                cupidatat non proident, sunt in culpa qui officia deserunt
-                mollit anim id est laborum.
+              <p className="text-aluminium text-xs md:text-base mt-4 text-center">
+                Alphaday&apos;s mission is to bring you all the tools needed to
+                follow your favourite projects, stay up-to-date with the latest
+                narratives, and use your favourite dapps, all from the comfort
+                of one easy-to-use customizable dashboard.
               </p>
+              {/* </div> */}
             </div>
           </div>
 
           <div className="flex justify-center items-center relative">
-            {/* <p
+            <p
               className="absolute z-10 top-[47%] left-[50%] font-medium text-aluminium text-[22px] tracking-[1px]"
               style={{ transform: "translate(-50%, -50%)" }}
             >
               OUR TEAM
-            </p> */}
+            </p>
             <div className="flex flex-col">
               <div className="flex gap-x-2 justify-center">
                 {teamData.slice(0, 4).map((data) => (
                   <TeamCard key={data.id} data={data} type="top" />
                 ))}
               </div>
-              <p className=" z-10 flex font-medium text-aluminium mt-1 sm:mt-[10px] sm:mb-1 sm:text-[22px] tracking-[1px] self-center">
+              {/* <p className=" z-10 flex font-medium text-aluminium mt-1 sm:mt-[10px] sm:mb-1 sm:text-[22px] tracking-[1px] self-center">
                 OUR TEAM
-              </p>
+              </p> */}
               <div className="flex gap-x-2 justify-center items-center">
                 {teamData.slice(4, 8).map((data) => (
                   <TeamCard key={data.id} data={data} type="bottom" />
