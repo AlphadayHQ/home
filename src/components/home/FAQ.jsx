@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Button, Div, Section, Title } from "../../shared";
+import { Div, Section, Title } from "../../shared";
 import { data } from "./faqData";
 
 const Card = ({ index, handleToggle, toggleDrawer, data }) => {
@@ -19,7 +19,7 @@ const Card = ({ index, handleToggle, toggleDrawer, data }) => {
         <h4 className="font-medium text-sm md:text-xl">{question}</h4>
 
         <span
-          className={`flex justify-center items-center w-[25px] h-[25px] rounded-full border ${
+          className={`flex justify-center items-center px-[4px] rounded-full border ${
             toggleDrawer == index ? "border-aluminium" : "border-blue"
           }`}
         >
@@ -75,7 +75,9 @@ function FAQ() {
     <Section className="bg-eerie">
       <Div className="pb-48">
         <div>
-          <Title className="">Frequently Asked Questions</Title>
+          <div className="flex justify-center w-full mb-6">
+            <Title className="">Frequently Asked Questions</Title>
+          </div>
 
           <div className="grid grid-cols-1 gap-4 w-full mx-auto max-w-[700px]">
             {data.map((item, index) => {
