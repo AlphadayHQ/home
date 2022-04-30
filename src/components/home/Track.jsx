@@ -46,19 +46,18 @@ function Track() {
 
           <FlipCardBack>
             <CardTitle className="w-full max-w-[475px]">
-              You can search for specific events, and filter them by category
-              and location.
+              Track your portfolio position across multiple wallets
             </CardTitle>
 
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-8">
               <CardText className="w-full max-w-[450px]">
-                Our calendar widget lets you stay on top of events, meetups,
-                important upgrades, and other notable things happening in the
-                future.
-                <br />
-                <br />
-                With the calendar widget you’ll never fall behind on important
-                events, meetups and protocol upgrades.
+                Track:
+                <ul className=" list-disc list-inside">
+                  <li>Your portfolio allocation</li>
+                  <li>Lending and Yield Farming Positions</li>
+                  <li>Historical performance of tokens</li>
+                  <li>Metrics of tokens including Volume, Market Cap</li>
+                </ul>
               </CardText>
 
               <div className="absolute bottom-0">

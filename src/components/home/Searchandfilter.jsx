@@ -36,7 +36,7 @@ function Searchandfilter() {
   const [searchToggle, setSearchToggle] = useState(false);
 
   function handleSearchToggle() {
-    setSearchToggle(!searchToggle);
+    setSearchToggle((prev) => !prev);
   }
 
   return (
@@ -44,7 +44,11 @@ function Searchandfilter() {
       <FlipCard className="overflow-hidden h-[300px]">
         <FlipCardInner className={`${searchToggle ? "flipThis" : ""}`}>
           <FlipCardFront className="pt-8 pb-8">
-            <div className="relative h-full w-full md:bg-[url('../../images/bg-text.png')] bg-no-repeat bg-center flex flex-col xl:flex-row">
+            <div
+              className={` ${
+                searchToggle ? "" : "relative"
+              } h-full w-full md:bg-[url('../../images/bg-text.png')] bg-no-repeat bg-center flex flex-col xl:flex-row`}
+            >
               <div>
                 <CardTitle className="w-full md:w-[300px]">
                   Search by any project, blockchain, token, person
@@ -62,22 +66,18 @@ function Searchandfilter() {
 
           <FlipCardBack>
             <CardTitle className="w-full max-w-[475px]">
-              You can search for specific events, and filter them by category
-              and location.
+              Search by any project, blockchain, token, person.
             </CardTitle>
 
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-8">
               <CardText className="w-full max-w-[450px]">
-                Our calendar widget lets you stay on top of events, meetups,
-                important upgrades, and other notable things happening in the
-                future.
-                <br />
-                <br />
-                With the calendar widget you’ll never fall behind on important
-                events, meetups and protocol upgrades.
+                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Rerum
+                quae mollitia velit quam. Asperiores eligendi omnis corrupti,
+                assumenda nemo necessitatibus, accusantium ullam eaque placeat
+                ea labore. Quisquam dicta error quaerat.
               </CardText>
 
-              <div className="absolute bottom-11">
+              <div className="absolute bottom-0 md:bottom-11">
                 <FlipCardClose handler={handleSearchToggle}>
                   <p className="mr-2">CLOSE</p>
                   <i className="ri-close-fill"></i>

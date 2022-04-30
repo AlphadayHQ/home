@@ -83,7 +83,7 @@ function Stats() {
   );
 
   return (
-    <FlipCard className="h-[350px] sm:h-[350px] md:h-[240px]">
+    <FlipCard className="h-[350px] sm:h-[350px] md:h-[290px] lg:h-[270px]">
       <FlipCardInner
         className={`bg-california rounded-xl ${
           statsCardToggler ? "flipThis" : ""
@@ -124,11 +124,11 @@ function Stats() {
         </FlipCardFront>
 
         <FlipCardBack
-          className={`bg-california pt-4 md:pt-5 lg:pt-6 px-4 sm:px-8 xl:px-20 overflow-y-scroll no-scrollbar`}
+          className={`bg-california flex items-center pt-4 pb-4 px-4 sm:px-8 xl:px-20 overflow-y-scroll no-scrollbar`}
         >
           <div className="grid sm:grid-cols-3 gap-4 align-items-center text-sm lg:text-base h-full">
             <div className="sm:border-r border-black pr-2">
-              <Title text={"Widgets"} />
+              <Title text={"Add more than 30 widgets to your dashboard"} />
               <p className="flex flex-wrap">
                 {data.widgets.map((widget, i) =>
                   i === data.widgets.length - 1 ? widget + "." : widget + ", "
@@ -137,7 +137,7 @@ function Stats() {
             </div>
             <div className="flex flex-col justify-between sm:border-r border-black pr-2">
               <div>
-                <Title text={"Projects"} />
+                <Title text={"Stay up to date on more than 500 projects"} />
                 <p className="flex flex-wrap">
                   {data.projects.map((project, i) =>
                     i === data.projects.length - 1
@@ -154,7 +154,7 @@ function Stats() {
                   <p className="mr-2 leading-4">CLOSE</p>
                   <i className="ri-close-fill"></i>
                 </FlipCardClose>
-                <br className="h-4" />
+                {/* <br className="h-4" /> */}
               </div>
             </div>
             <div>
@@ -187,7 +187,7 @@ function Stats() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:hidden ml-3 sm:ml-0 items-center mt-4 lg:mt-6">
+            <div className="flex flex-col sm:hidden items-center mt-3 sm:mt-4 lg:mt-6">
               <FlipCardClose
                 handler={handleStatsToggler}
                 className="text-black border-black py-0.5 pb-[1px]"

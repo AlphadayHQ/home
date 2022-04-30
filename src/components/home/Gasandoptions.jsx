@@ -1,5 +1,15 @@
-import React, {useState} from "react";
-import { Card, CardText, CardTitle, FlipCard, FlipCardInner, FlipCardFront, FlipCardBack, FlipCardButton, FlipCardClose } from "../../shared";
+import React, { useState } from "react";
+import {
+  Card,
+  CardText,
+  CardTitle,
+  FlipCard,
+  FlipCardInner,
+  FlipCardFront,
+  FlipCardBack,
+  FlipCardButton,
+  FlipCardClose,
+} from "../../shared";
 import gas from "../../images/workflow/gas.png";
 import switchimage from "../../images/workflow/switch.png";
 
@@ -7,11 +17,11 @@ function Gasandoptions() {
   const [gasToggler, setGasToggler] = useState(false);
   const [optionToggler, setOptionToggler] = useState(false);
 
-  function handleGasToggle(){
+  function handleGasToggle() {
     setGasToggler(!gasToggler);
   }
 
-  function handleOptionToggle(){
+  function handleOptionToggle() {
     setOptionToggler(!optionToggler);
   }
 
@@ -36,40 +46,38 @@ function Gasandoptions() {
             </div>
           </FlipCardFront>
 
-          <FlipCardBack>
-            
+          <FlipCardBack className="relative">
             <CardTitle className="w-full max-w-[475px]">
-              You can search for specific events, and filter them by category and location.
+              See the latest recommended gas price for Eth1.0 transactions.
             </CardTitle>
-          
+
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-2">
               <CardText className="w-full max-w-[450px]">
-                Our calendar widget lets you stay on top of events, meetups, important upgrades, and other notable things happening in the future.
-                <br/><br/>
-                With the calendar widget you’ll never fall behind on important events, meetups and protocol upgrades.
+                See the recommended transaction gas price for fast, standard,
+                and safe low transactions.
               </CardText>
-              
-              <div className="absolute bottom-0">
-                <FlipCardClose handler={handleGasToggle}>
-                  <p className="mr-2">CLOSE</p>
-                  <i className="ri-close-fill"></i>
-                </FlipCardClose>
-              </div>
+            </div>
+            <div className="absolute bottom-10">
+              <FlipCardClose handler={handleGasToggle}>
+                <p className="mr-2">CLOSE</p>
+                <i className="ri-close-fill"></i>
+              </FlipCardClose>
             </div>
           </FlipCardBack>
         </FlipCardInner>
       </FlipCard>
-
-      
 
       <FlipCard className="overflow-hidden h-[350px] md:h-[450px] lg:h-[490px]">
         <FlipCardInner className={`${optionToggler ? "flipThis" : ""}`}>
           <FlipCardFront>
             <div>
               <CardTitle className="w-full max-w-[550px]">
-                1-click switch between different dashboard views and design your own
+                1-click switch between different dashboard views and design your
+                own
               </CardTitle>
-              <FlipCardButton handler={handleOptionToggle}>How it works</FlipCardButton>
+              <FlipCardButton handler={handleOptionToggle}>
+                How it works
+              </FlipCardButton>
             </div>
 
             <div className="mt-16 lg:mt-24">
@@ -83,25 +91,25 @@ function Gasandoptions() {
             </div>
           </FlipCardFront>
 
-          <FlipCardBack>
-            
+          <FlipCardBack className="relative">
             <CardTitle className="w-full max-w-[475px]">
-              You can search for specific events, and filter them by category and location.
+              Your Dashboard Personalised
             </CardTitle>
-          
+
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-2">
               <CardText className="w-full max-w-[450px]">
-                Our calendar widget lets you stay on top of events, meetups, important upgrades, and other notable things happening in the future.
-                <br/><br/>
-                With the calendar widget you’ll never fall behind on important events, meetups and protocol upgrades.
+                Create your own dashboards according to your own workflow.
+                <br />
+                <br />
+                Save your 'view' and quickly switch between your various
+                pre-saved views.
               </CardText>
-              
-              <div className="absolute bottom-0">
-                <FlipCardClose handler={handleOptionToggle}>
-                  <p className="mr-2">CLOSE</p>
-                  <i className="ri-close-fill"></i>
-                </FlipCardClose>
-              </div>
+            </div>
+            <div className="absolute bottom-10">
+              <FlipCardClose handler={handleOptionToggle}>
+                <p className="mr-2">CLOSE</p>
+                <i className="ri-close-fill"></i>
+              </FlipCardClose>
             </div>
           </FlipCardBack>
         </FlipCardInner>
