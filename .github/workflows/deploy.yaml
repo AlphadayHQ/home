@@ -2,8 +2,7 @@ name: S3 Sync with cloudfront cache invalidation
 
 on:
   push:
-    branches:
-      - 'main'
+    branches: main
 
 jobs:
   deploy:
@@ -16,6 +15,6 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.DEPLOYER_AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.DEPLOYER_SECRET_ACCESS_KEY }}
-        AWS_S3_BUCKET: ${{ secrets.LANDING_AWS_S3_BUCKET }}
-        DISTRIBUTION_ID: ${{ secrets.LANDING_AWS_DISTRIBUTION_ID }}
+        AWS_S3_BUCKET: ${{ secrets.STAGING__LANDING__S3_BUCKET }}
+        DISTRIBUTION_ID: ${{ secrets.STAGING__LANDING__DISTRIBUTION_ID }}
         AWS_REGION: 'eu-west-1'   # optional: defaults to us-east-1
