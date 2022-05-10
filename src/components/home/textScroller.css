@@ -1,0 +1,40 @@
+/* inspired by EricPorter/pen/JjPmOOb */
+/* may add 3d effect later check later kanishkkunal/pen/wgEBgX */
+
+.flip4 {
+  -webkit-animation: flip4 10s cubic-bezier(0.23, 1, 0.32, 1.2) infinite;
+  animation: flip4 10s cubic-bezier(0.23, 1, 0.32, 1.2) infinite;
+}
+
+@keyframes flip4 {
+  0% {
+    margin-top: -560px;
+  }
+  5% {
+    margin-top: -420px;
+  }
+  25% {
+    margin-top: -420px;
+  }
+  30% {
+    margin-top: -280px;
+  }
+  50% {
+    margin-top: -280px;
+  }
+  55% {
+    margin-top: -140px;
+  }
+  75% {
+    margin-top: -140px;
+  }
+  80% {
+    margin-top: -0px;
+  }
+  99.99% {
+    margin-top: -0px;
+  }
+  100% {
+    margin-top: -560px;
+  }
+}
