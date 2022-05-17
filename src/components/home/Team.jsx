@@ -118,11 +118,19 @@ function TeamCard({ data, type }) {
           </div>
 
           <div className="flex">
-            <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue mr-2">
+            <a
+              href={data.twitter}
+              target="_blank"
+              className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue mr-2"
+            >
               <i className="text-white text-xs ri-twitter-fill"></i>
             </a>
 
-            <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue">
+            <a
+              href={data.linkedin}
+              target="_blank"
+              className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue"
+            >
               <i className="text-white text-xs ri-linkedin-fill"></i>
             </a>
           </div>
