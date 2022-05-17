@@ -44,7 +44,7 @@ function Navbar() {
             <figure>
               <img
                 src={alphaday}
-                className="w-[126px] md:w-[158px] object-fit"
+                className="h-[25px] object-fit"
                 alt="alphaday"
               />
             </figure>
