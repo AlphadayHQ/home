@@ -29,7 +29,7 @@ const teamData = [
       "bottom-[-110%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Defi Dude",
     position: "CO-FOUNDER & CMO",
-    twitter: "",
+    twitter: "https://twitter.com/defidude",
     linkedin: "https://www.linkedin.com/in/defi-dude-72296b221/",
   },
   {
