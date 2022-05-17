@@ -12,10 +12,15 @@ import {
 // import searchbg from "../../images/bg-text.png";
 
 const Form = () => {
+  const submitHandler = (e) => {
+    e.preventDefault();
+  };
+
   return (
     <form
       className="flex justify-between font-sans items-center w-full lg:w-[560px] bg-[#0A0A0B] rounded-[25px] py-2 px-2 border-[15px] border-[#1E2024]"
       style={{ boxShadow: "0px 2px 60px rgba(255, 255, 255, 0.15)" }}
+      onSubmit={(e) => submitHandler(e)}
     >
       <button className="bg-[#263964] font-light text-white rounded-[10px] pt-2 pb-1.5 px-2 flex justify-between items-center">
         <small className="mr-2 tracking-[.1em]">Uniswap</small>
