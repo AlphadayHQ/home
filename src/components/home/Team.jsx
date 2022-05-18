@@ -28,7 +28,7 @@ const teamData = [
     infoPosClassnames:
       "bottom-[-110%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Defi Dude",
-    position: "CO-FOUNDER",
+    position: "Co-Founder",
     twitter: "https://twitter.com/defidude",
     linkedin: "https://www.linkedin.com/in/defi-dude-72296b221/",
   },
@@ -39,7 +39,7 @@ const teamData = [
     infoPosClassnames:
       "bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Felipe Faraggi",
-    position: "CO-FOUNDER & CTO",
+    position: "Co-Founder & CTO",
     twitter: "https://twitter.com/felipefaraggi",
     linkedin: "https://www.linkedin.com/in/faraggi/",
   },
@@ -72,7 +72,7 @@ const teamData = [
     infoPosClassnames:
       "bottom-[-80%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Deniz Omar",
-    position: "CO-FOUNDER & CEO",
+    position: "Co-Founder & CEO",
     twitter: "https://twitter.com/DenizOmer",
     linkedin: "https://www.linkedin.com/in/denizomer/",
   },
