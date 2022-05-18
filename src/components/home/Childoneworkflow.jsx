@@ -94,8 +94,8 @@ function ChildOneWorkflow() {
                 network forks, AMAs.
                 <br />
                 <br />
-                Search event by geography: USA, London, etc. and subscribe
-                online to events and add them to your calendar or create alerts.
+                Search event by geography: USA, London, Online, etc. and subscribe
+                to events and add them to your calendar and create alerts.
               </CardText>
             </div>
             <div className="absolute bottom-10">
