@@ -168,7 +168,7 @@ function Team() {
 
           <div className="flex justify-center items-center relative">
             <p
-              className="absolute z-10 top-[47%] left-[50%] font-medium text-aluminium text-[22px] tracking-[1px]"
+              className="absolute z-10 top-[47%] left-[50%] font-medium text-aluminium text-[2.25rem] tracking-[1px]"
               style={{ transform: "translate(-50%, -50%)" }}
             >
               OUR TEAM
