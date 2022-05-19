@@ -1,9 +1,12 @@
-name: S3 Sync with cloudfront cache invalidation
+name: Deploy to Production
 
 on: workflow_dispatch
 
+env:
+  ENVIRONMENT: production
+
 jobs:
-  deploy:
+  deploy-to-production:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -23,3 +26,10 @@ jobs:
           DISTRIBUTION_ID: ${{ secrets.PROD__LANDING__DISTRIBUTION_ID }}
           AWS_REGION: "eu-west-1" # optional: defaults to us-east-1
           SOURCE_DIR: "dist"
+
+      - name: Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: "Ilshidur/action-discord@0c4b27844ba47cb1c7bee539c8eead5284ce9fa9"
+        with:
+          args: "Homepage has been deployed on ${{ env.ENVIRONMENT }}."
