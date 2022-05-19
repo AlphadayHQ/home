@@ -168,7 +168,7 @@ function Team() {
 
           <div className="flex justify-center items-center relative">
             <p
-              className="absolute z-10 top-[46%] left-[50%] font-medium text-aluminium text-[2.25rem] tracking-[1px]"
+              className="absolute z-10 top-[46%] left-[50%] font-medium text-aluminium text-[22px] sm:text-[2.25rem] tracking-[1px]"
               style={{ transform: "translate(-50%, -50%)" }}
             >
               OUR TEAM
@@ -179,10 +179,7 @@ function Team() {
                   <TeamCard key={data.id} data={data} type="top" />
                 ))}
               </div>
-              {/* <p className=" z-10 flex font-medium text-aluminium mt-1 sm:mt-[10px] sm:mb-1 sm:text-[22px] tracking-[1px] self-center">
-                OUR TEAM
-              </p> */}
-              <div className="flex gap-x-2 justify-center items-center">
+              <div className="flex mt-1.5 sm:mt-2 gap-x-2 justify-center items-center">
                 {teamData.slice(4, 8).map((data) => (
                   <TeamCard key={data.id} data={data} type="bottom" />
                 ))}
