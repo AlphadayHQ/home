@@ -67,7 +67,10 @@ function Navbar() {
                 </figure>
               </div>
               <div ref={element} className="scroll-hide absolute mb-1">
-                <Button link={"https://app.alphaday.com"} className={`bg-blue`}>
+                <Button
+                  link={"https://app.alphaday.com"}
+                  className={`launch-btn`}
+                >
                   Launch app
                 </Button>
               </div>
