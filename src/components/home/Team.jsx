@@ -179,9 +179,6 @@ function Team() {
                   <TeamCard key={data.id} data={data} type="top" />
                 ))}
               </div>
-              {/* <p className=" z-10 flex font-medium text-aluminium mt-1 sm:mt-[10px] sm:mb-1 sm:text-[22px] tracking-[1px] self-center">
-                OUR TEAM
-              </p> */}
               <div className="flex mt-1.5 sm:mt-2 gap-x-2 justify-center items-center">
                 {teamData.slice(4, 8).map((data) => (
                   <TeamCard key={data.id} data={data} type="bottom" />
