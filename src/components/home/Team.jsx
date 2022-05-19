@@ -8,6 +8,9 @@ import member5 from "../../images/team/member-5.jpg";
 import member6 from "../../images/team/member-6.jpg";
 import member7 from "../../images/team/member-7.jpg";
 import member8 from "../../images/team/member-8.jpg";
+import Jonathan from "../../images/team/jonathan.jpg";
+import emmanuel from "../../images/team/emmanuel.jpg";
+import theo from "../../images/team/theo.jpg";
 
 const teamData = [
   {
@@ -67,6 +70,39 @@ const teamData = [
   },
   {
     id: 6,
+    img: Jonathan,
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
+    infoPosClassnames:
+      "left-[30%] bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+    name: "Jonathan Irhodia",
+    position: "Developer",
+    twitter: "https://twitter.com/iamelcharitas",
+    linkedin: "https://linkedin.com/in/elcharitas",
+  },
+  {
+    id: 7,
+    img: theo,
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
+    infoPosClassnames:
+      "left-[30%] bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+    name: "Theophilus Ekunnusi",
+    position: "Developer",
+    twitter: "https://twitter.com/theoflux_uiux",
+    linkedin: "https://www.linkedin.com/in/theophilus-ekunnusi-3257a0169",
+  },
+  {
+    id: 8,
+    img: emmanuel,
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
+    infoPosClassnames:
+      "left-[30%] bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+    name: "Emmanuel James",
+    position: "Developer",
+    twitter: "https://twitter.com/vhegaz_",
+    linkedin: "https://www.linkedin.com/in/emmanuel-james-536659199/",
+  },
+  {
+    id: 9,
     img: member6,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[88px] sm:w-[222px]",
     infoPosClassnames:
@@ -77,7 +113,7 @@ const teamData = [
     linkedin: "https://www.linkedin.com/in/denizomer/",
   },
   {
-    id: 7,
+    id: 10,
     img: member7,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[151px]",
     infoPosClassnames:
@@ -88,7 +124,7 @@ const teamData = [
     linkedin: "https://www.linkedin.com/in/getgiddy/",
   },
   {
-    id: 8,
+    id: 11,
     img: member8,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[54px] sm:w-[137px]",
     infoPosClassnames:
@@ -175,12 +211,17 @@ function Team() {
             </p>
             <div className="flex flex-col">
               <div className="flex gap-x-2 justify-center">
-                {teamData.slice(0, 4).map((data) => (
+                {teamData.slice(0, 3).map((data) => (
                   <TeamCard key={data.id} data={data} type="top" />
                 ))}
               </div>
               <div className="flex mt-1.5 sm:mt-2 gap-x-2 justify-center items-center">
-                {teamData.slice(4, 8).map((data) => (
+                {teamData.slice(3, 8).map((data) => (
+                  <TeamCard key={data.id} data={data} type="bottom" />
+                ))}
+              </div>
+              <div className="flex mt-1.5 sm:mt-2 gap-x-2 justify-center items-center">
+                {teamData.slice(8, 11).map((data) => (
                   <TeamCard key={data.id} data={data} type="bottom" />
                 ))}
               </div>
