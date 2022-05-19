@@ -16,7 +16,7 @@ function Partners() {
             {partners.map((item) => {
               return (
                 <figure key={item.id} className="flex justify-center">
-                  <a href={item.link}>
+                  <a target="_blank" href={item.link} className="transcale flex items-center">
                     <img
                       src={item.img}
                       className={`my-4 ${item.size}`}
@@ -36,7 +36,7 @@ function Partners() {
                   className="flex flex-col justify-center items-center"
                 >
                   <figure className=" rounded-full mb-2">
-                    <a href={item.link}>
+                    <a target="_blank" href={item.link}>
                       <img
                         src={item.img}
                         className="w-[80px] h-[80px]"
@@ -47,7 +47,11 @@ function Partners() {
                   <p className="mb-2 text-sm text-platinum">
                     {item.contributor}
                   </p>
-                  <a href={item.link} className="text-xs text-aluminium justify-self-center bg-black rounded-full px-4 py-2">
+                  <a
+                    target="_blank"
+                    href={item.link}
+                    className="text-xs text-aluminium justify-self-center bg-black rounded-full px-4 py-2"
+                  >
                     {item.handle}
                   </a>
                 </div>

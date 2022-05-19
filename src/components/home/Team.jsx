@@ -27,9 +27,9 @@ const teamData = [
     classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
     infoPosClassnames:
       "bottom-[-110%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
-    name: "https://twitter.com/defidude",
-    position: "CO-FOUNDER & CMO",
-    twitter: "",
+    name: "Defi Dude",
+    position: "Co-Founder",
+    twitter: "https://twitter.com/defidude",
     linkedin: "https://www.linkedin.com/in/defi-dude-72296b221/",
   },
   {
@@ -39,7 +39,7 @@ const teamData = [
     infoPosClassnames:
       "bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Felipe Faraggi",
-    position: "CO-FOUNDER & CTO",
+    position: "Co-Founder & CTO",
     twitter: "https://twitter.com/felipefaraggi",
     linkedin: "https://www.linkedin.com/in/faraggi/",
   },
@@ -50,8 +50,8 @@ const teamData = [
     infoPosClassnames:
       "right-[30%] bottom-[-120%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Vicente Almonacid",
-    position: "Frontend Engineer",
-    twitter: "",
+    position: "Software Engineer",
+    twitter: "https://twitter.com/v_almonacid",
     linkedin: "https://www.linkedin.com/in/vicente-almonacid/",
   },
   {
@@ -61,7 +61,7 @@ const teamData = [
     infoPosClassnames:
       "left-[30%] bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Pablo Palomo",
-    position: "Backend Engineer",
+    position: "Technical Lead",
     twitter: "https://twitter.com/ppalomo",
     linkedin: "https://www.linkedin.com/in/pablo-palomo-07127711/",
   },
@@ -72,7 +72,7 @@ const teamData = [
     infoPosClassnames:
       "bottom-[-80%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Deniz Omar",
-    position: "CO-FOUNDER & CEO",
+    position: "Co-Founder & CEO",
     twitter: "https://twitter.com/DenizOmer",
     linkedin: "https://www.linkedin.com/in/denizomer/",
   },
@@ -93,8 +93,8 @@ const teamData = [
     classnames: "rounded-[13px] sm:rounded-[26px] w-[54px] sm:w-[137px]",
     infoPosClassnames:
       "right-[30%] bottom-[-140%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
-    name: "Paris Giannakou",
-    position: "Content Editor",
+    name: "Paris Charanas Giannakou",
+    position: "Analyst and Content Editor",
     twitter: "https://twitter.com/GrifousG",
     linkedin: "https://www.linkedin.com/in/paris-charanas-giannakou-788386231/",
   },
@@ -118,11 +118,19 @@ function TeamCard({ data, type }) {
           </div>
 
           <div className="flex">
-            <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue mr-2">
+            <a
+              href={data.twitter}
+              target="_blank"
+              className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue mr-2"
+            >
               <i className="text-white text-xs ri-twitter-fill"></i>
             </a>
 
-            <a className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue">
+            <a
+              href={data.linkedin}
+              target="_blank"
+              className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue"
+            >
               <i className="text-white text-xs ri-linkedin-fill"></i>
             </a>
           </div>
@@ -160,7 +168,7 @@ function Team() {
 
           <div className="flex justify-center items-center relative">
             <p
-              className="absolute z-10 top-[47%] left-[50%] font-medium text-aluminium text-[22px] tracking-[1px]"
+              className="absolute z-10 top-[46%] left-[50%] font-medium text-aluminium text-[22px] sm:text-[2.25rem] tracking-[1px]"
               style={{ transform: "translate(-50%, -50%)" }}
             >
               OUR TEAM
@@ -171,10 +179,7 @@ function Team() {
                   <TeamCard key={data.id} data={data} type="top" />
                 ))}
               </div>
-              {/* <p className=" z-10 flex font-medium text-aluminium mt-1 sm:mt-[10px] sm:mb-1 sm:text-[22px] tracking-[1px] self-center">
-                OUR TEAM
-              </p> */}
-              <div className="flex gap-x-2 justify-center items-center">
+              <div className="flex mt-1.5 sm:mt-2 gap-x-2 justify-center items-center">
                 {teamData.slice(4, 8).map((data) => (
                   <TeamCard key={data.id} data={data} type="bottom" />
                 ))}
