@@ -47,9 +47,9 @@ body {
 
 /* custom Hover effect to make elements scale when user interacts with them */
 .transcale{
-  transition: transform 0.5s ease-in;
+  transition: transform 0.2s ease-in;
 }
   
 .transcale:hover {
-    transform: scale(0.98);
+    transform: scale(0.97);
   }
