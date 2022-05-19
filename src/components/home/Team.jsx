@@ -28,7 +28,7 @@ const teamData = [
     infoPosClassnames:
       "bottom-[-110%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Defi Dude",
-    position: "CO-FOUNDER & CMO",
+    position: "Co-Founder",
     twitter: "https://twitter.com/defidude",
     linkedin: "https://www.linkedin.com/in/defi-dude-72296b221/",
   },
@@ -39,7 +39,7 @@ const teamData = [
     infoPosClassnames:
       "bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Felipe Faraggi",
-    position: "CO-FOUNDER & CTO",
+    position: "Co-Founder & CTO",
     twitter: "https://twitter.com/felipefaraggi",
     linkedin: "https://www.linkedin.com/in/faraggi/",
   },
@@ -50,8 +50,8 @@ const teamData = [
     infoPosClassnames:
       "right-[30%] bottom-[-120%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Vicente Almonacid",
-    position: "Frontend Engineer",
-    twitter: "",
+    position: "Software Engineer",
+    twitter: "https://twitter.com/v_almonacid",
     linkedin: "https://www.linkedin.com/in/vicente-almonacid/",
   },
   {
@@ -61,7 +61,7 @@ const teamData = [
     infoPosClassnames:
       "left-[30%] bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Pablo Palomo",
-    position: "Backend Engineer",
+    position: "Technical Lead",
     twitter: "https://twitter.com/ppalomo",
     linkedin: "https://www.linkedin.com/in/pablo-palomo-07127711/",
   },
@@ -72,7 +72,7 @@ const teamData = [
     infoPosClassnames:
       "bottom-[-80%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Deniz Omar",
-    position: "CO-FOUNDER & CEO",
+    position: "Co-Founder & CEO",
     twitter: "https://twitter.com/DenizOmer",
     linkedin: "https://www.linkedin.com/in/denizomer/",
   },
@@ -93,8 +93,8 @@ const teamData = [
     classnames: "rounded-[13px] sm:rounded-[26px] w-[54px] sm:w-[137px]",
     infoPosClassnames:
       "right-[30%] bottom-[-140%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
-    name: "Paris Giannakou",
-    position: "Content Editor",
+    name: "Paris Charanas Giannakou",
+    position: "Analyst and Content Editor",
     twitter: "https://twitter.com/GrifousG",
     linkedin: "https://www.linkedin.com/in/paris-charanas-giannakou-788386231/",
   },
