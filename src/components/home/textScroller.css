@@ -2,8 +2,8 @@
 /* may add 3d effect later check later kanishkkunal/pen/wgEBgX */
 
 .flip4 {
-  -webkit-animation: flip4 10s cubic-bezier(0.23, 1, 0.32, 1.2) infinite;
-  animation: flip4 10s cubic-bezier(0.23, 1, 0.32, 1.2) infinite;
+  -webkit-animation: flip4 15s cubic-bezier(0.23, 1, 0.32, 1.2) infinite;
+  animation: flip4 15s cubic-bezier(0.23, 1, 0.32, 1.2) infinite;
 }
 
 @keyframes flip4 {
