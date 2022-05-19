@@ -43,3 +43,13 @@ body {
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
 }
+
+
+/* custom Hover effect to make elements scale when user interacts with them */
+.transcale{
+  transition: transform 0.5s ease-in;
+}
+  
+.transcale:hover {
+    transform: scale(0.98);
+  }

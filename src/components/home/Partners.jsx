@@ -16,7 +16,7 @@ function Partners() {
             {partners.map((item) => {
               return (
                 <figure key={item.id} className="flex justify-center">
-                  <a target="_blank" href={item.link}>
+                  <a target="_blank" href={item.link} className="transcale">
                     <img
                       src={item.img}
                       className={`my-4 ${item.size}`}
