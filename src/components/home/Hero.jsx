@@ -16,7 +16,15 @@ const Dashboard = () => {
 };
 
 export default function () {
-  const textOptions = ["NFT", "DeFi", "Crypto", "Ethereum"];
+  const textOptions = [
+    "NFT",
+    "DeFi",
+    "Crypto",
+    "Ethereum",
+    "DAOs",
+    "Bitcoin",
+    "L2s",
+  ];
   return (
     <Section className="bg-california overflow-hidden h-auto w-full border-california">
       <div className="mx-auto w-11/12 max-w-7xl">
