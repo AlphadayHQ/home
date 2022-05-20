@@ -52,9 +52,3 @@ body {
 .transcale:hover {
   transform: scale(0.97);
 }
-
-.launch-btn {
-  background-color: #2850e0;
-  padding-left: 1.2rem !important;
-  padding-right: 1.2rem !important;
-}
