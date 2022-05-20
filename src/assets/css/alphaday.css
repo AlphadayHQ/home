@@ -1,17 +1,16 @@
 @import "./main.css";
 
-
-
 :root {
-    --color-california: #FAA202;
-    --color-platinum: #E2E3E9;
-    --color-aluminium: #A3A7B3;
-    --color-shark: #1D1F20;
-    --color-palatinate-blue: #0B39DF;
-    --color-eerie-black: #171A1C;
+  --color-california: #faa202;
+  --color-platinum: #e2e3e9;
+  --color-aluminium: #a3a7b3;
+  --color-shark: #1d1f20;
+  --color-palatinate-blue: #0b39df;
+  --color-eerie-black: #171a1c;
 
-    --color-black: #000000;
-    --color-white: #ffffff;
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-lightblue: #2850e0;
 }
 
 @tailwind base;
@@ -19,14 +18,13 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: titling;
-    font-weight: 400;
-    src: url("../fonts/Titling/TitlingGothicFBNar-Reg.otf");
+  font-family: titling;
+  font-weight: 400;
+  src: url("../fonts/Titling/TitlingGothicFBNar-Reg.otf");
 }
 
 @font-face {
-    font-family: titling;
-    font-weight: 500;
-    src: url("../fonts/Titling/TitlingGothicFBNar-Med.otf");
+  font-family: titling;
+  font-weight: 500;
+  src: url("../fonts/Titling/TitlingGothicFBNar-Med.otf");
 }
-

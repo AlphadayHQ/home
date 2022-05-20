@@ -55,7 +55,7 @@ export default function () {
             </p>
             <Button
               link={"https://app.alphaday.com"}
-              className="mt-4 md:mt-0 bg-blue self-start md:self-center"
+              className="mt-4 md:mt-0 bg-lightblue self-start md:self-center"
             >
               Launch app
             </Button>
