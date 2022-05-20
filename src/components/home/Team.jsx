@@ -9,8 +9,6 @@ import member6 from "../../images/team/member-6.jpg";
 import member7 from "../../images/team/member-7.jpg";
 import member8 from "../../images/team/member-8.jpg";
 import Jonathan from "../../images/team/jonathan.jpg";
-import emmanuel from "../../images/team/emmanuel.jpg";
-import theo from "../../images/team/theo.jpg";
 
 const teamData = [
   {
@@ -20,7 +18,7 @@ const teamData = [
     infoPosClassnames:
       "left-[30%] bottom-[-140%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Gideon Anyalewechi",
-    position: "Backend Engineer",
+    position: "Developer",
     twitter: "https://twitter.com/get_giddy",
     linkedin: "https://www.linkedin.com/in/getgiddy/",
   },
@@ -80,28 +78,6 @@ const teamData = [
     linkedin: "https://linkedin.com/in/elcharitas",
   },
   {
-    id: 7,
-    img: theo,
-    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
-    infoPosClassnames:
-      "left-[30%] bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
-    name: "Theophilus Ekunnusi",
-    position: "Developer",
-    twitter: "https://twitter.com/theoflux_uiux",
-    linkedin: "https://www.linkedin.com/in/theophilus-ekunnusi-3257a0169",
-  },
-  {
-    id: 8,
-    img: emmanuel,
-    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
-    infoPosClassnames:
-      "left-[30%] bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
-    name: "Emmanuel James",
-    position: "Developer",
-    twitter: "https://twitter.com/vhegaz_",
-    linkedin: "https://www.linkedin.com/in/emmanuel-james-536659199/",
-  },
-  {
     id: 9,
     img: member6,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[88px] sm:w-[222px]",
@@ -119,7 +95,7 @@ const teamData = [
     infoPosClassnames:
       "bottom-[-120%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Charles Nwankwo",
-    position: "Frontend Engineer",
+    position: "Developer",
     twitter: "https://twitter.com/Chadnium",
     linkedin: "https://www.linkedin.com/in/getgiddy/",
   },
@@ -128,7 +104,7 @@ const teamData = [
     img: member8,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[54px] sm:w-[137px]",
     infoPosClassnames:
-      "right-[30%] bottom-[-140%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+      "right-[30%] bottom-[-140%] sm:bottom-[-15%] lg:bottom-auto lg:left-[70%]",
     name: "Paris Charanas Giannakou",
     position: "Analyst and Content Editor",
     twitter: "https://twitter.com/GrifousG",
