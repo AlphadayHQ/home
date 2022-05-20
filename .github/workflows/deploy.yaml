@@ -1,8 +1,11 @@
-name: S3 Sync with cloudfront cache invalidation
+name: Deploy
 
 on:
   push:
     branches: main
+
+env:
+  ENVIRONMENT: staging
 
 jobs:
   deploy:
@@ -12,9 +15,11 @@ jobs:
       - uses: borales/actions-yarn@v2.3.0
         with:
           cmd: install # will run `yarn install` command
+
       - uses: borales/actions-yarn@v2.3.0
         with:
           cmd: build # will run `yarn build` command
+
       - uses: kefranabg/s3-sync-action@master
         with:
           args: --acl public-read --follow-symlinks --delete --exclude '.git/*' --exclude '.github/*' --exclude '.gitignore' --exclude 'README.md'
@@ -25,3 +30,10 @@ jobs:
           DISTRIBUTION_ID: ${{ secrets.STAGING__LANDING__DISTRIBUTION_ID }}
           AWS_REGION: "eu-west-1" # optional: defaults to us-east-1
           SOURCE_DIR: "dist"
+
+      - name: Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        uses: "Ilshidur/action-discord@0c4b27844ba47cb1c7bee539c8eead5284ce9fa9"
+        with:
+          args: "Homepage has been deployed on ${{ env.ENVIRONMENT }}."
