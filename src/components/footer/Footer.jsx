@@ -42,7 +42,7 @@ function Footer() {
             <Anchor href="mailto:hello@alphaday.com" className="mb-4">
               Contact
             </Anchor>
-            <Anchor href="mailto:hello@alphaday.com">Give feedback</Anchor>
+            <Anchor href="https://forms.gle/hBXWWTAvsN7dAMN66">Give feedback</Anchor>
           </Col>
 
           <div className="place-self-end flex justify-between items-center w-[90px]">
