@@ -16,7 +16,15 @@ const Dashboard = () => {
 };
 
 export default function () {
-  const textOptions = ["NFT", "DeFi", "Crypto", "Ethereum"];
+  const textOptions = [
+    "NFT",
+    "DeFi",
+    "Crypto",
+    "Ethereum",
+    "DAOs",
+    "Bitcoin",
+    "L2s",
+  ];
   return (
     <Section className="bg-california overflow-hidden h-auto w-full border-california">
       <div className="mx-auto w-11/12 max-w-7xl">
@@ -47,7 +55,7 @@ export default function () {
             </p>
             <Button
               link={"https://app.alphaday.com"}
-              className="mt-4 md:mt-0 bg-blue self-start md:self-center"
+              className="mt-4 md:mt-0 bg-lightblue self-start md:self-center"
             >
               Launch app
             </Button>

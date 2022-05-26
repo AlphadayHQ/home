@@ -14,6 +14,7 @@ module.exports = {
       eerie: "var(--color-eerie-black)",
       white: "var(--color-white)",
       black: "var(--color-black)",
+      lightblue: "var(--color-lightblue)",
     },
 
     extend: {
@@ -35,14 +36,13 @@ module.exports = {
         },
       },
       animation: {
-
-        'textFade': "textFade 10s cubic-bezier(0.23, 1, 0.32, 1.2) infinite"
+        textFade: "textFade 10s cubic-bezier(0.23, 1, 0.32, 1.2) infinite",
       },
       fontFamily: {
         titling: ["titling", defaultTheme.fontFamily.sans],
-        sans: ["titling", defaultTheme.fontFamily.sans]
-      }
-    }
+        sans: ["titling", defaultTheme.fontFamily.sans],
+      },
+    },
   },
   plugins: [],
 };
