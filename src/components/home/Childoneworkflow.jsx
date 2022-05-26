@@ -94,8 +94,9 @@ function ChildOneWorkflow() {
                 network forks, AMAs.
                 <br />
                 <br />
-                Search event by geography: USA, London, Online, etc. and subscribe
-                to events and add them to your calendar and create alerts.
+                Search event by geography: USA, London, Online, etc. and
+                subscribe to events and add them to your calendar and create
+                alerts.
               </CardText>
             </div>
             <div className="absolute bottom-10">
@@ -137,7 +138,7 @@ function ChildOneWorkflow() {
             </CardTitle>
 
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-8">
-              <CardText className="w-full max-w-[450px]">
+              <div className="w-full max-w-[450px] text-aluminium text-xs sm:text-sm ">
                 Track:
                 <ul className=" list-disc list-inside">
                   <li> Total Value Locked</li>
@@ -149,7 +150,7 @@ function ChildOneWorkflow() {
                   <li>Ethereum Client Dominance</li>
                   <li>And much more</li>
                 </ul>
-              </CardText>
+              </div>
             </div>
             <div className="absolute bottom-10">
               <FlipCardClose handler={handlecard2Toggle}>

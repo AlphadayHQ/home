@@ -8,23 +8,25 @@ import member5 from "../../images/team/member-5.jpg";
 import member6 from "../../images/team/member-6.jpg";
 import member7 from "../../images/team/member-7.jpg";
 import member8 from "../../images/team/member-8.jpg";
+import member9 from "../../images/team/member-9.jpg";
+import member10 from "../../images/team/member-10.jpg";
 
 const teamData = [
   {
     id: 1,
     img: member1,
-    classnames: "rounded-[13px] sm:rounded-[26px] w-[54px] sm:w-[137px]",
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
     infoPosClassnames:
       "left-[30%] bottom-[-140%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Gideon Anyalewechi",
-    position: "Backend Engineer",
+    position: "Developer",
     twitter: "https://twitter.com/get_giddy",
     linkedin: "https://www.linkedin.com/in/getgiddy/",
   },
   {
     id: 2,
     img: member2,
-    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[151px]",
     infoPosClassnames:
       "bottom-[-110%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Defi Dude",
@@ -48,7 +50,7 @@ const teamData = [
     img: member4,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[151px]",
     infoPosClassnames:
-      "right-[30%] bottom-[-120%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+      "bottom-[-120%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Vicente Almonacid",
     position: "Software Engineer",
     twitter: "https://twitter.com/v_almonacid",
@@ -59,7 +61,7 @@ const teamData = [
     img: member5,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
     infoPosClassnames:
-      "left-[30%] bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+      "right-[30%] bottom-[-140%] sm:bottom-[-15%] lg:bottom-auto lg:left-[70%]",
     name: "Pablo Palomo",
     position: "Technical Lead",
     twitter: "https://twitter.com/ppalomo",
@@ -67,8 +69,30 @@ const teamData = [
   },
   {
     id: 6,
+    img: member9,
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
+    infoPosClassnames:
+      "left-[30%] bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+    name: "Jonathan Irhodia",
+    position: "Developer",
+    twitter: "https://twitter.com/iamelcharitas",
+    linkedin: "https://linkedin.com/in/elcharitas",
+  },
+  {
+    id: 7,
+    img: member10,
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[151px]",
+    infoPosClassnames:
+      "bottom-[-120%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+    name: "Mikael Hagopian",
+    position: "QA and Analyst",
+    twitter: "https://twitter.com/MikeJa33",
+    linkedin: "https://www.linkedin.com/in/mikael-h-87bb4ba4/",
+  },
+  {
+    id: 9,
     img: member6,
-    classnames: "rounded-[13px] sm:rounded-[26px] w-[88px] sm:w-[222px]",
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[73px] sm:w-[183px]",
     infoPosClassnames:
       "bottom-[-80%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Deniz Omar",
@@ -77,22 +101,22 @@ const teamData = [
     linkedin: "https://www.linkedin.com/in/denizomer/",
   },
   {
-    id: 7,
+    id: 10,
     img: member7,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[151px]",
     infoPosClassnames:
       "bottom-[-120%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
     name: "Charles Nwankwo",
-    position: "Frontend Engineer",
+    position: "Developer",
     twitter: "https://twitter.com/Chadnium",
     linkedin: "https://www.linkedin.com/in/getgiddy/",
   },
   {
-    id: 8,
+    id: 11,
     img: member8,
-    classnames: "rounded-[13px] sm:rounded-[26px] w-[54px] sm:w-[137px]",
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
     infoPosClassnames:
-      "right-[30%] bottom-[-140%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+      "right-[30%] bottom-[-140%] sm:bottom-[-15%] lg:bottom-auto lg:left-[70%]",
     name: "Paris Charanas Giannakou",
     position: "Analyst and Content Editor",
     twitter: "https://twitter.com/GrifousG",
@@ -168,19 +192,20 @@ function Team() {
 
           <div className="flex justify-center items-center relative">
             <p
-              className="absolute z-10 top-[46%] left-[50%] font-medium text-aluminium text-[22px] sm:text-[2.25rem] tracking-[1px]"
+              className="absolute z-10 top-[50.5%] left-[50%] font-medium text-aluminium text-[22px] sm:text-[2.25rem] tracking-[1px]"
               style={{ transform: "translate(-50%, -50%)" }}
             >
               OUR TEAM
             </p>
             <div className="flex flex-col">
               <div className="flex gap-x-2 justify-center">
-                {teamData.slice(0, 4).map((data) => (
+                {teamData.slice(0, 5).map((data) => (
                   <TeamCard key={data.id} data={data} type="top" />
                 ))}
               </div>
+
               <div className="flex mt-1.5 sm:mt-2 gap-x-2 justify-center items-center">
-                {teamData.slice(4, 8).map((data) => (
+                {teamData.slice(5, 11).map((data) => (
                   <TeamCard key={data.id} data={data} type="bottom" />
                 ))}
               </div>
