@@ -17,13 +17,15 @@ const Dashboard = () => {
 
 export default function () {
   const textOptions = [
+    "L2s",
     "NFT",
     "DeFi",
+    "Web3",
+    "DAOs",
+    "Solana",
+    "Bitcoin",
     "Crypto",
     "Ethereum",
-    "DAOs",
-    "Bitcoin",
-    "L2s",
   ];
   return (
     <Section className="bg-california overflow-hidden h-auto w-full border-california">
