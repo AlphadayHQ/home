@@ -77,9 +77,9 @@ function CardTitle({ className, children }) {
 
 function CardText({ children, className }) {
   return (
-    <p className={`text-aluminium text-xs sm:text-sm ${className}`}>
+    <div className={`text-aluminium text-xs sm:text-sm ${className}`}>
       {children}
-    </p>
+    </div>
   );
 }
 
