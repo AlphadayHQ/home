@@ -39,7 +39,7 @@ const partners = [
     id: "4",
     partner: "Jsquare",
     img: jsquare,
-    link: "https://jsquare.co/",
+    link: "https://www.jsquare.co/",
     size: "w-[114px]",
   },
 
