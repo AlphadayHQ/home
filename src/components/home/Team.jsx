@@ -51,13 +51,6 @@ function Team() {
           <div className="mb-24 w-full flex flex-col items-center">
             <Title>Our Mission</Title>
             <div className="md:w-[500px]">
-              <p className="text-aluminium text-xs md:text-base text-center">
-                Crypto has exploded in popularity over the last decade and it is
-                now impossible to keep up with this crazy, chaotic space many of
-                us call home. We jump from site to site for hours trying to
-                track news, follow tweets, look for alpha, and not get rugged.
-              </p>
-
               <p className="text-aluminium text-xs md:text-base mt-4 text-center">
                 Alphaday&apos;s mission is to bring you all the tools needed to
                 follow your favourite projects, stay up-to-date with the latest
