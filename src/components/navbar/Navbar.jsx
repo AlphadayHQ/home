@@ -59,19 +59,19 @@ function Navbar() {
                 className="scroll-show flex justify-between items-center w-[90px]"
               >
                 <a
-                  href="https://twitter.com/AlphadayHQ"
-                  target="_blank"
-                  className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center"
-                >
-                  <img src={twitter} alt="twitter" />
-                </a>
-
-                <a
                   href="https://alphaday.com/discord"
                   target="_blank"
                   className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center"
                 >
                   <img src={discord} alt="discord" />
+                </a>
+
+                <a
+                  href="https://twitter.com/AlphadayHQ"
+                  target="_blank"
+                  className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center"
+                >
+                  <img src={twitter} alt="twitter" />
                 </a>
               </div>
               <div ref={element} className="scroll-hide absolute mb-1">
