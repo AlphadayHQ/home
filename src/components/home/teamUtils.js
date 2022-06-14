@@ -69,7 +69,7 @@ export const teamData = [
   },
   {
     img: member6,
-    name: "Deniz Omar",
+    name: "Deniz Omer",
     position: "Co-Founder & CEO",
     twitter: "https://twitter.com/DenizOmer",
     linkedin: "https://www.linkedin.com/in/denizomer/",
