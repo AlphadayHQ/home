@@ -4,6 +4,7 @@ import jsquare from "../../images/partners/jsquare.svg";
 import kyber from "../../images/partners/kyber.svg";
 import signum from "../../images/partners/signum.svg";
 import trader from "../../images/partners/trader.svg";
+import bff from "../../images/partners/bff.png";
 
 import jordi from "../../images/contributors/jordi.svg";
 import anthony from "../../images/contributors/anthony.svg";
@@ -18,7 +19,6 @@ const partners = [
     link: "https://iosg.vc/",
     size: "w-[100px]",
   },
-
   {
     id: "2",
     partner: "Kyber Network",
@@ -26,33 +26,36 @@ const partners = [
     link: "https://www.kyber.ventures/",
     size: "w-[100px]",
   },
-
   {
     id: "3",
-    partner: "DFG",
-    img: dfg,
-    link: "https://dfg.group/",
-    size: "w-[100px]",
-  },
-
-  {
-    id: "4",
-    partner: "Jsquare",
-    img: jsquare,
-    link: "https://www.jsquare.co/",
-    size: "w-[114px]",
-  },
-
-  {
-    id: "5",
     partner: "Signum Capital",
     img: signum,
     link: "https://www.signum.capital/",
     size: "w-[114px]",
   },
-
+  {
+    id: "4",
+    partner: "DFG",
+    img: dfg,
+    link: "https://dfg.group/",
+    size: "w-[100px]",
+  },
+  {
+    id: "5",
+    partner: "Jsquare",
+    img: jsquare,
+    link: "https://www.jsquare.co/",
+    size: "w-[114px]",
+  },
   {
     id: "6",
+    partner: "Blockchain Founders Fund",
+    img: bff,
+    link: "https://blockchainff.com/",
+    size: "w-[104px]",
+  },
+  {
+    id: "",
     partner: "TechMeetsTrader",
     img: trader,
     link: "https://techmeetstrader.com/",

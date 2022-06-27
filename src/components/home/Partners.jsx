@@ -12,11 +12,18 @@ function Partners() {
               OUR PARTNERS
             </h2>
           </div>
-          <div className="mb-8 grid place-content-center grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full mx-auto gap-4">
+          <div className="mb-8 flex flex-wrap xl:grid place-content-center xl:grid-cols-7 w-full mx-auto gap-4">
             {partners.map((item) => {
               return (
-                <figure key={item.id} className="flex justify-center">
-                  <a target="_blank" href={item.link} className="transcale flex items-center">
+                <figure
+                  key={item.id}
+                  className="flex justify-center mx-2 sm:mx-6 lg:mx-10"
+                >
+                  <a
+                    target="_blank"
+                    href={item.link}
+                    className="transcale flex items-center"
+                  >
                     <img
                       src={item.img}
                       className={`my-4 ${item.size}`}
