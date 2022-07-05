@@ -1,9 +1,9 @@
-import ventures from "../../images/partners/ventures.svg";
-import dfg from "../../images/partners/dfg.svg";
-import jsquare from "../../images/partners/jsquare.svg";
-import kyber from "../../images/partners/kyber.svg";
-import signum from "../../images/partners/signum.svg";
-import trader from "../../images/partners/trader.svg";
+import ventures from "../../images/partners/image50.png";
+import dfg from "../../images/partners/image52.png";
+import jsquare from "../../images/partners/image53.png";
+import kyber from "../../images/partners/image51.png";
+import signum from "../../images/partners/image54.png";
+import trader from "../../images/partners/image60.png";
 
 import jordi from "../../images/contributors/jordi.svg";
 import anthony from "../../images/contributors/anthony.svg";

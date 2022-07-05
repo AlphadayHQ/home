@@ -1,7 +1,8 @@
 import React from "react";
-import { Button, Section } from "../../shared";
+import { Section } from "../../shared";
 import hero from "../../images/home/hero.png";
 import "./textScroller.css";
+import LaunchAppButton from "./LaunchAppButton";
 
 const Dashboard = () => {
   return (
@@ -22,7 +23,6 @@ export default function () {
     "DeFi",
     "Web3",
     "DAOs",
-    "Solana",
     "Bitcoin",
     "Crypto",
     "Ethereum",
@@ -34,7 +34,7 @@ export default function () {
           <h1 className="flex text-black self-start text-center m-0 md:text-left font-medium leading-[60px] sm:leading-[80px] md:leading-[110px] text-[28px] sm:text-5xl md:text-7xl lg:text-[98px]">
             <span>Everything</span>
             <div className="overflow-hidden relative h-[60px] sm:h-[80px] md:h-[125px] pt-2.5 -mt-2.5 flex">
-              <ul className="flip4 max-w-[500px] inline-block">
+              <ul className="flip8 max-w-[500px] inline-block">
                 {textOptions.map((text) => (
                   <li
                     key={text}
@@ -55,12 +55,7 @@ export default function () {
               The one tool you need to stay up to date and interact with crypto
               with easily customisable workflows.
             </p>
-            <Button
-              link={"https://app.alphaday.com"}
-              className="mt-4 md:mt-0 bg-lightblue self-start md:self-center"
-            >
-              Launch app
-            </Button>
+            <LaunchAppButton />
           </div>
           <Dashboard />
         </div>
