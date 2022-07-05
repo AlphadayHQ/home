@@ -1,8 +1,6 @@
 name: Deploy to production
 
-on:
-  workflow_dispatch:
-    branches: main
+on: workflow_dispatch
 
 env:
   ENVIRONMENT: production
@@ -12,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+        with:
+          ref: main
 
       - uses: borales/actions-yarn@v3.0.0
         with:

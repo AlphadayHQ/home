@@ -9,7 +9,6 @@ on:
       - "v*"
   # and can be triggered manually also
   workflow_dispatch:
-    branches: main
 
 env:
   ENVIRONMENT: staging
@@ -19,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+        with:
+          ref: main
 
       - uses: borales/actions-yarn@v3.0.0
         with:
