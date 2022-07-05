@@ -1,7 +1,8 @@
 import React from "react";
-import { Button, Section } from "../../shared";
+import { Section } from "../../shared";
 import hero from "../../images/home/hero.png";
 import "./textScroller.css";
+import LaunchAppButton from "./LaunchAppButton";
 
 const Dashboard = () => {
   return (
@@ -54,18 +55,7 @@ export default function () {
               The one tool you need to stay up to date and interact with crypto
               with easily customisable workflows.
             </p>
-            {/* <Button
-              link={"https://app.alphaday.com"}
-              className="mt-4 md:mt-0 bg-lightblue self-start md:self-center"
-            >
-              Launch app
-            </Button> */}
-            <Button
-              link={"https://app.alphaday.com"}
-              className="mt-4 md:mt-0 bg-[#545656] self-start md:self-center"
-            >
-              Coming soon
-            </Button>
+            <LaunchAppButton />
           </div>
           <Dashboard />
         </div>
