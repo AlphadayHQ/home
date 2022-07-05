@@ -1,9 +1,9 @@
 import React, { useRef, useEffect } from "react";
-import { Nav, Button } from "../../shared";
-// import alphaday from "../../images/alphaday.svg";
+import { Nav } from "../../shared";
 import alphaday from "../../images/logo.png";
 import discord from "../../images/socials/discord.svg";
 import twitter from "../../images/socials/twitter.svg";
+import LaunchAppButton from "../home/LaunchAppButton";
 
 function Navbar() {
   const showPosition = 492;
@@ -75,12 +75,7 @@ function Navbar() {
                 </a>
               </div>
               <div ref={element} className="scroll-hide absolute mb-1">
-                <Button
-                  link={"https://app.alphaday.com"}
-                  className={`bg-lightblue`}
-                >
-                  Launch app
-                </Button>
+                <LaunchAppButton />
               </div>
             </div>
           </div>
