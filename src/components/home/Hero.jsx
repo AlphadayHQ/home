@@ -22,7 +22,6 @@ export default function () {
     "DeFi",
     "Web3",
     "DAOs",
-    "Solana",
     "Bitcoin",
     "Crypto",
     "Ethereum",
@@ -34,7 +33,7 @@ export default function () {
           <h1 className="flex text-black self-start text-center m-0 md:text-left font-medium leading-[60px] sm:leading-[80px] md:leading-[110px] text-[28px] sm:text-5xl md:text-7xl lg:text-[98px]">
             <span>Everything</span>
             <div className="overflow-hidden relative h-[60px] sm:h-[80px] md:h-[125px] pt-2.5 -mt-2.5 flex">
-              <ul className="flip4 max-w-[500px] inline-block">
+              <ul className="flip8 max-w-[500px] inline-block">
                 {textOptions.map((text) => (
                   <li
                     key={text}
