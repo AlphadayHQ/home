@@ -10,13 +10,13 @@ import member9 from "../../images/team/member-9.jpg";
 import member10 from "../../images/team/member-10.jpg";
 
 /**
- * For every team member card the the info tooltip is 
- * positioned differently for mobile (you don't want the tooltip 
- * to go out of the screen especially cards on the edged). 
- * 
+ * For every team member card the the info tooltip is
+ * positioned differently for mobile (you don't want the tooltip
+ * to go out of the screen especially cards on the edged).
+ *
  * So the position & size styles are constant while the team members
  * data are shuffled.
- */ 
+ */
 export const teamData = [
   {
     img: member1,
@@ -79,7 +79,7 @@ export const teamData = [
     name: "Charles Nwankwo",
     position: "Developer",
     twitter: "https://twitter.com/Chadnium",
-    linkedin: "https://www.linkedin.com/in/getgiddy/",
+    linkedin: "https://www.linkedin.com/in/charles-nwankwo-01/",
   },
   {
     img: member8,
@@ -167,4 +167,3 @@ export const shuffleTeam = (teamData, positionData) => {
     return positionData.map((data, i) => ({ ...data, ...shuffledMembers[i] }));
   }
 };
-
