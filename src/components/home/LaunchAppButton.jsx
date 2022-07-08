@@ -12,7 +12,7 @@ const LaunchAppButton = () => {
       </Button> */}
       <Button
         disabled
-        className="mt-4 md:mt-0 bg-[#585858] hover:opacity-100 cursor-not-allowed self-start md:self-center"
+        className="mt-4 md:mt-0 bg-[#585858] hover:opacity-100 cursor-not-allowed self-start md:self-center whitespace-nowrap"
       >
         Coming soon
       </Button>
