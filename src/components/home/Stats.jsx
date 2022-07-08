@@ -19,11 +19,14 @@ const data = {
     "Twitter Feed",
     "Gas Price",
     "DAO Tracker",
+    "NFT Research Reports",
     "Total Value Locked",
-    "DEX Volume",
-    "Eth2.0 Stats (coming soon)",
-    "NFT Floor Price Tracker (coming soon)",
-    "and many more",
+    "Trending NFTs",
+    "Daily Gwei Video Feed",
+    "Top Exchanges",
+    "Beginner Courses",
+    "Podcasts",
+    "and more"
   ],
   projects: [
     "Aave",
@@ -44,7 +47,6 @@ const data = {
     "1inch",
     "Convex",
     "Anchor",
-    "and many more",
   ],
   sources: {
     news: ["Coindesk", "Cointelegraph", "EthNews", "Decrypt", "The Defiant", "CryptoSlate", "NewsBTC", "Coin Journal"],
@@ -127,7 +129,7 @@ function Stats() {
         >
           <div className="grid sm:grid-cols-3 gap-4 align-items-center text-sm lg:text-base h-full">
             <div className="sm:border-r border-black pr-2">
-              <Title text={"Add more than 30 widgets to your dashboard"} />
+              <Title text={"Add 30+ widgets to your dashboard"} />
               <p className="flex flex-wrap">
                 {data.widgets.map((widget, i) =>
                   i === data.widgets.length - 1 ? widget + "." : widget + ", "
@@ -136,7 +138,7 @@ function Stats() {
             </div>
             <div className="flex flex-col justify-between sm:border-r border-black pr-2">
               <div>
-                <Title text={"Stay up to date on more than 500 projects"} />
+                <Title text={"Stay up to date on 500+ projects"} />
                 <p className="flex flex-wrap">
                   {data.projects.map((project, i) =>
                     i === data.projects.length - 1
