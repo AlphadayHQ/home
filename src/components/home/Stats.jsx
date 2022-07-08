@@ -27,30 +27,29 @@ const data = {
   ],
   projects: [
     "Aave",
-    "Convex",
-    "Anchor",
+    "Compound",
     "Curve",
-    "1inch",
     "Uniswap",
-    "MakerDAO",
-    "Frax",
     "Quickswap",
+    "MakerDAO",
     "Instadapp",
     "SushiSwap",
     "Balancer",
     "Yearn",
+    "Frax",
     "Venus",
     "Osmosis",
-    "Compound",
+    "KyberSwap",
     "0x",
     "1inch",
-    "KyberSwap",
+    "Convex",
+    "Anchor",
     "and many more",
   ],
   sources: {
-    news: ["Coindesk", "Cointelegraph", "EthNews", "Bloomberg"],
-    daos: ["Uniswap", "Kyber", "Falafel", "CoolBeanz", "Meowmeow", "DenziDao"],
-    blockchains: ["Ethereum", "Bitcoin", "Polkadot", "Solana", "Near"],
+    news: ["Coindesk", "Cointelegraph", "EthNews", "Decrypt", "The Defiant", "CryptoSlate", "NewsBTC", "Coin Journal"],
+    daos: ["Uniswap", "Curve", "Yearn", "dYdX", "ENS", "Bankless", "Sushi", "BadgerDAO", "Balancer", "Gitcoin", "Compound", "Fei +25 DAOs"],
+    blockchains: ["Ethereum", "Bitcoin", "Polkadot", "Solana", "Near", "Avalanche", "Terra", "Algorand", "Dfinity +60 Blockchains"],
   },
 };
 
@@ -103,13 +102,13 @@ function Stats() {
 
             <Item
               count="500+"
-              text="projects tracked"
+              text="projects"
               className="md:w-auto lg:w-[280px] md:mr-6"
             />
 
             <Item
-              count="159"
-              text="sources of information aggregated"
+              count="200+"
+              text="sources of data and information"
               className="lg:w-[360px]"
             />
           </div>

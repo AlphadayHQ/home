@@ -48,7 +48,7 @@ function Gasandoptions() {
 
           <FlipCardBack className="relative">
             <CardTitle className="w-full max-w-[475px]">
-              See the latest recommended gas price for Eth1.0 transactions.
+              See the latest gas prices on Ethereum.
             </CardTitle>
 
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-2">
