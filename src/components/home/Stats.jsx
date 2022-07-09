@@ -50,8 +50,8 @@ const data = {
   ],
   sources: {
     news: ["Coindesk", "Cointelegraph", "EthNews", "Decrypt", "The Defiant", "CryptoSlate", "NewsBTC", "Coin Journal"],
-    daos: ["Uniswap", "Curve", "Yearn", "dYdX", "ENS", "Bankless", "Sushi", "BadgerDAO", "Balancer", "Gitcoin", "Compound", "Fei +25 DAOs"],
-    blockchains: ["Ethereum", "Bitcoin", "Polkadot", "Solana", "Near", "Avalanche", "Terra", "Algorand", "Dfinity +60 Blockchains"],
+    daos: ["Uniswap", "Curve", "Yearn", "dYdX", "ENS", "Bankless", "Sushi", "BadgerDAO", "Gitcoin", "Compound +25 DAOs"],
+    blockchains: ["Ethereum", "Bitcoin", "Polkadot", "Solana", "Near", "Avalanche", "Terra", "Algorand +60 Blockchains"],
   },
 };
 
