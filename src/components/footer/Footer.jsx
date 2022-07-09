@@ -48,12 +48,12 @@ function Footer() {
           </Col>
 
           <div className="place-self-end flex justify-between items-center w-[90px]">
-            <a href={twitter}>
+            <a target="_blank" href={twitter}>
               <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
                 <img src={twitterLogo} alt="twitter" />
               </figure>
             </a>
-            <a href={discord}>
+            <a target="_blank" href={discord}>
               <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
                 <img src={discordLogo} alt="discord" />
               </figure>
