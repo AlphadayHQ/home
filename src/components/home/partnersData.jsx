@@ -65,7 +65,7 @@ const contributors = [
     id: "1",
     img: jordi,
     contributor: "Jordi Alexander",
-    handle: "@gametheorizon",
+    handle: "@gametheorizing",
     link: "https://twitter.com/gametheorizing",
   },
 
