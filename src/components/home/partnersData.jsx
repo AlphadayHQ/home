@@ -29,6 +29,14 @@ const partners = [
 
   {
     id: "3",
+    partner: "Signum Capital",
+    img: signum,
+    link: "https://www.signum.capital/",
+    size: "w-[114px]",
+  },
+  
+  {
+    id: "4",
     partner: "DFG",
     img: dfg,
     link: "https://dfg.group/",
@@ -36,18 +44,10 @@ const partners = [
   },
 
   {
-    id: "4",
+    id: "5",
     partner: "Jsquare",
     img: jsquare,
     link: "https://www.jsquare.co/",
-    size: "w-[114px]",
-  },
-
-  {
-    id: "5",
-    partner: "Signum Capital",
-    img: signum,
-    link: "https://www.signum.capital/",
     size: "w-[114px]",
   },
 
