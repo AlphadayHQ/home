@@ -14,7 +14,7 @@ const Col = ({children, className}) => {
 
 const Anchor = ({children, href, className}) => {
   return(
-    <a href={href} className={`text-aluminium text-sm ${className}`}>
+    <a href={href} target="_blank" className={`text-aluminium text-sm ${className}`}>
       {children}
     </a>
   )
