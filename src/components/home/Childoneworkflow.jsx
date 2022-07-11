@@ -33,7 +33,7 @@ function ChildOneWorkflow() {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-      <FlipCard className="overflow-hidden h-[400px] sm:h-[450px] lg:h-[590px]">
+      <FlipCard className="overflow-hidden h-[400px] sm:h-[480px] lg:h-[590px]">
         <FlipCardInner className={`${card1Toggler ? "flipThis" : ""}`}>
           <FlipCardFront>
             <div>
@@ -45,7 +45,7 @@ function ChildOneWorkflow() {
               </FlipCardButton>
             </div>
 
-            <div className="mt-16 sm:mt-24">
+            <div className="mt-16 sm:mt-16">
               <div className="mx-auto max-w-fit w-full text-sm mt-8">
                 <small
                   onClick={() => handleSwitchToggle("calendar")}
@@ -80,13 +80,14 @@ function ChildOneWorkflow() {
 
           <FlipCardBack>
             <CardTitle className="w-full max-w-[475px]">
-              Search for specific events and filter by event types, geography, and speakers
+              Search for specific events and filter by event types, geography,
+              and speakers
             </CardTitle>
 
-            <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-8">
+            <div className="relative h-[60%] md:h-[70%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-8">
               <CardText className="w-full max-w-[450px]">
-                The calendar widget keeps you on top of events, meetups,
-                network upgrades and forks, and other notable events
+                The calendar widget keeps you on top of events, meetups, network
+                upgrades and forks, and other notable events
                 <br />
                 <br />
                 Search by event type: hackathons, community calls, conferences,
@@ -96,8 +97,8 @@ function ChildOneWorkflow() {
                 Search event by geography: USA, London, Online
                 <br />
                 <br />
-                Create alerts, subscribe to events and add them to your
-                calendar (coming soon).
+                Create alerts, subscribe to events and add them to your calendar
+                (coming soon).
               </CardText>
             </div>
             <div className="absolute bottom-10">
@@ -110,7 +111,7 @@ function ChildOneWorkflow() {
         </FlipCardInner>
       </FlipCard>
 
-      <FlipCard className="overflow-hidden h-[400px] sm:h-[450px] lg:h-[590px]">
+      <FlipCard className="overflow-hidden h-[400px] sm:h-[480px] lg:h-[590px]">
         <FlipCardInner className={`${card2Toggler ? "flipThis" : ""}`}>
           <FlipCardFront>
             <div>
@@ -135,14 +136,15 @@ function ChildOneWorkflow() {
 
           <FlipCardBack>
             <CardTitle className="w-full max-w-[475px]">
-            Track important market indicators
+              Track important market indicators
             </CardTitle>
 
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-8">
               <div className="w-full max-w-[450px] text-aluminium text-xs sm:text-sm ">
-              Track on-chain and off-chain metrics, sentiment and data including:
-              <br/>
-              <br/>
+                Track on-chain and off-chain metrics, sentiment and data
+                including:
+                <br />
+                <br />
                 <ul className=" list-disc list-inside">
                   <li>Total Value Locked</li>
                   <li>Volume</li>
