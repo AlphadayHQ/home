@@ -51,13 +51,23 @@ function Track() {
 
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-8">
               <CardText className="w-full max-w-[450px]">
-                Track:
-                <ul className=" list-disc list-inside">
-                  <li>Your portfolio allocation</li>
-                  <li>Lending and Yield Farming Positions</li>
-                  <li>Historical performance of tokens</li>
-                  <li>Metrics of tokens including Volume, Market Cap</li>
-                </ul>
+              Keep an eye on:
+              <br/>
+              <br/>
+              <ul className=" list-disc list-inside-nested">
+                <li>Your portfolio allocation</li>
+                <li>Lending and Yield Farming Positions</li>
+                <li>Historical performance of tokens</li>
+                <li>Token Information including:
+                  <ul className=" list-disc list-inside">
+                    <li>Volume</li>
+                    <li>Market Cap</li>
+                    <li>Circulating Supply</li>
+                    <li>Max Supply</li>
+                    <li>24h High/Low</li>
+                  </ul>
+                </li>
+              </ul>
               </CardText>
 
               <div className="absolute bottom-0">

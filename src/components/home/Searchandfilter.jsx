@@ -56,7 +56,7 @@ function Searchandfilter() {
             >
               <div>
                 <CardTitle className="w-full md:w-[300px]">
-                  Search by any project, blockchain, token, person
+                  Search by any project, blockchain, token, or person
                 </CardTitle>
                 <FlipCardButton handler={handleSearchToggle}>
                   How it works
@@ -71,15 +71,13 @@ function Searchandfilter() {
 
           <FlipCardBack>
             <CardTitle className="w-full max-w-[475px]">
-              Search by any project, blockchain, token, person.
+              Search by any project, blockchain, topic or person
             </CardTitle>
 
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-8">
               <CardText className="w-full max-w-[450px]">
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Rerum
-                quae mollitia velit quam. Asperiores eligendi omnis corrupti,
-                assumenda nemo necessitatibus, accusantium ullam eaque placeat
-                ea labore. Quisquam dicta error quaerat.
+                Use the global search function to update your dashboard to show you information specific to your searched project, blockchain, token or person.
+                Widgets update their data to reflect your searched keyword.
               </CardText>
 
               <div className="absolute bottom-0 md:bottom-11">

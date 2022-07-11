@@ -48,13 +48,13 @@ function Gasandoptions() {
 
           <FlipCardBack className="relative">
             <CardTitle className="w-full max-w-[475px]">
-              See the latest recommended gas price for Eth1.0 transactions.
+              See the latest gas prices on Ethereum.
             </CardTitle>
 
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-2">
               <CardText className="w-full max-w-[450px]">
                 See the recommended transaction gas price for fast, standard,
-                and safe low transactions.
+                and safe low transactions on the Ethereum blockchain.
               </CardText>
             </div>
             <div className="absolute bottom-10">
@@ -93,7 +93,7 @@ function Gasandoptions() {
 
           <FlipCardBack className="relative">
             <CardTitle className="w-full max-w-[475px]">
-              Your Dashboard Personalised
+              Personalize Your Dashboard
             </CardTitle>
 
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-2">
@@ -101,8 +101,8 @@ function Gasandoptions() {
                 Create your own dashboards according to your own workflow.
                 <br />
                 <br />
-                Save your 'view' and quickly switch between your various
-                pre-saved views.
+                Save your 'view' and quickly switch between various personal
+                and Alphaday views
               </CardText>
             </div>
             <div className="absolute bottom-10">

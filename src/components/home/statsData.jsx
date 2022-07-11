@@ -10,7 +10,7 @@ const information = [
         "Coindesk"
       ]
     },
-  
+
     {
       id:"2",
       category: "DAOs:(WIP)",
@@ -22,16 +22,16 @@ const information = [
         "Meowmeow"
       ]
     },
-  
+
     {
       id:"3",
       category: "Events:",
       items: [
-        "Eventbrite", 
-        "Meetup", 
+        "Eventbrite",
+        "Meetup",
         "EthDevCalls",
-        "Slingshot", 
-        "EthStaker", 
+        "Slingshot",
+        "EthStaker",
         "MakerDAOs",
       ]
     },
@@ -53,19 +53,24 @@ const projects = [
         id: "1",
         category: "Blockchains and L2s:",
         items: [
-            "Ethereum",
-            "Near",
-            "Polkadot",
-            "Solana",
-            "Cardano",
-            "Avalanche",
-            "BinanceChain",
-            "Cosmos",
-            "Arbitrum",
-            "Optimism",
-            "Loopring",
-            "ImmutableX",
-            "xDAI"
+          "Aave",
+          "Compound",
+          "Curve",
+          "Uniswap",
+          "Quickswap",
+          "MakerDAO",
+          "Instadapp",
+          "SushiSwap",
+          "Balancer",
+          "Yearn",
+          "Frax",
+          "Venus",
+          "Osmosis",
+          "KyberSwap",
+          "0x",
+          "1inch",
+          "Convex",
+          "Anchor",
         ]
     },
 
