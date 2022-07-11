@@ -1,14 +1,19 @@
-import { useState } from 'react'
-import HomeContainer from './containers/HomeContainer'
+import { useState } from "react";
+import Seo from "./components/seo";
+import HomeContainer from "./containers/HomeContainer";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <>
-      <HomeContainer/>
+      <Seo
+        title="Alphaday"
+        description={"Everything about the Ethereum ecosystem in one app"}
+      />
+      <HomeContainer />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

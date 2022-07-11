@@ -4,5 +4,16 @@
   "feedBack": "https://forms.gle/hBXWWTAvsN7dAMN66",
   "discord": "https://alphaday.com/discord",
   "twitter": "https://twitter.com/AlphadayHQ",
-  "alphadayApp": "https://app.alphaday.com"
+  "alphadayApp": "https://app.alphaday.com",
+
+  "seo": {
+    "domain": "https://alphaday.com",
+    "siteName": "Alphaday",
+    "defaultTitle": "Alphaday | Everything about crypto, all in one app",
+    "defaultDescription": "Alphaday",
+    "socialLinks": {
+      "twitter": "https://twitter.com/AlphadayHQ"
+    },
+    "cover": "https://s3.eu-west-1.amazonaws.com/alphaday.com/images/seo1200x627-black.png"
+  }
 }
