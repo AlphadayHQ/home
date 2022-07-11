@@ -9,7 +9,7 @@ function App() {
     <>
       <Seo
         title="Alphaday"
-        description={"Everything about the Ethereum ecosystem in one app"}
+        description={"Everything about the Crypto ecosystem in one app"}
       />
       <HomeContainer />
     </>
