@@ -47,7 +47,7 @@ function Footer() {
             <Anchor href={feedBack}>Give feedback</Anchor>
           </Col>
 
-          <div className="place-self-end flex justify-between items-center w-[90px]">
+          <div className="place-self-start md:place-self-end flex justify-between items-center w-[90px]">
             <a target="_blank" href={twitter}>
               <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
                 <img src={twitterLogo} alt="twitter" />
