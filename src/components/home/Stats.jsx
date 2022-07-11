@@ -125,12 +125,12 @@ function Stats() {
         </FlipCardFront>
 
         <FlipCardBack
-          className={`bg-california flex items-center pt-4 pb-4 px-4 sm:px-8 xl:px-20 overflow-y-scroll no-scrollbar`}
+          className={`bg-california flex items-center pt-4 md:pt-6 lg:pt-8 pb-4 md:pb-8 px-4 sm:px-8 xl:px-16 overflow-y-scroll no-scrollbar`}
         >
           <div className="grid sm:grid-cols-3 gap-4 align-items-center text-sm lg:text-base h-full">
             <div className="sm:border-r border-black pr-2">
               <Title text={"Add 30+ widgets to your dashboard"} />
-              <p className="flex flex-wrap">
+              <p className="flex flex-wrap text-sm">
                 {data.widgets.map((widget, i) =>
                   i === data.widgets.length - 1 ? widget + "." : widget + ", "
                 )}{" "}
@@ -139,7 +139,7 @@ function Stats() {
             <div className="flex flex-col justify-between sm:border-r border-black pr-2">
               <div>
                 <Title text={"Stay up to date on 500+ projects"} />
-                <p className="flex flex-wrap">
+                <p className="flex flex-wrap text-sm">
                   {data.projects.map((project, i) =>
                     i === data.projects.length - 1
                       ? project + "."
@@ -161,7 +161,7 @@ function Stats() {
             <div>
               <div className="">
                 <Title text={"Sources"} />
-                <p className="inline-block text-[#2e2516] flex-wrap">
+                <p className="inline-block text-[#2e2516] flex-wrap text-sm">
                   <span className="text-black">News:</span>{" "}
                   {data.sources.news.map((source, i) =>
                     i === data.sources.news.length - 1
@@ -169,7 +169,7 @@ function Stats() {
                       : source + ", "
                   )}{" "}
                 </p>
-                <p className="inline-block text-[#2e2516] flex-wrap">
+                <p className="inline-block text-[#2e2516] flex-wrap text-sm">
                   <span className="text-black">DAOs:</span>{" "}
                   {data.sources.daos.map((source, i) =>
                     i === data.sources.daos.length - 1
@@ -177,7 +177,7 @@ function Stats() {
                       : source + ", "
                   )}{" "}
                 </p>
-                <p className="inline-block text-[#2e2516]  flex-wrap">
+                <p className="inline-block text-[#2e2516]  flex-wrap text-sm">
                   <span className="text-black">Blockchains:</span>{" "}
                   {data.sources.blockchains.map((source, i) =>
                     i === data.sources.blockchains.length - 1
