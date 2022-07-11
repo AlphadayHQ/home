@@ -80,23 +80,24 @@ function ChildOneWorkflow() {
 
           <FlipCardBack>
             <CardTitle className="w-full max-w-[475px]">
-              Search for specific events, filter by event types, geography, and
-              speakers
+              Search for specific events and filter by event types, geography, and speakers
             </CardTitle>
 
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-8">
               <CardText className="w-full max-w-[450px]">
-                The calendar widget lets you stay on top of events, meetups,
-                network upgrades and forks, and other notable events.
+                The calendar widget keeps you on top of events, meetups,
+                network upgrades and forks, and other notable events
                 <br />
                 <br />
-                Search by event type:hackathons, community calls, conferences,
-                network forks, AMAs.
+                Search by event type: hackathons, community calls, conferences,
+                network forks, AMAs
                 <br />
                 <br />
-                Search event by geography: USA, London, Online, etc. and
-                subscribe to events and add them to your calendar and create
-                alerts.
+                Search event by geography: USA, London, Online
+                <br />
+                <br />
+                Create alerts, subscribe to events and add them to your
+                calendar (coming soon).
               </CardText>
             </div>
             <div className="absolute bottom-10">
@@ -134,14 +135,16 @@ function ChildOneWorkflow() {
 
           <FlipCardBack>
             <CardTitle className="w-full max-w-[475px]">
-              Track the most important market indicators
+            Track important market indicators
             </CardTitle>
 
             <div className="relative h-[60%] md:h-[65%] lg:h-[70%] xl:h-[75%] flex flex-col justify-between items-start mt-8">
               <div className="w-full max-w-[450px] text-aluminium text-xs sm:text-sm ">
-                Track:
+              Track on-chain and off-chain metrics, sentiment and data including:
+              <br/>
+              <br/>
                 <ul className=" list-disc list-inside">
-                  <li> Total Value Locked</li>
+                  <li>Total Value Locked</li>
                   <li>Volume</li>
                   <li>Market Share</li>
                   <li>Number of Traders and Trades</li>
