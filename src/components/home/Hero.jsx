@@ -7,11 +7,13 @@ import LaunchAppButton from "./LaunchAppButton";
 const Dashboard = () => {
   return (
     <figure className="mt-16 md:mt-24 h-[350px] md:h-[700px] overflow-hidden">
-      <img
-        className="w-[100%] bg-eerie mx-auto border-[12px] rounded-xl border-eerie"
-        src={hero}
-        alt="dashboard"
-      />
+      <div className=" bg-eerie p-3 rounded-xl">
+        <img
+          className="w-[100%] bg-eerie mx-auto border-eerie"
+          src={hero}
+          alt="dashboard"
+        />
+      </div>
     </figure>
   );
 };
