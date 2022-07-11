@@ -51,7 +51,7 @@ const data = {
   sources: {
     news: ["Coindesk", "Cointelegraph", "EthNews", "Decrypt", "The Defiant", "CryptoSlate", "NewsBTC", "Coin Journal"],
     daos: ["Uniswap", "Curve", "Yearn", "dYdX", "ENS", "Bankless", "Sushi", "BadgerDAO", "Gitcoin", "Compound +25 DAOs"],
-    blockchains: ["Ethereum", "Bitcoin", "Polkadot", "Solana", "Near", "Avalanche", "Terra", "Algorand +60 Blockchains"],
+    blockchains: ["Ethereum", "Bitcoin", "Polkadot", "Solana", "Avalanche", "Near", "Terra", "Algorand +60 Blockchains"],
   },
 };
 
@@ -91,7 +91,7 @@ function Stats() {
         }`}
       >
         <FlipCardFront
-          className={`bg-california pt-4 md:pt-6 lg:pt-14 px-4 sm:px-8 xl:px-20`}
+          className={`bg-california pt-4 md:pt-20 lg:pt-14 px-4 sm:px-8 xl:px-20`}
         >
           <div
             className={`mx-auto ml-3 sm:ml-0 flex flex-col md:flex-row justify-between items-center md:items-start flex-1 mt-4 sm:mt-0`}
