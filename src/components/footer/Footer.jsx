@@ -34,7 +34,7 @@ function Footer() {
             <Anchor href={privacyPolicy}>Privacy policy</Anchor>
           </Col>
 
-          <Col className="place-self-center place-self-self-start">
+          <Col className="place-self-center">
             {/* <Anchor className="mb-4" href="#">
               Docs
             </Anchor> */}
@@ -48,7 +48,7 @@ function Footer() {
             <Anchor href={feedBack}>Give feedback</Anchor>
           </Col>
 
-          <div className="place-self-end place-self-center flex justify-between items-center w-[130px]">
+          <div className="place-self-center flex justify-between items-center w-[130px]">
             <a target="_blank" href={twitter}>
               <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
                 <img src={twitterLogo} alt="twitter" />
