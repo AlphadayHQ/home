@@ -1,10 +1,7 @@
-import { useState } from "react";
 import Seo from "./components/seo";
 import HomeContainer from "./containers/HomeContainer";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
     <>
       <Seo
