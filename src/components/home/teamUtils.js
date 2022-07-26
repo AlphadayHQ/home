@@ -27,7 +27,7 @@ export const teamData = [
   },
   {
     img: member2,
-    name: "Defi Dude",
+    name: "DeFi Dude",
     position: "Co-Founder",
     twitter: "https://twitter.com/defidude",
     linkedin: "https://www.linkedin.com/in/defi-dude-72296b221/",
