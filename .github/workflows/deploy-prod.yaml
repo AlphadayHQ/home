@@ -1,4 +1,4 @@
-name: Deploy to production
+name: Deploy to alphaday (production)
 
 on:
   workflow_dispatch
