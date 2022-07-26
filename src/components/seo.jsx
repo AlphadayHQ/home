@@ -31,7 +31,6 @@ const SEO = ({
         content={config.seo.siteName}
         data-react-helmet="true"
       />
-      <meta property="og:locale" content="en_AU" data-react-helmet="true" />
       {/* Opengraph meta tags for Facebook & LinkedIn */}
       <meta property="og:url" content={domain} data-react-helmet="true" />
       <meta property="og:type" content={"website"} data-react-helmet="true" />
