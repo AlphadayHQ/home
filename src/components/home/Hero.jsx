@@ -55,7 +55,7 @@ export default function () {
           <div className="w-full sm:w-[650px] flex flex-col md:flex-row sm:justify-between items-center mt-4 md:mt-8">
             <p className="self-start pt-2.5 w-full text-sm sm:w-[500px] md:text-[19px] leading-6 text-left text-[#000000]">
               The one tool you need to stay up to date and interact with crypto
-              with easily customisable workflows.
+              with easily customisable dashboards.
             </p>
             <LaunchAppButton />
           </div>
