@@ -7,7 +7,7 @@ const LaunchAppButton = () => {
 
   return (
     <>
-      <Button link={alphadayApp} className={`bg-lightblue`}>
+      <Button link={alphadayApp} target="_blank" className={`bg-lightblue`}>
         Launch app
       </Button>
     </>
