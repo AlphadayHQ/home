@@ -3,7 +3,7 @@ import { Section, Div } from "../../shared";
 import discordLogo from "../../images/socials/discord.svg";
 import twitterLogo from "../../images/socials/twitter.svg";
 import linkedinLogo from "../../images/socials/linkedin.svg";
-import config from "../../config.json"
+import config from "../../config"
 
 const Col = ({children, className}) => {
   return(

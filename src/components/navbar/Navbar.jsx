@@ -4,7 +4,7 @@ import alphaday from "../../images/logo.png";
 import LaunchAppButton from "../home/LaunchAppButton";
 import discordLogo from "../../images/socials/discord.svg";
 import twitterLogo from "../../images/socials/twitter.svg";
-import config from "../../config.json";
+import config from "../../config";
 
 function Navbar() {
   const { twitter, discord } = config;
