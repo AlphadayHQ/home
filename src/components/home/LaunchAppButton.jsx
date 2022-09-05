@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "../../shared";
-import config from "../../config.json";
+import config from "../../config";
 
 const LaunchAppButton = () => {
   const { alphadayApp } = config;
