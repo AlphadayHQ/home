@@ -1,12 +1,20 @@
+import Error404 from "./components/Error404";
 import Seo from "./components/seo";
 import HomeContainer from "./containers/HomeContainer";
 
 function App() {
   const path = window.location.pathname;
-  if (path.startsWith("/b/")) {
-    window.location.replace(`https://app.alphaday.com${path}`);
 
-    return <></>;
+  console.log(path);
+
+  if (path !== "/") {
+    if (path.startsWith("/b/")) {
+      window.location.replace(`https://app.alphaday.com${path}`);
+
+      return <></>;
+    }
+
+    return <Error404 />;
   }
   return (
     <>

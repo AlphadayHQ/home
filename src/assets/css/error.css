@@ -1,0 +1,123 @@
+.main {
+  height: calc(100vh - 38px);
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: rgb(17, 18, 19);
+  /* ERROR PAGE */
+  /* blinking animation */
+}
+.main .button {
+  display: flex;
+  align-items: flex-end;
+  background-color: #faa202;
+  padding: 12px 15px;
+  border-radius: 20px;
+  color: #fff;
+  font-family: "Montserrat", "Helvetica Neue", Helvetica, Verdana, sans-serif;
+  font-size: 20px;
+  line-height: 100%;
+  margin-top: 20px;
+}
+.main .button img {
+  margin: 0 5px;
+  height: 20px;
+}
+.main .button:hover {
+  opacity: 80%;
+}
+.main .button:focus {
+  opacity: 100%;
+}
+.main .top {
+  margin-top: 10px;
+}
+.main h1 {
+  font-family: "Montserrat", "Helvetica Neue", Helvetica, Verdana, sans-serif;
+  color: #84899a;
+  margin: 0;
+  font-size: 120px;
+  line-height: 110%;
+  animation: type 0.5s alternate infinite;
+}
+.main h1 span {
+  color: #faa202;
+  padding-right: 0.2rem;
+}
+.main p {
+  font-family: "Montserrat", "Helvetica Neue", Helvetica, Verdana, sans-serif;
+  color: #656a7b;
+  font-size: 20px;
+  margin-top: 2.2rem;
+  max-width: 90vw;
+}
+.main * {
+  transition: all 0.6s;
+}
+@keyframes type {
+  from {
+    border-right: 3px solid #faa202;
+  }
+  to {
+    border-right: 3px solid transparent;
+  }
+}
+/* /ERROR PAGE */
+#footer {
+  color: #84899a;
+  font-size: 12px;
+  font-family: Sans-Serif;
+  text-align: center;
+  background-color: rgb(17, 18, 19);
+  padding-bottom: 20px;
+}
+@media (max-width: 1240px) {
+  .main h1 {
+    font-size: 84px;
+  }
+  .main p {
+    margin-top: 1.2rem;
+    font-size: 18px;
+  }
+}
+@media (max-width: 768px) {
+  .main h1 {
+    font-size: 54px;
+  }
+  .main p {
+    margin-top: 0.8rem;
+    font-size: 16px;
+  }
+  .main .button {
+    padding: 12px 15px;
+    border-radius: 20px;
+    font-size: 18px;
+  }
+  .main .button img {
+    height: 18px;
+  }
+}
+@media (max-width: 550px) {
+  .main h1 {
+    width: 300px;
+    font-size: 50px;
+  }
+  .main p {
+    width: 300px;
+    text-align: left;
+    font-size: 14px;
+    margin-top: 1rem;
+  }
+  .main .logo {
+    width: 300px;
+  }
+  .main .button {
+    font-size: 16px;
+    justify-content: center;
+  }
+  .main .button img {
+    height: 16px;
+  }
+}
