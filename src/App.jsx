@@ -5,8 +5,6 @@ import HomeContainer from "./containers/HomeContainer";
 function App() {
   const path = window.location.pathname;
 
-  console.log(path);
-
   if (path !== "/") {
     if (path.startsWith("/b/")) {
       window.location.replace(`https://app.alphaday.com${path}`);
