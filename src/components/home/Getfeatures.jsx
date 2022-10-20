@@ -1,29 +1,22 @@
 import React, { useState } from "react";
-import { useFormFields, useMailChimpForm } from "use-mailchimp-form";
+import CONFIG from "../../config";
+import { useEmailForm } from "../../utils/useEmailForm";
 
 const Form = () => {
-  const postUrl =
-    "https://alphaday.us20.list-manage.com/subscribe/post?u=a526fcf0309d049cc366e94e0&amp;id=6279b67a6a";
-  const { fields, handleFieldChange } = useFormFields({
-    EMAIL: "",
-  });
+  const [email, setEmail] = useState("");
 
-  const { loading, error, success, message, handleSubmit } =
-    useMailChimpForm(postUrl);
+  const { loading, error, success, message, handleSubmit } = useEmailForm(
+    CONFIG.emailSubscrptionUrl
+  );
 
-  const isValidEmail = (email) => {
-    if (email.indexOf("@") === -1) {
-      return false;
-    }
-    return true;
-  };
+  const isValidEmail = (email) => /^\S+@\S+\.\S+$/.test(email);
 
   return (
     <>
       <form
         onSubmit={(event) => {
           event.preventDefault();
-          handleSubmit(fields);
+          if (isValidEmail(email)) handleSubmit(email);
         }}
         className="bg-black px-2.5 md:px-3 py-1 rounded-2xl w-full mx-auto md:w-[450px] lg:w-[550px] md:ml-4 flex justify-end items-center"
       >
@@ -31,8 +24,8 @@ const Form = () => {
           id="EMAIL"
           type="email"
           placeholder="Email address"
-          value={fields.EMAIL}
-          onChange={handleFieldChange}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="bg-transparent py-3 md:py-4 pl-2 pr-4 w-full outline-0 text-aluminium md:text-sm text-xs"
           required
         />
@@ -50,7 +43,7 @@ const Form = () => {
           {message}
         </div>
       ) : success ? (
-        <div className="mt-2.5 ml-1 md:ml-5 text-sm text-[#1a7b66]">
+        <div className="mt-2.5 ml-1 md:ml-5 font-semibold text-sm text-[#1a7b66]">
           Subscribed!
         </div>
       ) : (
