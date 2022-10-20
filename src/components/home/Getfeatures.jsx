@@ -18,7 +18,7 @@ const Form = () => {
           event.preventDefault();
           if (isValidEmail(email)) handleSubmit(email);
         }}
-        className="bg-black px-2.5 md:px-3 py-1 rounded-2xl w-full mx-auto md:w-[450px] lg:w-[550px] md:ml-4 flex justify-end items-center"
+        className="bg-black px-3 md:px-3.5 rounded-[20px] md:rounded-[22px] w-full mx-auto md:w-[450px] lg:w-[550px] md:ml-4 flex justify-end items-center"
       >
         <input
           id="EMAIL"
@@ -26,24 +26,26 @@ const Form = () => {
           placeholder="Email address"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="bg-transparent py-3 md:py-4 pl-2 pr-4 w-full outline-0 text-aluminium md:text-sm text-xs"
+          className="bg-transparent my-2 py-0.5 md:py-2 pl-2 pr-2 mr-2 w-full outline-0 text-aluminium md:text-lg leading-6 text-[13px] rounded-xl"
           required
         />
         <button
           type="submit"
-          className="bg-blue text-white pb-1 pt-1.5 md:py-2 px-4 -mr-1 rounded-xl"
+          className="bg-blue text-[13px] md:text-[15px] leading-[21px] text-white pb-1 pt-1.5 md:py-2 px-4 -mr-1 rounded-xl"
         >
           Subscribe
         </button>
       </form>
       {loading ? (
-        <div className="mt-2.5 ml-1 md:ml-5 text-sm">Subscribing...</div>
+        <div className="mt-1 ml-2 md:ml-5 font-semibold text-xs md:text-sm leading-[21px] ">
+          Subscribing...
+        </div>
       ) : error ? (
-        <div className="mt-2.5 ml-1 md:ml-5 text-sm text-[#cc1b1b]">
+        <div className="mt-1 ml-2 md:ml-5 font-semibold text-xs md:text-sm leading-[21px]  text-[#cc1b1b]">
           {message}
         </div>
       ) : success ? (
-        <div className="mt-2.5 ml-1 md:ml-5 font-semibold text-sm text-[#1a7b66]">
+        <div className="mt-1 ml-2 md:ml-5 font-semibold text-xs md:text-sm leading-[21px]  text-[#1a7b66]">
           Subscribed!
         </div>
       ) : (
@@ -66,7 +68,7 @@ function Getfeatures() {
           </p> */}
         </div>
 
-        <div className="w-[280px] flex items-center  md:w-auto">
+        <div className="min-w-[280px] flex items-center  w-auto">
           <Form />
         </div>
       </div>
