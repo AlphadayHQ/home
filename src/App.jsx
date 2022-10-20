@@ -12,6 +12,9 @@ function App() {
       return <></>;
     }
 
+    if (path === "/blog") 
+      window.location.replace(`https://alphaday.substack.com`);
+    
     return <Error404 />;
   }
   return (
