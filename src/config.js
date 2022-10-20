@@ -9,7 +9,7 @@ import coverImg from "./images/seo1200x627-black.png";
    discord: "https://alphaday.com/discord",
    twitter: "https://twitter.com/AlphadayHQ",
    alphadayApp: "https://app.alphaday.com",
-   blog: "https://medium.com/@alphaday",
+   blog: "https://alphaday/blog",
    linkedin: "https://www.linkedin.com/company/alphaday",
 
    seo: {
