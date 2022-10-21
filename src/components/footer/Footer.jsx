@@ -29,9 +29,9 @@ function Footer() {
         <div className="grid place-content-between gap-16 grid-cols-2 md:grid-cols-4">
           <Col className="place-self-center">
             <Anchor className="mb-4" href={terms}>
-              Terms of use
+              Terms of Use
             </Anchor>
-            <Anchor href={privacyPolicy}>Privacy policy</Anchor>
+            <Anchor href={privacyPolicy}>Privacy Policy</Anchor>
           </Col>
 
           <Col className="place-self-center">
@@ -45,7 +45,7 @@ function Footer() {
             <Anchor href="mailto:hello@alphaday.com" className="mb-4">
               Contact
             </Anchor>
-            <Anchor href={feedBack}>Give feedback</Anchor>
+            <Anchor href={feedBack}>Give Feedback</Anchor>
           </Col>
 
           <div className="place-self-center flex justify-between items-center w-[130px]">
