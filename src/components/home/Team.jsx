@@ -53,8 +53,8 @@ function Team() {
             <div className="md:w-[500px]">
               <p className="text-aluminium text-xs md:text-base mt-4 text-center">
                 Alphaday&apos;s mission is to bring you all the tools needed to
-                follow your favourite projects, stay up-to-date with the latest
-                narratives, and use your favourite dapps, all from the comfort
+                follow your favorite projects, stay up-to-date with the latest
+                narratives, and use your favorite dapps, all from the comfort
                 of one easy-to-use customizable dashboard.
               </p>
             </div>

@@ -35,7 +35,7 @@ const data = [
     id: "4",
     question: "How secure is Alphaday?",
     answer: [
-      <p>Alphaday is not a DApp and does not take custody of your tokens.</p>,
+      <p>While we do plan to support on-chain activity and other DApp usage in the future, Alphaday has no wallet interactions that could compromise your security, or funds, in any way.</p>,
     ],
   },
 
