@@ -72,7 +72,7 @@ function Gasandoptions() {
           <FlipCardFront>
             <div>
               <CardTitle className="w-full max-w-[550px]">
-                1-click switch between different dashboard views and design your
+                One-click switch between different dashboard views and design your
                 own
               </CardTitle>
               <FlipCardButton handler={handleOptionToggle}>
