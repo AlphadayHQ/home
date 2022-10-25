@@ -12,7 +12,7 @@ function Workflow() {
     <Section>
       <Div>
         <div>
-          <Title>Designed to optimise your workflow</Title>
+          <Title>Designed to optimize your workflow</Title>
           <div className="mt-16 grid grid-cols-1 gap-8">
             <Childoneworkflow />
             <Track />

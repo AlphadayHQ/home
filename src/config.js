@@ -9,11 +9,10 @@ const CONFIG = {
   discord: "https://alphaday.com/discord",
   twitter: "https://twitter.com/AlphadayHQ",
   alphadayApp: "https://app.alphaday.com",
-  blog: "https://medium.com/@alphaday",
+  blog: "https://alphaday.substack.com",
   linkedin: "https://www.linkedin.com/company/alphaday",
   emailSubscrptionUrl:
     "https://api.zettaday.com/v1/user/email_subscriptions/subscribe/",
-
   seo: {
     domain: "https://alphaday.com",
     siteName: "Alphaday",

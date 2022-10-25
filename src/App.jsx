@@ -1,5 +1,6 @@
 import Error404 from "./components/Error404";
 import Seo from "./components/seo";
+import CONFIG from "./config";
 import HomeContainer from "./containers/HomeContainer";
 
 function App() {
@@ -7,8 +8,13 @@ function App() {
 
   if (path !== "/") {
     if (path.startsWith("/b/")) {
-      window.location.replace(`https://app.alphaday.com${path}`);
+      window.location.replace(`${CONFIG.alphadayApp}${path}`);
 
+      return <></>;
+    }
+
+    if (path === "/blog") {
+      window.location.replace(CONFIG.blog);
       return <></>;
     }
 
