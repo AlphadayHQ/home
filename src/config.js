@@ -11,8 +11,10 @@ const CONFIG = {
   alphadayApp: "https://app.alphaday.com",
   blog: "https://alphaday.substack.com",
   linkedin: "https://www.linkedin.com/company/alphaday",
-  emailSubscrptionUrl:
-    "https://api.zettaday.com/v1/user/email_subscriptions/subscribe/",
+  // import.meta.env.PROD returns a boolean on whether the app is running in production
+  emailSubscrptionUrl: `https://api.${
+    import.meta.env.PROD ? "alphaday" : "zettaday"
+  }.com/v1/user/email_subscriptions/subscribe/`,
   seo: {
     domain: "https://alphaday.com",
     siteName: "Alphaday",
