@@ -21,7 +21,7 @@ const Dashboard = () => {
 export default function () {
   const textOptions = [
     "L2s",
-    "NFT",
+    "NFTs",
     "DeFi",
     "Web3",
     "DAOs",
