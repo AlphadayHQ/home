@@ -9,7 +9,7 @@ const CONFIG = {
   discord: "https://alphaday.com/discord",
   twitter: "https://twitter.com/AlphadayHQ",
   alphadayApp: "https://app.alphaday.com",
-  blog: "https://alphaday.substack.com",
+  blog: "https://blog.alphaday.com",
   linkedin: "https://www.linkedin.com/company/alphaday",
   // import.meta.env.PROD returns a boolean on whether the app is running in production
   emailSubscrptionUrl: `https://api.${
