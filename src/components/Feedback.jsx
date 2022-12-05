@@ -3,7 +3,7 @@ import "../assets/css/feedback.css"
 
 const FeedBack = () => {
   return (
-    <section>
+    <section className="feedback-wrap">
       <a class="profilePicture">
         <img src="src/assets/feedback/background.jpg" alt="Profile Picture" />
       </a>
