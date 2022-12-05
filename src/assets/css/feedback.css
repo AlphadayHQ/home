@@ -1,0 +1,118 @@
+html,
+body {
+  margin: 0;
+  height: 100%;
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
+}
+
+html {
+  background-image: url("./images/background.png");
+  background-size: cover;
+}
+
+body {
+  background: linear-gradient(
+    -45deg,
+    rgb(64, 115, 199, 0.9),
+    rgba(207, 58, 58, 0.9)
+  );
+  background-size: 400% 400%;
+  animation: gradient 8s ease infinite;
+  padding-top: 35px;
+  padding-bottom: 35px;
+  height: fit-content;
+  min-height: 100%;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+:root {
+  --accentColor: #e6e6e6;
+  --delay: 0.3s;
+}
+
+.description,
+.source {
+  color: white;
+  text-align: center;
+  margin: 27px auto;
+  margin-top: 10px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.source {
+  font-size: small;
+  margin-top: 50px;
+}
+
+.profilePicture,
+.profilePicture img {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  display: block;
+  margin: 35px auto 20px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.userName {
+  color: var(--accentColor);
+  font-size: x-large;
+  font-weight: bold;
+  line-height: 1.25;
+  display: block;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+}
+
+.links {
+  max-width: 675px;
+  width: auto;
+  display: block;
+  margin: 27px auto;
+}
+
+.link {
+  position: relative;
+  background-color: transparent;
+  color: var(--accentColor);
+  border: solid var(--accentColor) 2px;
+  border-radius: 10px;
+  font-size: 1rem;
+  text-align: center;
+  display: block;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  text-decoration: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (hover: hover) {
+  .link:hover {
+    background-color: var(--accentColor);
+    color: #000; /* Fallback for older browsers */
+    color: rgba(0, 0, 0, 0.5);
+  }
+}
+
+.link:active {
+  background-color: var(--accentColor);
+  color: #000; /* Fallback for older browsers */
+  color: rgba(0, 0, 0, 0.5);
+}

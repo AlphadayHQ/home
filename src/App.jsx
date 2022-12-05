@@ -1,4 +1,5 @@
 import Error404 from "./components/Error404";
+import FeedBack from "./components/Feedback";
 import Seo from "./components/seo";
 import CONFIG from "./config";
 import HomeContainer from "./containers/HomeContainer";
@@ -16,6 +17,10 @@ function App() {
     if (path === "/blog") {
       window.location.replace(CONFIG.blog);
       return <></>;
+    }
+
+    if (path === "/feedback") {
+      return <FeedBack />;
     }
 
     return <Error404 />;
