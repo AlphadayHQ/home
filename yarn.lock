@@ -1003,6 +1003,11 @@ semver@^6.3.0:
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.0.tgz#ee0a64c8af5e8ceea67687b133761e1becbd1d3d"
   integrity sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==
 
+sitemaps@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/sitemaps/-/sitemaps-1.0.0.tgz#1a14c2300318d1dfcc7ede1a75f099117672a3a8"
+  integrity sha512-5M2TqsbMmDzz7UoYLOpeGLfxygNdZ0AYvNFUoAjoeVr2vkliYGZzO50kwvIh3TPUqrqmatAb+0+CYbpka8TROw==
+
 source-map-js@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.0.2.tgz#adbc361d9c62df380125e7f161f71c826f1e490c"
