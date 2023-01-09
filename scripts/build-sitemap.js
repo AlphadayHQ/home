@@ -21,6 +21,11 @@ const links = [
         changefreq: "weekly",
     },
     {
+        loc: `${appUrl}/calendar`,
+        priority: "0.80",
+        changefreq: "weekly",
+    },
+    {
         loc: `${appUrl}/b/alpha`,
         priority: "0.80",
         changefreq: "weekly",
