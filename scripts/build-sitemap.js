@@ -34,7 +34,7 @@ const links = [
     },
     {
         loc: `${appUrl}/calendar`,
-        priority: "0.60",
+        priority: "0.40",
         changefreq: "weekly",
     },
     {
@@ -57,11 +57,33 @@ const links = [
         priority: "0.60",
         changefreq: "weekly",
     },
+
+];
+
+partner_links = [
     {
         loc: `${appUrl}/b/arbitrum`,
         priority: "0.60",
         changefreq: "weekly",
     },
-];
+    {
+        loc: `${appUrl}/b/bankless`,
+        priority: "0.60",
+        changefreq: "weekly",
+    },
+    {
+        loc: `${appUrl}/b/ethereum`,
+        priority: "0.60",
+        changefreq: "weekly",
+    },
+    {
+        loc: `${appUrl}/b/verasity`,
+        priority: "0.60",
+        changefreq: "weekly",
+    },
+]
+
+links = links.concat(partner_links);
+
 
 sitemaps(outputPath, links);
