@@ -1,4 +1,4 @@
-const sitemaps = require("sitemaps");
+const buildSitemap = require("sitemaps");
 const { resolve } = require("path");
 const { existsSync, mkdirSync } = require("fs");
 
@@ -34,7 +34,7 @@ const links = [
     },
     {
         loc: `${appUrl}/calendar`,
-        priority: "0.60",
+        priority: "0.40",
         changefreq: "weekly",
     },
     {
@@ -57,11 +57,34 @@ const links = [
         priority: "0.60",
         changefreq: "weekly",
     },
+];
+
+const partner_links = [
     {
         loc: `${appUrl}/b/arbitrum`,
         priority: "0.60",
         changefreq: "weekly",
     },
+    {
+        loc: `${appUrl}/b/bankless`,
+        priority: "0.60",
+        changefreq: "weekly",
+    },
+    {
+        loc: `${appUrl}/b/ethereum`,
+        priority: "0.60",
+        changefreq: "weekly",
+    },
+    {
+        loc: `${appUrl}/b/verasity`,
+        priority: "0.60",
+        changefreq: "weekly",
+    },
 ];
 
-sitemaps(outputPath, links);
+/**
+ * Generate a sitemap.xml file for the app.
+ *
+ * Build the sitemap by adding the links and partner links to the sitemap
+ */
+buildSitemap(outputPath, [...links, ...partner_links]);
