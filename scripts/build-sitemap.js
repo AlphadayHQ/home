@@ -1,4 +1,4 @@
-const sitemaps = require("sitemaps");
+const buildSitemap = require("sitemaps");
 const { resolve } = require("path");
 const { existsSync, mkdirSync } = require("fs");
 
@@ -57,7 +57,6 @@ const links = [
         priority: "0.60",
         changefreq: "weekly",
     },
-
 ];
 
 const partner_links = [
@@ -81,9 +80,11 @@ const partner_links = [
         priority: "0.60",
         changefreq: "weekly",
     },
-]
+];
 
-links = links.concat(partner_links);
-
-
-sitemaps(outputPath, links);
+/**
+ * Generate a sitemap.xml file for the app.
+ *
+ * Build the sitemap by adding the links and partner links to the sitemap
+ */
+buildSitemap(outputPath, [...links, ...partner_links]);
