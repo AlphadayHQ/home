@@ -60,7 +60,7 @@ const links = [
 
 ];
 
-partner_links = [
+const partner_links = [
     {
         loc: `${appUrl}/b/arbitrum`,
         priority: "0.60",
