@@ -5,93 +5,54 @@ import kyber from "../../images/partners/image51.png";
 import signum from "../../images/partners/image54.png";
 import trader from "../../images/partners/image60.png";
 
-import jordi from "../../images/contributors/jordi.svg";
-import anthony from "../../images/contributors/anthony.svg";
-import mariano from "../../images/contributors/mariano.svg";
-import pierre from "../../images/contributors/pierre.svg";
-
 const partners = [
   {
     id: "1",
     img: ventures,
-    partner: "IOSG Ventures",
-    link: "https://iosg.vc/",
+    partner: "Verasity",
+    link: "https://app.alphaday.com/b/verasity",
     size: "w-[100px]",
   },
 
   {
     id: "2",
-    partner: "Kyber Network",
+    partner: "Arbitrum",
     img: kyber,
-    link: "https://www.kyber.ventures/",
+    link: "https://app.alphaday.com/b/arbitrum",
     size: "w-[100px]",
   },
 
   {
     id: "3",
-    partner: "Signum Capital",
+    partner: "Bankless",
     img: signum,
-    link: "https://www.signum.capital/",
+    link: "https://app.alphaday.com/b/bankless",
     size: "w-[114px]",
   },
-  
+
   {
     id: "4",
-    partner: "DFG",
+    partner: "Impossible Finance",
     img: dfg,
-    link: "https://dfg.group/",
+    link: "https://app.alphaday.com/b/impossible",
     size: "w-[100px]",
   },
 
   {
     id: "5",
-    partner: "Jsquare",
+    partner: "Sia",
     img: jsquare,
-    link: "https://www.jsquare.co/",
+    link: "https://app.alphaday.com/b/sia",
     size: "w-[114px]",
   },
 
   {
     id: "6",
-    partner: "TechMeetsTrader",
+    partner: "Dfinity",
     img: trader,
-    link: "https://techmeetstrader.com/",
+    link: "https://app.alphaday.com/b/dfinity",
     size: "w-[114px]",
   },
 ];
 
-const contributors = [
-  {
-    id: "1",
-    img: jordi,
-    contributor: "Jordi Alexander",
-    handle: "@gametheorizing",
-    link: "https://twitter.com/gametheorizing",
-  },
-
-  {
-    id: "2",
-    img: anthony,
-    contributor: "Anthony Sassano",
-    handle: "@sassal0x",
-    link: "https://twitter.com/sassal0x",
-  },
-
-  {
-    id: "3",
-    img: mariano,
-    contributor: "Mariano Conti",
-    handle: "@nanexcool",
-    link: "https://twitter.com/nanexcool",
-  },
-
-  {
-    id: "4",
-    img: pierre,
-    contributor: "Pierre Laurent",
-    handle: "@pierrelaurent",
-    link: "https://www.linkedin.com/in/pierrelaurent789/",
-  },
-];
-
-export { partners, contributors };
+export { partners };
