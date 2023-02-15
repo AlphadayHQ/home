@@ -16,11 +16,16 @@ function Partners() {
             {partners.map((item) => {
               return (
                 <figure key={item.id} className="flex justify-center">
-                  <a target="_blank" href={item.link} className="transcale flex items-center">
+                  <a
+                    target="_blank"
+                    href={`https://app.alphaday.com/b/${item.slug}`}
+                    className="transcale flex items-center"
+                  >
                     <img
                       src={item.img}
                       className={`my-4 ${item.size}`}
                       alt="partner"
+                      title={item.partner}
                     />
                   </a>
                 </figure>

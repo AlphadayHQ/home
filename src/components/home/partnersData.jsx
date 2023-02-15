@@ -1,56 +1,56 @@
-import ventures from "../../images/partners/image50.png";
-import dfg from "../../images/partners/image52.png";
-import jsquare from "../../images/partners/image53.png";
-import kyber from "../../images/partners/image51.png";
-import signum from "../../images/partners/image54.png";
-import trader from "../../images/partners/image60.png";
+import arbitrum from "../../images/partners/arbitrum.png";
+import verasity from "../../images/partners/verasity.png";
+import sia from "../../images/partners/sia.png";
+import impossible from "../../images/partners/impossible.png";
+import bankless from "../../images/partners/bankless.png";
+import dfinity from "../../images/partners/dfinity.png";
 
 const partners = [
   {
     id: "1",
-    img: ventures,
+    img: verasity,
     partner: "Verasity",
-    link: "https://app.alphaday.com/b/verasity",
-    size: "w-[100px]",
+    slug: "verasity",
+    size: "w-[140px]",
   },
 
   {
     id: "2",
     partner: "Arbitrum",
-    img: kyber,
-    link: "https://app.alphaday.com/b/arbitrum",
-    size: "w-[100px]",
+    img: arbitrum,
+    slug: "arbitrum",
+    size: "w-[90px]",
   },
 
   {
     id: "3",
     partner: "Bankless",
-    img: signum,
-    link: "https://app.alphaday.com/b/bankless",
+    img: bankless,
+    slug: "bankless",
     size: "w-[114px]",
   },
 
   {
     id: "4",
     partner: "Impossible Finance",
-    img: dfg,
-    link: "https://app.alphaday.com/b/impossible",
+    img: impossible,
+    slug: "impossible",
     size: "w-[100px]",
   },
 
   {
     id: "5",
     partner: "Sia",
-    img: jsquare,
-    link: "https://app.alphaday.com/b/sia",
-    size: "w-[114px]",
+    img: sia,
+    slug: "sia",
+    size: "w-[45px]",
   },
 
   {
     id: "6",
     partner: "Dfinity",
-    img: trader,
-    link: "https://app.alphaday.com/b/dfinity",
+    img: dfinity,
+    slug: "dfinity",
     size: "w-[114px]",
   },
 ];
