@@ -4,10 +4,11 @@ import alphaday from "../../images/logo.png";
 import LaunchAppButton from "../home/LaunchAppButton";
 import discordLogo from "../../images/socials/discord.svg";
 import twitterLogo from "../../images/socials/twitter.svg";
+import linkedinLogo from "../../images/socials/linkedin.svg";
 import config from "../../config";
 
 function Navbar() {
-  const { twitter, discord } = config;
+  const { twitter, discord, linkedin } = config;
   const showPosition = 492;
   const element = useRef(null);
   const element2 = useRef(null);
@@ -69,11 +70,17 @@ function Navbar() {
                 </a>
 
                 <a
-                  href="https://twitter.com/AlphadayHQ"
+                  href={twitter}
                   target="_blank"
                   className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center"
                 >
                   <img src={twitterLogo} alt="twitter" />
+                </a>
+                <a
+                  target="_blank"
+                  href={linkedin}
+                  className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
+                    <img src={linkedinLogo} alt="linkedin" />
                 </a>
               </div>
               <div ref={element} className="scroll-hide absolute mb-1">
