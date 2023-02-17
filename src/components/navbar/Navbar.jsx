@@ -59,12 +59,13 @@ function Navbar() {
             <div className="relative items-center w-[100px] md:w-[140px] flex justify-end ease-in-out">
               <div
                 ref={element2}
-                className="scroll-show flex justify-between items-center w-[90px]"
+                className="scroll-show flex justify-between items-center w-[150px]"
               >
                 <a
                   href={discord}
                   target="_blank"
                   className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center"
+                  title="Join us on Discord"
                 >
                   <img src={discordLogo} alt="discord" />
                 </a>
@@ -73,13 +74,16 @@ function Navbar() {
                   href={twitter}
                   target="_blank"
                   className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center"
+                  title="Follow us on Twitter"
                 >
                   <img src={twitterLogo} alt="twitter" />
                 </a>
                 <a
                   target="_blank"
                   href={linkedin}
-                  className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
+                  className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center"
+                  title="Connect with us on LinkedIn"
+                >
                     <img src={linkedinLogo} alt="linkedin" />
                 </a>
               </div>
