@@ -56,10 +56,10 @@ function Navbar() {
           <div
             className={`fixed w-[91%] z-10 mx-auto lg:max-w-7xl flex justify-end`}
           >
-            <div className="relative items-center w-[100px] md:w-[140px] flex justify-end ease-in-out">
+            <div className="relative items-center w-[140px] flex justify-end ease-in-out">
               <div
                 ref={element2}
-                className="scroll-show flex justify-between items-center w-[150px]"
+                className="scroll-show flex justify-between items-center w-[160px]"
               >
                 <a
                   href={discord}
