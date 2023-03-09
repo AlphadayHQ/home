@@ -70,7 +70,7 @@ function Track() {
               </ul>
               </CardText>
 
-              <div className="absolute bottom-0">
+              <div className="absolute md:bottom-0 -bottom-6">
                 <FlipCardClose handler={handleTrackToggler}>
                   <p className="mr-2">CLOSE</p>
                   <i className="ri-close-fill"></i>
