@@ -20,7 +20,7 @@ function Track() {
 
   return (
     <div className="grid grid-cols-1">
-      <FlipCard className="overflow-hidden h-[350px] sm:h-[450px] lg:h-[590px]">
+      <FlipCard className="overflow-hidden h-[360px] sm:h-[450px] lg:h-[590px]">
         <FlipCardInner className={`${trackCardToggler ? "flipThis" : ""}`}>
           <FlipCardFront>
             <div>
