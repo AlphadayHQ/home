@@ -2,6 +2,7 @@ import Error404 from "./components/Error404";
 import Seo from "./components/seo";
 import CONFIG from "./config";
 import HomeContainer from "./containers/HomeContainer";
+import { CookieProvider } from "./utils/CookieContext";
 
 function App() {
   const path = window.location.pathname;
@@ -21,13 +22,14 @@ function App() {
     return <Error404 />;
   }
   return (
-    <>
+    <CookieProvider>
       <Seo
         title="Alphaday"
         description={"Everything about the Crypto ecosystem in one app"}
       />
       <HomeContainer />
-    </>
+      <CookieDisclaimer />
+    </CookieProvider>
   );
 }
 
