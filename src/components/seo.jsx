@@ -1,7 +1,12 @@
 import React, { useContext } from "react";
 import Helmet from "react-helmet";
+import TagManager from "react-gtm-module";
 import config from "../config";
 import { CookieContext } from "../utils/CookieContext";
+
+const tagManagerArgs = {
+  gtmId: "G-ZT80HRR0MD",
+};
 
 // recommended dimensions for thumbnail that appears when someone shares your website: 1200 pixels x 627 pixels (1.91/1 ratio)
 
@@ -76,9 +81,12 @@ const SEO = ({ title, description }) => {
       />
       <meta name="twitter:image" content={cover} data-react-helmet="true" />
       {allowTracking && (
-        <script>
-          {`(function(h,o,t,j,a,r){ h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)}; h._hjSettings={hjid:3387342,hjsv:6}; a=o.getElementsByTagName('head')[0]; r=o.createElement('script');r.async=1; r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv; a.appendChild(r); })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`}
-        </script>
+        <>
+          {TagManager.initialize(tagManagerArgs)}
+          <script>
+            {`(function(h,o,t,j,a,r){ h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)}; h._hjSettings={hjid:3387342,hjsv:6}; a=o.getElementsByTagName('head')[0]; r=o.createElement('script');r.async=1; r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv; a.appendChild(r); })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');`}
+          </script>
+        </>
       )}
     </Helmet>
   );
