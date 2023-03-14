@@ -23,8 +23,6 @@ const CookieDisclaimer = () => {
     },
   ];
 
-  console.log(noCookieChoice);
-
   if (noCookieChoice)
     return (
       <section className="fixed overflow-hidden w-full bottom-0 rounded-t-md z-100 bg-[#27292F]">

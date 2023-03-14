@@ -1,5 +1,6 @@
 import Error404 from "./components/Error404";
 import Seo from "./components/seo";
+import CookieDisclaimer from "./components/CookieDisclaimer";
 import CONFIG from "./config";
 import HomeContainer from "./containers/HomeContainer";
 import { CookieProvider } from "./utils/CookieContext";
