@@ -6,18 +6,18 @@ const CookieDisclaimer = () => {
 
   const choices = [
     {
-      key: "acceptAll",
-      buttonText: "Accept All",
+      key: "accept",
+      buttonText: "Accept",
       handler: () => {
-        setCookieChoice("acceptAll");
+        setCookieChoice("accept");
       },
       sortOrder: 0,
     },
     {
-      key: "accpetEssential",
-      buttonText: "Accept Essential",
+      key: "decline",
+      buttonText: "Decline",
       handler: () => {
-        setCookieChoice("accpetEssential");
+        setCookieChoice("decline");
       },
       sortOrder: 1,
     },
@@ -25,12 +25,11 @@ const CookieDisclaimer = () => {
 
   if (noCookieChoice)
     return (
-      <section className="fixed overflow-hidden w-full bottom-0 rounded-t-md z-100 bg-[#27292F]">
+      <section className="fixed overflow-hidden w-full bottom-0 z-100 bg-[#27292F]">
         <div className="relative flex flex-col flex-wrap justify-center items-center overflow-hidden">
           <div className="flex pt-5 p-2.5 lg:p-5 flex-1 flex-col lg:flex-row w-full max-w-7xl overflow-hidden items-center">
             <div className="mx-auto min-w-[280px] text-center lg:text-left text-[#C2C5D6] text-xs font-normal leading-6 tracking-wider">
-              We use essential cookies to make Alphaday work. We’d like to use
-              other cookies to improve and personalize your visit and to analyze
+              We’d like to use other cookies to improve and personalize your visit and to analyze
               our website’s performance, but only if you accept.
             </div>
             <div className="m-0 mt-2.5 lg:mt-0 flex flex-1 justify-end items-end scale-75">

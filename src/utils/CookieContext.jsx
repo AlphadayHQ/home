@@ -16,7 +16,7 @@ const useCookieChoice = () => {
   };
 
   return {
-    allowTracking: cookieChoice === "acceptAll",
+    allowTracking: cookieChoice === "accept",
     noCookieChoice: cookieChoice === null,
     setCookieChoice: handleCookieChioce,
   };
@@ -25,7 +25,9 @@ const useCookieChoice = () => {
 export const CookieProvider = ({ children }) => {
   const { allowTracking, setCookieChoice, noCookieChoice } = useCookieChoice();
   return (
-    <CookieContext.Provider value={{ allowTracking, setCookieChoice, noCookieChoice }}>
+    <CookieContext.Provider
+      value={{ allowTracking, setCookieChoice, noCookieChoice }}
+    >
       {children}
     </CookieContext.Provider>
   );
