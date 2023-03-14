@@ -20,7 +20,7 @@ function Track() {
 
   return (
     <div className="grid grid-cols-1">
-      <FlipCard className="overflow-hidden h-[350px] sm:h-[450px] lg:h-[590px]">
+      <FlipCard className="overflow-hidden h-[360px] sm:h-[450px] lg:h-[590px]">
         <FlipCardInner className={`${trackCardToggler ? "flipThis" : ""}`}>
           <FlipCardFront>
             <div>
@@ -70,7 +70,7 @@ function Track() {
               </ul>
               </CardText>
 
-              <div className="absolute bottom-0">
+              <div className="absolute md:bottom-0 -bottom-6">
                 <FlipCardClose handler={handleTrackToggler}>
                   <p className="mr-2">CLOSE</p>
                   <i className="ri-close-fill"></i>
