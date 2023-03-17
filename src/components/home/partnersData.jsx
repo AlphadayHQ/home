@@ -9,7 +9,6 @@ import orbs from "../../images/partners/orbs.png";
 import rocketPool from "../../images/partners/rocketPool.png";
 import theGraph from "../../images/partners/theGraph.png";
 import zcash from "../../images/partners/zcash.png";
-
 import verasity from "../../images/partners/verasity.png";
 import sia from "../../images/partners/sia.png";
 
@@ -47,7 +46,7 @@ const partners = [
     img: impossible,
     partner: "Impossible Finance",
     slug: "impossible",
-    size: "w-[100px]",
+    size: "w-[110px]",
   },
   {
     id: "6",
