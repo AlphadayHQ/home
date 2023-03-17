@@ -46,7 +46,7 @@ const partners = [
     id: "5",
     img: impossible,
     partner: "Impossible Finance",
-    slug: "impossible-finance",
+    slug: "impossible",
     size: "w-[100px]",
   },
   {
@@ -74,7 +74,7 @@ const partners = [
     id: "9",
     img: rocketPool,
     partner: "Rocket Pool",
-    slug: "rocket-pool",
+    slug: "rocketpool",
     size: "w-[52px]",
   },
   {
@@ -88,7 +88,7 @@ const partners = [
     id: "11",
     img: theGraph,
     partner: "TheGraph",
-    slug: "the-graph",
+    slug: "thegraph",
     size: "w-[50px]",
   },
   {
