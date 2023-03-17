@@ -9,7 +9,7 @@ function Partners() {
         <div className="">
           <div className="mb-8">
             <h2 className="text-[22px] font-medium text-aluminium text-center">
-              OUR PARTNERS
+              BOARD PARTNERS
             </h2>
           </div>
           <div className="grid place-content-center grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full mx-auto gap-4">
