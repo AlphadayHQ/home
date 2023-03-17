@@ -1,97 +1,109 @@
-import ventures from "../../images/partners/image50.png";
-import dfg from "../../images/partners/image52.png";
-import jsquare from "../../images/partners/image53.png";
-import kyber from "../../images/partners/image51.png";
-import signum from "../../images/partners/image54.png";
-import trader from "../../images/partners/image60.png";
-
-import jordi from "../../images/contributors/jordi.svg";
-import anthony from "../../images/contributors/anthony.svg";
-import mariano from "../../images/contributors/mariano.svg";
-import pierre from "../../images/contributors/pierre.svg";
+import aave from "../../images/partners/aave.png";
+import avalanche from "../../images/partners/avalanche.png";
+import aztec from "../../images/partners/aztec.png";
+import dfinity from "../../images/partners/dfinity.png";
+import impossible from "../../images/partners/impossible.png";
+import iotex from "../../images/partners/iotex.png";
+import moonbeam from "../../images/partners/moonbeam.png";
+import orbs from "../../images/partners/orbs.png";
+import rocketPool from "../../images/partners/rocketPool.png";
+import theGraph from "../../images/partners/theGraph.png";
+import zcash from "../../images/partners/zcash.png";
+import verasity from "../../images/partners/verasity.png";
+import sia from "../../images/partners/sia.png";
 
 const partners = [
   {
     id: "1",
-    img: ventures,
-    partner: "IOSG Ventures",
-    link: "https://iosg.vc/",
-    size: "w-[100px]",
+    img: aave,
+    partner: "Aave",
+    slug: "aave",
+    size: "w-[120px]",
   },
-
   {
     id: "2",
-    partner: "Kyber Network",
-    img: kyber,
-    link: "https://www.kyber.ventures/",
-    size: "w-[100px]",
+    img: avalanche,
+    partner: "Avalanche",
+    slug: "avalanche",
+    size: "w-[150px]",
   },
-
   {
     id: "3",
-    partner: "Signum Capital",
-    img: signum,
-    link: "https://www.signum.capital/",
-    size: "w-[114px]",
+    img: aztec,
+    partner: "Aztec",
+    slug: "aztec",
+    size: "w-[90px]",
   },
-  
   {
     id: "4",
-    partner: "DFG",
-    img: dfg,
-    link: "https://dfg.group/",
-    size: "w-[100px]",
+    img: dfinity,
+    partner: "Dfinity",
+    slug: "dfinity",
+    size: "w-[114px]",
   },
-
   {
     id: "5",
-    partner: "Jsquare",
-    img: jsquare,
-    link: "https://www.jsquare.co/",
-    size: "w-[114px]",
+    img: impossible,
+    partner: "Impossible Finance",
+    slug: "impossible",
+    size: "w-[110px]",
   },
-
   {
     id: "6",
-    partner: "TechMeetsTrader",
-    img: trader,
-    link: "https://techmeetstrader.com/",
-    size: "w-[114px]",
+    img: iotex,
+    partner: "Iotex",
+    slug: "iotex",
+    size: "w-[120px]",
+  },
+  {
+    id: "7",
+    img: moonbeam,
+    partner: "Moonbeam",
+    slug: "moonbeam",
+    size: "w-[140px]",
+  },
+  {
+    id: "8",
+    img: orbs,
+    partner: "Orbs",
+    slug: "orbs",
+    size: "w-[80px]",
+  },
+  {
+    id: "9",
+    img: rocketPool,
+    partner: "Rocket Pool",
+    slug: "rocketpool",
+    size: "w-[150px]",
+  },
+  {
+    id: "10",
+    img: sia,
+    partner: "Sia",
+    slug: "sia",
+    size: "w-[120px]",
+  },
+  {
+    id: "11",
+    img: theGraph,
+    partner: "TheGraph",
+    slug: "thegraph",
+    size: "w-[140px]",
+  },
+  {
+    id: "12",
+    img: verasity,
+    partner: "Verasity",
+    slug: "verasity",
+    size: "w-[140px]",
+  },
+  {
+    id: "13",
+    img: zcash,
+    partner: "Zcash",
+    slug: "zcash",
+    size: "w-[90px]",
   },
 ];
 
-const contributors = [
-  {
-    id: "1",
-    img: jordi,
-    contributor: "Jordi Alexander",
-    handle: "@gametheorizing",
-    link: "https://twitter.com/gametheorizing",
-  },
-
-  {
-    id: "2",
-    img: anthony,
-    contributor: "Anthony Sassano",
-    handle: "@sassal0x",
-    link: "https://twitter.com/sassal0x",
-  },
-
-  {
-    id: "3",
-    img: mariano,
-    contributor: "Mariano Conti",
-    handle: "@nanexcool",
-    link: "https://twitter.com/nanexcool",
-  },
-
-  {
-    id: "4",
-    img: pierre,
-    contributor: "Pierre Laurent",
-    handle: "@pierrelaurent",
-    link: "https://www.linkedin.com/in/pierrelaurent789/",
-  },
-];
-
-export { partners, contributors };
+export { partners };

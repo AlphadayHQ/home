@@ -12,6 +12,7 @@
   "dependencies": {
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
+    "react-gtm-module": "^2.0.11",
     "react-helmet": "^6.1.0"
   },
   "devDependencies": {
