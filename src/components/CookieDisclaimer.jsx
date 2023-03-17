@@ -29,9 +29,8 @@ const CookieDisclaimer = () => {
         <div className="relative flex flex-col flex-wrap justify-center items-center overflow-hidden">
           <div className="flex pt-5 p-2.5 lg:p-5 flex-1 flex-col lg:flex-row w-full max-w-7xl overflow-hidden items-center">
             <div className="mx-auto min-w-[280px] text-center lg:text-left text-[#C2C5D6] text-xs font-normal leading-6 tracking-wider">
-              We’d like to use other cookies to improve and personalize your
-              visit and to analyze our website’s performance, but only if you
-              accept.
+              We’d like to use cookies to improve and personalize your
+              visit and to analyze our website’s performance.
             </div>
             <div className="m-0 mt-2.5 lg:mt-0 flex flex-1 justify-end items-end scale-75">
               {choices
