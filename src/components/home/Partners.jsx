@@ -15,7 +15,12 @@ function Partners() {
           <div className="grid place-content-center grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full mx-auto gap-4">
             {partners.map((item) => {
               return (
-                <figure key={item.id} className="flex justify-center">
+                <figure
+                  key={item.id}
+                  className={`flex justify-center ${
+                    item.id === "13" ? "col-[1/-1] h-24" : ""
+                  }`}
+                >
                   <a
                     target="_blank"
                     href={`https://app.alphaday.com/b/${item.slug}`}
