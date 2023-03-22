@@ -1,5 +1,4 @@
 import member1 from "../../images/team/member-1.jpg";
-import member2 from "../../images/team/member-2.jpg";
 import member3 from "../../images/team/member-3.jpg";
 import member4 from "../../images/team/member-4.jpg";
 import member5 from "../../images/team/member-5.jpg";
@@ -24,13 +23,6 @@ export const teamData = [
     position: "Developer",
     twitter: "https://twitter.com/get_giddy",
     linkedin: "https://www.linkedin.com/in/getgiddy/",
-  },
-  {
-    img: member2,
-    name: "DeFi Dude",
-    position: "Co-Founder",
-    twitter: "https://twitter.com/defidude",
-    linkedin: "https://www.linkedin.com/in/defi-dude-72296b221/",
   },
   {
     img: member3,
@@ -96,12 +88,6 @@ export const positionData = [
     classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
     infoPosClassnames:
       "left-[30%] bottom-[-140%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
-  },
-  {
-    id: 2,
-    classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[151px]",
-    infoPosClassnames:
-      "bottom-[-110%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
   },
   {
     id: 3,
