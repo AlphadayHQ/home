@@ -23,7 +23,7 @@ async function fetchBoards(url) {
 	const response = await fetch(url);
 	const { results, links } = await response.json();
 	let next = links.next;
-	boards = [...results];
+	let boards = [...results];
 	while (next) {
 		const response = await fetch(next);
 		const { results, links } = await response.json();
