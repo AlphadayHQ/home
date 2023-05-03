@@ -23,17 +23,17 @@ function TeamCard({ data, type }) {
             <a
               href={data.twitter}
               target="_blank"
-              className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue mr-2"
+              className="cursor-pointer flex items-center w-8 h-8 rounded-full justify-center bg-blue mr-2"
             >
-              <i className="text-white text-xs ri-twitter-fill"></i>
+              <i className="text-white text-sm ri-twitter-fill"></i>
             </a>
 
             <a
               href={data.linkedin}
               target="_blank"
-              className="cursor-pointer flex items-center w-[22px] h-[22px] rounded-full justify-center bg-blue"
+              className="cursor-pointer flex items-center w-8 h-8 rounded-full justify-center bg-blue"
             >
-              <i className="text-white text-xs ri-linkedin-fill"></i>
+              <i className="text-white text-sm ri-linkedin-fill"></i>
             </a>
           </div>
         </div>
