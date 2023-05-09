@@ -10,6 +10,7 @@
     "build-sitemap": "node scripts/build-sitemap.js"
   },
   "dependencies": {
+    "node-fetch": "2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-gtm-module": "^2.0.11",
