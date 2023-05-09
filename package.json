@@ -1,7 +1,7 @@
 {
   "name": "alphaday",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.2.11",
   "homepage": ".",
   "scripts": {
     "dev": "vite",
@@ -10,6 +10,7 @@
     "build-sitemap": "node scripts/build-sitemap.js"
   },
   "dependencies": {
+    "node-fetch": "2",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-gtm-module": "^2.0.11",
