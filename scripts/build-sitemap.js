@@ -16,7 +16,6 @@ if (!existsSync(distPath)) {
 
 const baseUrl = "https://alphaday.com";
 const appUrl = "https://app.alphaday.com";
-
 const boardsRequestUrl = "https://api.alphaday.com/ui/views/";
 
 // function to fetch all pages from the API looping through paginated results
