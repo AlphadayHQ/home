@@ -18,14 +18,21 @@ const baseUrl = "https://alphaday.com";
 const appUrl = "https://app.alphaday.com";
 const boardsRequestUrl = "https://api.alphaday.com/ui/views/";
 
+const appId = process.env.ALPHADAY_APP_ID;
+const appSecret = process.env.ALPHADAY_APP_SECRET;
+
 // function to fetch all pages from the API looping through paginated results
 async function fetchBoards(url) {
-  const response = await fetch(url);
+  const headers = {
+	"x-app-id": appId,
+	"x-app-secret": appSecret,
+  };
+  const response = await fetch(url, { headers: headers });
   const { results, links } = await response.json();
   let next = links?.next;
   let boards = [...(results || [])];
   while (next) {
-    const response = await fetch(next);
+    const response = await fetch(next, { headers: headers });
     const { results, links } = await response.json();
     next = links?.next;
     boards = [...boards, ...(results || [])];
