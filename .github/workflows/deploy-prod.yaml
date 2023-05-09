@@ -21,6 +21,9 @@ jobs:
       - uses: borales/actions-yarn@v3.0.0
         with:
           cmd: build # will run `yarn build` command
+        env:
+          ALPHADAY_APP_ID: sBnL0RkWkM
+          ALPHADAY_APP_SECRET: 21gPAwU3uOUisMJJFJjaotbDxCmvCHKMh76Xlvb8XK2RkkvZHhtSfcUfoz6QiFx8zhZf31vxvKAFD7pkdmbjHiKwoVuS2iDOLjvC
 
       - uses: kefranabg/s3-sync-action@master
         with:
