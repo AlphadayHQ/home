@@ -25,8 +25,8 @@ jobs:
         with:
           cmd: build # will run `yarn build` command
         env:
-          ALPHADAY_APP_ID: sBnL0RkWkM
-          ALPHADAY_APP_SECRET: 21gPAwU3uOUisMJJFJjaotbDxCmvCHKMh76Xlvb8XK2RkkvZHhtSfcUfoz6QiFx8zhZf31vxvKAFD7pkdmbjHiKwoVuS2iDOLjvC
+          REACT_APP_X_APP_ID: sBnL0RkWkM
+          REACT_APP_X_APP_SECRET: 21gPAwU3uOUisMJJFJjaotbDxCmvCHKMh76Xlvb8XK2RkkvZHhtSfcUfoz6QiFx8zhZf31vxvKAFD7pkdmbjHiKwoVuS2iDOLjvC
 
       - uses: kefranabg/s3-sync-action@master
         with:
@@ -41,29 +41,29 @@ jobs:
 
   # Get message VARs and Notify team through discord of deployment
   notify:
-      name: Notify
-      runs-on: ubuntu-latest
-      needs: deploy
+    name: Notify
+    runs-on: ubuntu-latest
+    needs: deploy
 
-      steps:
-          - uses: actions/checkout@v2.2.0
-            with:
-                fetch-depth: 0
+    steps:
+      - uses: actions/checkout@v2.2.0
+        with:
+          fetch-depth: 0
 
-          - name: Get Repo Name
-            run: echo "REPOSITORY_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
+      - name: Get Repo Name
+        run: echo "REPOSITORY_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
 
-          - name: "Get Latest Tag"
-            id: previoustag
-            uses: "WyriHaximus/github-action-get-previous-tag@v1"
+      - name: "Get Latest Tag"
+        id: previoustag
+        uses: "WyriHaximus/github-action-get-previous-tag@v1"
 
-          - name: Set branch name
-            run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+      - name: Set branch name
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
 
-            # Notify Discord
-          - name: Discord notification
-            env:
-                DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK__OPS_CHANNEL }}
-            uses: "Ilshidur/action-discord@0c4b27844ba47cb1c7bee539c8eead5284ce9fa9"
-            with:
-                args: "${{ env.REPOSITORY_NAME }}-${{ steps.previoustag.outputs.tag }} (${{ env.BRANCH_NAME }}) has been deployed on ${{ env.ENVIRONMENT }}."
+        # Notify Discord
+      - name: Discord notification
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK__OPS_CHANNEL }}
+        uses: "Ilshidur/action-discord@0c4b27844ba47cb1c7bee539c8eead5284ce9fa9"
+        with:
+          args: "${{ env.REPOSITORY_NAME }}-${{ steps.previoustag.outputs.tag }} (${{ env.BRANCH_NAME }}) has been deployed on ${{ env.ENVIRONMENT }}."
