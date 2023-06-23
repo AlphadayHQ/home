@@ -97,13 +97,13 @@ function Stats() {
             className={`mx-auto ml-3 sm:ml-0 flex flex-col md:flex-row justify-between items-center md:items-start flex-1 mt-4 sm:mt-0`}
           >
             <Item
-              count="30+"
+              count="50+"
               text="widgets"
               className="md:w-auto lg:w-[220px] md:mr-6"
             />
 
             <Item
-              count="500+"
+              count="1500+"
               text="projects"
               className="md:w-auto lg:w-[280px] md:mr-6"
             />
