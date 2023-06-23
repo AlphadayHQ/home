@@ -103,7 +103,7 @@ function Stats() {
             />
 
             <Item
-              count="500+"
+              count="1500+"
               text="projects"
               className="md:w-auto lg:w-[280px] md:mr-6"
             />
