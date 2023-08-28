@@ -9,6 +9,7 @@ import jordi from "../../images/contributors/jordi.svg";
 import anthony from "../../images/contributors/anthony.svg";
 import mariano from "../../images/contributors/mariano.svg";
 import pierre from "../../images/contributors/pierre.svg";
+import hashkey from "../../images/backers/hashkey.png";
 
 const backers = [
   {
@@ -17,6 +18,13 @@ const backers = [
     partner: "IOSG Ventures",
     link: "https://iosg.vc/",
     size: "w-[100px]",
+  },
+  {
+    id: "7",
+    partner: "HashKey Capital",
+    img: hashkey,
+    link: "https://hashkey.capital/",
+    size: "w-[114px]",
   },
 
   {
@@ -34,7 +42,7 @@ const backers = [
     link: "https://www.signum.capital/",
     size: "w-[114px]",
   },
-  
+
   {
     id: "4",
     partner: "DFG",
