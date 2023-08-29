@@ -58,14 +58,6 @@ const backers = [
     link: "https://www.jsquare.co/",
     size: "w-[114px]",
   },
-
-  {
-    id: "6",
-    partner: "TechMeetsTrader",
-    img: trader,
-    link: "https://techmeetstrader.com/",
-    size: "w-[114px]",
-  },
 ];
 
 const contributors = [

@@ -12,7 +12,7 @@ function Backers() {
               OUR BACKERS
             </h2>
           </div>
-          <div className="mb-8 grid place-content-center grid-cols-2 md:grid-cols-3 lg:grid-cols-7 w-full mx-auto gap-4">
+          <div className="mb-8 grid place-content-center grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full mx-auto gap-4">
             {backers.map((item) => {
               return (
                 <figure key={item.id} className="flex justify-center">
