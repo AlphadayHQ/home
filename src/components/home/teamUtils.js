@@ -73,13 +73,6 @@ export const teamData = [
     twitter: "https://twitter.com/Chadnium",
     linkedin: "https://www.linkedin.com/in/charles-nwankwo-01/",
   },
-  {
-    img: member8,
-    name: "Paris Charanas Giannakou",
-    position: "Analyst and Content Editor",
-    twitter: "https://twitter.com/GrifousG",
-    linkedin: "https://www.linkedin.com/in/paris-charanas-giannakou-788386231/",
-  },
 ];
 
 export const positionData = [
