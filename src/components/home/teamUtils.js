@@ -4,7 +4,6 @@ import member4 from "../../images/team/member-4.jpg";
 import member5 from "../../images/team/member-5.jpg";
 import member6 from "../../images/team/member-6.jpg";
 import member7 from "../../images/team/member-7.jpg";
-import member8 from "../../images/team/member-8.jpg";
 import member9 from "../../images/team/member-9.jpg";
 import member10 from "../../images/team/member-10.jpg";
 
@@ -73,13 +72,6 @@ export const teamData = [
     twitter: "https://twitter.com/Chadnium",
     linkedin: "https://www.linkedin.com/in/charles-nwankwo-01/",
   },
-  {
-    img: member8,
-    name: "Paris Charanas Giannakou",
-    position: "Analyst and Content Editor",
-    twitter: "https://twitter.com/GrifousG",
-    linkedin: "https://www.linkedin.com/in/paris-charanas-giannakou-788386231/",
-  },
 ];
 
 export const positionData = [
@@ -130,12 +122,6 @@ export const positionData = [
     classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[151px]",
     infoPosClassnames:
       "bottom-[-120%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
-  },
-  {
-    id: 10,
-    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
-    infoPosClassnames:
-      "right-[30%] bottom-[-140%] sm:bottom-[-15%] lg:bottom-auto lg:left-[70%]",
   },
 ];
 
