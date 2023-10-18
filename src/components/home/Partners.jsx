@@ -17,7 +17,9 @@ function Partners() {
               return (
                 <figure
                   key={item.id}
-                  className={`flex justify-center`}
+                  className={`flex justify-center ${
+                    item.id === "13" ? "col-[1/-1] h-24" : ""
+                  }`}
                 >
                   <a
                     target="_blank"
