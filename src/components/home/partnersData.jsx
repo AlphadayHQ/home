@@ -11,6 +11,7 @@ import theGraph from "../../images/partners/theGraph.png";
 import zcash from "../../images/partners/zcash.png";
 import verasity from "../../images/partners/verasity.png";
 import sia from "../../images/partners/sia.png";
+import chiliz from "../../images/partners/chiliz.png";
 
 const partners = [
   {
@@ -104,7 +105,13 @@ const partners = [
     slug: "zcash",
     size: "w-[90px]",
   },
-
+  {
+    id: "14",
+    img: chiliz,
+    partner: "Chiliz",
+    slug: "chiliz",
+    size: "w-[90px]",
+  },
 ];
 
 export { partners };
