@@ -104,6 +104,7 @@ const partners = [
     slug: "zcash",
     size: "w-[90px]",
   },
+
 ];
 
 export { partners };
