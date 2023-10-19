@@ -24,7 +24,11 @@ function Partners() {
                 >
                   <a
                     target="_blank"
-                    href={`https://app.alphaday.com/b/${item.slug}`}
+                    href={
+                      item.slug
+                        ? `https://app.alphaday.com/b/${item.slug}`
+                        : undefined
+                    }
                     className="transcale flex items-center"
                   >
                     <img

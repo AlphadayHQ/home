@@ -109,7 +109,7 @@ const partners = [
     id: "14",
     img: chiliz,
     partner: "Chiliz",
-    slug: "chiliz",
+    slug: undefined,
     size: "w-[90px]",
   },
 ];
