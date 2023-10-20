@@ -118,14 +118,14 @@ const partners = [
     id: "15",
     img: ethereumClassic,
     partner: "Ethereum Classic",
-    slug: undefined,
+    slug: "ethereumclassic",
     size: "w-[90px]",
   },
   {
     id: "16",
     img: oceanProtocol,
-    partner: "Ccean Protocol",
-    slug: undefined,
+    partner: "Ocean Protocol",
+    slug: "oceanprotocol",
     size: "w-[90px]",
   },
 ];
