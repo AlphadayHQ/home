@@ -17,10 +17,8 @@ function Partners() {
               return (
                 <figure
                   key={item.id}
-                  className={`flex justify-center ${
-                    index === partners.length - 1 && "[grid-column-end:_-3]"
-                  }
-                  ${index === partners.length - 2 && "[grid-column-end:_4]"}`}
+                  className={`flex justify-center 
+                  ${index === partners.length - 4 && "[grid-column-end:_-5]"}`}
                 >
                   <a
                     target="_blank"
