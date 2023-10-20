@@ -13,17 +13,20 @@ function Partners() {
             </h2>
           </div>
           <div className="grid place-content-center grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full mx-auto gap-4">
-            {partners.map((item) => {
+            {partners.map((item, index) => {
               return (
                 <figure
                   key={item.id}
-                  className={`flex justify-center ${
-                    item.id === "13" ? "col-[1/-1] h-24" : ""
-                  }`}
+                  className={`flex justify-center 
+                  ${index === partners.length - 4 && "[grid-column-end:_-5]"}`}
                 >
                   <a
                     target="_blank"
-                    href={`https://app.alphaday.com/b/${item.slug}`}
+                    href={
+                      item.slug
+                        ? `https://app.alphaday.com/b/${item.slug}`
+                        : undefined
+                    }
                     className="transcale flex items-center"
                   >
                     <img
