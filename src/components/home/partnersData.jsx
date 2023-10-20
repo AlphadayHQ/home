@@ -11,6 +11,9 @@ import theGraph from "../../images/partners/theGraph.png";
 import zcash from "../../images/partners/zcash.png";
 import verasity from "../../images/partners/verasity.png";
 import sia from "../../images/partners/sia.png";
+import chiliz from "../../images/partners/chiliz.png";
+import ethereumClassic from "../../images/partners/ethereum-classic.png";
+import oceanProtocol from "../../images/partners/ocean-protocol.png";
 
 const partners = [
   {
@@ -102,6 +105,27 @@ const partners = [
     img: zcash,
     partner: "Zcash",
     slug: "zcash",
+    size: "w-[90px]",
+  },
+  {
+    id: "14",
+    img: chiliz,
+    partner: "Chiliz",
+    slug: undefined,
+    size: "w-[90px]",
+  },
+  {
+    id: "15",
+    img: ethereumClassic,
+    partner: "Ethereum Classic",
+    slug: "ethereumclassic",
+    size: "w-[90px]",
+  },
+  {
+    id: "16",
+    img: oceanProtocol,
+    partner: "Ocean Protocol",
+    slug: "oceanprotocol",
     size: "w-[90px]",
   },
 ];
