@@ -88,7 +88,7 @@ function Footer() {
         </div>
 
         <div className="w-full flex justify-center items-center text-aluminium border-t border-[#A3A7B380] mt-16">
-          <small className="mt-4">&copy; 2023 Alphabox Solutions</small>
+          <small className="mt-4">&copy; 2024 Alphabox Solutions</small>
         </div>
       </Div>
     </Section>
