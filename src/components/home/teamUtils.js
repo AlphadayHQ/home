@@ -98,6 +98,12 @@ export const positionData = [
       "left-[30%] bottom-[-140%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
   },
   {
+    id: 2,
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[73px] sm:w-[183px]",
+    infoPosClassnames:
+      "bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+  },
+  {
     id: 3,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[73px] sm:w-[183px]",
     infoPosClassnames:
@@ -111,7 +117,7 @@ export const positionData = [
   },
   {
     id: 5,
-    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[168px]",
     infoPosClassnames:
       "right-[30%] bottom-[-140%] sm:bottom-[-15%] lg:bottom-auto lg:left-[70%]",
   },
@@ -135,7 +141,13 @@ export const positionData = [
   },
   {
     id: 9,
-    classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[151px]",
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[168px]",
+    infoPosClassnames:
+      "bottom-[-120%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+  },
+  {
+    id: 10,
+    classnames: "rounded-[13px] sm:rounded-[26px] w-[60px] sm:w-[158px]",
     infoPosClassnames:
       "bottom-[-120%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
   },

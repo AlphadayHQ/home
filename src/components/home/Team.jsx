@@ -44,6 +44,7 @@ function TeamCard({ data, type }) {
 
 function Team() {
   const shuffledTeam = shuffleTeam(teamData, positionData);
+  console.log(shuffledTeam, "shuffledTeam");
   return (
     <Section>
       <Div>
