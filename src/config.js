@@ -2,9 +2,9 @@ import coverImg from "./images/seo1200x627-black.png";
 
 const CONFIG = {
   privacyPolicy:
-    "https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0",
+    "https://alpahday.com/privacy",
   terms:
-    "https://app.termly.io/document/terms-of-use-for-website/0f183823-fe52-47af-87d2-d1058b844918",
+    "https://alpahday.com/terms",
   feedBack: "https://forms.gle/hBXWWTAvsN7dAMN66",
   discord: "https://alphaday.com/discord",
   twitter: "https://twitter.com/AlphadayHQ",
