@@ -43,6 +43,7 @@ function TeamCard({ data, type }) {
 }
 
 function Team() {
+  // teamData.length should be equal to positionData.length
   const shuffledTeam = shuffleTeam(teamData, positionData);
   return (
     <Section>
@@ -54,8 +55,8 @@ function Team() {
               <p className="text-aluminium text-xs md:text-base mt-4 text-center">
                 Alphaday&apos;s mission is to bring you all the tools needed to
                 follow your favorite projects, stay up-to-date with the latest
-                narratives, and use your favorite dapps, all from the comfort
-                of one easy-to-use customizable dashboard.
+                narratives, and use your favorite dapps, all from the comfort of
+                one easy-to-use customizable dashboard.
               </p>
             </div>
           </div>
