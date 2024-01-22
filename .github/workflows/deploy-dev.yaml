@@ -10,6 +10,7 @@ on:
 
 env:
   ENVIRONMENT: dev
+  VITE_CLARITY_PROJECT_ID: ${{ secrets.DEV__REACT_APP_CLARITY_PROJECT_ID }}
 
 jobs:
   deploy:

@@ -1,10 +1,8 @@
 import coverImg from "./images/seo1200x627-black.png";
 
 const CONFIG = {
-  privacyPolicy:
-    "https://alpahday.com/privacy",
-  terms:
-    "https://alpahday.com/terms",
+  privacyPolicy: "https://alpahday.com/privacy",
+  terms: "https://alpahday.com/terms",
   feedBack: "https://forms.gle/hBXWWTAvsN7dAMN66",
   discord: "https://alphaday.com/discord",
   twitter: "https://twitter.com/AlphadayHQ",
@@ -25,6 +23,7 @@ const CONFIG = {
     },
     cover: coverImg,
   },
+  CLARITY_ID: import.meta.env.VITE_CLARITY_PROJECT_ID ?? "",
 };
 
 export default CONFIG;
