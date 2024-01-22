@@ -26,6 +26,13 @@ export const teamData = [
     linkedin: "https://www.linkedin.com/in/getgiddy/",
   },
   {
+    img: member2,
+    name: "Zehra Naz Hacısüleyman",
+    position: "Marketing Lead",
+    twitter: "https://twitter.com/zehranazh",
+    linkedin: "https://www.linkedin.com/in/zehranazh/",
+  },
+  {
     img: member3,
     name: "Felipe Faraggi",
     position: "Co-Founder & CTO",
@@ -47,20 +54,6 @@ export const teamData = [
     linkedin: "https://www.linkedin.com/in/pablo-palomo-07127711/",
   },
   {
-    img: member9,
-    name: "Jonathan Irhodia",
-    position: "Developer",
-    twitter: "https://twitter.com/iamelcharitas",
-    linkedin: "https://linkedin.com/in/elcharitas",
-  },
-  {
-    img: member10,
-    name: "Mikael Hagopian",
-    position: "QA and Analyst",
-    twitter: "https://twitter.com/MikeJa33",
-    linkedin: "https://www.linkedin.com/in/mikael-h-87bb4ba4/",
-  },
-  {
     img: member6,
     name: "Deniz Omer",
     position: "Co-Founder & CEO",
@@ -76,17 +69,24 @@ export const teamData = [
   },
   {
     img: member8,
-    name: "Zehra Naz Hacısüleyman",
-    position: "Marketing Lead",
-    twitter: "https://twitter.com/zehranazh",
-    linkedin: "https://www.linkedin.com/in/zehranazh/",
-  },
-  {
-    img: member2,
     name: " Selim Cetiner",
     position: "Content Analyst",
     twitter: "https://twitter.com/selim_jpeg",
     linkedin: "https://www.linkedin.com/in/selim-cetiner-167364234/",
+  },
+  {
+    img: member9,
+    name: "Jonathan Irhodia",
+    position: "Developer",
+    twitter: "https://twitter.com/iamelcharitas",
+    linkedin: "https://linkedin.com/in/elcharitas",
+  },
+  {
+    img: member10,
+    name: "Mikael Hagopian",
+    position: "QA and Analyst",
+    twitter: "https://twitter.com/MikeJa33",
+    linkedin: "https://www.linkedin.com/in/mikael-h-87bb4ba4/",
   },
 ];
 
