@@ -4,6 +4,7 @@ on: workflow_dispatch
 
 env:
   ENVIRONMENT: production
+  VITE_CLARITY_PROJECT_ID: ${{ secrets.PROD__REACT_APP_CLARITY_PROJECT_ID }}
 
 jobs:
   deploy:
