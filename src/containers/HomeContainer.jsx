@@ -1,6 +1,6 @@
 import React from 'react'
 import { Footer, Navbar } from '../components';
-import { Hero, Partners, Backers, Team, FAQ, Getfeatures, Workflow } from '../components/home';
+import { Hero, Partners, Backers, Team, FAQ, Blog, Getfeatures, Workflow } from '../components/home';
 
 function HomeContainer() {
   return (
@@ -12,6 +12,7 @@ function HomeContainer() {
       <Backers />
       <Team />
       <FAQ />
+      <Blog />
       <Getfeatures />
       <Footer />
     </>
