@@ -21,38 +21,63 @@ const Anchor = ({ children, href, className }) => {
   );
 };
 
+const ColTilte = ({title}) => (
+  <p className="text-aluminium text-sm font-medium mb-4">{title}</p>
+);
+
 function Footer() {
-  const { blog, discord, feedBack, linkedin, privacyPolicy, terms, twitter } =
-    config;
+  const {
+    blog,
+    discord,
+    feedBack,
+    linkedin,
+    privacyPolicy,
+    terms,
+    twitter,
+    blogLinks,
+  } = config;
   return (
     <Section className="">
       <Div className="pt-0">
         <div className="grid place-content-between gap-10 sm:gap-16 grid-cols-2 md:grid-cols-4">
-          <Col className="place-self-center hidden md:flex">
+          <Col className="place-self-start hidden md:flex">
+            <ColTilte title="About Us" />
             <Anchor className="mb-4" href={terms}>
               Terms of Use
             </Anchor>
-            <Anchor href={privacyPolicy}>Privacy Policy</Anchor>
-          </Col>
-
-          <Col className="place-self-center hidden md:flex">
-            {/* <Anchor className="mb-4" href="#">
-              Docs
-            </Anchor> */}
-            <Anchor href={blog} className="">
+            <Anchor href={privacyPolicy} className="mb-4">
+              Privacy Policy
+            </Anchor>
+            <Anchor href={blog} className="mb-4">
               Blog
             </Anchor>
-          </Col>
-
-          <Col className="place-self-center hidden md:flex">
             <Anchor href="mailto:hello@alphaday.com" className="mb-4">
               Contact
             </Anchor>
             <Anchor href={feedBack}>Give Feedback</Anchor>
           </Col>
 
+          <Col className="place-self-start hidden md:flex">
+            <ColTilte title="Crypto 101" />
+            {blogLinks["Crypto 101"].map(({ title, link }) => (
+              <Anchor href={link} className="mb-4">
+                {title}
+              </Anchor>
+            ))}
+          </Col>
+
+          <Col className="place-self-start hidden md:flex">
+            <ColTilte title="Learn" />
+            {blogLinks.learn.map(({ title, link }) => (
+              <Anchor href={link} className="mb-4">
+                {title}
+              </Anchor>
+            ))}
+          </Col>
+
           {/* mobile */}
           <Col className="place-self-center md:hidden">
+            <ColTilte title="About Us" />
             <Anchor className="mb-4" href={blog}>
               Blog
             </Anchor>
