@@ -40,7 +40,7 @@ function Footer() {
     <Section className="">
       <Div className="pt-0">
         <div className="grid place-content-between gap-10 sm:gap-16 grid-cols-2 md:grid-cols-4">
-          <Col className="place-self-start hidden md:flex">
+          <Col className="place-self-start flex">
             <ColTilte title="About Us" />
             <Anchor className="mb-4" href={terms}>
               Terms of Use
@@ -57,7 +57,7 @@ function Footer() {
             <Anchor href={feedBack}>Give Feedback</Anchor>
           </Col>
 
-          <Col className="place-self-start hidden md:flex">
+          <Col className="place-self-start flex">
             <ColTilte title="Crypto 101" />
             {blogLinks["Crypto 101"].map(({ title, link }) => (
               <Anchor href={link} className="mb-4">
@@ -66,7 +66,7 @@ function Footer() {
             ))}
           </Col>
 
-          <Col className="place-self-start hidden md:flex">
+          <Col className="place-self-start flex col-span-2 md:col-span-1">
             <ColTilte title="Learn" />
             {blogLinks.learn.map(({ title, link }) => (
               <Anchor href={link} className="mb-4">
@@ -75,25 +75,7 @@ function Footer() {
             ))}
           </Col>
 
-          {/* mobile */}
-          <Col className="place-self-center md:hidden">
-            <ColTilte title="About Us" />
-            <Anchor className="mb-4" href={blog}>
-              Blog
-            </Anchor>
-            <Anchor className="mb-4" href={terms}>
-              Terms of Use
-            </Anchor>
-            <Anchor className="mb-4" href={privacyPolicy}>
-              Privacy Policy
-            </Anchor>
-            <Anchor className="mb-4" href={feedBack}>
-              Give Feedback
-            </Anchor>
-            <Anchor href="mailto:hello@alphaday.com">Contact</Anchor>
-          </Col>
-
-          <div className="place-self-center items-end flex justify-between w-[130px] h-full">
+          <div className="place-self-start pb-4 md:place-self-center items-end flex justify-between w-[130px] h-full col-span-2 md:col-span-1">
             <a target="_blank" href={twitter}>
               <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
                 <img src={twitterLogo} alt="twitter" />
