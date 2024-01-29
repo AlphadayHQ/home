@@ -39,7 +39,7 @@ function Footer() {
   return (
     <Section className="">
       <Div className="pt-0">
-        <div className="grid place-content-between gap-10 sm:gap-16 grid-cols-2 md:grid-cols-4">
+        <div className="grid place-content-between gap-10 xl:gap-16 grid-cols-2 md:grid-cols-4">
           <Col className="place-self-start flex">
             <ColTilte title="About Us" />
             <Anchor className="mb-4" href={terms}>
