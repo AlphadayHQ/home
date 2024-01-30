@@ -24,6 +24,60 @@ const CONFIG = {
     cover: coverImg,
   },
   CLARITY_ID: import.meta.env.VITE_CLARITY_PROJECT_ID ?? "",
+  blogLinks: {
+    learn: [
+      {
+        title: "Making Money with Cryptocurrency",
+        link: "https://blog.alphaday.com/p/making-money-with-cryptocurrency",
+      },
+      {
+        title: "How to Build a Cryptocurrency Dashboard",
+        link: "https://blog.alphaday.com/p/how-to-build-a-cryptocurrency-dashboard",
+      },
+      {
+        title: "What Is Crypto Halving: A Bitcoin Story",
+        link: "https://blog.alphaday.com/p/what-is-crypto-halving-a-bitcoin",
+      },
+      {
+        title: "How To Set Up Ethereum Wallet",
+        link: "https://blog.alphaday.com/p/how-to-set-up-ethereum-wallet",
+      },
+      {
+        title: "How to Read Crypto Charts",
+        link: "https://blog.alphaday.com/p/how-to-read-crypto-charts-full-guide",
+      },
+      {
+        title: "Crypto Asset Management Guide",
+        link: "https://blog.alphaday.com/p/crypto-asset-management-guide",
+      },
+      {
+        title: "Staking vs. Liquidity Mining (Yield Farming)",
+        link: "https://blog.alphaday.com/p/staking-vs-liquidity-mining-yield",
+      },
+    ],
+    "Crypto 101": [
+      {
+        title: "What is Bitcoin?",
+        link: "https://blog.alphaday.com/p/what-is-bitcoin",
+      },
+      {
+        title: "What Is Ethereum?",
+        link: "https://blog.alphaday.com/p/what-is-ethereum",
+      },
+      {
+        title: "What is Wrapped Crypto?",
+        link: "https://blog.alphaday.com/p/what-is-wrapped-crypto",
+      },
+      {
+        title: "What is Arbitrum?",
+        link: "https://blog.alphaday.com/p/what-is-arbitrum-everything-you-need",
+      },
+      {
+        title: "What is zkSync?",
+        link: "https://blog.alphaday.com/p/understanding-zksync-from-scratch",
+      },
+    ],
+  },
 };
 
 export default CONFIG;
