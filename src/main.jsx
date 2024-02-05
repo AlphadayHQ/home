@@ -1,5 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { clarity } from 'react-microsoft-clarity';
 import "./assets/css/alphaday.css";
 import App from "./App";
 import CONFIG from "./config";
