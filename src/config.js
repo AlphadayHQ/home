@@ -1,20 +1,21 @@
 import coverImg from "./images/seo1200x627-black.png";
 
+const ALPHADAY_ROOT_URL = "https://alphaday.com/";
+
 const CONFIG = {
-  privacyPolicy: "https://alpahday.com/privacy",
-  terms: "https://alpahday.com/terms",
+  privacyPolicy: ALPHADAY_ROOT_URL + "privacy",
+  terms: ALPHADAY_ROOT_URL + "terms",
   feedBack: "https://forms.gle/hBXWWTAvsN7dAMN66",
-  discord: "https://alphaday.com/discord",
+  discord: ALPHADAY_ROOT_URL + "discord",
   twitter: "https://twitter.com/AlphadayHQ",
   alphadayApp: "https://app.alphaday.com",
   blog: "https://blog.alphaday.com",
   linkedin: "https://www.linkedin.com/company/alphaday",
   // import.meta.env.PROD returns a boolean on whether the app is running in production
-  emailSubscrptionUrl: `https://api.${
-    import.meta.env.PROD ? "alphaday" : "zettaday"
-  }.com/v1/user/email_subscriptions/subscribe/`,
+  emailSubscrptionUrl: `https://api.${import.meta.env.PROD ? "alphaday" : "zettaday"
+    }.com/v1/user/email_subscriptions/subscribe/`,
   seo: {
-    domain: "https://alphaday.com",
+    domain: ALPHADAY_ROOT_URL,
     siteName: "Alphaday",
     defaultTitle: "Alphaday",
     defaultDescription: "Everything Crypto, All in one place.",
