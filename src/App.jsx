@@ -13,7 +13,7 @@ function removeTrailingBackSlash(site) {
 function App() {
   const path = removeTrailingBackSlash(window.location.pathname);
 
-  const supportedPaths = ["/", CONFIG.privacyPolicy];
+  const supportedPaths = ["", CONFIG.privacyPolicy];
 
   if (!supportedPaths.includes(path)) {
     if (path.startsWith("/b/")) {
