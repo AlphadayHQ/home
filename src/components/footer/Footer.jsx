@@ -9,11 +9,11 @@ const Col = ({ children, className }) => {
   return <div className={`flex flex-col ${className}`}>{children}</div>;
 };
 
-const Anchor = ({ children, href, className }) => {
+const Anchor = ({ children, href, className, target }) => {
   return (
     <a
       href={href}
-      target="_blank"
+      target={target || "_blank"}
       className={`text-aluminium text-sm ${className}`}
     >
       {children}
@@ -32,7 +32,9 @@ function Footer() {
             <Anchor className="mb-4" href={terms}>
               Terms of Use
             </Anchor>
-            <Anchor href={privacyPolicy}>Privacy Policy</Anchor>
+            <Anchor target="_self" href={privacyPolicy}>
+              Privacy Policy
+            </Anchor>
           </Col>
 
           <Col className="place-self-center hidden md:flex">

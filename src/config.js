@@ -1,7 +1,7 @@
 import coverImg from "./images/seo1200x627-black.png";
 
 const CONFIG = {
-  privacyPolicy: "http://localhost:3000/privacy-policy",
+  privacyPolicy: `${window.location.origin}/privacy-policy`,
   terms: "https://alpahday.com/terms",
   feedBack: "https://forms.gle/hBXWWTAvsN7dAMN66",
   discord: "https://alphaday.com/discord",
