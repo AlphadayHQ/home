@@ -6,8 +6,12 @@ import HomeContainer from "./containers/HomeContainer";
 import { CookieProvider } from "./utils/CookieContext";
 import PrivacyPolicyPage from "./pages/privacy-policy";
 
+function removeTrailingBackSlash(site) {
+  return site.replace(/\/$/, "");
+}
+
 function App() {
-  const path = window.location.pathname;
+  const path = removeTrailingBackSlash(window.location.pathname);
 
   const supportedPaths = ["/", CONFIG.privacyPolicy];
 
@@ -31,7 +35,11 @@ function App() {
         title="Alphaday"
         description={"Everything about the Crypto ecosystem in one app"}
       />
-      {path === CONFIG.privacyPolicy ? <PrivacyPolicyPage /> : <HomeContainer />}
+      {path === CONFIG.privacyPolicy ? (
+        <PrivacyPolicyPage />
+      ) : (
+        <HomeContainer />
+      )}
       <CookieDisclaimer />
     </CookieProvider>
   );
