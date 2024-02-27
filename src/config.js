@@ -3,7 +3,7 @@ import coverImg from "./images/seo1200x627-black.png";
 const ALPHADAY_ROOT_URL = "https://alphaday.com/";
 
 const CONFIG = {
-  privacyPolicy: "/privacy",
+  privacyPolicy: "/privacy-policy",
   terms: ALPHADAY_ROOT_URL + "terms",
   feedBack: "https://forms.gle/hBXWWTAvsN7dAMN66",
   discord: ALPHADAY_ROOT_URL + "discord",
