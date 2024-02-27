@@ -4,11 +4,14 @@ import CookieDisclaimer from "./components/CookieDisclaimer";
 import CONFIG from "./config";
 import HomeContainer from "./containers/HomeContainer";
 import { CookieProvider } from "./utils/CookieContext";
+import PrivacyPolicyPage from "./pages/privacy-policy";
 
 function App() {
   const path = window.location.pathname;
 
-  if (path !== "/") {
+  const supportedPaths = ["/", "/privacy-policy"];
+
+  if (!supportedPaths.includes(path)) {
     if (path.startsWith("/b/")) {
       window.location.replace(`${CONFIG.alphadayApp}${path}`);
 
@@ -28,7 +31,7 @@ function App() {
         title="Alphaday"
         description={"Everything about the Crypto ecosystem in one app"}
       />
-      <HomeContainer />
+      {path === "/privacy-policy" ? <PrivacyPolicyPage /> : <HomeContainer />}
       <CookieDisclaimer />
     </CookieProvider>
   );
