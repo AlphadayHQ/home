@@ -21,56 +21,61 @@ const Anchor = ({ children, href, className, target }) => {
   );
 };
 
+const ColTilte = ({title}) => (
+  <p className="text-aluminium text-sm font-medium mb-4">{title}</p>
+);
+
 function Footer() {
-  const { blog, discord, feedBack, linkedin, privacyPolicy, terms, twitter } =
-    config;
+  const {
+    blog,
+    discord,
+    feedBack,
+    linkedin,
+    privacyPolicy,
+    terms,
+    twitter,
+    blogLinks,
+  } = config;
   return (
     <Section className="">
       <Div className="pt-0">
-        <div className="grid place-content-between gap-10 sm:gap-16 grid-cols-2 md:grid-cols-4">
-          <Col className="place-self-center hidden md:flex">
+        <div className="grid place-content-between gap-10 xl:gap-16 grid-cols-2 md:grid-cols-4">
+          <Col className="place-self-start flex">
+            <ColTilte title="About Us" />
             <Anchor className="mb-4" href={terms}>
               Terms of Use
             </Anchor>
             <Anchor target="_self" href={privacyPolicy}>
               Privacy Policy
             </Anchor>
-          </Col>
-
-          <Col className="place-self-center hidden md:flex">
-            {/* <Anchor className="mb-4" href="#">
-              Docs
-            </Anchor> */}
-            <Anchor href={blog} className="">
+            <Anchor href={blog} className="mb-4">
               Blog
             </Anchor>
-          </Col>
-
-          <Col className="place-self-center hidden md:flex">
             <Anchor href="mailto:hello@alphaday.com" className="mb-4">
               Contact
             </Anchor>
             <Anchor href={feedBack}>Give Feedback</Anchor>
           </Col>
 
-          {/* mobile */}
-          <Col className="place-self-center md:hidden">
-            <Anchor className="mb-4" href={blog}>
-              Blog
-            </Anchor>
-            <Anchor className="mb-4" href={terms}>
-              Terms of Use
-            </Anchor>
-            <Anchor className="mb-4" href={privacyPolicy}>
-              Privacy Policy
-            </Anchor>
-            <Anchor className="mb-4" href={feedBack}>
-              Give Feedback
-            </Anchor>
-            <Anchor href="mailto:hello@alphaday.com">Contact</Anchor>
+          <Col className="place-self-start flex">
+            <ColTilte title="Crypto 101" />
+            {blogLinks["Crypto 101"].map(({ title, link }) => (
+              <Anchor href={link} className="mb-4">
+                {title}
+              </Anchor>
+            ))}
           </Col>
 
-          <div className="place-self-center items-end flex justify-between w-[130px] h-full">
+          <Col className="place-self-start flex col-span-2 md:col-span-1">
+            <ColTilte title="Learn" />
+            {blogLinks.learn.map(({ title, link }) => (
+              <Anchor href={link} className="mb-4">
+                {title}
+              </Anchor>
+            ))}
+          </Col>
+
+          <div className="place-self-start pb-4 md:place-self-center items-end flex justify-between w-[130px] h-full col-span-2 md:col-span-1">
             <a target="_blank" href={twitter}>
               <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
                 <img src={twitterLogo} alt="twitter" />
