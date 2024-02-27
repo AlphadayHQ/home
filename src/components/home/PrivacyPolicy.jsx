@@ -5,9 +5,9 @@ import { data } from "./faqData";
 function PrivacyPolicy() {
   return (
     <Section className="">
-      <div className="mx-auto max-w-7xl mb-40 mt-24 text-white">
-        <h1 className="text-white text-3xl mb-6">Privacy Policy</h1>
-        <p>
+      <div className="mx-4 sm:mx-auto max-w-7xl mb-40 mt-14 sm:mt-24 text-white">
+        <h1 className="text-white text-xl sm:text-3xl mb-6">Privacy Policy</h1>
+        <p className="text-sm">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -16,7 +16,7 @@ function PrivacyPolicy() {
           pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
           culpa qui officia deserunt mollit anim id est laborum.
         </p>
-        <p className="mt-4">
+        <p className="mt-4 text-sm">
           Sed ut perspiciatis unde omnis iste natus error sit voluptatem
           accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
           ab illo inventore veritatis et quasi architecto beatae vitae dicta
@@ -31,7 +31,7 @@ function PrivacyPolicy() {
           ea voluptate velit esse quam nihil molestiae consequatur, vel illum
           qui dolorem eum fugiat quo voluptas nulla pariatur?
         </p>
-        <p className="mt-4">
+        <p className="mt-4 text-sm">
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
           minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -40,7 +40,7 @@ function PrivacyPolicy() {
           pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
           culpa qui officia deserunt mollit anim id est laborum.
         </p>{" "}
-        <p className="mt-4">
+        <p className="mt-4 text-sm">
           Sed ut perspiciatis unde omnis iste natus error sit voluptatem
           accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae
           ab illo inventore veritatis et quasi architecto beatae vitae dicta
