@@ -9,7 +9,7 @@ import PrivacyPolicyPage from "./pages/privacy-policy";
 function App() {
   const path = window.location.pathname;
 
-  const supportedPaths = ["/", "/privacy-policy"];
+  const supportedPaths = ["/", CONFIG.privacyPolicy];
 
   if (!supportedPaths.includes(path)) {
     if (path.startsWith("/b/")) {
@@ -31,7 +31,7 @@ function App() {
         title="Alphaday"
         description={"Everything about the Crypto ecosystem in one app"}
       />
-      {path === "/privacy-policy" ? <PrivacyPolicyPage /> : <HomeContainer />}
+      {path === CONFIG.privacyPolicy ? <PrivacyPolicyPage /> : <HomeContainer />}
       <CookieDisclaimer />
     </CookieProvider>
   );
