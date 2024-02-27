@@ -1,6 +1,5 @@
-import React, { useRef, useState } from "react";
-import { Div, Section, Title } from "../../shared";
-import { data } from "./faqData";
+import React from "react";
+import { Section } from "../../shared";
 
 function PrivacyPolicy() {
   return (

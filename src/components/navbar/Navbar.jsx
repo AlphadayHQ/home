@@ -42,14 +42,14 @@ function Navbar({ isPrivacyPolicy }) {
     <div className={isPrivacyPolicy ? "" : "bg-california"}>
       <Nav className="relative z-50 top-0 left-0">
         <div className="flex justify-between items-center">
-          <div className="flex justify-between items-center">
-            <figure>
+          <div className="flex justify-between items-center z-20">
+            <a href="/">
               <img
                 src={alphaday}
                 className="h-[25px] object-fit"
                 alt="alphaday"
               />
-            </figure>
+            </a>
           </div>
 
           <div

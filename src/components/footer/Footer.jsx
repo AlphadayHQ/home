@@ -21,7 +21,7 @@ const Anchor = ({ children, href, className, target }) => {
   );
 };
 
-const ColTilte = ({title}) => (
+const ColTilte = ({ title }) => (
   <p className="text-aluminium text-sm font-medium mb-4">{title}</p>
 );
 
@@ -45,7 +45,7 @@ function Footer() {
             <Anchor className="mb-4" href={terms}>
               Terms of Use
             </Anchor>
-            <Anchor target="_self" href={privacyPolicy}>
+            <Anchor target="_self" href={privacyPolicy} className="mb-4">
               Privacy Policy
             </Anchor>
             <Anchor href={blog} className="mb-4">
