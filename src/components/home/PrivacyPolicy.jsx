@@ -7,75 +7,75 @@ function PrivacyPolicy() {
       <div className="mx-4 sm:mx-auto max-w-7xl mb-40 mt-14 sm:mt-24 text-white">
         <h1 className="text-white text-xl sm:text-3xl mb-6">Privacy Policy</h1>
         <p>
-          <span style="color:#7f7f7f;">
+          <span style={{ color: "#7f7f7f" }}>
             <strong>Last updated July 26, 2022</strong>
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             This privacy notice for Alphabox Solutions PTE. LTD. (doing business
             as Alphaday) ("
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>we</strong>
           </span>
-          <span style="color:#595959;">," "</span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>," "</span>
+          <span style={{ color: "#d9d9d9" }}>
             <strong>us</strong>
           </span>
-          <span style="color:#595959;">," or "</span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>," or "</span>
+          <span style={{ color: "#d9d9d9" }}>
             <strong>our</strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             "), describes how and why we might collect, store, use, and/or share
             ("
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>process</strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             ") your information when you use our services ("
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>Services</strong>
           </span>
-          <span style="color:#595959;">"), such as when you:</span>
+          <span style={{ color: "#d9d9d9" }}>"), such as when you:</span>
         </p>
         <ul>
           <li>
-            <span style="color:#595959;">Visit our website at</span>
+            <span style={{ color: "#d9d9d9" }}>Visit our website at</span>
             <a target="_blank" href="https://alphaday.com">
-              <span style="color:#595959;"></span>https://alphaday.com
+              <span style={{ color: "#d9d9d9" }}></span>https://alphaday.com
             </a>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               , or any website of ours that links to this privacy notice
             </span>
           </li>
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               Engage with us in other related ways, including any sales,
               marketing, or events
             </span>
           </li>
         </ul>
         <p>
-          <span style="color:#7f7f7f;">
+          <span style={{ color: "#7f7f7f" }}>
             <strong>Questions or concerns?</strong>
           </span>
-          <span style="color:#7f7f7f;">
+          <span style={{ color: "#7f7f7f" }}>
             Reading this privacy notice will help you understand your privacy
             rights and choices. If you do not agree with our policies and
             practices, please do not use our Services. If you still have any
             questions or concerns, please contact us at hello@alphaday.com.
           </span>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>SUMMARY OF KEY POINTS</strong>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>
             <em>
               This summary provides key points from our privacy notice, but you
@@ -87,7 +87,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#toc"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               <strong>
                 <em>table of contents</em>
               </strong>
@@ -97,7 +97,7 @@ function PrivacyPolicy() {
             <em>below to find the section you are looking for.</em>
           </strong>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>What personal information do we process?</strong>
           When you visit, use, or navigate our Services, we may process personal
           information depending on how you interact with us and the Services,
@@ -107,21 +107,21 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#personalinfo"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               personal information you disclose to us
             </span>
           </a>
           .
         </p>
-        <p>
+        <p className="mt-4">
           <strong>Do we process any sensitive personal information?</strong>
           We do not process sensitive personal information.
         </p>
-        <p>
+        <p className="mt-4">
           <strong>Do we receive any information from third parties?</strong>
           We do not receive any information from third parties.
         </p>
-        <p>
+        <p className="mt-4">
           <strong>How do we process your information?</strong>
           We process your information to provide, improve, and administer our
           Services, communicate with you, for security and fraud prevention, and
@@ -132,11 +132,13 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#infouse"
           >
-            <span style="color:#003afa;">how we process your information</span>
+            <span style={{ color: "#003afa" }}>
+              how we process your information
+            </span>
           </a>
           .
         </p>
-        <p>
+        <p className="mt-4">
           <strong>
             In what situations and with which parties do we share personal
             information?
@@ -147,13 +149,13 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#whoshare"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               when and with whom we share your personal information
             </span>
           </a>
           .
         </p>
-        <p>
+        <p className="mt-4">
           <strong>How do we keep your information safe?</strong>
           We have organizational and technical processes and procedures in place
           to protect your personal information. However, no electronic
@@ -166,13 +168,13 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#infosafe"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               how we keep your information safe
             </span>
           </a>
           .
         </p>
-        <p>
+        <p className="mt-4">
           <strong>What are your rights?</strong>
           Depending on where you are located geographically, the applicable
           privacy law may mean you have certain rights regarding your personal
@@ -181,18 +183,20 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#privacyrights"
           >
-            <span style="color:#003afa;">your privacy rights</span>
+            <span style={{ color: "#003afa" }}>your privacy rights</span>
           </a>
           .
         </p>
-        <p>
+        <p className="mt-4">
           <strong>How do you exercise your rights?</strong>
           The easiest way to exercise your rights is by submitting a
           <a
             target="_blank"
             href="https://app.termly.io/notify/ae1c7443-6788-4493-91d3-ba6f87ff05e0"
           >
-            <span style="color:#003afa;">data subject access request</span>
+            <span style={{ color: "#003afa" }}>
+              data subject access request
+            </span>
           </a>
           , or by contacting us. We will consider and act upon any request in
           accordance with applicable data protection laws.
@@ -203,13 +207,13 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#toc"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               Review the privacy notice in full
             </span>
           </a>
           .
         </p>
-        <p>
+        <p className="mt-4">
           <strong>TABLE OF CONTENTS</strong>
         </p>
         <p>
@@ -217,7 +221,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#infocollect"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               1. WHAT INFORMATION DO WE COLLECT?
             </span>
           </a>
@@ -227,7 +231,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#infouse"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               2. HOW DO WE PROCESS YOUR INFORMATION?
             </span>
           </a>
@@ -237,7 +241,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#legalbases"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               3. WHAT LEGAL BASES DO WE RELY ON TO PROCESS YOUR PERSONAL
               INFORMATION?
             </span>
@@ -256,7 +260,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#cookies"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               5. DO WE USE COOKIES AND OTHER TRACKING TECHNOLOGIES?
             </span>
           </a>
@@ -266,7 +270,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#sociallogins"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               6. HOW DO WE HANDLE YOUR SOCIAL LOGINS?
             </span>
           </a>
@@ -276,7 +280,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#inforetain"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               7. HOW LONG DO WE KEEP YOUR INFORMATION?
             </span>
           </a>
@@ -286,7 +290,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#infosafe"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               8. HOW DO WE KEEP YOUR INFORMATION SAFE?
             </span>
           </a>
@@ -304,7 +308,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#DNT"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               10. CONTROLS FOR DO-NOT-TRACK FEATURES
             </span>
           </a>
@@ -314,7 +318,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#uslaws"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               11. DO UNITED STATES RESIDENTS HAVE SPECIFIC PRIVACY RIGHTS?
             </span>
           </a>
@@ -324,7 +328,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#policyupdates"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               12. DO WE MAKE UPDATES TO THIS NOTICE?
             </span>
           </a>
@@ -334,7 +338,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#contact"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               13. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?
             </span>
           </a>
@@ -344,30 +348,30 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#request"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               14. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM
               YOU?
             </span>
           </a>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>1. WHAT INFORMATION DO WE COLLECT?</strong>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>Personal information you disclose to us</strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>
               <em>In Short:</em>
             </strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <em>We collect personal information that you provide to us.</em>
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We collect personal information that you voluntarily provide to us
             when you register on the Services, express an interest in obtaining
             information about us or our products and Services, when you
@@ -376,10 +380,10 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>Personal Information Provided by You.</strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             The personal information that we collect depends on the context of
             your interactions with us and the Services, the choices you make,
             and the products and features you use. The personal information we
@@ -388,33 +392,33 @@ function PrivacyPolicy() {
         </p>
         <ul>
           <li>
-            <span style="color:#595959;">email addresses</span>
+            <span style={{ color: "#d9d9d9" }}>email addresses</span>
           </li>
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">usernames</span>
+            <span style={{ color: "#d9d9d9" }}>usernames</span>
           </li>
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">passwords</span>
+            <span style={{ color: "#d9d9d9" }}>passwords</span>
           </li>
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">contact preferences</span>
+            <span style={{ color: "#d9d9d9" }}>contact preferences</span>
           </li>
         </ul>
-        <p>
+        <p className="mt-4">
           <strong>Sensitive Information.</strong>
           We do not process sensitive information.
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>Social Media Login Data.</strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We may provide you with the option to register with us using your
             existing social media account details, like your Facebook, Twitter,
             or other social media account. If you choose to register in this
@@ -427,25 +431,25 @@ function PrivacyPolicy() {
           >
             HOW DO WE HANDLE YOUR SOCIAL LOGINS?
           </a>
-          <span style="color:#595959;">" below.</span>
+          <span style={{ color: "#d9d9d9" }}>" below.</span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             All personal information that you provide to us must be true,
             complete, and accurate, and you must notify us of any changes to
             such personal information.
           </span>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>Information automatically collected</strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>
               <em>In Short:</em>
             </strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <em>
               Some information — such as your Internet Protocol (IP) address
               and/or browser and device characteristics — is collected
@@ -454,7 +458,7 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We automatically collect certain information when you visit, use, or
             navigate the Services. This information does not reveal your
             specific identity (like your name or contact information) but may
@@ -468,22 +472,22 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             Like many businesses, we also collect information through cookies
             and similar technologies.
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             The information we collect includes:
           </span>
         </p>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               <em>Log and Usage Data.</em>
             </span>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               Log and usage data is service-related, diagnostic, usage, and
               performance information our servers automatically collect when you
               access or use our Services and which we record in log files.
@@ -500,10 +504,10 @@ function PrivacyPolicy() {
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               <em>Device Data.</em>
             </span>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               We collect device data such as information about your computer,
               phone, tablet, or other device you use to access the Services.
               Depending on the device used, this device data may include
@@ -514,16 +518,16 @@ function PrivacyPolicy() {
             </span>
           </li>
         </ul>
-        <p>
+        <p className="mt-4">
           <strong>2. HOW DO WE PROCESS YOUR INFORMATION?</strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>
               <em>In Short:</em>
             </strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <em>
               We process your information to provide, improve, and administer
               our Services, communicate with you, for security and fraud
@@ -533,7 +537,7 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>
               We process your personal information for a variety of reasons,
               depending on how you interact with our Services, including:
@@ -542,13 +546,13 @@ function PrivacyPolicy() {
         </p>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               <strong>
                 To facilitate account creation and authentication and otherwise
                 manage user accounts.
               </strong>
             </span>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               We may process your information so you can create and log in to
               your account, as well as keep your account in working order.
             </span>
@@ -556,12 +560,12 @@ function PrivacyPolicy() {
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               <strong>
                 To deliver and facilitate delivery of services to the user.
               </strong>
             </span>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               We may process your information to provide you with the requested
               service.
             </span>
@@ -569,12 +573,12 @@ function PrivacyPolicy() {
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               <strong>
                 To respond to user inquiries/offer support to users.
               </strong>
             </span>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               We may process your information to respond to your inquiries and
               solve any potential issues you might have with the requested
               service.
@@ -583,10 +587,10 @@ function PrivacyPolicy() {
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               <strong>To send administrative information to you.</strong>
             </span>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               We may process your information to send you details about our
               products and services, changes to our terms and policies, and
               other similar information.
@@ -595,10 +599,10 @@ function PrivacyPolicy() {
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               <strong>To enable user-to-user communications.</strong>
             </span>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               We may process your information if you choose to use any of our
               offerings that allow for communication with another user.
             </span>
@@ -606,10 +610,10 @@ function PrivacyPolicy() {
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               <strong>To request feedback.</strong>
             </span>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               We may process your information when necessary to request feedback
               and to contact you about your use of our Services.
             </span>
@@ -617,12 +621,12 @@ function PrivacyPolicy() {
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               <strong>
                 To send you marketing and promotional communications.
               </strong>
             </span>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               We may process the personal information you send to us for our
               marketing purposes, if this is in accordance with your marketing
               preferences. You can opt out of our marketing emails at any time.
@@ -632,9 +636,11 @@ function PrivacyPolicy() {
               target="_blank"
               href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#privacyrights"
             >
-              <span style="color:#003afa;">WHAT ARE YOUR PRIVACY RIGHTS?</span>
+              <span style={{ color: "#003afa" }}>
+                WHAT ARE YOUR PRIVACY RIGHTS?
+              </span>
             </a>
-            <span style="color:#595959;">" below.</span>
+            <span style={{ color: "#d9d9d9" }}>" below.</span>
           </li>
         </ul>
         <ul>
@@ -676,12 +682,12 @@ function PrivacyPolicy() {
             individual’s vital interest, such as to prevent harm.
           </li>
         </ul>
-        <p>
+        <p className="mt-4">
           <strong>
             3. WHAT LEGAL BASES DO WE RELY ON TO PROCESS YOUR INFORMATION?
           </strong>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>
             <em>In Short:</em>
           </strong>
@@ -695,7 +701,7 @@ function PrivacyPolicy() {
           </em>
         </p>
         <p>
-          <span style="text-decoration:underline;">
+          <span style={{ textDecoration: "underline" }}>
             <strong>
               <em>
                 If you are located in the EU or UK, this section applies to you.
@@ -719,7 +725,7 @@ function PrivacyPolicy() {
               target="_blank"
               href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#withdrawconsent"
             >
-              <span style="color:#003afa;">withdrawing your consent</span>
+              <span style={{ color: "#003afa" }}>withdrawing your consent</span>
             </a>
             .
           </li>
@@ -793,7 +799,7 @@ function PrivacyPolicy() {
           </li>
         </ul>
         <p>
-          <span style="text-decoration:underline;">
+          <span style={{ textDecoration: "underline" }}>
             <strong>
               <em>
                 If you are located in Canada, this section applies to you.
@@ -810,7 +816,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#withdrawconsent"
           >
-            <span style="color:#003afa;">withdraw your consent</span>
+            <span style={{ color: "#003afa" }}>withdraw your consent</span>
           </a>
           at any time.
         </p>
@@ -883,18 +889,18 @@ function PrivacyPolicy() {
             regulations
           </li>
         </ul>
-        <p>
+        <p className="mt-4">
           <strong>
             4. WHEN AND WITH WHOM DO WE SHARE YOUR PERSONAL INFORMATION?
           </strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>
               <em>In Short:</em>
             </strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <em>
               We may share information in specific situations described in this
               section and/or with the following third parties.
@@ -914,16 +920,16 @@ function PrivacyPolicy() {
             another company.
           </li>
         </ul>
-        <p>
+        <p className="mt-4">
           <strong>5. DO WE USE COOKIES AND OTHER TRACKING TECHNOLOGIES?</strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>
               <em>In Short:</em>
             </strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <em>
               We may use cookies and other tracking technologies to collect and
               store your information.
@@ -931,23 +937,23 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We may use cookies and similar tracking technologies (like web
             beacons and pixels) to access or store information. Specific
             information about how we use such technologies and how you can
             refuse certain cookies is set out in our Cookie Notice.
           </span>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>6. HOW DO WE HANDLE YOUR SOCIAL LOGINS?</strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>
               <em>In Short:</em>
             </strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <em>
               If you choose to register or log in to our Services using a social
               media account, we may have access to certain information about
@@ -956,7 +962,7 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             Our Services offer you the ability to register and log in using your
             third-party social media account details (like your Facebook or
             Twitter logins). Where you choose to do this, we will receive
@@ -969,7 +975,7 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We will use the information we receive only for the purposes that
             are described in this privacy notice or that are otherwise made
             clear to you on the relevant Services. Please note that we do not
@@ -980,16 +986,16 @@ function PrivacyPolicy() {
             privacy preferences on their sites and apps.
           </span>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>7. HOW LONG DO WE KEEP YOUR INFORMATION?</strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>
               <em>In Short:</em>
             </strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <em>
               We keep your information for as long as necessary to fulfill the
               purposes outlined in this privacy notice unless otherwise required
@@ -998,7 +1004,7 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We will only keep your personal information for as long as it is
             necessary for the purposes set out in this privacy notice, unless a
             longer retention period is required or permitted by law (such as
@@ -1009,7 +1015,7 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             When we have no ongoing legitimate business need to process your
             personal information, we will either delete or anonymize such
             information, or, if this is not possible (for example, because your
@@ -1018,16 +1024,16 @@ function PrivacyPolicy() {
             any further processing until deletion is possible.
           </span>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>8. HOW DO WE KEEP YOUR INFORMATION SAFE?</strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>
               <em>In Short:</em>
             </strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <em>
               We aim to protect your personal information through a system of
               organizational and technical security measures.
@@ -1035,7 +1041,7 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We have implemented appropriate and reasonable technical and
             organizational security measures designed to protect the security of
             any personal information we process. However, despite our safeguards
@@ -1050,16 +1056,16 @@ function PrivacyPolicy() {
             only access the Services within a secure environment.
           </span>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>9. WHAT ARE YOUR PRIVACY RIGHTS?</strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>
               <em>In Short:</em>
             </strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <em>
               In some regions, such as the European Economic Area (EEA), United
               Kingdom (UK), Switzerland, and Canada, you have rights that allow
@@ -1069,7 +1075,7 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             In some regions (like the EEA, UK, Switzerland, and Canada), you
             have certain rights under applicable data protection laws. These may
             include the right (i) to request access and obtain a copy of your
@@ -1085,20 +1091,20 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#contact"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               HOW CAN YOU CONTACT US ABOUT THIS NOTICE?
             </span>
           </a>
-          <span style="color:#595959;">" below.</span>
+          <span style={{ color: "#d9d9d9" }}>" below.</span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We will consider and act upon any request in accordance with
             applicable data protection laws.
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             If you are located in the EEA or UK and you believe we are
             unlawfully processing your personal information, you also have the
             right to complain to your
@@ -1107,36 +1113,38 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://ec.europa.eu/justice/data-protection/bodies/authorities/index_en.htm"
           >
-            <span style="color:#595959;"></span>Member State data protection
-            authority
+            <span style={{ color: "#d9d9d9" }}></span>Member State data
+            protection authority
           </a>
-          <span style="color:#595959;">or</span>
+          <span style={{ color: "#d9d9d9" }}>or</span>
           <a
             target="_blank"
             href="https://ico.org.uk/make-a-complaint/data-protection-complaints/data-protection-complaints/"
           >
-            <span style="color:#003afa;">UK data protection authority</span>
+            <span style={{ color: "#003afa" }}>
+              UK data protection authority
+            </span>
           </a>
-          <span style="color:#595959;">.</span>
+          <span style={{ color: "#d9d9d9" }}>.</span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             If you are located in Switzerland, you may contact the
           </span>
           <a
             target="_blank"
             href="https://www.edoeb.admin.ch/edoeb/en/home.html"
           >
-            <span style="color:#595959;"></span>Federal Data Protection and
-            Information Commissioner
+            <span style={{ color: "#d9d9d9" }}></span>Federal Data Protection
+            and Information Commissioner
           </a>
-          <span style="color:#595959;">.</span>
+          <span style={{ color: "#d9d9d9" }}>.</span>
         </p>
         <p>
-          <span style="color:#595959;text-decoration:underline;">
+          <span style={{ color: "#d9d9d9", textDecoration: "underline" }}>
             <strong>Withdrawing your consent:</strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             If we are relying on your consent to process your personal
             information, which may be express and/or implied consent depending
             on the applicable law, you have the right to withdraw your consent
@@ -1147,11 +1155,11 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#contact"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               HOW CAN YOU CONTACT US ABOUT THIS NOTICE?
             </span>
           </a>
-          <span style="color:#595959;">" below.</span>
+          <span style={{ color: "#d9d9d9" }}>" below.</span>
         </p>
         <p>
           However, please note that this will not affect the lawfulness of the
@@ -1160,7 +1168,7 @@ function PrivacyPolicy() {
           reliance on lawful processing grounds other than consent.
         </p>
         <p>
-          <span style="text-decoration:underline;">
+          <span style={{ textDecoration: "underline" }}>
             <strong>
               Opting out of marketing and promotional communications:
             </strong>
@@ -1172,7 +1180,7 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#contact"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               HOW CAN YOU CONTACT US ABOUT THIS NOTICE?
             </span>
           </a>
@@ -1182,7 +1190,7 @@ function PrivacyPolicy() {
           use of your account, to respond to service requests, or for other
           non-marketing purposes.
         </p>
-        <p>
+        <p className="mt-4">
           <strong>Account Information</strong>
         </p>
         <p>
@@ -1200,10 +1208,10 @@ function PrivacyPolicy() {
           legal terms and/or comply with applicable legal requirements.
         </p>
         <p>
-          <span style="color:#595959;text-decoration:underline;">
+          <span style={{ color: "#d9d9d9", textDecoration: "underline" }}>
             <strong>Cookies and similar technologies:</strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             Most Web browsers are set to accept cookies by default. If you
             prefer, you can usually choose to set your browser to remove cookies
             and to reject cookies. If you choose to remove cookies or reject
@@ -1215,11 +1223,11 @@ function PrivacyPolicy() {
           If you have questions or comments about your privacy rights, you may
           email us at hello@alphaday.com.
         </p>
-        <p>
+        <p className="mt-4">
           <strong>10. CONTROLS FOR DO-NOT-TRACK FEATURES</strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             Most web browsers and some mobile operating systems and mobile
             applications include a Do-Not-Track ("DNT") feature or setting you
             can activate to signal your privacy preference not to have data
@@ -1233,18 +1241,18 @@ function PrivacyPolicy() {
             of this privacy notice.
           </span>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>
             11. DO UNITED STATES RESIDENTS HAVE SPECIFIC PRIVACY RIGHTS?
           </strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>
               <em>In Short:</em>
             </strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <em>
               If you are a resident of California, you are granted specific
               rights regarding access to your personal information.
@@ -1252,14 +1260,14 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>
               What categories of personal information do we collect?
             </strong>
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We have collected the following categories of personal information
             in the past twelve (12) months:
           </span>
@@ -1269,27 +1277,27 @@ function PrivacyPolicy() {
             <tbody>
               <tr>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     <strong>Category</strong>
                   </span>
                 </td>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     <strong>Examples</strong>
                   </span>
                 </td>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     <strong>Collected</strong>
                   </span>
                 </td>
               </tr>
               <tr>
                 <td>
-                  <span style="color:#595959;">A. Identifiers</span>
+                  <span style={{ color: "#d9d9d9" }}>A. Identifiers</span>
                 </td>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     Contact details, such as real name, alias, postal address,
                     telephone or mobile contact number, unique personal
                     identifier, online identifier, Internet Protocol address,
@@ -1297,7 +1305,7 @@ function PrivacyPolicy() {
                   </span>
                 </td>
                 <td>
-                  <span style="color:#595959;">NO</span>
+                  <span style={{ color: "#d9d9d9" }}>NO</span>
                 </td>
               </tr>
             </tbody>
@@ -1308,19 +1316,19 @@ function PrivacyPolicy() {
             <tbody>
               <tr>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     B. Personal information as defined in the California
                     Customer Records statute
                   </span>
                 </td>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     Name, contact information, education, employment, employment
                     history, and financial information
                   </span>
                 </td>
                 <td>
-                  <span style="color:#595959;">NO</span>
+                  <span style={{ color: "#d9d9d9" }}>NO</span>
                 </td>
               </tr>
             </tbody>
@@ -1331,22 +1339,26 @@ function PrivacyPolicy() {
             <tbody>
               <tr>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     C. Protected classification characteristics under state or
                     federal law
                   </span>
                 </td>
                 <td>
-                  <span style="color:#595959;">Gender and date of birth</span>
+                  <span style={{ color: "#d9d9d9" }}>
+                    Gender and date of birth
+                  </span>
                 </td>
                 <td>NO</td>
               </tr>
               <tr>
                 <td>
-                  <span style="color:#595959;">D. Commercial information</span>
+                  <span style={{ color: "#d9d9d9" }}>
+                    D. Commercial information
+                  </span>
                 </td>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     Transaction information, purchase history, financial
                     details, and payment information
                   </span>
@@ -1355,10 +1367,12 @@ function PrivacyPolicy() {
               </tr>
               <tr>
                 <td>
-                  <span style="color:#595959;">E. Biometric information</span>
+                  <span style={{ color: "#d9d9d9" }}>
+                    E. Biometric information
+                  </span>
                 </td>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     Fingerprints and voiceprints
                   </span>
                 </td>
@@ -1366,12 +1380,12 @@ function PrivacyPolicy() {
               </tr>
               <tr>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     F. Internet or other similar network activity
                   </span>
                 </td>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     Browsing history, search history, online behavior, interest
                     data, and interactions with our and other websites,
                     applications, systems, and advertisements
@@ -1381,22 +1395,22 @@ function PrivacyPolicy() {
               </tr>
               <tr>
                 <td>
-                  <span style="color:#595959;">G. Geolocation data</span>
+                  <span style={{ color: "#d9d9d9" }}>G. Geolocation data</span>
                 </td>
                 <td>
-                  <span style="color:#595959;">Device location</span>
+                  <span style={{ color: "#d9d9d9" }}>Device location</span>
                 </td>
                 <td>NO</td>
               </tr>
               <tr>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     H. Audio, electronic, visual, thermal, olfactory, or similar
                     information
                   </span>
                 </td>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     Images and audio, video or call recordings created in
                     connection with our business activities
                   </span>
@@ -1405,12 +1419,12 @@ function PrivacyPolicy() {
               </tr>
               <tr>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     I. Professional or employment-related information
                   </span>
                 </td>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     Business contact details in order to provide you our
                     Services at a business level or job title, work history, and
                     professional qualifications if you apply for a job with us
@@ -1420,10 +1434,12 @@ function PrivacyPolicy() {
               </tr>
               <tr>
                 <td>
-                  <span style="color:#595959;">J. Education Information</span>
+                  <span style={{ color: "#d9d9d9" }}>
+                    J. Education Information
+                  </span>
                 </td>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     Student records and directory information
                   </span>
                 </td>
@@ -1431,12 +1447,12 @@ function PrivacyPolicy() {
               </tr>
               <tr>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     K. Inferences drawn from collected personal information
                   </span>
                 </td>
                 <td>
-                  <span style="color:#595959;">
+                  <span style={{ color: "#d9d9d9" }}>
                     Inferences drawn from any of the collected personal
                     information listed above to create a profile or summary
                     about, for example, an individual’s preferences and
@@ -1460,7 +1476,7 @@ function PrivacyPolicy() {
           <li>Category B - As long as the user has an account with us</li>
         </ul>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We may also collect other personal information outside of these
             categories through instances where you interact with us in person,
             online, or by phone or mail in the context of:
@@ -1468,28 +1484,28 @@ function PrivacyPolicy() {
         </p>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               Receiving help through our customer support channels;
             </span>
           </li>
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               Participation in customer surveys or contests; and
             </span>
           </li>
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               Facilitation in the delivery of our Services and to respond to
               your inquiries.
             </span>
           </li>
         </ul>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>How do we use and share your personal information?</strong>
           </span>
         </p>
@@ -1499,19 +1515,19 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#infouse"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               HOW DO WE PROCESS YOUR INFORMATION?
             </span>
           </a>
           "
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>Will your information be shared with anyone else?</strong>
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We may disclose your personal information with our service providers
             pursuant to a written contract between us and each service provider.
             Learn more about how we disclose personal information to in the
@@ -1521,14 +1537,14 @@ function PrivacyPolicy() {
             target="_blank"
             href="https://app.termly.io/document/privacy-policy/ae1c7443-6788-4493-91d3-ba6f87ff05e0#whoshare"
           >
-            <span style="color:#003afa;">
+            <span style={{ color: "#003afa" }}>
               WHEN AND WITH WHOM DO WE SHARE YOUR PERSONAL INFORMATION?
             </span>
           </a>
-          <span style="color:#595959;">"</span>
+          <span style={{ color: "#d9d9d9" }}>"</span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We may use your personal information for our own business purposes,
             such as for undertaking internal research for technological
             development and demonstration. This is not considered to be
@@ -1536,7 +1552,7 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We have not disclosed, sold, or shared any personal information to
             third parties for a business or commercial purpose in the preceding
             twelve (12) months. We will not sell or share personal information
@@ -1544,7 +1560,7 @@ function PrivacyPolicy() {
             consumers.
           </span>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>California Residents</strong>
         </p>
         <p>
@@ -1570,7 +1586,7 @@ function PrivacyPolicy() {
           removed from all our systems (e.g., backups, etc.).
         </p>
         <p>
-          <span style="text-decoration:underline;">
+          <span style={{ textDecoration: "underline" }}>
             <strong>CCPA Privacy Notice</strong>
           </span>
         </p>
@@ -1595,17 +1611,17 @@ function PrivacyPolicy() {
           certain rights and obligations regarding your personal information.
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>Your rights with respect to your personal data</strong>
           </span>
         </p>
         <p>
-          <span style="color:#595959;text-decoration:underline;">
+          <span style={{ color: "#d9d9d9", textDecoration: "underline" }}>
             Right to request deletion of the data — Request to delete
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             You can ask for the deletion of your personal information. If you
             ask us to delete your personal information, we will respect your
             request and delete your personal information, subject to certain
@@ -1617,46 +1633,46 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;text-decoration:underline;">
+          <span style={{ color: "#d9d9d9", textDecoration: "underline" }}>
             Right to be informed — Request to know
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             Depending on the circumstances, you have a right to know:
           </span>
         </p>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               whether we collect and use your personal information;
             </span>
           </li>
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               the categories of personal information that we collect;
             </span>
           </li>
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               the purposes for which the collected personal information is used;
             </span>
           </li>
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               whether we sell or share personal information to third parties;
             </span>
           </li>
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               the categories of personal information that we sold, shared, or
               disclosed for a business purpose;
             </span>
@@ -1664,7 +1680,7 @@ function PrivacyPolicy() {
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               the categories of third parties to whom the personal information
               was sold, shared, or disclosed for a business purpose;
             </span>
@@ -1672,7 +1688,7 @@ function PrivacyPolicy() {
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               the business or commercial purpose for collecting, selling, or
               sharing personal information; and
             </span>
@@ -1684,7 +1700,7 @@ function PrivacyPolicy() {
           </li>
         </ul>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             In accordance with applicable law, we are not obligated to provide
             or delete consumer information that is de-identified in response to
             a consumer request or to re-identify individual data to verify a
@@ -1692,30 +1708,30 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;text-decoration:underline;">
+          <span style={{ color: "#d9d9d9", textDecoration: "underline" }}>
             Right to Non-Discrimination for the Exercise of a Consumer’s Privacy
             Rights
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We will not discriminate against you if you exercise your privacy
             rights.
           </span>
         </p>
         <p>
-          <span style="text-decoration:underline;">
+          <span style={{ textDecoration: "underline" }}>
             Right to Limit Use and Disclosure of Sensitive Personal Information
           </span>
         </p>
         <p>We do not process consumer's sensitive personal information.</p>
         <p>
-          <span style="color:#595959;text-decoration:underline;">
+          <span style={{ color: "#d9d9d9", textDecoration: "underline" }}>
             Verification process
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             Upon receiving your request, we will need to verify your identity to
             determine you are the same person about whom we have the information
             in our system. These verification efforts require us to ask you to
@@ -1730,7 +1746,7 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We will only use personal information provided in your request to
             verify your identity or authority to make the request. To the extent
             possible, we will avoid requesting additional information from you
@@ -1743,20 +1759,20 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;text-decoration:underline;">
+          <span style={{ color: "#d9d9d9", textDecoration: "underline" }}>
             Other privacy rights
           </span>
         </p>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               You may object to the processing of your personal information.
             </span>
           </li>
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               You may request correction of your personal data if it is
               incorrect or no longer relevant, or ask to restrict the processing
               of the information.
@@ -1765,7 +1781,7 @@ function PrivacyPolicy() {
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               You can designate an authorized agent to make a request under the
               CCPA on your behalf. We may deny a request from an authorized
               agent that does not submit proof that they have been validly
@@ -1775,7 +1791,7 @@ function PrivacyPolicy() {
         </ul>
         <ul>
           <li>
-            <span style="color:#595959;">
+            <span style={{ color: "#d9d9d9" }}>
               You may request to opt out from future selling or sharing of your
               personal information to third parties. Upon receiving an opt-out
               request, we will act upon the request as soon as feasibly
@@ -1785,30 +1801,34 @@ function PrivacyPolicy() {
           </li>
         </ul>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             To exercise these rights, you can contact us by submitting a
           </span>
           <a
             target="_blank"
             href="https://app.termly.io/notify/ae1c7443-6788-4493-91d3-ba6f87ff05e0"
           >
-            <span style="color:#003afa;">data subject access request</span>
+            <span style={{ color: "#003afa" }}>
+              data subject access request
+            </span>
           </a>
-          <span style="color:#595959;">, by email at hello@alphaday.com,</span>
+          <span style={{ color: "#d9d9d9" }}>
+            , by email at hello@alphaday.com,
+          </span>
           or by referring to the contact details at the bottom of this document.
           If you have a complaint about how we handle your data, we would like
           to hear from you.
         </p>
-        <p>
+        <p className="mt-4">
           <strong>12. DO WE MAKE UPDATES TO THIS NOTICE?</strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <strong>
               <em>In Short:</em>
             </strong>
           </span>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             <em>
               Yes, we will update this notice as necessary to stay compliant
               with relevant laws.
@@ -1816,7 +1836,7 @@ function PrivacyPolicy() {
           </span>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             We may update this privacy notice from time to time. The updated
             version will be indicated by an updated "Revised" date and the
             updated version will be effective as soon as it is accessible. If we
@@ -1827,32 +1847,32 @@ function PrivacyPolicy() {
             your information.
           </span>
         </p>
-        <p>
+        <p className="mt-4">
           <strong>13. HOW CAN YOU CONTACT US ABOUT THIS NOTICE?</strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             If you have questions or comments about this notice, you may email
             us at hello@alphaday.com or contact us by post at:
           </span>
         </p>
         <p>
-          <span style="color:#595959;">Alphabox Solutions PTE. LTD.</span>
+          <span style={{ color: "#d9d9d9" }}>Alphabox Solutions PTE. LTD.</span>
         </p>
         <p>45 North Canal Road</p>
         <p>#0101 Lew Building</p>
         <p>
-          Singapore<span style="color:#595959;">, Singapore 059301</span>
+          Singapore<span style={{ color: "#d9d9d9" }}>, Singapore 059301</span>
         </p>
         <p>Singapore</p>
-        <p>
+        <p className="mt-4">
           <strong>
             14. HOW CAN YOU REVIEW, UPDATE, OR DELETE THE DATA WE COLLECT FROM
             YOU?
           </strong>
         </p>
         <p>
-          <span style="color:#595959;">
+          <span style={{ color: "#d9d9d9" }}>
             Based on the applicable laws of your country, you may have the right
             to request access to the personal information we collect from you,
             change that information, or delete it. To request to review, update,
