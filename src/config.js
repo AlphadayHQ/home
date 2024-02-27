@@ -3,7 +3,7 @@ import coverImg from "./images/seo1200x627-black.png";
 const ALPHADAY_ROOT_URL = "https://alphaday.com/";
 
 const CONFIG = {
-  privacyPolicy: ALPHADAY_ROOT_URL + "privacy",
+  privacyPolicy: "/privacy-policy",
   terms: ALPHADAY_ROOT_URL + "terms",
   feedBack: "https://forms.gle/hBXWWTAvsN7dAMN66",
   discord: ALPHADAY_ROOT_URL + "discord",
@@ -12,8 +12,9 @@ const CONFIG = {
   blog: "https://blog.alphaday.com",
   linkedin: "https://www.linkedin.com/company/alphaday",
   // import.meta.env.PROD returns a boolean on whether the app is running in production
-  emailSubscrptionUrl: `https://api.${import.meta.env.PROD ? "alphaday" : "zettaday"
-    }.com/v1/user/email_subscriptions/subscribe/`,
+  emailSubscrptionUrl: `https://api.${
+    import.meta.env.PROD ? "alphaday" : "zettaday"
+  }.com/v1/user/email_subscriptions/subscribe/`,
   seo: {
     domain: ALPHADAY_ROOT_URL,
     siteName: "Alphaday",

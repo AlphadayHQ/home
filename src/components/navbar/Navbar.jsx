@@ -6,7 +6,7 @@ import discordLogo from "../../images/socials/discord.svg";
 import twitterLogo from "../../images/socials/twitter.svg";
 import config from "../../config";
 
-function Navbar() {
+function Navbar({ isPrivacyPolicy }) {
   const { twitter, discord } = config;
   const showPosition = 492;
   const element = useRef(null);
@@ -39,17 +39,17 @@ function Navbar() {
   }, []);
 
   return (
-    <div className="bg-california">
+    <div className={isPrivacyPolicy ? "" : "bg-california"}>
       <Nav className="relative z-50 top-0 left-0">
         <div className="flex justify-between items-center">
-          <div className="flex justify-between items-center">
-            <figure>
+          <div className="flex justify-between items-center z-20">
+            <a href="/">
               <img
                 src={alphaday}
                 className="h-[25px] object-fit"
                 alt="alphaday"
               />
-            </figure>
+            </a>
           </div>
 
           <div

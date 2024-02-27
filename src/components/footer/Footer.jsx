@@ -9,11 +9,11 @@ const Col = ({ children, className }) => {
   return <div className={`flex flex-col ${className}`}>{children}</div>;
 };
 
-const Anchor = ({ children, href, className }) => {
+const Anchor = ({ children, href, className, target }) => {
   return (
     <a
       href={href}
-      target="_blank"
+      target={target || "_blank"}
       className={`text-aluminium text-sm ${className}`}
     >
       {children}
@@ -21,7 +21,7 @@ const Anchor = ({ children, href, className }) => {
   );
 };
 
-const ColTilte = ({title}) => (
+const ColTilte = ({ title }) => (
   <p className="text-aluminium text-sm font-medium mb-4">{title}</p>
 );
 
@@ -45,7 +45,7 @@ function Footer() {
             <Anchor className="mb-4" href={terms}>
               Terms of Use
             </Anchor>
-            <Anchor href={privacyPolicy} className="mb-4">
+            <Anchor target="_self" href={privacyPolicy} className="mb-4">
               Privacy Policy
             </Anchor>
             <Anchor href={blog} className="mb-4">
