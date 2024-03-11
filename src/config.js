@@ -4,6 +4,7 @@ const ALPHADAY_ROOT_URL = "https://alphaday.com/";
 
 const CONFIG = {
   privacyPolicy: "/privacy",
+  mobile: "/mobile",
   terms: ALPHADAY_ROOT_URL + "terms",
   feedBack: "https://forms.gle/hBXWWTAvsN7dAMN66",
   discord: ALPHADAY_ROOT_URL + "discord",
