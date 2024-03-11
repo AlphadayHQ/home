@@ -5,6 +5,10 @@ const ALPHADAY_ROOT_URL = "https://alphaday.com/";
 const CONFIG = {
   privacyPolicy: "/privacy",
   mobile: "/mobile",
+  appStore: {
+    apple: "https://apps.apple.com/us/app/alphaday/id1581443943",
+    google: "https://play.google.com/store/apps/details?id=com.alphaday",
+  },
   terms: ALPHADAY_ROOT_URL + "terms",
   feedBack: "https://forms.gle/hBXWWTAvsN7dAMN66",
   discord: ALPHADAY_ROOT_URL + "discord",

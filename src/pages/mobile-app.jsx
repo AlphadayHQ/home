@@ -1,27 +1,19 @@
 import React from "react";
 import { Footer, Navbar } from "../components";
-import {
-  Hero,
-  Partners,
-  Backers,
-  Team,
-  FAQ,
-  Getfeatures,
-  Workflow,
-} from "../components/home";
+import Hero from "../components/mobile/Hero";
 
 const MobilePage = () => {
   return (
     <>
       <Navbar />
       <Hero />
-      <Workflow />
+      {/* <Workflow />
       <Partners />
       <Backers />
       <Team />
       <FAQ />
       <Getfeatures />
-      <Footer />
+      <Footer /> */}
     </>
   );
 };
