@@ -4,6 +4,10 @@ const ALPHADAY_ROOT_URL = "https://alphaday.com/";
 
 const CONFIG = {
   privacyPolicy: "/privacy",
+  video: {
+    title: "Alphaday Video",
+    link: "https://www.youtube.com/embed/ThCd_W3rK_8",
+  },
   mobile: "/mobile",
   appStore: {
     apple: "https://apps.apple.com/us/app/alphaday/id1581443943",

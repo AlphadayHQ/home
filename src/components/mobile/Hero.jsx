@@ -9,8 +9,8 @@ export default function () {
   return (
     <Section className="bg-california overflow-hidden h-auto w-full border-california">
       <div className="mx-auto w-11/12 max-w-7xl">
-        <div className=" md:mx-auto flex flex-col max-w-5xl sm:mt-14 mt-10">
-          <h1 className="flex flex-col text-black self-start text-center m-0 md:text-left font-medium leading-[60px] sm:leading-[80px] md:leading-[110px] text-[42px] sm:text-5xl md:text-7xl lg:text-[98px]">
+        <div className="flex flex-col max-w-5xl sm:mt-14 mt-10">
+          <h1 className="flex flex-col text-black self-start text-center m-0 md:text-left font-medium leading-[60px] sm:leading-[70px] md:leading-[100px] lg:leading-[125px] text-[42px] sm:text-5xl md:text-7xl lg:text-[98px]">
             <span className="text-left">Swipe Up,</span>
             <span className="text-left">Explore,</span>
             <span className="text-left">Unlock</span>
@@ -25,34 +25,34 @@ export default function () {
           <a href={CONFIG.appStore.apple}>
             <button
               type="button"
-              class="flex items-center shadow-xl font-montserrat justify-center w-44 mt-3 text-black bg-transparent border-2 border-black pt-1 rounded-lg"
+              class="flex items-center shadow-xl font-montserrat justify-center px-1 min-w-[150px] mt-3 text-black bg-transparent border-2 border-black pt-1 rounded-lg"
             >
-              <div class="mr-3">
-                <img src={AppleSVG} className="w-8 h-8 self-center" />
+              <div class="mr-2">
+                <img src={AppleSVG} className="w-7 h-7 self-center" />
               </div>
               <div>
                 <div class="text-xs text-left tracking-tighter">
                   Download on the
                 </div>
-                <div class="-mt-1 text-lg text-left font-semibold">
+                <div class="-mt-1 text-base text-left font-semibold">
                   App Store
                 </div>
               </div>
             </button>
           </a>
-          <a className="ml-5" href={CONFIG.appStore.google}>
+          <a className="ml-2" href={CONFIG.appStore.google}>
             <button
               type="button"
-              class="flex items-center shadow-xl font-montserrat justify-center w-44 mt-3 text-black bg-transparent border-2 border-black pt-1 rounded-lg"
+              class="flex items-center shadow-xl font-montserrat justify-center px-1 min-w-[150px] mt-3 text-black bg-transparent border-2 border-black pt-1 rounded-lg"
             >
-              <div class="mr-3">
-                <img src={GooglePlaySVG} className="w-8 h-8 self-baseline" />
+              <div class="mr-2">
+                <img src={GooglePlaySVG} className="w-7 h-7 self-baseline" />
               </div>
               <div>
                 <div class="text-xs text-left tracking-tighter">
                   Android app on
                 </div>
-                <div class="-mt-1 text-lg text-left font-semibold">
+                <div class="-mt-1 text-base text-left font-semibold">
                   Google Play
                 </div>
               </div>
