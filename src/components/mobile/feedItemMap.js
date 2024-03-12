@@ -11,19 +11,17 @@ import memeIcon from "../../assets/svg/feed-icons/memes.svg";
 import tvlIcon from "../../assets/svg/feed-icons/TVL.svg";
 import videoIcon from "../../assets/svg/feed-icons/play.svg";
 
-export const feedItemIconMap = {
-  news: newsIcon,
-  event: eventIcon,
-  video: videoIcon,
-  podcast: podcastIcon,
-  blog: blogIcon,
-  forum: forumIcon,
-  person: personIcon,
-  image: imageIcon,
-  meme: imageIcon,
-  reddit: socialIcon,
-  DISCORD: socialIcon,
-  market: priceActionIcon,
-  tvl: tvlIcon,
-  meme: memeIcon,
-};
+export const feedItemIconArray = [
+  { name: "TVL", icon: tvlIcon },
+  { name: "Blog", icon: blogIcon },
+  { name: "News", icon: newsIcon },
+  { name: "Events", icon: eventIcon },
+  { name: "Videos", icon: videoIcon },
+  { name: "Images", icon: imageIcon },
+  { name: "Memes", icon: memeIcon },
+  { name: "Forums", icon: forumIcon },
+  { name: "Persons", icon: personIcon },
+  { name: "Podcasts", icon: podcastIcon },
+  { name: "Social Posts", icon: socialIcon },
+  { name: "Price actions", icon: priceActionIcon },
+];
