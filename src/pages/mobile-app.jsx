@@ -2,6 +2,7 @@ import React from "react";
 import { Footer, Navbar } from "../components";
 import Hero from "../components/mobile/Hero";
 import Video from "../components/mobile/Video";
+import { Backers, Partners } from "../components/home";
 
 const MobilePage = () => {
   return (
@@ -9,6 +10,7 @@ const MobilePage = () => {
       <Navbar />
       <Hero />
       <Video />
+      <Backers />
       {/* <Workflow />
       <Partners />
       <Backers />

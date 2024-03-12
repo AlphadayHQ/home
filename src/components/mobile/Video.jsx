@@ -20,7 +20,7 @@ const Video = () => {
   }, []);
   return (
     <Section>
-      <div className="w-full flex justify-center h-auto">
+      <div className="w-full flex justify-center h-auto my-14">
         <iframe
           src={CONFIG.video.link}
           title={CONFIG.video.title}
