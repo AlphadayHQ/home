@@ -2,12 +2,11 @@ import React from "react";
 import { Footer, Navbar } from "../components";
 import Hero from "../components/mobile/Hero";
 import Video from "../components/mobile/Video";
-import { Backers, Partners, Workflow } from "../components/home";
+import { Backers, FAQ, Partners, Workflow } from "../components/home";
 import Info from "../components/mobile/Info";
 import onTheGoImage from "../images/mobile/on-the-go.png";
 import SwipeUpImage from "../images/mobile/swipe-up.png";
 import NotificationsImage from "../images/mobile/notifications.png";
-import PillsImage from "../images/mobile/pills-image.png";
 import Stats from "../components/home/Stats";
 import SuperfeedInfo from "../components/mobile/SuperfeedInfo";
 import SomeFeatures from "../components/mobile/SomeFeatures";
@@ -46,14 +45,8 @@ const MobilePage = () => {
       />
       <SomeFeatures />
       <UserFeedback />
-      {/* <Workflow />
-      <Partners />
-      <Backers />
-      <Team />
-      <FAQ />
-      <Footer /> */}
-      <div className="mb-40"></div>
-      {/* This is a hack to fix the footer position */}
+      <FAQ isMobile />
+      <Footer isMobile />
     </>
   );
 };
