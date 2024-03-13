@@ -11,6 +11,7 @@ import PillsImage from "../images/mobile/pills-image.png";
 import Stats from "../components/home/Stats";
 import SuperfeedInfo from "../components/mobile/SuperfeedInfo";
 import SomeFeatures from "../components/mobile/SomeFeatures";
+import UserFeedback from "../components/mobile/UserFeedback";
 
 const MobilePage = () => {
   return (
@@ -44,6 +45,7 @@ const MobilePage = () => {
         bg="bg-eerie"
       />
       <SomeFeatures />
+      <UserFeedback />
       {/* <Workflow />
       <Partners />
       <Backers />
