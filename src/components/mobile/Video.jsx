@@ -25,9 +25,9 @@ const Video = () => {
           src={CONFIG.video.link}
           title={CONFIG.video.title}
           allow="autoplay; encrypted-media"
-          className="border-none w-[80%] aspect-video mt-5"
+          className="border-none w-[90%] aspect-video mt-5"
           style={{
-            height: "220px",
+            height: "280px",
             visibility: "hidden",
           }}
           allowFullScreen
