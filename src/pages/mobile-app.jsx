@@ -10,6 +10,7 @@ import NotificationsImage from "../images/mobile/notifications.png";
 import PillsImage from "../images/mobile/pills-image.png";
 import Stats from "../components/home/Stats";
 import SuperfeedInfo from "../components/mobile/SuperfeedInfo";
+import SomeFeatures from "../components/mobile/SomeFeatures";
 
 const MobilePage = () => {
   return (
@@ -34,13 +35,6 @@ const MobilePage = () => {
       <div className="mx-auto w-11/12 max-w-7xl py-10">
         <Stats />
       </div>
-      {/* <Info
-        emoji="🚀"
-        title="Unlock the Superfeed"
-        text="Forget opening dozens of tabs, Superfeed is your personalized crypto news aggregator."
-        img={PillsImage}
-        bg="bg-eerie"
-      /> */}
       <SuperfeedInfo />
       <Info
         emoji="🔔"
@@ -49,6 +43,7 @@ const MobilePage = () => {
         img={NotificationsImage}
         bg="bg-eerie"
       />
+      <SomeFeatures />
       {/* <Workflow />
       <Partners />
       <Backers />

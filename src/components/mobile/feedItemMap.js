@@ -25,3 +25,11 @@ export const feedItemIconArray = [
   { name: "Social Posts", icon: socialIcon },
   { name: "Price actions", icon: priceActionIcon },
 ];
+
+export const featuresIconArray = [
+  { name: "Web3 Connect", icon: socialIcon, color: "#CC841F" },
+  { name: "Secure & Private", icon: tvlIcon, color: "#CE4BD9" },
+  { name: "Own Your Content Onchain", icon: newsIcon, color: "#1D7CBF" },
+  { name: "Dynamic Design", icon: blogIcon, color: "#4747CC" },
+  { name: "Collect Points", icon: personIcon, color: "#D1A234" },
+];
