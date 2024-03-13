@@ -1,9 +1,8 @@
 import React from "react";
 import { Section } from "../../shared";
-import AppleSVG from "../../assets/svg/apple.svg";
-import GooglePlaySVG from "../../assets/svg/google-play.svg";
 import ArrowDownSVG from "../../assets/svg/arrow-down.svg";
-import CONFIG from "../../config";
+import GooglePlayButton from "./GooglePlayButton";
+import AppleStoreButton from "./AppleStoreButton";
 
 export default function () {
   return (
@@ -22,42 +21,8 @@ export default function () {
           effortlessly.
         </div>
         <div className="text-lg text-black mt-5 flex">
-          <a href={CONFIG.appStore.apple}>
-            <button
-              type="button"
-              class="flex items-center shadow-xl font-montserrat justify-center px-1 min-w-[150px] mt-3 text-black bg-transparent border-2 border-black pt-1 rounded-lg"
-            >
-              <div class="mr-2">
-                <img src={AppleSVG} className="w-7 h-7 self-center" />
-              </div>
-              <div>
-                <div class="text-xs text-left tracking-tighter">
-                  Download on the
-                </div>
-                <div class="-mt-1 text-base text-left font-semibold">
-                  App Store
-                </div>
-              </div>
-            </button>
-          </a>
-          <a className="ml-2" href={CONFIG.appStore.google}>
-            <button
-              type="button"
-              class="flex items-center shadow-xl font-montserrat justify-center px-1 min-w-[150px] mt-3 text-black bg-transparent border-2 border-black pt-1 rounded-lg"
-            >
-              <div class="mr-2">
-                <img src={GooglePlaySVG} className="w-7 h-7 self-baseline" />
-              </div>
-              <div>
-                <div class="text-xs text-left tracking-tighter">
-                  Android app on
-                </div>
-                <div class="-mt-1 text-base text-left font-semibold">
-                  Google Play
-                </div>
-              </div>
-            </button>
-          </a>
+          <AppleStoreButton />
+          <GooglePlayButton />
         </div>
         <div className="flex justify-center mt-20 mb-10">
           <img src={ArrowDownSVG} className="w-8 h-8 animate-bounce" />
