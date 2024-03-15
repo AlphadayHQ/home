@@ -5,8 +5,9 @@ import LaunchAppButton from "../home/LaunchAppButton";
 import discordLogo from "../../images/socials/discord.svg";
 import twitterLogo from "../../images/socials/twitter.svg";
 import config from "../../config";
-import AppleStoreButton from "../mobile/AppleStoreButton";
-import GooglePlayButton from "../mobile/GooglePlayButton";
+// TODO Add buttons when apps are ready
+// import AppleStoreButton from "../mobile/AppleStoreButton";
+// import GooglePlayButton from "../mobile/GooglePlayButton";
 
 function Navbar({ isPrivacyPolicy }) {
   const { twitter, discord } = config;
@@ -80,10 +81,10 @@ function Navbar({ isPrivacyPolicy }) {
               </div>
               <div ref={element} className="scroll-hide absolute mb-1 flex">
                 <LaunchAppButton />
-                <div className="flex ml-2">
+                {/* <div className="flex ml-2">
                   <AppleStoreButton type="sm" />
                   <GooglePlayButton type="sm" />
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
