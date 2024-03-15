@@ -9,7 +9,7 @@ const LaunchAppButton = () => {
     <>
       <Button
         link={alphadayApp}
-        className={`bg-lightblue whitespace-nowrap !text-black pt-2.5`}
+        className={`bg-lightblue whitespace-nowrap pt-2.5`}
       >
         Launch app
       </Button>
