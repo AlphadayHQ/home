@@ -8,10 +8,10 @@ const Info = ({ emoji, title, text, img, bg }) => {
       <div className="mx-auto w-11/12 max-w-7xl py-10">
         <div className="text-xl text-center">{emoji}</div>
         <h2 className="uppercase text-center text-platinum mt-2">{title}</h2>
-        <p className="text-platinum mt-4 text-center max-w-sm mx-auto">
+        <p className="text-platinum mt-4 text-center max-w-md mx-auto">
           {text}
         </p>
-        <img className="mt-4 mx-auto" src={img} alt="" />
+        <img className="mt-4 mx-auto max-w-md" src={img} alt="" />
       </div>
     </Section>
   );
