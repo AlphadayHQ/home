@@ -24,7 +24,8 @@ const GooglePlayButton = ({ type }) => {
         </div>
         {type !== "sm" && (
           <div>
-            <div class="text-xs text-left tracking-tighter">Android app on</div>
+            {/* <div class="text-xs text-left tracking-tighter">Android app on</div> */}
+            <div class="text-xs text-left tracking-tighter">Coming soon</div>
             <div class="-mt-1 text-base text-left font-semibold">
               Google Play
             </div>
