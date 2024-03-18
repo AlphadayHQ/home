@@ -7,14 +7,14 @@ const feedbackDetails = [
     Company: "The Daily Gwei",
     feedback:
       "Alphaday has transformed the way I manage my crypto portfolio. It's intuitive, comprehensive, and all-encompassing.",
-    img: "https://flowbite.com/docs/images/carousel/carousel-2.svg",
+    // img: "https://flowbite.com/docs/images/carousel/carousel-2.svg",
   },
   {
     name: "John Sassano",
     Company: "The Daily Gwei",
     feedback:
       "Alphaday is a great tool for anyone who wants to keep up with the latest news and events in the Ethereum ecosystem. The team behind it is also very responsive and open to feedback!",
-    img: "https://flowbite.com/docs/images/carousel/carousel-3.svg",
+    // img: "https://flowbite.com/docs/images/carousel/carousel-3.svg",
   },
 ];
 
@@ -30,9 +30,9 @@ const UserFeedback = () => {
   };
 
   return (
-    <Section className="h-auto w-ful bg-eerie">
-      <div className="mx-auto w-11/12 max-w-7xl py-10">
-        <h2 className="uppercase text-center text-platinum mt-2">
+    <Section className="h-auto w-full">
+      <div className="mx-auto w-11/12 max-w-7xl py-16">
+        <h2 className="text-[22px] font-medium text-aluminium text-center uppercase">
           What users are saying
         </h2>
         <p className="text-platinum mt-4 text-center max-w-sm mx-auto">
@@ -46,11 +46,13 @@ const UserFeedback = () => {
               {/* <!-- Item 1 --> */}
               <div class="hidden- duration-700 ease-in-out" data-carousel-item>
                 <div className="flex justify-center items-center mx-4">
-                  <img
-                    src="https://flowbite.com/docs/images/carousel/carousel-2.svg"
-                    alt=""
-                    className="w-12 h-12 rounded-full mb-10"
-                  />
+                  {feedbackDetails[selectedOptionId].img && (
+                    <img
+                      src={feedbackDetails[selectedOptionId].img}
+                      alt=""
+                      className="w-12 h-12 rounded-full mb-10"
+                    />
+                  )}
                   <div className="flex flex-col ml-4">
                     <p className="text-aluminium">
                       {feedbackDetails[selectedOptionId].feedback}

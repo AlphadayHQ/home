@@ -4,7 +4,7 @@ import { featuresIconArray } from "./feedItemMap";
 
 const SomeFeatures = () => {
   return (
-    <Section className="h-auto w-full">
+    <Section className="h-auto w-full bg-eerie">
       <div className="mx-auto w-11/12 max-w-7xl py-10">
         <div className="flex flex-wrap justify-center max-w-sm mx-auto">
           {featuresIconArray.map((item) => (
