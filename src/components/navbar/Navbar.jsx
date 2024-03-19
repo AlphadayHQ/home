@@ -5,11 +5,12 @@ import LaunchAppButton from "../home/LaunchAppButton";
 import discordLogo from "../../images/socials/discord.svg";
 import twitterLogo from "../../images/socials/twitter.svg";
 import config from "../../config";
+import { twMerge } from "tailwind-merge";
 // TODO Add buttons when apps are ready
 // import AppleStoreButton from "../mobile/AppleStoreButton";
 // import GooglePlayButton from "../mobile/GooglePlayButton";
 
-function Navbar({ isPrivacyPolicy }) {
+function Navbar({ isPrivacyPolicy, isMobile }) {
   const { twitter, discord } = config;
   const showPosition = 492;
   const element = useRef(null);
@@ -43,7 +44,12 @@ function Navbar({ isPrivacyPolicy }) {
 
   return (
     <div className={isPrivacyPolicy ? "" : "bg-california"}>
-      <Nav className="relative z-50 top-0 left-0">
+      <Nav
+        className={twMerge(
+          "relative z-50 top-0 left-0",
+          isMobile && "lg:max-w-5xl"
+        )}
+      >
         <div className="flex justify-between items-center">
           <div className="flex justify-between items-center z-20">
             <a href="/">
@@ -56,7 +62,10 @@ function Navbar({ isPrivacyPolicy }) {
           </div>
 
           <div
-            className={`fixed w-[91%] z-10 mx-auto lg:max-w-7xl flex justify-end`}
+            className={twMerge(
+              "fixed w-[91%] z-10 mx-auto lg:max-w-7xl flex justify-end",
+              isMobile && "lg:max-w-5xl"
+            )}
           >
             <div className="relative items-center w-[100px] md:w-[140px] flex justify-end ease-in-out">
               <div
