@@ -34,7 +34,7 @@ export default function () {
           Alphaday keeps all your essential crypto tools and insights in one
           convenient place.
         </div>
-        <div className="text-lg text-black mt-8 xl:mt-14 flex">
+        <div className="text-lg text-black mt-8 xl:mt-14 flex gap-2">
           <AppleStoreButton />
           <GooglePlayButton />
         </div>
