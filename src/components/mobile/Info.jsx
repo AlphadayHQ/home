@@ -13,7 +13,7 @@ const Info = ({ emoji, title, text, img, bg }) => {
         <p className="text-platinum mt-4 text-center max-w-md mx-auto">
           {text}
         </p>
-        <img className="mt-8 w-full max-w-5xl rounded-2xl" src={img} alt="" />
+        <img className="mt-8 w-full max-w-5xl mx-auto rounded-2xl" src={img} alt="" />
       </div>
     </Section>
   );
