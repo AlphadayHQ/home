@@ -8,13 +8,14 @@ import {
   // Partners, Workflow
 } from "../components/home";
 import Info from "../components/mobile/Info";
-import onTheGoImage from "../images/mobile/on-the-go.png";
+import onTheGoImage from "../images/mobile/on-the-go.jpg";
 import SwipeUpImage from "../images/mobile/swipe-up.png";
 import NotificationsImage from "../images/mobile/alpha-notifications.png";
 import Stats from "../components/home/Stats";
 import SuperfeedInfo from "../components/mobile/SuperfeedInfo";
 import SomeFeatures from "../components/mobile/SomeFeatures";
 import UserFeedback from "../components/mobile/UserFeedback";
+import JoinCommunity from "../components/mobile/JoinCommunity";
 
 const MobilePage = () => {
   return (
@@ -47,8 +48,9 @@ const MobilePage = () => {
       </div>
       <Backers />
       <SomeFeatures />
-      <UserFeedback />
-      {/* <FAQ isMobile /> */}
+      <JoinCommunity />
+      {/* <UserFeedback /> */}
+      <FAQ isMobile />
       <Footer isMobile />
     </>
   );

@@ -6,18 +6,17 @@ import AppleStoreButton from "./AppleStoreButton";
 
 const HeroTextSm = () => (
   <h1 className="md:hidden flex flex-col text-black self-start text-center m-0 md:text-left font-medium leading-[60px] sm:leading-[70px] md:leading-[100px] lg:leading-[125px] text-[42px] sm:text-5xl md:text-7xl lg:text-[98px]">
-    <span className="text-left">Swipe Up,</span>
-    <span className="text-left">Explore,</span>
-    <span className="text-left">Unlock</span>
-    <span className="text-left">Alpha.</span>
+    <span className="text-left">One App,</span>
+    <span className="text-left">All Your</span>
+    <span className="text-left">Crypto Tools</span>
   </h1>
 );
 
 const HeroTextLg = ({ className }) => (
   <h1 className="hidden md:flex flex-col text-black self-start text-center m-0 md:text-left font-medium leading-[60px] sm:leading-[70px] md:leading-[100px] lg:leading-[125px] text-[42px] sm:text-5xl md:text-7xl lg:text-[98px]">
-    <span className="text-left">Swipe Up,</span>
-    <span className="text-left">Explore,</span>
-    <span className="text-left">Unlock Alpha.</span>
+    <span className="text-left">One App,</span>
+    <span className="text-left">All Your</span>
+    <span className="text-left">Crypto Tools</span>
   </h1>
 );
 
@@ -29,15 +28,18 @@ export default function () {
           <HeroTextSm />
           <HeroTextLg />
         </div>
-        <div className="text-lg text-black mt-8">
-          Swipe through the latest in crypto and get the next big alpha
-          effortlessly.
+        <div className="text-lg text-black mt-6 xl:mt-10">
+          No more logging in and out of multiple platforms.
         </div>
-        <div className="text-lg text-black mt-5 flex">
+        <div className="text-lg text-black mt-3 max-w-sm">
+          Alphaday keeps all your essential crypto tools and insights in one
+          convenient place.
+        </div>
+        <div className="text-lg text-black mt-8 xl:mt-14 flex">
           <AppleStoreButton />
           <GooglePlayButton />
         </div>
-        <div className="flex justify-center mt-20 mb-10">
+        <div className="flex flex-col items-center mt-20 mb-10">
           <img src={ArrowDownSVG} className="w-8 h-8 animate-bounce" />
         </div>
       </div>

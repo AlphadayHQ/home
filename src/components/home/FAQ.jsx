@@ -73,11 +73,11 @@ function FAQ({ isMobile }) {
   }
   return (
     <Section className="bg-eerie">
-      <Div className={isMobile ? "!pt-0 !pb-10" : "pb-48"}>
+      <Div className={isMobile ? "!py-16" : "pb-48"}>
         <div>
           <div className="flex justify-center w-full mb-6">
             {isMobile ? (
-              <h2 className="uppercase text-center text-platinum mt-2">
+              <h2 className="text-[22px] font-medium text-aluminium text-center">
                 Frequently Asked Questions
               </h2>
             ) : (
