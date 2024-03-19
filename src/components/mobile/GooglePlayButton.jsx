@@ -14,7 +14,7 @@ const GooglePlayButton = ({ type }) => {
       class={twMerge(
         "flex group relative items-center shadow-xl font-montserrat justify-center px-1 min-w-[150px] mt-3 text-black bg-transparent border-2 border-black pt-1 rounded-lg",
         type === "sm" &&
-          "min-w-[40px] py-2.5 border-0 mt-0 bg-lightblue drop-shadow-eclipse hover:opacity-80 transition-all duration-300"
+          "min-w-[40px] py-2.5 border-0 mt-0 bg-lightblue drop-shadow-eclipse hover:bg-[#1235b5] transition-all duration-300"
       )}
     >
       <div class={twMerge("mr-2", type === "sm" && "mr-0")}>
