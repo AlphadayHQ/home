@@ -1,7 +1,7 @@
 import React from "react";
 import { Footer, Navbar } from "../components";
 import Hero from "../components/mobile/Hero";
-// import Video from "../components/mobile/Video";
+import Video from "../components/mobile/Video";
 import {
   Backers,
   FAQ,
@@ -21,7 +21,7 @@ const MobilePage = () => {
     <>
       <Navbar />
       <Hero />
-      {/* <Video /> */}
+      <Video />
       <Info
         emoji="🏃"
         title="Crypto on the go"
