@@ -37,7 +37,7 @@ const Video = () => {
           }}
         /> */}
         <img
-          className="mx-auto w-[80%] max-w-5xl rounded-2xl"
+          className="mx-auto w-11/12 max-w-5xl rounded-2xl"
           src={NotificationsImage}
           alt=""
         />
