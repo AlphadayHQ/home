@@ -6,16 +6,17 @@ import { twMerge } from "tailwind-merge";
 import Tooltip from "../home/Tooltip";
 
 // type: "sm" | "base"
-const GooglePlayButton = ({ type }) => {
+const GooglePlayButton = ({ type, disabled }) => {
   return (
     // <a className="ml-2" href={CONFIG.appStore.google}>
     <span className="relative">
       <button
         type="button"
+        disabled={disabled}
         class={twMerge(
           "flex peer items-center shadow-xl font-montserrat justify-center px-1 min-w-[150px] mt-3 text-black bg-transparent border-2 border-black pt-1 rounded-lg",
           type === "sm" &&
-            "min-w-[40px] pt-2.5 pb-2 border-0 mt-0 bg-lightblue drop-shadow-eclipse hover:bg-[#1235b5] transition-all duration-300"
+            "min-w-[40px] pt-2.5 pb-2 border-0 mt-0 bg-lightblue drop-shadow-eclipse hover:bg-[#1235b5] transition-all duration-300 disabled:bg-aluminium"
         )}
       >
         <div class={twMerge("mr-2", type === "sm" && "mr-0")}>

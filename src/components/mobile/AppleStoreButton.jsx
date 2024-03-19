@@ -5,16 +5,17 @@ import AppleWhiteSVG from "../../assets/svg/apple-white.svg";
 import { twMerge } from "tailwind-merge";
 import Tooltip from "../home/Tooltip";
 
-const AppleStoreButton = ({ type }) => {
+const AppleStoreButton = ({ type, disabled }) => {
   return (
     // <a href={CONFIG.appStore.apple}>
     <span className="relative">
       <button
         type="button"
+        disabled={disabled}
         class={twMerge(
           "flex peer items-center shadow-xl font-montserrat justify-center px-1 min-w-[150px] mt-3 text-black bg-transparent border-2 border-black pt-1 rounded-lg",
           type === "sm" &&
-            "min-w-[40px] pt-2 pb-1.5 border-0 mt-0 bg-lightblue drop-shadow-eclipse hover:bg-[#1235b5] transition-all duration-300"
+            "min-w-[40px] pt-2 pb-1.5 border-0 mt-0 bg-lightblue drop-shadow-eclipse hover:bg-[#1235b5] disabled:bg-aluminium transition-all duration-300"
         )}
       >
         <div class={twMerge("mr-2", type === "sm" && "mr-0")}>
