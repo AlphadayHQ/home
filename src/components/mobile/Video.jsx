@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Section } from "../../shared";
-import CONFIG from "../../config";
+// import CONFIG from "../../config";
+import NotificationsImage from "../../images/mobile/superfeed.jpg";
 
 const Video = () => {
   /**
@@ -19,9 +20,10 @@ const Video = () => {
     return () => clearTimeout(timeout);
   }, []);
   return (
-    <Section>
-      <div className="w-full flex justify-center h-auto my-14">
-        <iframe
+    <Section className="bg-eerie">
+      <div className="w-full flex justify-center h-auto py-14">
+        {/* // TODO Use this for Video */}
+        {/* <iframe
           src={CONFIG.video.link}
           title={CONFIG.video.title}
           allow="autoplay; encrypted-media"
@@ -33,6 +35,11 @@ const Video = () => {
               frameRef.current.style.visibility = "visible";
             }
           }}
+        /> */}
+        <img
+          className="my-8 mx-auto max-w-5xl rounded-2xl"
+          src={NotificationsImage}
+          alt=""
         />
       </div>
     </Section>
