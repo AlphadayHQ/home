@@ -25,7 +25,7 @@ const ColTilte = ({ title }) => (
   <p className="text-aluminium text-sm font-medium mb-4">{title}</p>
 );
 
-function Footer() {
+function Footer({ isMobile }) {
   const {
     blog,
     discord,
@@ -38,7 +38,7 @@ function Footer() {
   } = config;
   return (
     <Section className="">
-      <Div className="pt-0">
+      <Div className={isMobile ? "pt-16" : "pt-0"}>
         <div className="grid place-content-between gap-10 xl:gap-16 grid-cols-2 md:grid-cols-4">
           <Col className="place-self-start flex">
             <ColTilte title="About Us" />
