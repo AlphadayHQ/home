@@ -5,11 +5,9 @@ import Video from "../components/mobile/Video";
 import {
   Backers,
   FAQ,
-  // Partners, Workflow
 } from "../components/home";
 import Info from "../components/mobile/Info";
 import onTheGoImage from "../images/mobile/on-the-go.jpg";
-import SwipeUpImage from "../images/mobile/swipe-up.png";
 import NotificationsImage from "../images/mobile/alpha-notifications.png";
 import Stats from "../components/home/Stats";
 import SuperfeedInfo from "../components/mobile/SuperfeedInfo";
@@ -20,7 +18,7 @@ import JoinCommunity from "../components/mobile/JoinCommunity";
 const MobilePage = () => {
   return (
     <>
-      <Navbar />
+      <Navbar isMobile />
       <Hero />
       <Video />
       <Info
@@ -29,13 +27,6 @@ const MobilePage = () => {
         text="Experience the ultimate convenience with Alphaday and fit your entire crypto workflow right in your pocket."
         img={onTheGoImage}
       />
-      {/* <Info
-        emoji="👆"
-        title="Swipe up for alpha"
-        text="Alphaday is here to change the way you interact with your crypto feed completely."
-        img={SwipeUpImage}
-        bg="bg-eerie"
-      /> */}
       <Info
         emoji="🔔"
         title="Never miss a beat"
@@ -49,7 +40,6 @@ const MobilePage = () => {
       <Backers />
       <SomeFeatures />
       <JoinCommunity />
-      {/* <UserFeedback /> */}
       <FAQ isMobile />
       <Footer isMobile />
     </>

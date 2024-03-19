@@ -1,19 +1,22 @@
 import React from "react";
 import GooglePlaySVG from "../../assets/svg/google-play.svg";
 import GooglePlayWhiteSVG from "../../assets/svg/google-play-white.svg";
-import CONFIG from "../../config";
+// import CONFIG from "../../config";
 import { twMerge } from "tailwind-merge";
+import Tooltip from "../home/Tooltip";
 
 // type: "sm" | "base"
-const GooglePlayButton = ({ type }) => {
+const GooglePlayButton = ({ type, disabled }) => {
   return (
-    <a className="ml-2" href={CONFIG.appStore.google}>
+    // <a className="ml-2" href={CONFIG.appStore.google}>
+    <span className="relative">
       <button
         type="button"
+        disabled={disabled}
         class={twMerge(
-          "flex items-center shadow-xl font-montserrat justify-center px-1 min-w-[150px] mt-3 text-black bg-transparent border-2 border-black pt-1 rounded-lg",
+          "flex peer items-center shadow-xl font-montserrat justify-center px-1 min-w-[150px] mt-3 text-black bg-transparent border-2 border-black pt-1 rounded-lg",
           type === "sm" &&
-            "min-w-[40px] py-2.5 border-0 mt-0 bg-lightblue drop-shadow-eclipse hover:opacity-80 transition-all duration-300"
+            "min-w-[40px] pt-2.5 pb-2 border-0 mt-0 bg-lightblue drop-shadow-eclipse hover:bg-[#1235b5] transition-all duration-300 disabled:bg-aluminium"
         )}
       >
         <div class={twMerge("mr-2", type === "sm" && "mr-0")}>
@@ -32,7 +35,17 @@ const GooglePlayButton = ({ type }) => {
           </div>
         )}
       </button>
-    </a>
+      <Tooltip
+        text="Launcing soon on the Google Play store"
+        tipPos={type === "sm" ? "right" : "center"}
+        className={twMerge(
+          "mb-1 -bottom-20",
+          type === "sm" &&
+            "w-36 sm:w-40 -bottom-20 -left-[300%] xl:-left-[150%]"
+        )}
+      />
+    </span>
+    // </a>
   );
 };
 

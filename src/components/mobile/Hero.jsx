@@ -12,10 +12,9 @@ const HeroTextSm = () => (
   </h1>
 );
 
-const HeroTextLg = ({ className }) => (
-  <h1 className="hidden md:flex flex-col text-black self-start text-center m-0 md:text-left font-medium leading-[60px] sm:leading-[70px] md:leading-[100px] lg:leading-[125px] text-[42px] sm:text-5xl md:text-7xl lg:text-[98px]">
-    <span className="text-left">One App,</span>
-    <span className="text-left">All Your</span>
+const HeroTextLg = () => (
+  <h1 className="pt-10 hidden md:flex flex-col text-black self-start text-center m-0 md:text-left font-medium leading-[60px] sm:leading-[70px] md:leading-[100px] lg:leading-[125px] text-[42px] sm:text-5xl md:text-7xl lg:text-[98px]">
+    <span className="text-left">One App, All Your</span>
     <span className="text-left">Crypto Tools</span>
   </h1>
 );
@@ -23,7 +22,7 @@ const HeroTextLg = ({ className }) => (
 export default function () {
   return (
     <Section className="bg-california overflow-hidden h-auto w-full border-california">
-      <div className="mx-auto w-11/12 max-w-7xl">
+      <div className="mx-auto w-11/12 max-w-5xl">
         <div className="flex flex-col max-w-5xl sm:mt-14 mt-10">
           <HeroTextSm />
           <HeroTextLg />
@@ -35,7 +34,7 @@ export default function () {
           Alphaday keeps all your essential crypto tools and insights in one
           convenient place.
         </div>
-        <div className="text-lg text-black mt-8 xl:mt-14 flex">
+        <div className="text-lg text-black mt-8 xl:mt-14 flex gap-2">
           <AppleStoreButton />
           <GooglePlayButton />
         </div>
