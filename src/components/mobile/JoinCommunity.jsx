@@ -20,7 +20,10 @@ const JoinCommunity = ({ bg }) => {
           "Alphaday has transformed the way I manage my crypto portfolio. It's
           intuitive, comprehensive, and all-encompassing."
         </p>
-        <p className="text-3xl text-center mt-10 mx-auto w-full">
+        <p className="text-platinum mt-6 text-center max-w-md mx-auto">
+          -Robert H.
+        </p>
+        <p className="text-3xl text-center mt-8 mx-auto w-full">
           ⭐ ⭐ ⭐ ⭐ ⭐
         </p>
       </div>

@@ -4,8 +4,8 @@ import Hero from "../components/mobile/Hero";
 import Video from "../components/mobile/Video";
 import { Backers, FAQ } from "../components/home";
 import Info from "../components/mobile/Info";
-// import onTheGoImage from "../images/mobile/on-the-go.jpg";
-import NotificationsImage from "../images/mobile/alpha-notifications.jpg";
+import onTheGoImage from "../images/mobile/crypto-on-the-go.jpg";
+import NotificationsImage from "../images/mobile/alpha-notifications.png";
 import Stats from "../components/home/Stats";
 import SuperfeedInfo from "../components/mobile/SuperfeedInfo";
 import SomeFeatures from "../components/mobile/SomeFeatures";
@@ -22,7 +22,7 @@ const MobilePage = () => {
         emoji="🏃"
         title="Crypto on the go"
         text="Experience the ultimate convenience with Alphaday and fit your entire crypto workflow right in your pocket."
-        // img={onTheGoImage}
+        img={onTheGoImage}
       />
       <Info
         emoji="🔔"
