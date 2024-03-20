@@ -86,7 +86,7 @@ function FAQ({ isMobile }) {
           </div>
 
           <div className="grid grid-cols-1 gap-4 w-full mx-auto max-w-[700px]">
-            {(isMobile ? mobileFAQData : FAQ).map((item, index) => {
+            {(isMobile ? mobileFAQData : FAQData).map((item, index) => {
               return (
                 <Card
                   index={index}
