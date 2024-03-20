@@ -5,7 +5,7 @@ import Video from "../components/mobile/Video";
 import { Backers, FAQ } from "../components/home";
 import Info from "../components/mobile/Info";
 import onTheGoImage from "../images/mobile/crypto-on-the-go.jpg";
-import NotificationsImage from "../images/mobile/alpha-notifications.png";
+import NotificationsImage from "../images/mobile/alpha-notifications.jpg";
 import Stats from "../components/home/Stats";
 import SuperfeedInfo from "../components/mobile/SuperfeedInfo";
 import SomeFeatures from "../components/mobile/SomeFeatures";
