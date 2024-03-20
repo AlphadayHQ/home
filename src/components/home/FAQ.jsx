@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
 import { Div, Section, Title } from "../../shared";
-import { data } from "./faqData";
+import { FAQData, mobileFAQData } from "./faqData";
 
-const Card = ({ index, handleToggle, toggleDrawer, data }) => {
+const Card = ({ index, handleToggle, toggleDrawer, data, isMobile }) => {
   const answerRef = useRef(null);
   const { question, answer } = data;
 
@@ -62,7 +62,7 @@ const Card = ({ index, handleToggle, toggleDrawer, data }) => {
   );
 };
 
-function FAQ() {
+function FAQ({ isMobile }) {
   let [toggleDrawer, setToggleDrawer] = useState(0);
 
   function handleToggle(arg) {
@@ -73,14 +73,20 @@ function FAQ() {
   }
   return (
     <Section className="bg-eerie">
-      <Div className="pb-48">
+      <Div className={isMobile ? "!py-16" : "pb-48"}>
         <div>
           <div className="flex justify-center w-full mb-6">
-            <Title className="">Frequently Asked Questions</Title>
+            {isMobile ? (
+              <h2 className="text-[22px] font-medium text-aluminium text-center">
+                Frequently Asked Questions
+              </h2>
+            ) : (
+              <Title className="">Frequently Asked Questions</Title>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-4 w-full mx-auto max-w-[700px]">
-            {data.map((item, index) => {
+            {(isMobile ? mobileFAQData : FAQData).map((item, index) => {
               return (
                 <Card
                   index={index}

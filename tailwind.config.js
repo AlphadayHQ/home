@@ -41,6 +41,7 @@ module.exports = {
       fontFamily: {
         titling: ["titling", defaultTheme.fontFamily.sans],
         sans: ["titling", defaultTheme.fontFamily.sans],
+        montserrat: ["Montserrat", defaultTheme.fontFamily.sans],
       },
     },
   },
