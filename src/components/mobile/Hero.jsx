@@ -30,12 +30,9 @@ export default function () {
           <HeroTextSm />
           <HeroTextLg />
         </div>
-        <div className="text-lg text-black mt-6 xl:mt-10">
-          No more logging in and out of multiple platforms.
-        </div>
-        <div className="text-lg text-black mt-3 max-w-sm">
-          Alphaday keeps all your essential crypto tools and insights in one
-          convenient place.
+        <div className="text-lg text-black mt-6 xl:mt-10 max-w-sm md:max-w-full">
+          Skip the noise — maximize your crypto gains with smart insights
+          wherever you go.
         </div>
         <div className="text-lg text-black mt-8 xl:mt-14 flex gap-2">
           <AppleStoreButton />
