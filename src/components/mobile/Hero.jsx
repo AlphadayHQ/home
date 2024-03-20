@@ -7,16 +7,18 @@ import SuperfeedImage from "../../images/mobile/superfeed-transparent.png";
 
 const HeroTextSm = () => (
   <h1 className="md:hidden flex flex-col text-black self-start text-center m-0 md:text-left font-medium leading-[60px] sm:leading-[70px] md:leading-[100px] lg:leading-[125px] text-[42px] sm:text-5xl md:text-7xl lg:text-[98px]">
-    <span className="text-left">One App,</span>
-    <span className="text-left">All Your</span>
-    <span className="text-left">Crypto Tools</span>
+    <span className="text-left">Your</span>
+    <span className="text-left">Pocket-sized</span>
+    <span className="text-left">Crypto</span>
+    <span className="text-left">Powerhouse</span>
   </h1>
 );
 
 const HeroTextLg = () => (
   <h1 className="pt-10 hidden md:flex flex-col text-black self-start text-center m-0 md:text-left font-medium leading-[60px] sm:leading-[70px] md:leading-[100px] lg:leading-[125px] text-[42px] sm:text-5xl md:text-7xl lg:text-[98px]">
-    <span className="text-left">One App, All Your</span>
-    <span className="text-left">Crypto Tools</span>
+    <span className="text-left">Your Pocket-sized</span>
+    <span className="text-left">Crypto</span>
+    <span className="text-left">Powerhouse</span>
   </h1>
 );
 
