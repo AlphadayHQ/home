@@ -31,11 +31,12 @@ const MobilePage = () => {
         img={NotificationsImage}
         bg="bg-eerie"
       />
+      <SuperfeedInfo />
       <div className="mx-auto w-11/12 max-w-7xl py-16">
         <Stats />
       </div>
-      <Backers />
       <SomeFeatures />
+      <Backers />
       <JoinCommunity />
       <FAQ isMobile />
       <Footer isMobile />

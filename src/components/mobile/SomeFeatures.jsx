@@ -5,8 +5,8 @@ import { featuresIconArray } from "./feedItemMap";
 const SomeFeatures = () => {
   return (
     <Section className="h-auto w-full">
-      <div className="mx-auto w-11/12 max-w-7xl py-10">
-        <div className="flex flex-wrap justify-center max-w-sm mx-auto">
+      <div className="mx-auto w-11/12 max-w-7xl pt-10 pb-16">
+        <div className="flex flex-wrap justify-center max-w-sm sm:max-w-lg mx-auto">
           {featuresIconArray.map((item) => (
             <button
               style={{ backgroundColor: item.color }}

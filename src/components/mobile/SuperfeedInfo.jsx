@@ -14,7 +14,7 @@ const SuperfeedInfo = () => {
           Forget opening dozens of tabs, Superfeed is your personalized crypto
           news aggregator.
         </p>
-        <div className="flex flex-wrap justify-center max-w-sm mx-auto">
+        <div className="flex flex-wrap justify-center max-w-sm sm:max-w-3xl mx-auto">
           {feedItemIconArray.map((item) => (
             <button className="bg-[#4c5154] py-1 pt-1.5 px-2.5 rounded-xl flex flex-nowrap my-1.5 mx-1">
               <img
