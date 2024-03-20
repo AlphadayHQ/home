@@ -2,10 +2,7 @@ import React from "react";
 import { Footer, Navbar } from "../components";
 import Hero from "../components/mobile/Hero";
 import Video from "../components/mobile/Video";
-import {
-  Backers,
-  FAQ,
-} from "../components/home";
+import { Backers, FAQ } from "../components/home";
 import Info from "../components/mobile/Info";
 import onTheGoImage from "../images/mobile/on-the-go.jpg";
 import NotificationsImage from "../images/mobile/alpha-notifications.png";
@@ -18,7 +15,7 @@ import JoinCommunity from "../components/mobile/JoinCommunity";
 const MobilePage = () => {
   return (
     <>
-      <Navbar isMobile />
+      <Navbar />
       <Hero />
       <Video />
       <Info
