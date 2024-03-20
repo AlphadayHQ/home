@@ -40,7 +40,7 @@ const AppleStoreButton = ({ type, disabled }) => {
         className={twMerge(
           "mb-1 -bottom-20 w-full",
           type === "sm" &&
-            "w-36 sm:w-44 -bottom-20 -left-[120%] lg:-left-[160%]"
+            "w-36 sm:w-44 -bottom-20 -left-[120%] sm:-left-[160%]"
         )}
       />
     </span>

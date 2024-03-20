@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Section } from "../../shared";
 // import CONFIG from "../../config";
-import NotificationsImage from "../../images/mobile/superfeed.jpg";
+import SuperfeedImage from "../../images/mobile/superfeed.jpg";
 
 const Video = () => {
   /**
@@ -20,7 +20,7 @@ const Video = () => {
     return () => clearTimeout(timeout);
   }, []);
   return (
-    <Section className="bg-eerie">
+    <Section className="bg-eerie block xl:hidden">
       <div className="w-full flex justify-center h-auto py-14">
         {/* // TODO Use this for Video */}
         {/* <iframe
@@ -38,7 +38,7 @@ const Video = () => {
         /> */}
         <img
           className="mx-auto w-11/12 max-w-5xl rounded-2xl"
-          src={NotificationsImage}
+          src={SuperfeedImage}
           alt=""
         />
       </div>

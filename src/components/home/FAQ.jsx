@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
 import { Div, Section, Title } from "../../shared";
-import { data } from "./faqData";
+import { FAQData, mobileFAQData } from "./faqData";
 
-const Card = ({ index, handleToggle, toggleDrawer, data }) => {
+const Card = ({ index, handleToggle, toggleDrawer, data, isMobile }) => {
   const answerRef = useRef(null);
   const { question, answer } = data;
 
@@ -86,7 +86,7 @@ function FAQ({ isMobile }) {
           </div>
 
           <div className="grid grid-cols-1 gap-4 w-full mx-auto max-w-[700px]">
-            {data.map((item, index) => {
+            {(isMobile ? mobileFAQData : FAQ).map((item, index) => {
               return (
                 <Card
                   index={index}
