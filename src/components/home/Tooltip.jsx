@@ -23,8 +23,7 @@ const Tooltip = ({
         <div
           class={twMerge(
             "[clip-path:polygon(100%_50%,_0_0,_100%_0,_50%_100%,_0_0)] rotate-180 h-2 w-4 bg-black",
-
-            tipPos === "right" && "items-end mr-0.5"
+            tipPos === "right" && "items-end mr-2"
           )}
         ></div>
         <div class="rounded font-extralight bg-black px-4 py-3 text-xs text-left shadow-lg cursor-default">

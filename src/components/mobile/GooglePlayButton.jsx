@@ -41,7 +41,7 @@ const GooglePlayButton = ({ type, disabled }) => {
         className={twMerge(
           "mb-1 -bottom-20",
           type === "sm" &&
-            "w-36 sm:w-40 -bottom-20 -left-[300%] xl:-left-[150%]"
+            "w-36 sm:w-40 -bottom-20 -left-[300%]"
         )}
       />
     </span>
