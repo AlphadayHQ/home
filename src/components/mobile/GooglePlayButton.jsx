@@ -36,7 +36,7 @@ const GooglePlayButton = ({ type, disabled }) => {
         )}
       </button>
       <Tooltip
-        text="Launcing soon on the Google Play store"
+        text="Launching soon on the Google Play store"
         tipPos={type === "sm" ? "right" : "center"}
         className={twMerge(
           "mb-1 -bottom-20",
