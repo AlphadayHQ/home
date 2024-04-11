@@ -35,7 +35,7 @@ const AppleStoreButton = ({ type, disabled }) => {
         )}
       </button>
       <Tooltip
-        text="Launcing soon on the Apple App store"
+        text="Launching soon on the Apple App store"
         tipPos="center"
         className={twMerge(
           "mb-1 -bottom-20 w-full",
