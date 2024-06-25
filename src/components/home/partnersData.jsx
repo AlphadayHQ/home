@@ -128,7 +128,7 @@ const partners = [
     img: worldcoin,
     partner: "Worldcoin",
     slug: "worldcoin",
-    size: "w-[120px]",
+    size: "w-[150px]",
   },
   {
     id: "17",
