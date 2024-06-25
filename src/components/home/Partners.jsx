@@ -13,12 +13,11 @@ function Partners() {
             </h2>
           </div>
           <div className="grid place-content-center grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full mx-auto gap-4">
-            {partners.map((item, index) => {
+            {partners.map((item) => {
               return (
                 <figure
                   key={item.id}
-                  className={`flex justify-center
-                  ${index === partners.length}`}
+                  className="flex justify-center"
                 >
                   <a
                     target="_blank"
