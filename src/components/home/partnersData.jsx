@@ -1,11 +1,8 @@
 import aave from "../../images/partners/aave.png";
 import avalanche from "../../images/partners/avalanche.png";
-import aztec from "../../images/partners/aztec.png";
 import dfinity from "../../images/partners/dfinity.png";
 import impossible from "../../images/partners/impossible.png";
 import iotex from "../../images/partners/iotex.png";
-import moonbeam from "../../images/partners/moonbeam.png";
-import orbs from "../../images/partners/orbs.png";
 import rocketPool from "../../images/partners/rocketPool.png";
 import theGraph from "../../images/partners/theGraph.png";
 import zcash from "../../images/partners/zcash.png";
@@ -58,9 +55,9 @@ const partners = [
   },
   {
     id: "6",
-    img: moonbeam,
-    partner: "Moonbeam",
-    slug: "moonbeam",
+    img: iotex,
+    partner: "Iotex",
+    slug: "iotex",
     size: "w-[140px]",
   },
   {
@@ -114,9 +111,9 @@ const partners = [
   },
   {
     id: "14",
-    img: aztec,
-    partner: "Aztec",
-    slug: "aztec",
+    img: verasity,
+    partner: "Verasity",
+    slug: "verasity",
     size: "w-[90px]",
   },
   {
