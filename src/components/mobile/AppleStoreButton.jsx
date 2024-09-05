@@ -12,13 +12,13 @@ const AppleStoreButton = ({ type, disabled }) => {
       <button
         type="button"
         disabled={disabled}
-        class={twMerge(
+        className={twMerge(
           "flex peer items-center shadow-xl font-montserrat justify-center px-1 min-w-[150px] mt-3 text-black bg-transparent border-2 border-black pt-1 rounded-lg",
           type === "sm" &&
             "min-w-[40px] pt-2 pb-1.5 border-0 mt-0 bg-lightblue drop-shadow-eclipse hover:bg-[#1235b5] disabled:bg-aluminium transition-all duration-300"
         )}
       >
-        <div class={twMerge("mr-2", type === "sm" && "mr-0")}>
+        <div className={twMerge("mr-2", type === "sm" && "mr-0")}>
           <img
             src={type === "sm" ? AppleWhiteSVG : AppleSVG}
             className="w-7 h-7 self-center mb-1"
@@ -26,11 +26,15 @@ const AppleStoreButton = ({ type, disabled }) => {
         </div>
         {type !== "sm" && (
           <div>
-            <div class="text-xs text-left tracking-tighter">Coming soon</div>
-            {/* <div class="text-xs text-left tracking-tighter">
+            <div className="text-xs text-left tracking-tighter">
+              Coming soon
+            </div>
+            {/* <div className="text-xs text-left tracking-tighter">
               Download on the
             </div> */}
-            <div class="-mt-1 text-base text-left font-semibold">App Store</div>
+            <div className="-mt-1 text-base text-left font-semibold">
+              App Store
+            </div>
           </div>
         )}
       </button>
