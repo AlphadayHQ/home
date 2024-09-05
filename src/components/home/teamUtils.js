@@ -23,13 +23,6 @@ export const teamData = [
     twitter: "https://twitter.com/get_giddy",
     linkedin: "https://www.linkedin.com/in/getgiddy/",
   },
-  // {
-  //   img: member2,
-  //   name: "Zehra Naz Hacısüleyman",
-  //   position: "Marketing Lead",
-  //   twitter: "https://twitter.com/zehranazh",
-  //   linkedin: "https://www.linkedin.com/in/zehranazh/",
-  // },
   {
     img: member3,
     name: "Felipe Faraggi",
@@ -65,13 +58,6 @@ export const teamData = [
     twitter: "https://twitter.com/Chadnium",
     linkedin: "https://www.linkedin.com/in/charles-nwankwo-01/",
   },
-  // {
-  //   img: member8,
-  //   name: " Selim Cetiner",
-  //   position: "Content Analyst",
-  //   twitter: "https://twitter.com/selim_jpeg",
-  //   linkedin: "https://www.linkedin.com/in/selim-cetiner-167364234/",
-  // },
   {
     img: member9,
     name: "Jonathan Irhodia",
