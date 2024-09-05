@@ -60,7 +60,7 @@ function Footer({ isMobile }) {
           <Col className="place-self-start flex">
             <ColTilte title="Crypto 101" />
             {blogLinks["Crypto 101"].map(({ title, link }) => (
-              <Anchor href={link} className="mb-4">
+              <Anchor key={link} href={link} className="mb-4">
                 {title}
               </Anchor>
             ))}
@@ -69,7 +69,7 @@ function Footer({ isMobile }) {
           <Col className="place-self-start flex col-span-2 md:col-span-1">
             <ColTilte title="Learn" />
             {blogLinks.learn.map(({ title, link }) => (
-              <Anchor href={link} className="mb-4">
+              <Anchor key={link} href={link} className="mb-4">
                 {title}
               </Anchor>
             ))}

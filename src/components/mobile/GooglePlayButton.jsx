@@ -13,13 +13,13 @@ const GooglePlayButton = ({ type, disabled }) => {
       <button
         type="button"
         disabled={disabled}
-        class={twMerge(
+        className={twMerge(
           "flex peer items-center shadow-xl font-montserrat justify-center px-1 min-w-[150px] mt-3 text-black bg-transparent border-2 border-black pt-1 rounded-lg",
           type === "sm" &&
             "min-w-[40px] pt-2.5 pb-2 border-0 mt-0 bg-lightblue drop-shadow-eclipse hover:bg-[#1235b5] transition-all duration-300 disabled:bg-aluminium"
         )}
       >
-        <div class={twMerge("mr-2", type === "sm" && "mr-0")}>
+        <div className={twMerge("mr-2", type === "sm" && "mr-0")}>
           <img
             src={type === "sm" ? GooglePlayWhiteSVG : GooglePlaySVG}
             className="w-7 h-7 self-baseline"
@@ -27,9 +27,11 @@ const GooglePlayButton = ({ type, disabled }) => {
         </div>
         {type !== "sm" && (
           <div>
-            {/* <div class="text-xs text-left tracking-tighter">Android app on</div> */}
-            <div class="text-xs text-left tracking-tighter">Coming soon</div>
-            <div class="-mt-1 text-base text-left font-semibold">
+            {/* <div className="text-xs text-left tracking-tighter">Android app on</div> */}
+            <div className="text-xs text-left tracking-tighter">
+              Coming soon
+            </div>
+            <div className="-mt-1 text-base text-left font-semibold">
               Google Play
             </div>
           </div>
@@ -40,8 +42,7 @@ const GooglePlayButton = ({ type, disabled }) => {
         tipPos={type === "sm" ? "right" : "center"}
         className={twMerge(
           "mb-1 -bottom-20",
-          type === "sm" &&
-            "w-36 sm:w-40 -bottom-20 -left-[300%]"
+          type === "sm" && "w-36 sm:w-40 -bottom-20 -left-[300%]"
         )}
       />
     </span>
