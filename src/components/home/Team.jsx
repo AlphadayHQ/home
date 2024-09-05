@@ -70,13 +70,13 @@ function Team() {
             </p>
             <div className="flex flex-col">
               <div className="flex gap-x-2 justify-center">
-                {shuffledTeam.slice(0, 5).map((data) => (
+                {shuffledTeam.slice(0, 4).map((data) => (
                   <TeamCard key={data.id} data={data} type="top" />
                 ))}
               </div>
 
               <div className="flex mt-1.5 sm:mt-2 gap-x-2 justify-center items-center">
-                {shuffledTeam.slice(5, 11).map((data) => (
+                {shuffledTeam.slice(4, 11).map((data) => (
                   <TeamCard key={data.id} data={data} type="bottom" />
                 ))}
               </div>
