@@ -7,6 +7,7 @@ import { CookieProvider } from "./utils/CookieContext";
 import PrivacyPolicyPage from "./pages/privacy-policy";
 import MobilePage from "./pages/mobile-app";
 import { useEffect } from "react";
+import { navigateToHash } from "./utils/navigateToHash";
 
 function removeTrailingBackSlash(site) {
   return site.replace(/\/$/, "");
@@ -24,22 +25,15 @@ function App() {
 
   // Has navigator - scroll to the hash on the page
   useEffect(() => {
-    // Handle initial hash on mount
-    const handleInitialHash = () => {
-      const hash = window.location.hash.slice(1); // removes #
-      if (hash) {
-        setTimeout(() => {
-          const element = document.getElementById(hash);
-          element?.scrollIntoView({ behavior: "smooth" });
-        }, 100); // Small delay for React to render
-      }
+    navigateToHash();
+
+    // Handle future hash changes
+    window.addEventListener("hashchange", navigateToHash);
+
+    return () => {
+      window.removeEventListener("hashchange", navigateToHash);
+      window.removeEventListener("load", navigateToHash);
     };
-
-    handleInitialHash();
-
-    // Listen for hash changes
-    window.addEventListener("hashchange", handleInitialHash);
-    return () => window.removeEventListener("hashchange", handleInitialHash);
   }, []);
 
   if (!supportedPaths.includes(path)) {
