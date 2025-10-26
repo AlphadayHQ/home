@@ -25,14 +25,26 @@ function App() {
 
   // Has navigator - scroll to the hash on the page
   useEffect(() => {
-    navigateToHash();
+    let timeoutId = null;
+    let isActive = true;
 
-    // Handle future hash changes
-    window.addEventListener("hashchange", navigateToHash);
+    // Run after a small delay to ensure hydration
+    const initialTimeout = setTimeout(
+      () => navigateToHash(timeoutId, isActive),
+      100
+    );
+
+    window.addEventListener("hashchange", () =>
+      navigateToHash(timeoutId, isActive)
+    );
 
     return () => {
-      window.removeEventListener("hashchange", navigateToHash);
-      window.removeEventListener("load", navigateToHash);
+      isActive = false;
+      clearTimeout(initialTimeout);
+      if (timeoutId) clearTimeout(timeoutId);
+      window.removeEventListener("hashchange", () =>
+        navigateToHash(timeoutId, isActive)
+      );
     };
   }, []);
 
