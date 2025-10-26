@@ -25,27 +25,18 @@ function App() {
 
   // Has navigator - scroll to the hash on the page
   useEffect(() => {
-    let timeoutId = null;
-    let isActive = true;
+    // For Vite production builds, wait for all chunks to load
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(navigateToHash, 100); // Small delay after DOMContentLoaded
+      });
+    } else {
+      setTimeout(navigateToHash, 100);
+    }
 
-    // Run after a small delay to ensure hydration
-    const initialTimeout = setTimeout(
-      () => navigateToHash(timeoutId, isActive),
-      100
-    );
+    window.addEventListener("hashchange", navigateToHash);
 
-    window.addEventListener("hashchange", () =>
-      navigateToHash(timeoutId, isActive)
-    );
-
-    return () => {
-      isActive = false;
-      clearTimeout(initialTimeout);
-      if (timeoutId) clearTimeout(timeoutId);
-      window.removeEventListener("hashchange", () =>
-        navigateToHash(timeoutId, isActive)
-      );
-    };
+    return () => window.removeEventListener("hashchange", navigateToHash);
   }, []);
 
   if (!supportedPaths.includes(path)) {

@@ -1,23 +1,17 @@
-export const navigateToHash = (timeoutId, isActive) => {
+export const navigateToHash = () => {
   const hash = window.location.hash.slice(1);
   if (!hash) return;
 
-  if (timeoutId) clearTimeout(timeoutId);
+  // Add debugging
+  console.log("Looking for element:", hash);
+  console.log(
+    "All IDs on page:",
+    Array.from(document.querySelectorAll("[id]")).map((el) => el.id)
+  );
 
-  const tryScroll = (attempts = 0) => {
-    if (!isActive) return;
-
-    const element = document.getElementById(hash);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    } else if (attempts < 50) {
-      timeoutId = setTimeout(() => tryScroll(attempts + 1), 100);
-    }
-  };
-
-  // KEY CHANGE: Always delay on first mount
-  // This ensures React hydration is complete in production
-  setTimeout(() => {
-    tryScroll();
-  }, 0); // Pushes to next event loop cycle
+  const element = document.getElementById(hash);
+  if (element) {
+    console.log("Found element, scrolling...");
+    element.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
 };
