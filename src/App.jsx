@@ -24,17 +24,21 @@ function App() {
   const supportedPaths = ["", ...Object.keys(otherPages)];
 
   // Has navigator - scroll to the hash on the page
-  useEffect(() => {
-    navigateToHash();
+useEffect(() => {
+  let timeoutId = null;
+  let isActive = true; // Cleanup flag
 
-    // Handle future hash changes
-    window.addEventListener("hashchange", navigateToHash);
 
-    return () => {
-      window.removeEventListener("hashchange", navigateToHash);
-      window.removeEventListener("load", navigateToHash);
-    };
-  }, []);
+
+  navigateToHash(timeoutId, isActive);
+  window.addEventListener("hashchange", navigateToHash);
+
+  return () => {
+    isActive = false;
+    if (timeoutId) clearTimeout(timeoutId);
+    window.removeEventListener("hashchange", navigateToHash);
+  };
+}, []);
 
   if (!supportedPaths.includes(path)) {
     if (path.startsWith("/b/")) {

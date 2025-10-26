@@ -1,23 +1,24 @@
-export const navigateToHash = () => {
+export const navigateToHash = (timeoutId, isActive) => {
   const hash = window.location.hash.slice(1);
   if (!hash) return;
 
-  // Keep trying until element exists (max 50 attempts)
-  let attempts = 0;
-  const tryScroll = () => {
+  // Clear any existing timeout
+  if (timeoutId) clearTimeout(timeoutId);
+
+  const tryScroll = (attempts = 0) => {
+    if (!isActive) return; // Component unmounted
+
     const element = document.getElementById(hash);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
     } else if (attempts < 50) {
-      attempts++;
-      setTimeout(tryScroll, 500); // Retry every 500ms
+      timeoutId = setTimeout(() => tryScroll(attempts + 1), 100);
     }
   };
 
-  // Wait for DOM to be ready
   if (document.readyState === "complete") {
     tryScroll();
   } else {
-    window.addEventListener("load", tryScroll);
+    window.addEventListener("load", () => tryScroll(), { once: true });
   }
 };
