@@ -24,21 +24,20 @@ function App() {
   const supportedPaths = ["", ...Object.keys(otherPages)];
 
   // Has navigator - scroll to the hash on the page
-useEffect(() => {
-  let timeoutId = null;
-  let isActive = true; // Cleanup flag
+  useEffect(() => {
+    // For Vite production builds, wait for all chunks to load
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(navigateToHash, 100); // Small delay after DOMContentLoaded
+      });
+    } else {
+      setTimeout(navigateToHash, 100);
+    }
 
+    window.addEventListener("hashchange", navigateToHash);
 
-
-  navigateToHash(timeoutId, isActive);
-  window.addEventListener("hashchange", navigateToHash);
-
-  return () => {
-    isActive = false;
-    if (timeoutId) clearTimeout(timeoutId);
-    window.removeEventListener("hashchange", navigateToHash);
-  };
-}, []);
+    return () => window.removeEventListener("hashchange", navigateToHash);
+  }, []);
 
   if (!supportedPaths.includes(path)) {
     if (path.startsWith("/b/")) {
