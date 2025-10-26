@@ -57,7 +57,7 @@ const Form = () => {
 
 function Getfeatures() {
   return (
-    <section id="signup" className="mx-auto w-11/12 max-w-7xl py-8 md:py-10 bg-california relative top-[-90px] rounded-3xl">
+    <section id="signup2" className="mx-auto w-11/12 max-w-7xl py-8 md:py-10 bg-california relative top-[-90px] rounded-3xl">
       <div className="px-4 md:px-8 flex flex-col md:flex-row w-full justify-between items-center">
         <div className="mb-8 md:m-0">
           <h3 className="text-black w-full  max-w-[400px] text-2xl md:text-3xl font-medium ">
