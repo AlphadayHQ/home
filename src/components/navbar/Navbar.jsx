@@ -89,10 +89,10 @@ function Navbar({ isPrivacyPolicy, isMobile }) {
               </div>
               <div ref={element} className="scroll-hide absolute mb-1 flex">
                 <LaunchAppButton />
-                <div className="flex ml-2 gap-2">
+                {/* <div className="flex ml-2 gap-2">
                   <AppleStoreButton type="sm" disabled />
                   <GooglePlayButton type="sm" disabled />
-                </div>
+                </div> */}
               </div>
             </div>
           </div>
