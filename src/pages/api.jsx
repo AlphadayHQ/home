@@ -12,8 +12,8 @@ import alphaday from "../images/logo-notext.png";
 import { CodeBlock } from "../components/ui/CodeBlock";
 import Seo from "../components/seo";
 
-const heroCurl = "curl https://api.alphaday.com/v1/search?project=arbitrum";
-const trendingCurl = "curl https://api.alphaday.com/v1/news/trending?limit=3";
+const heroCurl = "curl https://api.alphaday.com/search?project=arbitrum";
+const trendingCurl = "curl https://api.alphaday.com/news/trending?limit=3";
 const trendingJson = `{
   "trending": [
     {
@@ -43,8 +43,8 @@ const mcpConfig = `{
     }
   }
 }`;
-const restCurl = "curl https://api.alphaday.com/v1/news?tags=arbitrum";
-const finalCurl = "curl https://api.alphaday.com/v1/news/summary";
+const restCurl = "curl https://api.alphaday.com/news?tags=arbitrum";
+const finalCurl = "curl https://api.alphaday.com/news/summary";
 const docsUrl = "https://api.alphaday.com/docs";
 const githubUrl = "https://github.com/AlphadayHQ/";
 
@@ -323,7 +323,7 @@ const ApiPage = () => {
                 </div>
                 <div className="mt-2 whitespace-nowrap max-sm:hidden">
                   <span className="text-primary mr-1">$</span> curl
-                  https://api.alphaday.com/v1/news/trending?limit=3
+                  https://api.alphaday.com/news/trending?limit=3
                 </div>
                 <div className="mt-2 whitespace-nowrap sm:hidden">
                   <span className="flex tracking-tight text-left whitespace-nowrap">
