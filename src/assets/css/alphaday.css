@@ -19,7 +19,16 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-background hover:bg-primary-hover transition-colors;
+    background-color: #faa202;
+    color: #121212;
+    font-weight: 600;
+    transition:
+      transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      background-color 0.2s ease;
+  }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    background-color: #ffb84d;
   }
 }
 
@@ -31,6 +40,29 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+}
+
+/* ---- API landing page scoped styles ---- */
+.api-root {
+  position: relative;
+}
+
+/* Noise overlay — scoped to .api-root so it doesn't affect other pages */
+.api-root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.04;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+.api-root .interactive-element {
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+.api-root .interactive-element:hover {
+  transform: translateY(-1px);
 }
 
 @font-face {

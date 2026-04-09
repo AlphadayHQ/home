@@ -84,7 +84,7 @@ const ApiPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-text flex flex-col w-full relative selection:bg-primary/30 font-sans">
+    <div className="api-root min-h-screen bg-background text-text flex flex-col w-full relative selection:bg-primary/30 font-sans">
       <Seo
         title="Alphaday API"
         description="All of crypto. One API. 1,000+ data sources, MCP and REST."
