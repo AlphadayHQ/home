@@ -437,7 +437,7 @@ const ApiPage = () => {
                   </div>
                   <h3 className="font-bold text-xl">MCP Server</h3>
                   <span className="text-xs font-mono text-text-muted bg-surface-light px-2 py-1 rounded ml-auto">
-                    claude_desktop_config.json
+                    claude_config.json
                   </span>
                 </div>
                 <CodeBlock
