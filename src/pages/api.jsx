@@ -39,7 +39,7 @@ const trendingJson = `{
 const mcpConfig = `{
   "mcpServers": {
     "alphaday": {
-      "url": "https://mcp.alphaday.com"
+      "url": "https://api.alphaday.com/mcp"
     }
   }
 }`;
