@@ -56,7 +56,7 @@ const tools = [
   { name: "get_podcasts", desc: "118 podcast feeds, latest episodes" },
   { name: "get_videos", desc: "121 YouTube channels, timestamped" },
   { name: "get_events", desc: "Conferences, meetups, side events" },
-  { name: "get_dao_proposals", desc: "Live Snapshot votes across 51 DAOs" },
+  { name: "get_dao", desc: "Live Snapshot votes across 51 DAOs" },
   { name: "get_forum_posts", desc: "59 governance forums, one endpoint" },
   {
     name: "get_trending_keywords",
