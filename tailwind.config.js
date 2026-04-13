@@ -10,11 +10,35 @@ module.exports = {
       platinum: "var(--color-platinum)",
       aluminium: "var(--color-aluminium)",
       shark: "var(--color-shark)",
-      blue: "var(--color-palatinate-blue)",
+      blue: {
+        DEFAULT: "var(--color-palatinate-blue)",
+        400: "#60a5fa",
+      },
       eerie: "var(--color-eerie-black)",
       white: "var(--color-white)",
       black: "var(--color-black)",
       lightblue: "var(--color-lightblue)",
+      // Semantic tokens for the API landing page
+      background: "#121212",
+      surface: {
+        DEFAULT: "#191919",
+        light: "#242424",
+        border: "#3b3a3a",
+      },
+      text: {
+        DEFAULT: "#f2f2f2",
+        muted: "#849399",
+      },
+      primary: {
+        DEFAULT: "#faa202",
+        hover: "#ffb84d",
+      },
+      success: "#6dd230",
+      danger: "#f45532",
+      warning: "#faa202",
+      orange: {
+        400: "#fb923c",
+      },
     },
 
     extend: {
@@ -42,6 +66,11 @@ module.exports = {
         titling: ["titling", defaultTheme.fontFamily.sans],
         sans: ["titling", defaultTheme.fontFamily.sans],
         montserrat: ["Montserrat", defaultTheme.fontFamily.sans],
+        display: ["titling", defaultTheme.fontFamily.sans],
+        mono: defaultTheme.fontFamily.mono,
+      },
+      boxShadow: {
+        "primary-glow": "0 0 40px -10px rgba(250,162,2,0.3)",
       },
     },
   },

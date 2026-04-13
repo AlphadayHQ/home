@@ -9,6 +9,7 @@ const CONFIG = {
     link: "https://www.youtube.com/embed/ThCd_W3rK_8",
   },
   mobile: "/mobile",
+  api: "/api",
   appStore: {
     apple: "https://apps.apple.com/us/app/alphaday/id1581443943",
     google: "https://play.google.com/store/apps/details?id=com.alphaday",
