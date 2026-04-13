@@ -11,7 +11,9 @@ export function CodeBlock({
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(code);
+      const textToCopy =
+        language === "bash" ? code.replace(/^curl\s+/gm, "") : code;
+      await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {

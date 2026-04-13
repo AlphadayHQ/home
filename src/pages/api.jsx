@@ -79,7 +79,7 @@ const ApiPage = () => {
 
   const handleHeroCopy = async () => {
     try {
-      await navigator.clipboard.writeText(heroCurl);
+      await navigator.clipboard.writeText(heroCurl.replace(/^curl\s+/, ""));
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
