@@ -6,6 +6,7 @@ import HomeContainer from "./containers/HomeContainer";
 import { CookieProvider } from "./utils/CookieContext";
 import PrivacyPolicyPage from "./pages/privacy-policy";
 import MobilePage from "./pages/mobile-app";
+import ApiPage from "./pages/api";
 import { useEffect } from "react";
 import { navigateToHash } from "./utils/navigateToHash";
 
@@ -16,6 +17,7 @@ function removeTrailingBackSlash(site) {
 const otherPages = {
   [CONFIG.privacyPolicy]: <PrivacyPolicyPage />,
   [CONFIG.mobile]: <MobilePage />,
+  [CONFIG.api]: <ApiPage />,
 };
 
 function App() {
