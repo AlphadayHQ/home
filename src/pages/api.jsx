@@ -147,9 +147,9 @@ const ApiPage = () => {
           </h1>
 
           <p className="text-lg md:text-xl text-text-muted max-w-3xl mb-12 leading-relaxed">
-            1,000+ crypto data sources. One integration. Query news, podcasts,
-            videos, DAO proposals, events, and more &mdash; filtered by project
-            or keyword. <br className="hidden md:block" />
+            1,000+ crypto data sources. One integration. <br />
+            Query news, podcasts, videos, DAO proposals, events, and more,
+            filtered by project or keyword. <br className="hidden md:block" />
             Available as an MCP server or REST API.
           </p>
 
