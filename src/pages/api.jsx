@@ -112,19 +112,19 @@ const ApiPage = () => {
           <div className="hidden md:flex items-center gap-8 font-semibold text-sm">
             <a
               href={docsUrl}
-              className="text-text-muted hover:text-text transition-colors"
+              className="text-text-muted tracking-wide hover:text-text transition-colors"
             >
               Docs
             </a>
             <a
               href={githubUrl}
-              className="text-text-muted hover:text-text transition-colors"
+              className="text-text-muted tracking-wide hover:text-text transition-colors"
             >
               GitHub
             </a>
             <a
               href="/"
-              className="text-primary hover:text-primary-hover transition-colors flex items-center gap-1 group"
+              className="text-primary tracking-wide hover:text-primary-hover transition-colors flex items-center group"
             >
               Alphaday{" "}
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

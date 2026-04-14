@@ -25,7 +25,7 @@ const CookieDisclaimer = () => {
 
   if (noCookieChoice)
     return (
-      <section className="fixed overflow-hidden w-full bottom-0 z-100 bg-[#27292F]">
+      <section className="fixed overflow-hidden w-full bottom-0 z-[100] bg-[#27292F]">
         <div className="relative flex flex-col flex-wrap justify-center items-center overflow-hidden">
           <div className="flex pt-5 p-2.5 lg:p-5 flex-1 flex-col lg:flex-row w-full max-w-7xl overflow-hidden items-center">
             <div className="mx-auto min-w-[280px] text-center lg:text-left text-[#C2C5D6] text-xs font-normal leading-6 tracking-wider">
