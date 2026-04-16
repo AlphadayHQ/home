@@ -43,8 +43,31 @@ const mcpConfig = `{
     }
   }
 }`;
+const mcpClients = [
+  {
+    name: "Claude Code",
+    command: "claude mcp add --transport http alphaday https://api.alphaday.com/mcp",
+    label: "Terminal",
+  },
+  {
+    name: "Codex",
+    command: "codex mcp add alphaday --url https://api.alphaday.com/mcp",
+    label: "Terminal",
+  },
+  {
+    name: "MCP Importer",
+    command: "mcporter config add alphaday --url https://api.alphaday.com/mcp",
+    label: "Terminal",
+  },
+  {
+    name: "JSON Config",
+    command: mcpConfig,
+    language: "json",
+    label: "config.json",
+  },
+];
 const restCurl = "curl https://api.alphaday.com/news?tags=arbitrum";
-const finalCurl = "curl https://api.alphaday.com/news/summary";
+const finalCurl = "curl https://api.alphaday.com/get-started";
 const docsUrl = "https://api.alphaday.com/docs";
 const githubUrl = "https://github.com/AlphadayHQ/";
 
@@ -68,6 +91,7 @@ const tools = [
 const ApiPage = () => {
   const [copied, setCopied] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeMcp, setActiveMcp] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -79,7 +103,7 @@ const ApiPage = () => {
 
   const handleHeroCopy = async () => {
     try {
-      await navigator.clipboard.writeText(heroCurl);
+      await navigator.clipboard.writeText(heroCurl.replace(/^curl\s+/, ""));
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -112,19 +136,19 @@ const ApiPage = () => {
           <div className="hidden md:flex items-center gap-8 font-semibold text-sm">
             <a
               href={docsUrl}
-              className="text-text-muted hover:text-text transition-colors"
+              className="text-text-muted tracking-wide hover:text-text transition-colors"
             >
               Docs
             </a>
             <a
               href={githubUrl}
-              className="text-text-muted hover:text-text transition-colors"
+              className="text-text-muted tracking-wide hover:text-text transition-colors"
             >
               GitHub
             </a>
             <a
               href="/"
-              className="text-primary hover:text-primary-hover transition-colors flex items-center gap-1 group"
+              className="text-primary tracking-wide hover:text-primary-hover transition-colors flex items-center group"
             >
               Alphaday{" "}
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -147,9 +171,9 @@ const ApiPage = () => {
           </h1>
 
           <p className="text-lg md:text-xl text-text-muted max-w-3xl mb-12 leading-relaxed">
-            1,000+ crypto data sources. One integration. Query news, podcasts,
-            videos, DAO proposals, events, and more &mdash; filtered by project
-            or keyword. <br className="hidden md:block" />
+            1,000+ crypto data sources. One integration. <br />
+            Query news, podcasts, videos, DAO proposals, events, and more,
+            filtered by project or keyword. <br className="hidden md:block" />
             Available as an MCP server or REST API.
           </p>
 
@@ -218,7 +242,7 @@ const ApiPage = () => {
                 POLYGON
               </span>
               <span className="font-display font-bold text-2xl tracking-tight cursor-default">
-                Sui
+                SUI
               </span>
             </div>
           </div>
@@ -421,11 +445,11 @@ const ApiPage = () => {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="font-display text-4xl font-bold tracking-tight mb-4">
-                Two ways in. Same data.
+                Works with your stack.
               </h2>
               <p className="text-lg text-text-muted max-w-2xl mx-auto">
-                Use our MCP server if your agent speaks MCP. Use REST if it
-                doesn&apos;t. Same endpoints, same data, same rate limits.
+                One-line setup for every major MCP client. Or use REST if your
+                agent doesn&apos;t speak MCP. Same data either way.
               </p>
             </div>
 
@@ -436,15 +460,32 @@ const ApiPage = () => {
                     1
                   </div>
                   <h3 className="font-bold text-xl">MCP Server</h3>
-                  <span className="text-xs font-mono text-text-muted bg-surface-light px-2 py-1 rounded ml-auto">
-                    claude_config.json
-                  </span>
                 </div>
-                <CodeBlock
-                  code={mcpConfig}
-                  language="json"
-                  className="min-h-[180px]"
-                />
+                <div className="flex flex-wrap gap-2 mb-4 pl-2">
+                  {mcpClients.map((client, i) => (
+                    <button
+                      key={client.name}
+                      onClick={() => setActiveMcp(i)}
+                      className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                        activeMcp === i
+                          ? "bg-primary text-background"
+                          : "bg-surface border border-surface-border text-text-muted hover:text-text"
+                      }`}
+                    >
+                      {client.name}
+                    </button>
+                  ))}
+                </div>
+                <div className="relative">
+                  <span className="absolute top-3 right-3 text-xs font-mono text-text-muted bg-surface-light px-2 py-1 rounded z-10">
+                    {mcpClients[activeMcp].label}
+                  </span>
+                  <CodeBlock
+                    code={mcpClients[activeMcp].command}
+                    language={mcpClients[activeMcp].language || "bash"}
+                    className="min-h-[140px] flex items-center"
+                  />
+                </div>
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-3 mb-4 pl-2">
@@ -459,7 +500,7 @@ const ApiPage = () => {
                 <CodeBlock
                   code={restCurl}
                   language="bash"
-                  className="min-h-[180px] flex items-center"
+                  className="lg:mt-[50px] min-h-[140px] flex items-center"
                 />
               </div>
             </div>
