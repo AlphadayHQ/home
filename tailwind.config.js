@@ -26,7 +26,8 @@ module.exports = {
         border: "#3b3a3a",
       },
       text: {
-        DEFAULT: "#f2f2f2",
+        DEFAULT: "#e7e7e7",
+        DEFAULT3: "#e7e7e7",
         muted: "#849399",
       },
       primary: {
