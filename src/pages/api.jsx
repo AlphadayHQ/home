@@ -80,7 +80,7 @@ const tools = [
   { name: "get_videos", desc: "121 YouTube channels, timestamped" },
   { name: "get_events", desc: "Conferences, meetups, side events" },
   { name: "get_dao", desc: "Live Snapshot votes across 51 DAOs" },
-  { name: "get_forum_posts", desc: "59 governance forums, one endpoint" },
+  { name: "get_forum", desc: "59 governance forums, one endpoint" },
   {
     name: "get_trending_keywords",
     desc: "What crypto is talking about, right now",
