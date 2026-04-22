@@ -45,18 +45,19 @@ const mcpConfig = `{
 }`;
 const mcpClients = [
   {
+    name: "MCP Importer",
+    command: "mcporter config add alphaday --url https://api.alphaday.com/mcp",
+    label: "Terminal",
+  },
+  {
     name: "Claude Code",
-    command: "claude mcp add --transport http alphaday https://api.alphaday.com/mcp",
+    command:
+      "claude mcp add --transport http alphaday https://api.alphaday.com/mcp",
     label: "Terminal",
   },
   {
     name: "Codex",
     command: "codex mcp add alphaday --url https://api.alphaday.com/mcp",
-    label: "Terminal",
-  },
-  {
-    name: "MCP Importer",
-    command: "mcporter config add alphaday --url https://api.alphaday.com/mcp",
     label: "Terminal",
   },
   {
