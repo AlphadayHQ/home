@@ -390,12 +390,10 @@ const ApiPage = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {tools.map((tool, i) => (
+              {tools.map((tool) => (
                 <div
                   key={tool.name}
-                  className={`bg-surface border border-surface-border p-6 rounded-2xl hover:border-primary/50 hover:bg-surface-light transition-all group lg:col-span-1 ${
-                    i === 11 ? "md:col-span-2 lg:col-span-1 lg:col-start-2" : ""
-                  }`}
+                  className="bg-surface border border-surface-border p-6 rounded-2xl hover:border-primary/50 hover:bg-surface-light transition-all group"
                 >
                   <div className="font-mono text-sm font-bold text-text mb-3 flex items-center gap-2">
                     <span className="text-primary bg-primary/10 px-2 py-1 rounded">
