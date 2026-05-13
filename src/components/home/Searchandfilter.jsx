@@ -18,7 +18,7 @@ const Form = () => {
 
   return (
     <form
-      className="flex justify-between font-sans items-center w-full lg:w-[560px] bg-[#0A0A0B] rounded-[25px] py-2 px-2 border-[15px] border-[#1E2024]"
+      className="flex justify-between font-sans items-center w-full lg:w-[560px] bg-[#0A0A0B] rounded-[25px] py-2 px-2 border-15 border-[#1E2024]"
       style={{ boxShadow: "0px 2px 60px rgba(255, 255, 255, 0.15)" }}
       onSubmit={(e) => submitHandler(e)}
     >

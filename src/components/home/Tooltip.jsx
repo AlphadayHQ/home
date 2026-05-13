@@ -9,7 +9,7 @@ const Tooltip = ({
   return (
     <div
       className={twMerge(
-        "[transform:perspective(50px)_translateZ(0)_rotateX(10deg)] peer-hover:[transform:perspective(0px)_translateZ(0)_rotateX(0deg)] absolute bottom-0 mb-6 origin-bottom rounded text-white opacity-0 transition-all duration-300 peer-hover:opacity-100",
+        "transform-[perspective(50px)_translateZ(0)_rotateX(10deg)] peer-hover:transform-[perspective(0px)_translateZ(0)_rotateX(0deg)] absolute bottom-0 mb-6 origin-bottom rounded text-white opacity-0 transition-all duration-300 peer-hover:opacity-100",
         className
       )}
     >
@@ -22,7 +22,7 @@ const Tooltip = ({
       >
         <div
           className={twMerge(
-            "[clip-path:polygon(100%_50%,_0_0,_100%_0,_50%_100%,_0_0)] rotate-180 h-2 w-4 bg-black",
+            "[clip-path:polygon(100%_50%,0_0,100%_0,50%_100%,0_0)] rotate-180 h-2 w-4 bg-black",
             tipPos === "right" && "items-end mr-2"
           )}
         ></div>
