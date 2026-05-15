@@ -8,6 +8,7 @@ import PrivacyPolicyPage from "./pages/privacy-policy";
 import MobilePage from "./pages/mobile-app";
 import ApiPage from "./pages/api";
 import { useEffect } from "react";
+import { HelmetProvider } from "react-helmet-async";
 import { navigateToHash } from "./utils/navigateToHash";
 
 function removeTrailingBackSlash(site) {
@@ -56,18 +57,20 @@ function App() {
     return <Error404 />;
   }
   return (
-    <CookieProvider>
-      <Seo
-        title="Alphaday"
-        description={"Everything about the Crypto ecosystem in one app"}
-      />
-      {Object.keys(otherPages).includes(path) ? (
-        <>{otherPages[path]}</>
-      ) : (
-        <HomeContainer />
-      )}
-      <CookieDisclaimer />
-    </CookieProvider>
+    <HelmetProvider>
+      <CookieProvider>
+        <Seo
+          title="Alphaday"
+          description={"Everything about the Crypto ecosystem in one app"}
+        />
+        {Object.keys(otherPages).includes(path) ? (
+          <>{otherPages[path]}</>
+        ) : (
+          <HomeContainer />
+        )}
+        <CookieDisclaimer />
+      </CookieProvider>
+    </HelmetProvider>
   );
 }
 

@@ -150,7 +150,7 @@ function Stats() {
               <div className="hidden sm:flex flex-col ml-3 sm:ml-0 items-center mt-4 lg:mt-6">
                 <FlipCardClose
                   handler={handleStatsToggler}
-                  className="text-black border-black py-0.5 pb-[1px] ml-5 sm:ml-0"
+                  className="text-black border-black py-0.5 pb-px ml-5 sm:ml-0"
                 >
                   <p className="mr-2 leading-4">CLOSE</p>
                   <i className="ri-close-fill"></i>
@@ -191,7 +191,7 @@ function Stats() {
             <div className="flex flex-col sm:hidden items-center mt-3 sm:mt-4 lg:mt-6">
               <FlipCardClose
                 handler={handleStatsToggler}
-                className="text-black border-black py-0.5 pb-[1px]"
+                className="text-black border-black py-0.5 pb-px"
               >
                 <p className="mr-2 leading-4">CLOSE</p>
                 <i className="ri-close-fill"></i>

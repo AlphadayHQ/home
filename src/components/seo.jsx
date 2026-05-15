@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import Helmet from "react-helmet";
+import { Helmet } from "react-helmet-async";
 import TagManager from "react-gtm-module";
 import config from "../config";
 import { CookieContext } from "../utils/CookieContext";

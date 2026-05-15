@@ -85,13 +85,13 @@ export const positionData = [
   //   id: 2,
   //   classnames: "rounded-[13px] sm:rounded-[26px] w-[73px] sm:w-[183px]",
   //   infoPosClassnames:
-  //     "bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+  //     "-bottom-full sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
   // },
   {
     id: 3,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[73px] sm:w-[183px]",
     infoPosClassnames:
-      "bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+      "-bottom-full sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
   },
   {
     id: 4,
@@ -109,7 +109,7 @@ export const positionData = [
     id: 6,
     classnames: "rounded-[13px] sm:rounded-[26px] w-[63px]  sm:w-[158px]",
     infoPosClassnames:
-      "left-[30%] bottom-[-100%] sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
+      "left-[30%] -bottom-full sm:bottom-[-35%] lg:bottom-auto lg:left-[70%]",
   },
   {
     id: 7,

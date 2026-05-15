@@ -167,7 +167,7 @@ const ApiPage = () => {
           <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1]">
             <span className="text-text">All of Crypto.</span>
             <br />
-            <span className="bg-gradient-to-r from-primary to-orange-400 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-primary to-orange-400 bg-clip-text text-transparent">
               One API.
             </span>
           </h1>
@@ -512,7 +512,7 @@ const ApiPage = () => {
         {/* 10. Pricing */}
         <section className="py-24 px-6 relative flex justify-center">
           <div className="max-w-md w-full relative z-10 group">
-            <div className="absolute -inset-[1px] bg-gradient-to-b from-primary to-surface-border rounded-[2rem] opacity-30 group-hover:opacity-100 transition duration-500 blur-[2px]" />
+            <div className="absolute -inset-px bg-linear-to-b from-primary to-surface-border rounded-[2rem] opacity-30 group-hover:opacity-100 transition duration-500 blur-[2px]" />
             <div className="bg-surface relative rounded-[2rem] p-10 flex flex-col items-center text-center shadow-2xl">
               <h2 className="font-display text-3xl font-bold mb-2">
                 Free. Forever-ish.
