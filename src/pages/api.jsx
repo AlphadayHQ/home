@@ -45,18 +45,19 @@ const mcpConfig = `{
 }`;
 const mcpClients = [
   {
+    name: "MCP Importer",
+    command: "mcporter config add alphaday --url https://api.alphaday.com/mcp",
+    label: "Terminal",
+  },
+  {
     name: "Claude Code",
-    command: "claude mcp add --transport http alphaday https://api.alphaday.com/mcp",
+    command:
+      "claude mcp add --transport http alphaday https://api.alphaday.com/mcp",
     label: "Terminal",
   },
   {
     name: "Codex",
     command: "codex mcp add alphaday --url https://api.alphaday.com/mcp",
-    label: "Terminal",
-  },
-  {
-    name: "MCP Importer",
-    command: "mcporter config add alphaday --url https://api.alphaday.com/mcp",
     label: "Terminal",
   },
   {
@@ -86,6 +87,7 @@ const tools = [
     desc: "What crypto is talking about, right now",
   },
   { name: "search_projects", desc: "Discover tags for any project" },
+  { name: "get_market_coin", desc: "Prices and metadata for the top 100 coins" },
 ];
 
 const ApiPage = () => {
@@ -379,7 +381,7 @@ const ApiPage = () => {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-20">
               <h2 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-6">
-                11 tools. Zero setup.
+                12 tools. Zero setup.
               </h2>
               <p className="text-xl text-text-muted max-w-2xl mx-auto">
                 Every endpoint is also a pre-described MCP tool. Your agent
@@ -392,7 +394,7 @@ const ApiPage = () => {
                 <div
                   key={tool.name}
                   className={`bg-surface border border-surface-border p-6 rounded-2xl hover:border-primary/50 hover:bg-surface-light transition-all group lg:col-span-1 ${
-                    i === 10 ? "md:col-span-2 lg:col-span-1 lg:col-start-2" : ""
+                    i === 11 ? "md:col-span-2 lg:col-span-1 lg:col-start-2" : ""
                   }`}
                 >
                   <div className="font-mono text-sm font-bold text-text mb-3 flex items-center gap-2">
@@ -431,7 +433,7 @@ const ApiPage = () => {
             </div>
             <div className="px-6 flex flex-col items-center pt-8 md:pt-0">
               <span className="text-5xl md:text-6xl font-black tracking-tighter mb-2">
-                11
+                12
               </span>
               <span className="font-bold text-background/80 uppercase tracking-widest text-sm">
                 Tools at Launch
@@ -525,7 +527,7 @@ const ApiPage = () => {
                   sources
                 </li>
                 <li className="flex items-center gap-3">
-                  <Check className="w-5 h-5 text-success" /> All 11 tools
+                  <Check className="w-5 h-5 text-success" /> All 12 tools
                 </li>
                 <li className="flex items-center gap-3">
                   <Check className="w-5 h-5 text-success" /> MCP and REST access
