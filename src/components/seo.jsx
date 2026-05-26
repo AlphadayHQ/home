@@ -12,11 +12,13 @@ import { CookieContext } from "../utils/CookieContext";
 
 // recommended dimensions for thumbnail that appears when someone shares your website: 1200 pixels x 627 pixels (1.91/1 ratio)
 
-const SEO = ({ title, description }) => {
+const SEO = ({ title, description, canonical, ogImage, jsonLd }) => {
   //date format: 2015-02-05T08:00:00+08:00
   const { domain, socialLinks, cover } = config.seo;
   const titleToShow = title || config.seo.defaultTitle;
   const descriptionToShow = description || config.seo.defaultDescription;
+  const ogImageToShow = ogImage || cover;
+  const canonicalUrl = canonical || domain;
   const { allowTracking } = useContext(CookieContext);
 
   return (
@@ -32,13 +34,14 @@ const SEO = ({ title, description }) => {
         content={descriptionToShow}
         data-react-helmet="true"
       />
+      <link rel="canonical" href={canonicalUrl} data-react-helmet="true" />
       <meta
         property="og:site_name"
         content={config.seo.siteName}
         data-react-helmet="true"
       />
       {/* Opengraph meta tags for Facebook & LinkedIn */}
-      <meta property="og:url" content={domain} data-react-helmet="true" />
+      <meta property="og:url" content={canonicalUrl} data-react-helmet="true" />
       <meta property="og:type" content={"website"} data-react-helmet="true" />
       <meta
         property="og:title"
@@ -50,7 +53,7 @@ const SEO = ({ title, description }) => {
         content={descriptionToShow}
         data-react-helmet="true"
       />
-      <meta property="og:image" content={cover} data-react-helmet="true" />
+      <meta property="og:image" content={ogImageToShow} data-react-helmet="true" />
 
       {/*You can get this id when you create an app id on Facebook of your Facebook page*/}
       {/* <meta
@@ -81,7 +84,12 @@ const SEO = ({ title, description }) => {
         content={`${descriptionToShow}`}
         data-react-helmet="true"
       />
-      <meta name="twitter:image" content={cover} data-react-helmet="true" />
+      <meta name="twitter:image" content={ogImageToShow} data-react-helmet="true" />
+      {jsonLd && (
+        <script type="application/ld+json" data-react-helmet="true">
+          {JSON.stringify(jsonLd)}
+        </script>
+      )}
       {/* <!-- Global site tag (gtag.js) - Google Analytics --> */}
       {allowTracking && (
         <script
