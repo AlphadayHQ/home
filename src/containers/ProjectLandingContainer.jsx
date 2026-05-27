@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Seo from "../components/seo";
 import Error404 from "../components/Error404";
-import { fetchBoardBySlug } from "../api/boards";
-import { deriveCards } from "../components/landing/widgetCategoryMap";
-import { getToken } from "../components/landing/tokenOverrides";
+import { fetchLandingPageBySlug } from "../api/boards";
 import Hero from "../components/landing/Hero";
 import CategoryGrid from "../components/landing/CategoryGrid";
 import DashboardScreenshot from "../components/landing/DashboardScreenshot";
 import ValueProps from "../components/landing/ValueProps";
 import BottomCTA from "../components/landing/BottomCTA";
 import LandingFooter from "../components/landing/LandingFooter";
-import config from "../config";
+import LongFormSection from "../components/landing/LongFormSection";
 
 function LoadingState() {
   return (
@@ -27,10 +25,7 @@ function ErrorState() {
       <p className="text-aluminium mb-6">
         We couldn't load this dashboard right now. Please try again later.
       </p>
-      <a
-        href="/"
-        className="text-california underline"
-      >
+      <a href="/" className="text-california underline">
         Back to Alphaday
       </a>
     </div>
@@ -38,19 +33,19 @@ function ErrorState() {
 }
 
 function ProjectLandingContainer({ slug }) {
-  const [state, setState] = useState({ status: "loading", board: null });
+  const [state, setState] = useState({ status: "loading", data: null });
 
   useEffect(() => {
     let cancelled = false;
-    setState({ status: "loading", board: null });
-    fetchBoardBySlug(slug)
-      .then((board) => {
+    setState({ status: "loading", data: null });
+    fetchLandingPageBySlug(slug)
+      .then((data) => {
         if (cancelled) return;
-        if (!board) setState({ status: "not-found", board: null });
-        else setState({ status: "ready", board });
+        if (!data) setState({ status: "not-found", data: null });
+        else setState({ status: "ready", data });
       })
       .catch(() => {
-        if (!cancelled) setState({ status: "error", board: null });
+        if (!cancelled) setState({ status: "error", data: null });
       });
     return () => {
       cancelled = true;
@@ -61,45 +56,42 @@ function ProjectLandingContainer({ slug }) {
   if (state.status === "not-found") return <Error404 />;
   if (state.status === "error") return <ErrorState />;
 
-  const { board } = state;
-  const project = board.name;
-  const token = getToken(board);
-  const cardIds = deriveCards(board);
-  const canonical = `https://alphaday.com/${board.slug}`;
-  const tokenPhrase = token ? `${token} price, ` : "";
-  const title = `${project} — News, Price, Governance & Analytics Dashboard`;
-  const description = `Your all-in-one ${project} dashboard. Track ${tokenPhrase}news, governance, on-chain data, community updates and more.`;
-
+  const data = state.data;
+  const canonical = `https://alphaday.com/${data.slug}`;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    name: title,
-    description,
+    name: data.meta.title,
+    description: data.meta.description,
     url: canonical,
   };
 
   return (
     <>
       <Seo
-        title={title}
-        description={description}
+        title={data.meta.title}
+        description={data.meta.description}
         canonical={canonical}
+        ogImage={data.meta.og_image}
         jsonLd={jsonLd}
       />
       <Hero
-        project={project}
-        slug={board.slug}
-        logo={board.icon}
-        appUrl={config.alphadayApp}
+        headline={data.hero.headline}
+        subheading={data.hero.subheading}
+        logo={data.icon}
+        dashboardUrl={data.dashboard_url}
+        projectName={data.name}
       />
-      <CategoryGrid project={project} token={token} cardIds={cardIds} />
-      <DashboardScreenshot project={project} />
-      <ValueProps project={project} />
-      <BottomCTA
-        project={project}
-        slug={board.slug}
-        appUrl={config.alphadayApp}
-      />
+      {data.intro_paragraph && (
+        <LongFormSection body={data.intro_paragraph} />
+      )}
+      <CategoryGrid name={data.name} cards={data.category_cards} />
+      <DashboardScreenshot projectName={data.name} />
+      <ValueProps valueProps={data.value_props} projectName={data.name} />
+      {data.about_project && (
+        <LongFormSection body={data.about_project} heading={`About ${data.name}`} />
+      )}
+      <BottomCTA projectName={data.name} dashboardUrl={data.dashboard_url} />
       <LandingFooter />
     </>
   );

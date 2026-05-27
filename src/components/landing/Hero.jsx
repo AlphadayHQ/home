@@ -2,9 +2,7 @@ import React from "react";
 import { Section } from "../../shared";
 import { ArrowRight } from "lucide-react";
 
-function Hero({ project, slug, logo, appUrl }) {
-  const dashboardUrl = `${appUrl}/b/${slug}`;
-
+function Hero({ headline, subheading, logo, dashboardUrl, projectName }) {
   return (
     <Section className="bg-california overflow-hidden w-full border-california">
       <div className="mx-auto w-11/12 max-w-7xl">
@@ -12,23 +10,21 @@ function Hero({ project, slug, logo, appUrl }) {
           {logo && (
             <img
               src={logo}
-              alt={`${project} logo`}
+              alt={`${projectName} logo`}
               className="h-16 w-16 md:h-20 md:w-20 rounded-2xl mb-6 object-contain bg-white/30 p-1"
             />
           )}
           <h1 className="text-black font-medium leading-[1.05] text-4xl sm:text-5xl md:text-7xl lg:text-[88px] mb-4 md:mb-6">
-            The homepage for
-            <br />
-            <span className="whitespace-nowrap">{project} enthusiasts.</span>
+            {headline}
           </h1>
           <p className="text-black/80 text-base md:text-xl max-w-2xl mb-8 md:mb-10">
-            All the {project} news, prices, governance, on-chain data, and community updates — in one place.
+            {subheading}
           </p>
           <a
             href={dashboardUrl}
             className="inline-flex items-center gap-2 bg-black text-white hover:bg-[#1235b5] transition-colors duration-300 rounded-lg px-6 py-3 md:px-8 md:py-4 text-base md:text-lg font-medium"
           >
-            Open {project} Dashboard
+            Open {projectName} Dashboard
             <ArrowRight className="w-5 h-5" />
           </a>
         </div>
