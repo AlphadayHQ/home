@@ -9,6 +9,7 @@ import ValueProps from "../components/landing/ValueProps";
 import BottomCTA from "../components/landing/BottomCTA";
 import LandingFooter from "../components/landing/LandingFooter";
 import LongFormSection from "../components/landing/LongFormSection";
+import { Footer, Navbar } from "../components";
 
 function LoadingState() {
   return (
@@ -75,6 +76,7 @@ function ProjectLandingContainer({ slug }) {
         ogImage={data.meta.og_image}
         jsonLd={jsonLd}
       />
+      <Navbar />
       <Hero
         headline={data.hero.headline}
         subheading={data.hero.subheading}
@@ -82,17 +84,19 @@ function ProjectLandingContainer({ slug }) {
         dashboardUrl={data.dashboard_url}
         projectName={data.name}
       />
-      {data.intro_paragraph && (
-        <LongFormSection body={data.intro_paragraph} />
-      )}
+      {data.intro_paragraph && <LongFormSection body={data.intro_paragraph} />}
       <CategoryGrid name={data.name} cards={data.category_cards} />
       <DashboardScreenshot projectName={data.name} />
       <ValueProps valueProps={data.value_props} projectName={data.name} />
       {data.about_project && (
-        <LongFormSection body={data.about_project} heading={`About ${data.name}`} />
+        <LongFormSection
+          body={data.about_project}
+          heading={`About ${data.name}`}
+        />
       )}
       <BottomCTA projectName={data.name} dashboardUrl={data.dashboard_url} />
-      <LandingFooter />
+      <div className="w-full h-20"></div>
+      <Footer />
     </>
   );
 }
