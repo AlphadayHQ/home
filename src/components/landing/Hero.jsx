@@ -6,7 +6,7 @@ function Hero({ headline, subheading, logo, dashboardUrl, projectName }) {
   return (
     <Section className="bg-california overflow-hidden w-full border-california">
       <div className="mx-auto w-11/12 max-w-7xl">
-        <div className="md:mx-auto flex flex-col items-start max-w-5xl pt-12 sm:pt-16 md:pt-24 pb-16 md:pb-24">
+        <div className="flex flex-col items-start max-w-5xl pt-12 sm:pt-16 md:pt-24 pb-16 md:pb-24">
           {logo && (
             <img
               src={logo}

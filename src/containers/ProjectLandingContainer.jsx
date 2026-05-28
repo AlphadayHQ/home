@@ -9,6 +9,8 @@ import ValueProps from "../components/landing/ValueProps";
 import BottomCTA from "../components/landing/BottomCTA";
 import LandingFooter from "../components/landing/LandingFooter";
 import LongFormSection from "../components/landing/LongFormSection";
+import FAQ from "../components/landing/FAQ";
+import SiblingDashboards from "../components/landing/SiblingDashboards";
 import { Footer, Navbar } from "../components";
 
 function LoadingState() {
@@ -31,6 +33,65 @@ function ErrorState() {
       </a>
     </div>
   );
+}
+
+function buildJsonLd({ data, canonical }) {
+  const graph = [
+    {
+      "@type": "SoftwareApplication",
+      name: `${data.name} Dashboard`,
+      description: data.meta.description,
+      url: canonical,
+      applicationCategory: "FinanceApplication",
+      operatingSystem: "Web",
+      offers: {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "USD",
+      },
+      publisher: {
+        "@type": "Organization",
+        name: "Alphaday",
+        url: "https://alphaday.com",
+      },
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        {
+          "@type": "ListItem",
+          position: 1,
+          name: "Alphaday",
+          item: "https://alphaday.com",
+        },
+        {
+          "@type": "ListItem",
+          position: 2,
+          name: data.name,
+          item: canonical,
+        },
+      ],
+    },
+  ];
+
+  if (data.faqs?.length) {
+    graph.push({
+      "@type": "FAQPage",
+      mainEntity: data.faqs.map((faq) => ({
+        "@type": "Question",
+        name: faq.question,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: faq.answer,
+        },
+      })),
+    });
+  }
+
+  return {
+    "@context": "https://schema.org",
+    "@graph": graph,
+  };
 }
 
 function ProjectLandingContainer({ slug }) {
@@ -59,13 +120,7 @@ function ProjectLandingContainer({ slug }) {
 
   const data = state.data;
   const canonical = `https://alphaday.com/${data.slug}`;
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "WebPage",
-    name: data.meta.title,
-    description: data.meta.description,
-    url: canonical,
-  };
+  const jsonLd = buildJsonLd({ data, canonical });
 
   return (
     <>
@@ -94,8 +149,12 @@ function ProjectLandingContainer({ slug }) {
           heading={`About ${data.name}`}
         />
       )}
+      <FAQ faqs={data.faqs} projectName={data.name} />
       <BottomCTA projectName={data.name} dashboardUrl={data.dashboard_url} />
-      <div className="w-full h-20"></div>
+      <SiblingDashboards
+        siblings={data.sibling_dashboards}
+        currentName={data.name}
+      />
       <Footer />
     </>
   );
