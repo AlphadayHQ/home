@@ -54,7 +54,7 @@ function Navbar({ isPrivacyPolicy, isMobile }) {
             <a href="/">
               <img
                 src={alphaday}
-                className="h-[25px] object-fit"
+                className="h-6.25 object-fit"
                 alt="alphaday"
               />
             </a>
@@ -66,15 +66,15 @@ function Navbar({ isPrivacyPolicy, isMobile }) {
               isMobile && "lg:max-w-5xl"
             )}
           >
-            <div className="relative items-center w-[100px] md:w-[140px] flex justify-end ease-in-out">
+            <div className="relative items-center w-25 md:w-35 flex justify-end ease-in-out">
               <div
                 ref={element2}
-                className="scroll-show flex justify-between items-center w-[90px]"
+                className="scroll-show flex justify-between items-center w-22.5"
               >
                 <a
                   href={discord}
                   target="_blank"
-                  className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center"
+                  className="w-10 h-10 rounded-full bg-black flex justify-center items-center"
                 >
                   <img src={discordLogo} alt="discord" />
                 </a>
@@ -82,7 +82,7 @@ function Navbar({ isPrivacyPolicy, isMobile }) {
                 <a
                   href="https://twitter.com/AlphadayHQ"
                   target="_blank"
-                  className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center"
+                  className="w-10 h-10 rounded-full bg-black flex justify-center items-center"
                 >
                   <img src={twitterLogo} alt="twitter" />
                 </a>
