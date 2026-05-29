@@ -3,6 +3,7 @@ import Seo from "./components/seo";
 import CookieDisclaimer from "./components/CookieDisclaimer";
 import CONFIG from "./config";
 import HomeContainer from "./containers/HomeContainer";
+import ProjectLandingContainer from "./containers/ProjectLandingContainer";
 import { CookieProvider } from "./utils/CookieContext";
 import PrivacyPolicyPage from "./pages/privacy-policy";
 import MobilePage from "./pages/mobile-app";
@@ -52,6 +53,18 @@ function App() {
     if (path === "/blog") {
       window.location.replace(CONFIG.blog);
       return <></>;
+    }
+
+    const slugMatch = path.match(/^\/([a-z0-9][a-z0-9-]*)$/);
+    if (slugMatch) {
+      return (
+        <HelmetProvider>
+          <CookieProvider>
+            <ProjectLandingContainer slug={slugMatch[1]} />
+            <CookieDisclaimer />
+          </CookieProvider>
+        </HelmetProvider>
+      );
     }
 
     return <Error404 />;
