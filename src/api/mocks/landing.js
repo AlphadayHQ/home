@@ -6,7 +6,6 @@ const AVALANCHE = {
   name: "Avalanche",
   icon: "https://s3.eu-west-1.amazonaws.com/dev-zettaday.com/media/icons/sources/avax_MppBUlK.png",
   token_symbol: "AVAX",
-  dashboard_url: "https://app.alphaday.com/b/avalanche",
   meta: {
     title: "Avalanche (AVAX) Dashboard — Price, News, Research & Governance",
     description:
