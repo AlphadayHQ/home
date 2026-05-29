@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import Seo from "../components/seo";
 import Error404 from "../components/Error404";
 import { fetchLandingPageBySlug } from "../api/boards";
+import config from "../config";
 import Hero from "../components/landing/Hero";
 import CategoryGrid from "../components/landing/CategoryGrid";
 import DashboardScreenshot from "../components/landing/DashboardScreenshot";
@@ -120,6 +121,7 @@ function ProjectLandingContainer({ slug }) {
 
   const data = state.data;
   const canonical = `https://alphaday.com/${data.slug}`;
+  const dashboardUrl = `${config.alphadayApp.replace(/\/$/, "")}/b/${data.slug}`;
   const jsonLd = buildJsonLd({ data, canonical });
 
   return (
@@ -136,7 +138,7 @@ function ProjectLandingContainer({ slug }) {
         headline={data.hero.headline}
         subheading={data.hero.subheading}
         logo={data.icon}
-        dashboardUrl={data.dashboard_url}
+        dashboardUrl={dashboardUrl}
         projectName={data.name}
       />
       {data.intro_paragraph && <LongFormSection body={data.intro_paragraph} />}
@@ -150,7 +152,7 @@ function ProjectLandingContainer({ slug }) {
         />
       )}
       <FAQ faqs={data.faqs} projectName={data.name} />
-      <BottomCTA projectName={data.name} dashboardUrl={data.dashboard_url} />
+      <BottomCTA projectName={data.name} dashboardUrl={dashboardUrl} />
       <SiblingDashboards
         siblings={data.sibling_dashboards}
         currentName={data.name}
