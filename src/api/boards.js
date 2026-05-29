@@ -24,10 +24,10 @@ function apiUrl(path) {
 export async function fetchLandingPageBySlug(slug) {
   if (USE_MOCKS) {
     return LANDING_MOCKS[slug] || null;
-  }
+  }  
 
   const res = await fetch(
-    apiUrl(`/ui/landing-pages/?slug=${encodeURIComponent(slug)}`),
+    apiUrl(`/ui/landing-pages/${encodeURIComponent(slug)}`),
     { headers: authHeaders() }
   );
 
