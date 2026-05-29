@@ -35,6 +35,9 @@
   --font-display: titling, ui-sans-serif, system-ui, sans-serif;
 
   --animate-textFade: textFade 10s cubic-bezier(0.23, 1, 0.32, 1.2) infinite;
+  --animate-shimmer: shimmer 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  --animate-progress-slide: progress-slide 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  --animate-breathe-glow: breathe-glow 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 
   --drop-shadow-eclipse: 4px 4px 0px #000000;
   --shadow-primary-glow: 0 0 40px -10px rgba(250, 162, 2, 0.3);
@@ -50,6 +53,22 @@
     80%   { margin-top: 0px; }
     99.9% { margin-top: 0px; }
     100%  { margin-top: -270px; }
+  }
+
+  @keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  @keyframes progress-slide {
+    0%   { transform: translateX(-60%) scaleX(0.6); }
+    50%  { transform: translateX(20%)  scaleX(0.9); }
+    100% { transform: translateX(120%) scaleX(0.6); }
+  }
+
+  @keyframes breathe-glow {
+    0%, 100% { opacity: 0.55; transform: scale(1);    box-shadow: 0 0 0px 0px rgba(0,0,0,0.0); }
+    50%      { opacity: 1;    transform: scale(1.04); box-shadow: 0 0 24px 4px rgba(0,0,0,0.15); }
   }
 }
 
