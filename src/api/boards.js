@@ -1,10 +1,6 @@
 import { LANDING_MOCKS } from "./mocks/landing";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.PROD
-    ? "https://api.alphaday.com/"
-    : "https://api.zettaday.com/");
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const APP_ID = import.meta.env.VITE_X_APP_ID;
 const APP_SECRET = import.meta.env.VITE_X_APP_SECRET;
@@ -24,7 +20,7 @@ function apiUrl(path) {
 export async function fetchLandingPageBySlug(slug) {
   if (USE_MOCKS) {
     return LANDING_MOCKS[slug] || null;
-  }  
+  }
 
   const res = await fetch(
     apiUrl(`/ui/landing-pages/${encodeURIComponent(slug)}`),

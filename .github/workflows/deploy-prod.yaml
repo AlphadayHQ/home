@@ -20,8 +20,9 @@ jobs:
         with:
           cmd: build # will run `yarn build` command
         env:
-          REACT_APP_X_APP_ID: sBnL0RkWkM
-          REACT_APP_X_APP_SECRET: 21gPAwU3uOUisMJJFJjaotbDxCmvCHKMh76Xlvb8XK2RkkvZHhtSfcUfoz6QiFx8zhZf31vxvKAFD7pkdmbjHiKwoVuS2iDOLjvC
+          VITE_API_BASE_URL: https://api.alphaday.com/
+          VITE_X_APP_ID: sBnL0RkWkM
+          VITE_X_APP_SECRET: 21gPAwU3uOUisMJJFJjaotbDxCmvCHKMh76Xlvb8XK2RkkvZHhtSfcUfoz6QiFx8zhZf31vxvKAFD7pkdmbjHiKwoVuS2iDOLjvC
 
       - uses: kefranabg/s3-sync-action@master
         with:
