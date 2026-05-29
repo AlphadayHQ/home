@@ -143,7 +143,10 @@ function ProjectLandingContainer({ slug }) {
       />
       {data.intro_paragraph && <LongFormSection body={data.intro_paragraph} />}
       <CategoryGrid name={data.name} cards={data.category_cards} />
-      <DashboardScreenshot projectName={data.name} />
+      <DashboardScreenshot
+        projectName={data.name}
+        dashboardImage={data.dashboard_image}
+      />
       <ValueProps valueProps={data.value_props} projectName={data.name} />
       {data.about_project && (
         <LongFormSection

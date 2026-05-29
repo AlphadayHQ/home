@@ -2,13 +2,13 @@ import React from "react";
 import { Section, Div } from "../../shared";
 import dashboardImg from "../../images/home/hero.png";
 
-function DashboardScreenshot({ projectName }) {
+function DashboardScreenshot({ projectName, dashboardImage }) {
   return (
     <Section className="bg-eerie">
       <Div className="py-8! md:py-12!">
         <div className="bg-eerie p-3 rounded-xl">
           <img
-            src={dashboardImg}
+            src={dashboardImage || dashboardImg}
             alt={`${projectName} dashboard preview`}
             className="w-full rounded-lg"
           />

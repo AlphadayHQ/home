@@ -12,6 +12,8 @@ const AVALANCHE = {
       "Track AVAX price, Avalanche news, daily AI briefings, governance, research reports, ecosystem projects, dev docs and jobs — from one free, customizable dashboard.",
     og_image: null,
   },
+  dashboard_image:
+    "https://s3.eu-west-1.amazonaws.com/dev-zettaday.com/media/landing/avalanche-dashboard.png",
   hero: {
     headline: "Avalanche (AVAX), the full stack.",
     subheading:
