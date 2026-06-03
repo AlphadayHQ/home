@@ -1,13 +1,16 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
+// https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
+  server: {
+    port: 3000,
+  },
   build: {
-    rollupOptions: {
+    rolldownOptions: {
       output: {
-        assetFileNames: `assets/[name].[ext]`,
+        assetFileNames: 'assets/[name]-[hash].[ext]',
       },
     },
   },

@@ -3,11 +3,13 @@ import Seo from "./components/seo";
 import CookieDisclaimer from "./components/CookieDisclaimer";
 import CONFIG from "./config";
 import HomeContainer from "./containers/HomeContainer";
+import ProjectLandingContainer from "./containers/ProjectLandingContainer";
 import { CookieProvider } from "./utils/CookieContext";
 import PrivacyPolicyPage from "./pages/privacy-policy";
 import MobilePage from "./pages/mobile-app";
 import ApiPage from "./pages/api";
 import { useEffect } from "react";
+import { HelmetProvider } from "react-helmet-async";
 import { navigateToHash } from "./utils/navigateToHash";
 
 function removeTrailingBackSlash(site) {
@@ -53,21 +55,35 @@ function App() {
       return <></>;
     }
 
+    const slugMatch = path.match(/^\/([a-z0-9][a-z0-9-]*)$/);
+    if (slugMatch) {
+      return (
+        <HelmetProvider>
+          <CookieProvider>
+            <ProjectLandingContainer slug={slugMatch[1]} />
+            <CookieDisclaimer />
+          </CookieProvider>
+        </HelmetProvider>
+      );
+    }
+
     return <Error404 />;
   }
   return (
-    <CookieProvider>
-      <Seo
-        title="Alphaday"
-        description={"Everything about the Crypto ecosystem in one app"}
-      />
-      {Object.keys(otherPages).includes(path) ? (
-        <>{otherPages[path]}</>
-      ) : (
-        <HomeContainer />
-      )}
-      <CookieDisclaimer />
-    </CookieProvider>
+    <HelmetProvider>
+      <CookieProvider>
+        <Seo
+          title="Alphaday"
+          description={"Everything about the Crypto ecosystem in one app"}
+        />
+        {Object.keys(otherPages).includes(path) ? (
+          <>{otherPages[path]}</>
+        ) : (
+          <HomeContainer />
+        )}
+        <CookieDisclaimer />
+      </CookieProvider>
+    </HelmetProvider>
   );
 }
 

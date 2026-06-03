@@ -1,21 +1,76 @@
-@import "./main.css";
+@import './main.css' layer(base);
 
-:root {
+@import 'tailwindcss';
+
+@theme {
   --color-california: #faa202;
   --color-platinum: #e2e3e9;
   --color-aluminium: #a3a7b3;
   --color-shark: #1d1f20;
-  --color-palatinate-blue: #0b39df;
-  --color-eerie-black: #171a1c;
-
-  --color-black: #000000;
-  --color-white: #ffffff;
+  --color-eerie: #171a1c;
   --color-lightblue: #2850e0;
-}
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+  --color-blue: #0b39df;
+  --color-blue-400: #60a5fa;
+  --color-orange-400: #fb923c;
+
+  --color-background: #121212;
+  --color-surface: #191919;
+  --color-surface-light: #242424;
+  --color-surface-border: #3b3a3a;
+
+  --color-text: #e7e7e7;
+  --color-text-muted: #849399;
+
+  --color-primary: #faa202;
+  --color-primary-hover: #ffb84d;
+
+  --color-success: #6dd230;
+  --color-danger: #f45532;
+  --color-warning: #faa202;
+
+  --font-titling: titling, ui-sans-serif, system-ui, sans-serif;
+  --font-sans: titling, ui-sans-serif, system-ui, sans-serif;
+  --font-montserrat: Montserrat, ui-sans-serif, system-ui, sans-serif;
+  --font-display: titling, ui-sans-serif, system-ui, sans-serif;
+
+  --animate-textFade: textFade 10s cubic-bezier(0.23, 1, 0.32, 1.2) infinite;
+  --animate-shimmer: shimmer 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  --animate-progress-slide: progress-slide 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  --animate-breathe-glow: breathe-glow 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+
+  --drop-shadow-eclipse: 4px 4px 0px #000000;
+  --shadow-primary-glow: 0 0 40px -10px rgba(250, 162, 2, 0.3);
+
+  @keyframes textFade {
+    0%    { margin-top: -360px; }
+    5%    { margin-top: -270px; }
+    25%   { margin-top: -270px; }
+    30%   { margin-top: -180px; }
+    50%   { margin-top: -180px; }
+    55%   { margin-top: -90px; }
+    75%   { margin-top: -90px; }
+    80%   { margin-top: 0px; }
+    99.9% { margin-top: 0px; }
+    100%  { margin-top: -270px; }
+  }
+
+  @keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+
+  @keyframes progress-slide {
+    0%   { transform: translateX(-60%) scaleX(0.6); }
+    50%  { transform: translateX(20%)  scaleX(0.9); }
+    100% { transform: translateX(120%) scaleX(0.6); }
+  }
+
+  @keyframes breathe-glow {
+    0%, 100% { opacity: 0.55; transform: scale(1);    box-shadow: 0 0 0px 0px rgba(0,0,0,0.0); }
+    50%      { opacity: 1;    transform: scale(1.04); box-shadow: 0 0 24px 4px rgba(0,0,0,0.15); }
+  }
+}
 
 @layer components {
   .btn-primary {

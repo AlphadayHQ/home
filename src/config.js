@@ -1,6 +1,5 @@
-import coverImg from "./images/seo1200x627-black.png";
-
 const ALPHADAY_ROOT_URL = "https://alphaday.com/";
+const coverImg = "/assets/seo1200x627-black.png";
 
 const CONFIG = {
   privacyPolicy: "/privacy",
