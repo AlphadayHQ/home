@@ -35,6 +35,18 @@ const CONFIG = {
     cover: coverImg,
   },
   CLARITY_ID: import.meta.env.VITE_CLARITY_PROJECT_ID ?? "",
+  // Curated board landing pages featured on the home page (internal-linking / SEO).
+  // Each slug must map to a published page served at alphaday.com/{slug}.
+  featuredBoards: [
+    { slug: "ethereum", name: "Ethereum" },
+    { slug: "solana", name: "Solana" },
+    { slug: "base", name: "Base" },
+    { slug: "arbitrum", name: "Arbitrum" },
+    { slug: "optimism", name: "Optimism" },
+    { slug: "polygon", name: "Polygon" },
+    { slug: "avalanche", name: "Avalanche" },
+    { slug: "berachain", name: "Berachain" },
+  ],
   blogLinks: {
     learn: [
       {
