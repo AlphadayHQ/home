@@ -15,11 +15,17 @@ if (!existsSync(distPath)) {
 }
 
 const baseUrl = "https://alphaday.com";
-const appUrl = "https://app.alphaday.com";
 const boardsRequestUrl = "https://api.alphaday.com/ui/views/";
 
-const appId = process.env.REACT_APP_X_APP_ID;
-const appSecret = process.env.REACT_APP_X_APP_SECRET;
+const appId = process.env.VITE_X_APP_ID;
+const appSecret = process.env.VITE_X_APP_SECRET;
+
+if (!appId || !appSecret) {
+  throw new Error(
+    "build-sitemap: missing VITE_X_APP_ID / VITE_X_APP_SECRET env vars — " +
+      "cannot fetch boards. Refusing to build a sitemap without landing pages."
+  );
+}
 
 // function to fetch all pages from the API looping through paginated results
 async function fetchBoards(url) {
@@ -51,24 +57,24 @@ const static_links = [
     priority: "0.80",
     changefreq: "weekly",
   },
-  {
-    loc: appUrl,
-    priority: "1.00",
-    changefreq: "weekly",
-  },
-  {
-    loc: `${appUrl}/calendar`,
-    priority: "0.40",
-    changefreq: "weekly",
-  },
 ];
 
 // call fetchBoards to get all boards synchronously
 fetchBoards(boardsRequestUrl).then((boards) => {
-  const board_links = boards.map((board) => {
+  if (!boards.length) {
+    throw new Error(
+      "build-sitemap: board fetch returned 0 results — check API credentials " +
+        "and endpoint. Refusing to build a sitemap with no landing pages."
+    );
+  }
+
+  // SEO landing pages live on this domain at alphaday.com/{slug}.
+  // The live dashboards at app.alphaday.com/b/{slug} are a different host
+  // and must not be listed here — they belong in app.alphaday.com's own sitemap.
+  const landing_links = boards.map((board) => {
     return {
-      loc: `${appUrl}/b/${board.slug}`,
-      priority: "0.60",
+      loc: `${baseUrl}/${board.slug}`,
+      priority: "0.70",
       changefreq: "weekly",
     };
   });
@@ -76,7 +82,10 @@ fetchBoards(boardsRequestUrl).then((boards) => {
   /**
    * Generate a sitemap.xml file for the app.
    *
-   * Build the sitemap by adding the links and partner links to the sitemap
+   * Build the sitemap from the static links plus one landing page per board.
    */
-  buildSitemap(outputPath, [...static_links, ...board_links]);
+  buildSitemap(outputPath, [...static_links, ...landing_links]);
+}).catch((err) => {
+  console.error(err.message || err);
+  process.exit(1);
 });
