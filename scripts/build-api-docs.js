@@ -153,10 +153,18 @@ function transform(spec) {
           description: p.description || "",
         }));
 
+        // Two-tier text: operation_summary -> bold heading, operation_description
+        // -> supporting sentence. drf-yasg maps a viewset's operation_summary to
+        // the spec `summary` and operation_description to `description`.
+        const summary = (op.summary || "").trim();
+        const description = (op.description || "").trim();
+
         const endpoint = {
           method: method.toUpperCase(),
           path,
-          description: (op.summary || op.description || "").trim(),
+          // Kept for backwards-compat / search; heading falls back to it when no summary.
+          summary: summary || null,
+          description,
           parameters,
           returns: buildReturns(defs, successSchema(op.responses)),
           curl: buildCurl(path),

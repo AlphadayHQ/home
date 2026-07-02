@@ -85,11 +85,11 @@ function categoryBlurb(cat) {
   );
 }
 
-// Text blob used for the search filter — path, description, params, model.
+// Text blob used for the search filter — path, summary, description, params, model.
 function endpointHaystack(ep) {
   const params = ep.parameters.map((p) => p.name).join(" ");
   const model = ep.returns?.model || "";
-  return `${ep.path} ${ep.description} ${params} ${model}`.toLowerCase();
+  return `${ep.path} ${ep.summary || ""} ${ep.description} ${params} ${model}`.toLowerCase();
 }
 
 function CopyCurlButton({ curl }) {
@@ -244,8 +244,17 @@ function EndpointBlock({ endpoint }) {
           <CopyCurlButton curl={endpoint.curl} />
         </div>
       </div>
-      {endpoint.description && (
-        <p className="mt-2 text-sm text-text-muted">{endpoint.description}</p>
+      {(endpoint.summary || endpoint.description) && (
+        <div className="mt-2">
+          <p className="text-sm font-medium text-text">
+            {endpoint.summary || endpoint.description}
+          </p>
+          {endpoint.summary && endpoint.description && (
+            <p className="mt-0.5 text-sm text-text-muted">
+              {endpoint.description}
+            </p>
+          )}
+        </div>
       )}
       <div className="mt-3">
         <ParamTable parameters={endpoint.parameters} />
@@ -368,13 +377,6 @@ export default function ApiDocsPage() {
               className="text-text-muted hover:text-primary transition-colors hidden sm:inline"
             >
               Swagger <ArrowRight size={12} className="inline" />
-            </a>
-            <a
-              href={CONFIG.api}
-              className="text-text-muted hover:text-primary transition-colors whitespace-nowrap"
-            >
-              <ArrowLeft size={12} className="inline" />{" "}
-              <span className="hidden sm:inline">Back to </span>Catalogue
             </a>
           </div>
         </div>
