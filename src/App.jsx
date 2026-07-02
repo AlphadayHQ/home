@@ -8,6 +8,7 @@ import { CookieProvider } from "./utils/CookieContext";
 import PrivacyPolicyPage from "./pages/privacy-policy";
 import MobilePage from "./pages/mobile-app";
 import ApiPage from "./pages/api";
+import ApiDocsPage from "./pages/api-docs";
 import { useEffect } from "react";
 import { HelmetProvider } from "react-helmet-async";
 import { navigateToHash } from "./utils/navigateToHash";
@@ -20,6 +21,7 @@ const otherPages = {
   [CONFIG.privacyPolicy]: <PrivacyPolicyPage />,
   [CONFIG.mobile]: <MobilePage />,
   [CONFIG.api]: <ApiPage />,
+  [CONFIG.apiDocs]: <ApiDocsPage />,
 };
 
 function App() {
