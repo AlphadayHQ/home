@@ -69,7 +69,7 @@ const mcpClients = [
 ];
 const restCurl = "curl https://api.alphaday.com/news?tags=arbitrum";
 const finalCurl = "curl https://api.alphaday.com/get-started";
-const docsUrl = "https://api.alphaday.com/docs";
+const docsUrl = "/api/docs";
 const githubUrl = "https://github.com/AlphadayHQ/";
 
 const tools = [
@@ -162,7 +162,7 @@ const ApiPage = () => {
       <main className="flex-1 w-full flex flex-col">
         {/* 2. Hero */}
         <section className="relative pt-40 pb-20 px-6 max-w-5xl mx-auto w-full flex flex-col items-center text-center">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
 
           <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1]">
             <span className="text-text">All of Crypto.</span>
@@ -188,7 +188,7 @@ const ApiPage = () => {
               <span className="tracking-tight text-left max-sm:hidden">
                 {heroCurl}
               </span>
-              <div className="tracking-tight text-left whitespace-nowrap w-[250px] sm:hidden">
+              <div className="tracking-tight text-left whitespace-nowrap w-62.5 sm:hidden">
                 <span className="flex tracking-tight text-left whitespace-nowrap">
                   {heroCurl.slice(0, Math.floor(heroCurl.length / 2) + 4)}
                 </span>
@@ -319,7 +319,7 @@ const ApiPage = () => {
 
         {/* 6. Hero Demo Section */}
         <section className="py-24 px-6 bg-surface-light/30 border-y border-surface-border relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 blur-[150px] rounded-full pointer-events-none translate-x-1/2 -translate-y-1/2" />
+          <div className="absolute top-0 right-0 w-200 h-200 bg-primary/5 blur-[150px] rounded-full pointer-events-none translate-x-1/2 -translate-y-1/2" />
           <div className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-16 items-center">
             <div className="flex-1 space-y-6 z-10">
               <h2 className="font-display text-4xl md:text-5xl font-bold tracking-tight">
@@ -485,7 +485,7 @@ const ApiPage = () => {
                   <CodeBlock
                     code={mcpClients[activeMcp].command}
                     language={mcpClients[activeMcp].language || "bash"}
-                    className="min-h-[140px] flex items-center"
+                    className="min-h-35 flex items-center"
                   />
                 </div>
               </div>
@@ -502,8 +502,16 @@ const ApiPage = () => {
                 <CodeBlock
                   code={restCurl}
                   language="bash"
-                  className="lg:mt-[50px] min-h-[140px] flex items-center"
+                  className="lg:mt-12.5 min-h-35 flex items-center"
                 />
+                <a
+                  href={docsUrl}
+                  className="group mt-4 inline-flex items-center gap-2 pl-2 text-sm font-semibold text-primary hover:text-primary-hover transition-colors"
+                >
+                  Browse the full reference — every endpoint, parameter &amp;
+                  response shape
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </a>
               </div>
             </div>
           </div>
@@ -512,8 +520,8 @@ const ApiPage = () => {
         {/* 10. Pricing */}
         <section className="py-24 px-6 relative flex justify-center">
           <div className="max-w-md w-full relative z-10 group">
-            <div className="absolute -inset-px bg-linear-to-b from-primary to-surface-border rounded-[2rem] opacity-30 group-hover:opacity-100 transition duration-500 blur-[2px]" />
-            <div className="bg-surface relative rounded-[2rem] p-10 flex flex-col items-center text-center shadow-2xl">
+            <div className="absolute -inset-px bg-linear-to-b from-primary to-surface-border rounded-4xl opacity-30 group-hover:opacity-100 transition duration-500 blur-[2px]" />
+            <div className="bg-surface relative rounded-4xl p-10 flex flex-col items-center text-center shadow-2xl">
               <h2 className="font-display text-3xl font-bold mb-2">
                 Free. Forever-ish.
               </h2>
@@ -521,7 +529,7 @@ const ApiPage = () => {
                 $0
               </div>
 
-              <ul className="space-y-4 text-left w-full max-w-[280px] mb-10 text-text-muted font-medium">
+              <ul className="space-y-4 text-left w-full max-w-70 mb-10 text-text-muted font-medium">
                 <li className="flex items-center gap-3">
                   <Check className="w-5 h-5 text-success" /> All 1,000+ data
                   sources
@@ -552,7 +560,7 @@ const ApiPage = () => {
 
         {/* 11. Final CTA */}
         <section className="py-32 px-6 border-t border-surface-border bg-surface-light/50 text-center relative overflow-hidden">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary/10 blur-[100px] rounded-t-full pointer-events-none" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-150 h-75 bg-primary/10 blur-[100px] rounded-t-full pointer-events-none" />
           <div className="max-w-3xl mx-auto relative z-10">
             <h2 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-6">
               Start building. No signup.

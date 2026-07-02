@@ -1,12 +1,13 @@
 {
   "name": "alphaday",
   "private": true,
-  "version": "1.4.1",
+  "version": "1.4.2",
   "homepage": ".",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && yarn build-sitemap",
+    "build": "yarn build-api-docs && vite build && yarn build-sitemap",
     "preview": "vite preview",
+    "build-api-docs": "node scripts/build-api-docs.js",
     "build-sitemap": "node scripts/build-sitemap.js"
   },
   "dependencies": {
