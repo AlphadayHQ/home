@@ -466,11 +466,9 @@ export default function ApiDocsPage() {
                 </span>
               </div>
               <p className="leading-relaxed">
-                All endpoints require an{" "}
-                <code className="font-mono text-text-muted bg-surface-light px-1 py-0.5 rounded">
-                  Authorization: Bearer $ALPHADAY_API_KEY
-                </code>{" "}
-                header.
+                All endpoints are currently{" "}
+                <span className="text-success font-semibold">open</span> — no
+                API key or authentication required.
               </p>
             </div>
           </div>
