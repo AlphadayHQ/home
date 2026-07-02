@@ -128,7 +128,8 @@ function buildCurl(path) {
   const url =
     API_BASE_URL +
     path.replace(/\{(\w+)\}/g, (_, name) => sampleForPathParam(name));
-  return `curl -H "Authorization: Bearer $ALPHADAY_API_KEY" ${url}`;
+  // The API is currently open — no auth header required.
+  return `curl ${url}`;
 }
 
 function transform(spec) {
