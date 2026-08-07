@@ -11,9 +11,15 @@ import {
 import alphaday from "../images/logo-notext.png";
 import { CodeBlock } from "../components/ui/CodeBlock";
 import Seo from "../components/seo";
+import {
+  API_COMMANDS,
+  API_STATS,
+  API_TOOLS,
+  TOOL_COUNT,
+} from "../data/apiSurface";
 
-const heroCurl = "curl https://api.alphaday.com/search?project=arbitrum";
-const trendingCurl = "curl https://api.alphaday.com/news/trending?limit=3";
+const heroCurl = API_COMMANDS.search;
+const trendingCurl = API_COMMANDS.trending;
 const trendingJson = `{
   "trending": [
     {
@@ -39,25 +45,24 @@ const trendingJson = `{
 const mcpConfig = `{
   "mcpServers": {
     "alphaday": {
-      "url": "https://api.alphaday.com/mcp"
+      "url": "${API_COMMANDS.mcpUrl}"
     }
   }
 }`;
 const mcpClients = [
   {
     name: "MCP Importer",
-    command: "mcporter config add alphaday --url https://api.alphaday.com/mcp",
+    command: API_COMMANDS.mcporter,
     label: "Terminal",
   },
   {
     name: "Claude Code",
-    command:
-      "claude mcp add --transport http alphaday https://api.alphaday.com/mcp",
+    command: `claude mcp add --transport http alphaday ${API_COMMANDS.mcpUrl}`,
     label: "Terminal",
   },
   {
     name: "Codex",
-    command: "codex mcp add alphaday --url https://api.alphaday.com/mcp",
+    command: `codex mcp add alphaday --url ${API_COMMANDS.mcpUrl}`,
     label: "Terminal",
   },
   {
@@ -67,28 +72,12 @@ const mcpClients = [
     label: "config.json",
   },
 ];
-const restCurl = "curl https://api.alphaday.com/news?tags=arbitrum";
-const finalCurl = "curl https://api.alphaday.com/get-started";
+const restCurl = API_COMMANDS.news;
+const finalCurl = API_COMMANDS.getStarted;
 const docsUrl = "/api/docs";
 const githubUrl = "https://github.com/AlphadayHQ/";
 
-const tools = [
-  { name: "get_news", desc: "Real-time news from 49 crypto outlets" },
-  { name: "get_trending_news", desc: "What the crypto media is buzzing about" },
-  { name: "get_news_summary", desc: "AI-generated daily crypto briefing" },
-  { name: "get_blogs", desc: "133 project blogs, one feed" },
-  { name: "get_podcasts", desc: "118 podcast feeds, latest episodes" },
-  { name: "get_videos", desc: "121 YouTube channels, timestamped" },
-  { name: "get_events", desc: "Conferences, meetups, side events" },
-  { name: "get_dao", desc: "Live Snapshot votes across 51 DAOs" },
-  { name: "get_forum", desc: "59 governance forums, one endpoint" },
-  {
-    name: "get_trending_keywords",
-    desc: "What crypto is talking about, right now",
-  },
-  { name: "search_projects", desc: "Discover tags for any project" },
-  { name: "get_market_coin", desc: "Prices and metadata for the top 100 coins" },
-];
+const tools = API_TOOLS;
 
 const ApiPage = () => {
   const [copied, setCopied] = useState(false);
@@ -381,7 +370,7 @@ const ApiPage = () => {
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-20">
               <h2 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-6">
-                12 tools. Zero setup.
+                {TOOL_COUNT} tools. Zero setup.
               </h2>
               <p className="text-xl text-text-muted max-w-2xl mx-auto">
                 Every endpoint is also a pre-described MCP tool. Your agent
@@ -394,7 +383,7 @@ const ApiPage = () => {
                 <div
                   key={tool.name}
                   className={`bg-surface border border-surface-border p-6 rounded-2xl hover:border-primary/50 hover:bg-surface-light transition-all group lg:col-span-1 ${
-                    i === 11 ? "md:col-span-2 lg:col-span-1 lg:col-start-2" : ""
+                    i === tools.length - 1 ? "md:col-span-2 lg:col-span-1 lg:col-start-2" : ""
                   }`}
                 >
                   <div className="font-mono text-sm font-bold text-text mb-3 flex items-center gap-2">
@@ -415,30 +404,19 @@ const ApiPage = () => {
         {/* 8. Stat Band */}
         <section className="py-24 px-6 bg-primary text-background border-y border-primary/20">
           <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-12 text-center divide-y md:divide-y-0 md:divide-x divide-background/20 font-display">
-            <div className="px-6 flex flex-col items-center pt-8 md:pt-0">
-              <span className="text-5xl md:text-6xl font-black tracking-tighter mb-2">
-                1,000+
-              </span>
-              <span className="font-bold text-background/80 uppercase tracking-widest text-sm">
-                Data Sources
-              </span>
-            </div>
-            <div className="px-6 flex flex-col items-center pt-8 md:pt-0">
-              <span className="text-5xl md:text-6xl font-black tracking-tighter mb-2">
-                500k+
-              </span>
-              <span className="font-bold text-background/80 uppercase tracking-widest text-sm">
-                Indexed Items
-              </span>
-            </div>
-            <div className="px-6 flex flex-col items-center pt-8 md:pt-0">
-              <span className="text-5xl md:text-6xl font-black tracking-tighter mb-2">
-                12
-              </span>
-              <span className="font-bold text-background/80 uppercase tracking-widest text-sm">
-                Tools at Launch
-              </span>
-            </div>
+            {API_STATS.map(({ num, label }) => (
+              <div
+                key={label}
+                className="px-6 flex flex-col items-center pt-8 md:pt-0"
+              >
+                <span className="text-5xl md:text-6xl font-black tracking-tighter mb-2">
+                  {num}
+                </span>
+                <span className="font-bold text-background/80 uppercase tracking-widest text-sm">
+                  {label}
+                </span>
+              </div>
+            ))}
           </div>
         </section>
 
@@ -535,7 +513,7 @@ const ApiPage = () => {
                   sources
                 </li>
                 <li className="flex items-center gap-3">
-                  <Check className="w-5 h-5 text-success" /> All 12 tools
+                  <Check className="w-5 h-5 text-success" /> All {TOOL_COUNT} tools
                 </li>
                 <li className="flex items-center gap-3">
                   <Check className="w-5 h-5 text-success" /> MCP and REST access

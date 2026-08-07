@@ -1,61 +1,44 @@
-import React, { useRef, useState } from "react";
-import { Div, Section, Title } from "../../shared";
+import React, { useState } from "react";
+import { Plus } from "lucide-react";
+import { Section } from "../../shared";
 import { FAQData, mobileFAQData } from "./faqData";
 
-const Card = ({ index, handleToggle, toggleDrawer, data, isMobile }) => {
-  const answerRef = useRef(null);
-  const { question, answer } = data;
-
-  const answerHeight = answerRef?.current?.scrollHeight;
+const Item = ({ index, isOpen, onToggle, data }) => {
+  const { id, question, answer } = data;
+  const answerId = `faq-answer-${id}`;
 
   return (
-    <div className="bg-black rounded-xl p-4 md:p-8">
+    <div className="bg-surface-light border border-surface-border rounded-xl overflow-hidden">
+      <button
+        type="button"
+        aria-expanded={isOpen}
+        aria-controls={answerId}
+        onClick={() => onToggle(index)}
+        className="w-full flex justify-between items-center gap-4 text-left px-5.5 py-4.75 cursor-pointer text-text font-bold text-[16.5px]"
+      >
+        {question}
+        <Plus
+          className={`w-5 h-5 shrink-0 text-primary transition-transform duration-200 ${
+            isOpen ? "rotate-45" : ""
+          }`}
+        />
+      </button>
+
+      {/* grid-rows 0fr -> 1fr animates to the content's natural height without
+          measuring it, so the initially-open item is correct on first paint. */}
       <div
-        onClick={() => handleToggle(index)}
-        className={`flex justify-between items-center cursor-pointer ${
-          toggleDrawer == index ? "text-platinum" : "text-aluminium"
+        id={answerId}
+        role="region"
+        className={`grid transition-[grid-template-rows] duration-250 ease-[cubic-bezier(0.65,0.05,0.36,1)] ${
+          isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
         }`}
       >
-        <h4 className="font-medium text-sm md:text-xl">{question}</h4>
-
-        <span
-          className={`flex justify-center items-center px-[4px] rounded-full border ${
-            toggleDrawer == index ? "border-aluminium" : "border-blue"
-          }`}
-        >
-          <i
-            className={`${
-              toggleDrawer == index ? "ri-subtract-line" : "ri-add-fill"
-            } `}
-          ></i>
-        </span>
-      </div>
-
-      <div
-        className={`overflow-hidden transition-[height] duration-400 h-auto will-change-[height] ease-[cubic-bezier(0.65,0.05,0.36,1)]`}
-        style={{
-          height: `${toggleDrawer == index ? answerHeight + 16 : 0}px`,
-        }}
-      >
-        <div
-          ref={answerRef}
-          className={`mt-4 ${
-            toggleDrawer == index ? "opacity-100" : "opacity-0"
-          }`}
-          style={{ transition: "opacity 0.1s linear 0.18s" }}
-        >
-          {answer.map((el, i) => {
-            return (
-              <div
-                key={i}
-                className={`text-aluminium px-4 text-sm md:px-8 md:text-base ${
-                  i == answer.length - 1 && "mt-4"
-                }`}
-              >
-                {el}
-              </div>
-            );
-          })}
+        <div className="overflow-hidden">
+          <div className="px-5.5 pb-5 text-text-muted text-[15px] space-y-3">
+            {answer.map((paragraph, i) => (
+              <React.Fragment key={i}>{paragraph}</React.Fragment>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -63,47 +46,41 @@ const Card = ({ index, handleToggle, toggleDrawer, data, isMobile }) => {
 };
 
 function FAQ({ isMobile }) {
-  let [toggleDrawer, setToggleDrawer] = useState(0);
+  const [openIndex, setOpenIndex] = useState(0);
+  const items = isMobile ? mobileFAQData : FAQData;
 
-  function handleToggle(arg) {
-    if (toggleDrawer === arg) {
-      return setToggleDrawer(null);
-    }
-    setToggleDrawer(arg);
-  }
+  const handleToggle = (index) =>
+    setOpenIndex((current) => (current === index ? null : index));
+
   return (
-    <Section className="bg-eerie">
-      <Div className={isMobile ? "!py-16" : "pb-48"}>
-        <div>
-          <div className="flex justify-center w-full mb-6">
-            {isMobile ? (
-              <h2 className="text-[22px] font-medium text-aluminium text-center">
-                Frequently Asked Questions
-              </h2>
-            ) : (
-              <Title className="">Frequently Asked Questions</Title>
-            )}
-          </div>
+    <Section id="faq" className="bg-background scroll-mt-16">
+      <div className="mx-auto w-11/12 max-w-7xl py-24">
+        <h2
+          className={`font-display font-extrabold tracking-tight text-text ${
+            isMobile
+              ? "text-[22px] text-center"
+              : "text-[clamp(26px,3.6vw,38px)]"
+          }`}
+        >
+          Frequently Asked Questions
+        </h2>
 
-          <div className="grid grid-cols-1 gap-4 w-full mx-auto max-w-[700px]">
-            {(isMobile ? mobileFAQData : FAQData).map((item, index) => {
-              return (
-                <Card
-                  index={index}
-                  handleToggle={handleToggle}
-                  toggleDrawer={toggleDrawer}
-                  key={item.id}
-                  data={item}
-                />
-              );
-            })}
-          </div>
+        <div
+          className={`grid grid-cols-1 gap-3 mt-11 max-w-210 ${
+            isMobile ? "mx-auto" : ""
+          }`}
+        >
+          {items.map((item, index) => (
+            <Item
+              key={item.id}
+              index={index}
+              data={item}
+              isOpen={openIndex === index}
+              onToggle={handleToggle}
+            />
+          ))}
         </div>
-
-        {/* <div className="w-full mx-auto max-w-fit mt-8 md:mt-16">
-                    <Button className="bg-black w-fit border border-aluminium">Read more in the Docs</Button>
-                </div> */}
-      </Div>
+      </div>
     </Section>
   );
 }

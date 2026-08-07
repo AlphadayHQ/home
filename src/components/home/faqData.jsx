@@ -4,58 +4,49 @@ const FAQData = [
     question: "What is Alphaday?",
     answer: [
       <p>
-        Alphaday is the ultimate crypto dashboard for staying up to date with
-        all things crypto and interacting with your favorite DApps. It is built
-        on a highly customizable platform that lets you re-create your entire
-        crypto workflow within minutes so you never have to visit another crypto
-        website ever again.
+        Alphaday is the crypto data layer. We structure every kind of crypto
+        data — market, on-chain, news, podcasts, video, governance, dev activity,
+        events — into one queryable layer. Humans use it through the Alphaday app
+        and dashboards; apps and AI agents plug in through the free API and MCP
+        server. Try it out today at app.alphaday.com.
       </p>,
     ],
   },
-
   {
     id: "2",
     question: "How much does Alphaday cost?",
-    answer: [<p>Alphaday is completely free to use.</p>],
-  },
-
-  {
-    id: "3",
-    question: "Do I need to be an expert to use Alphaday?",
     answer: [
       <p>
-        No, Alphaday is built from the ground up to be beginner friendly. A
-        dedicated Beginner View provides a curated experience to ease users into
-        the world of crypto.
+        The Alphaday app is free at app.alphaday.com. The API and MCP server are
+        free too — no signup, no API key. Fair-use rate limits apply, and
+        we&apos;ll always tell you before anything changes.
       </p>,
     ],
   },
-
   {
-    id: "4",
-    question: "How secure is Alphaday?",
+    id: "3",
+    question: "What is the Alphaday API & MCP server?",
     answer: [
-      <p>While we do plan to support on-chain activity and other DApp usage in the future, Alphaday has no wallet interactions that could compromise your security, or funds, in any way.</p>,
+      <p>
+        One integration that returns every crypto content type — news, podcasts,
+        videos, governance votes, events and more — filtered by project, keyword,
+        or time range. Use it as a REST API, or drop the MCP server into Claude,
+        Cursor, or your own agent: every endpoint is a pre-described tool your
+        agent already knows how to use.
+      </p>,
     ],
   },
-
-//   {
-//     id: "5",
-//     question: "sunt in culpa qui officia laborum?",
-//     answer: [
-//       <p>
-//         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-//         tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-//         veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-//         commodo consequat.
-//       </p>,
-//       <p>
-//         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-//         dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-//         proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-//       </p>,
-//     ],
-//   },
+  {
+    id: "4",
+    question: "Do I need to be an expert to use Alphaday?",
+    answer: [
+      <p>
+        No. The app works out of the box — pick an ecosystem board and go.
+        Developers get a single endpoint and readable docs; agents get
+        pre-described MCP tools with zero setup.
+      </p>,
+    ],
+  },
 ];
 
 const mobileFAQData = [
