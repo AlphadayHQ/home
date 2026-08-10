@@ -151,14 +151,14 @@ const ApiPage = () => {
       <main className="flex-1 w-full flex flex-col">
         {/* 2. Hero */}
         <section className="relative pt-40 pb-20 px-6 max-w-5xl mx-auto w-full flex flex-col items-center text-center">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150 bg-primary/10 blur-[120px] rounded-full pointer-events-none" />
 
           <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-[1.1]">
             <span className="text-text">All of Crypto.</span>
             <br />
-            <span className="bg-linear-to-r from-primary to-orange-400 bg-clip-text text-transparent">
-              One API.
-            </span>
+            {/* Flat primary, matching the home hero. Gradient text is the
+                AI-template signature this brand is defined against, and a
+                two-stop orange ramp carries no meaning the flat colour lacks. */}
+            <span className="text-primary">One API.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-text-muted max-w-3xl mb-12 leading-relaxed">
@@ -308,7 +308,6 @@ const ApiPage = () => {
 
         {/* 6. Hero Demo Section */}
         <section className="py-24 px-6 bg-surface-light/30 border-y border-surface-border relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-200 h-200 bg-primary/5 blur-[150px] rounded-full pointer-events-none translate-x-1/2 -translate-y-1/2" />
           <div className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-16 items-center">
             <div className="flex-1 space-y-6 z-10">
               <h2 className="font-display text-4xl md:text-5xl font-bold tracking-tight">
@@ -538,7 +537,6 @@ const ApiPage = () => {
 
         {/* 11. Final CTA */}
         <section className="py-32 px-6 border-t border-surface-border bg-surface-light/50 text-center relative overflow-hidden">
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-150 h-75 bg-primary/10 blur-[100px] rounded-t-full pointer-events-none" />
           <div className="max-w-3xl mx-auto relative z-10">
             <h2 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-6">
               Start building. No signup.

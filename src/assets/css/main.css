@@ -6,6 +6,10 @@
 
 html {
   -webkit-tap-highlight-color: transparent;
+  /* Never fake a weight or a slant we don't ship. Where a cut is missing the
+     browser falls back to the nearest real face instead of smearing one —
+     synthetic bold is especially destructive on narrow/condensed faces. */
+  font-synthesis: none;
 }
 
 body {

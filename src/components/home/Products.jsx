@@ -27,7 +27,10 @@ function Products() {
               key={name}
               className="bg-surface-light border border-surface-border rounded-2xl p-3.5 flex flex-col gap-1.5"
             >
-              <div className="text-primary font-extrabold text-[15px] flex items-center gap-2 flex-wrap leading-tight">
+              {/* Product names sit in text, not primary: five orange headings
+                  in a row drown the one orange thing that matters in each
+                  card — the link. The section eyebrow keeps the accent. */}
+              <div className="text-text font-extrabold text-[15px] flex items-center gap-2 flex-wrap leading-tight">
                 {name}
                 {badge && (
                   <span className="text-[9px] font-bold uppercase tracking-wider text-background bg-text-muted rounded px-1.5 py-0.5">
@@ -57,7 +60,9 @@ function Products() {
 
         <FlowArrows count={5} direction="up" className="hidden lg:flex gap-[18%]" />
 
-        <div className="bg-primary text-background text-center font-black uppercase tracking-[0.18em] text-base py-4.25 px-2.5 rounded-[10px] shadow-[0_0_44px_rgba(250,162,2,0.22)] mt-5 lg:mt-0">
+        {/* Same convergence bar as the hero — outlined, not filled, so the
+            only solid-orange rounded rects on the page are the buttons. */}
+        <div className="bg-surface border-2 border-primary text-primary text-center font-black uppercase tracking-[0.18em] text-base py-4.25 px-2.5 rounded-[10px] mt-5 lg:mt-0">
           Alphaday Data Layer
         </div>
 

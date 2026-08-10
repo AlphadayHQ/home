@@ -64,10 +64,20 @@
       />
       <!-- Social Tags -->
 
-    <!-- font -->
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&family=Open+Sans:wght@400;500;600;700&display=swap');
-    </style>    
+    <!--
+      Fonts. Titling Gothic FB Narrow is self-hosted (see assets/css/alphaday.css)
+      and carries the whole site; Montserrat is used only for the "Alphaday API"
+      wordmark and the mobile store buttons. Open Sans used to be requested here
+      in four weights and referenced nowhere — removed.
+      Montserrat needs 700 as well as 600: the wordmark is set in font-bold, and
+      with `font-synthesis: none` a missing 700 would silently render as 600.
+    -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <div id="root"></div>

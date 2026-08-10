@@ -3,7 +3,12 @@ import React from "react";
 /**
  * The connector arrows that carry data into (down) or out of (up) the
  * Alphaday Data Layer bar. Gradient runs from border grey at the far end to
- * primary orange at the layer bar.
+ * primary orange at the layer bar, so the colour itself says "this is where
+ * the value gets added".
+ *
+ * Held at 60% opacity: connectors are supporting structure, not accents, and
+ * eight saturated arrowheads otherwise compete with the CTA for attention.
+ * The gradient still reads clearly at this weight.
  */
 function FlowArrows({ count = 4, direction = "down", className = "" }) {
   const isDown = direction === "down";
@@ -11,7 +16,7 @@ function FlowArrows({ count = 4, direction = "down", className = "" }) {
 
   return (
     <div
-      className={`flex justify-center gap-14 py-3.5 ${className}`}
+      className={`flex justify-center gap-14 py-3.5 opacity-60 ${className}`}
       aria-hidden="true"
     >
       {Array.from({ length: count }, (_, i) => (
