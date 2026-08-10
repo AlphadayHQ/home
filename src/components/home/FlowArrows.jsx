@@ -9,10 +9,23 @@ import React from "react";
  * Held at 60% opacity: connectors are supporting structure, not accents, and
  * eight saturated arrowheads otherwise compete with the CTA for attention.
  * The gradient still reads clearly at this weight.
+ *
+ * Pass `delay` (ms) to opt into the hero's entrance choreography: each arrow
+ * animates in along its own direction of travel, one after another, so the row
+ * reads as flow rather than as a row of icons appearing. Omit it and the
+ * arrows render statically — which is what the below-the-fold usages want,
+ * since an entrance nobody is present to see is just a pop-in on scroll.
  */
-function FlowArrows({ count = 4, direction = "down", className = "" }) {
+function FlowArrows({
+  count = 4,
+  direction = "down",
+  className = "",
+  delay = null,
+  stagger = 45,
+}) {
   const isDown = direction === "down";
   const gradientId = `flow-${direction}`;
+  const animated = delay !== null;
 
   return (
     <div
@@ -20,7 +33,15 @@ function FlowArrows({ count = 4, direction = "down", className = "" }) {
       aria-hidden="true"
     >
       {Array.from({ length: count }, (_, i) => (
-        <svg key={i} width="12" height="26" viewBox="0 0 12 26" fill="none">
+        <svg
+          key={i}
+          width="12"
+          height="26"
+          viewBox="0 0 12 26"
+          fill="none"
+          className={animated ? (isDown ? "animate-descend" : "animate-rise") : undefined}
+          style={animated ? { animationDelay: `${delay + i * stagger}ms` } : undefined}
+        >
           <defs>
             <linearGradient
               id={`${gradientId}-${i}`}

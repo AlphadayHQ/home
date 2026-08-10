@@ -16,6 +16,22 @@ body {
   background-color: #1d1f20;
 }
 
+/* Honour the OS "reduce motion" setting everywhere, including the four infinite
+   theme animations (textFade, shimmer, progress-slide, breathe-glow) which had
+   no guard at all. Durations collapse rather than being removed, so entrance
+   animations using `animation-fill-mode: both` still land on their final frame
+   instead of leaving elements stuck at opacity 0. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 .scroll-show {
   opacity: 1;
   transition-property: opacity;

@@ -7,7 +7,7 @@ import linkedinLogo from "../../images/socials/linkedin.svg";
 import CONFIG from "../../config";
 
 const ColTitle = ({ children }) => (
-  <p className="text-xs font-bold uppercase tracking-[0.12em] text-text-muted/70 mb-3.5">
+  <p className="text-xs font-bold uppercase tracking-[0.12em] text-text-muted mb-3.5">
     {children}
   </p>
 );
@@ -103,7 +103,7 @@ function Footer({ isMobile }) {
         </div>
 
         <div className="mt-12 pt-5.5 border-t border-surface-border flex flex-wrap justify-between items-center gap-3.5">
-          <small className="text-text-muted/70 text-[13px]">
+          <small className="text-text-muted text-[13px]">
             &copy; {new Date().getFullYear()} Alphabox Solutions
           </small>
           <div className="flex gap-3">

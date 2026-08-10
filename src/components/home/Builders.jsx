@@ -47,7 +47,7 @@ function Builders() {
                   {step}
                 </span>
                 <h3 className="text-[15.5px] font-extrabold text-text">{title}</h3>
-                <span className="ml-auto text-xs text-text-muted/70 font-mono">
+                <span className="ml-auto text-xs text-text-muted font-mono">
                   {context}
                 </span>
               </div>
@@ -87,7 +87,7 @@ function Builders() {
               <div className="text-[clamp(32px,4.6vw,48px)] font-black tracking-tight leading-none">
                 {num}
               </div>
-              <div className="text-[12.5px] font-bold uppercase tracking-[0.1em] mt-1">
+              <div className="text-[12.5px] font-bold uppercase tracking-widest mt-1">
                 {label}
               </div>
             </div>

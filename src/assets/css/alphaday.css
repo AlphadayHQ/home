@@ -18,6 +18,9 @@
   --color-surface: #191919;
   --color-surface-light: #242424;
   --color-surface-border: #3b3a3a;
+  /* One step up from surface-border, for outlining an element that should read
+     as present rather than recessive (e.g. the hero's data-type chips). */
+  --color-surface-border-strong: #4a4a4a;
 
   --color-text: #e7e7e7;
   --color-text-muted: #849399;
@@ -38,6 +41,14 @@
   --animate-shimmer: shimmer 1.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   --animate-progress-slide: progress-slide 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
   --animate-breathe-glow: breathe-glow 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+
+  /* Hero entrance. `rise` enters from below, `descend` from above, so an
+     element can be animated along the direction it's meant to be travelling —
+     the hero's down-arrows arrive downward. ease-out-quint: confident
+     deceleration, no bounce. `both` fill so elements start hidden and stay
+     put afterwards. Transform + opacity only, so these stay on the compositor. */
+  --animate-rise: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-descend: descend 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
 
   --drop-shadow-eclipse: 4px 4px 0px #000000;
   /* No `--shadow-primary-glow` here on purpose. Orange glow on a dark
@@ -72,6 +83,27 @@
   @keyframes breathe-glow {
     0%, 100% { opacity: 0.55; transform: scale(1);    box-shadow: 0 0 0px 0px rgba(0,0,0,0.0); }
     50%      { opacity: 1;    transform: scale(1.04); box-shadow: 0 0 24px 4px rgba(0,0,0,0.15); }
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translate3d(0, 14px, 0); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @keyframes descend {
+    from { opacity: 0; transform: translate3d(0, -14px, 0); }
+    to   { opacity: 1; transform: none; }
+  }
+}
+
+@layer base {
+  /* Nothing on the site defined a focus style, so keyboard users were getting
+     the browser default — a dark ring that is close to invisible against
+     #121212. `:focus-visible` keeps it off mouse clicks. The offset gap keeps
+     the ring legible over both surface and primary-filled backgrounds. */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
 }
 

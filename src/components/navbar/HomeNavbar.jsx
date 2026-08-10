@@ -37,13 +37,13 @@ function HomeNavbar() {
 
         <div className="flex items-center gap-2.5">
           <a
-            className="hidden sm:inline-block border border-surface-border text-text rounded-lg px-4.5 py-2.5 text-[13.5px] font-bold hover:border-primary/50 hover:-translate-y-px transition-all duration-200"
+            className="hidden sm:inline-block border border-surface-border text-text rounded-lg px-4.5 py-3 text-[13.5px] font-bold hover:border-primary/50 hover:-translate-y-px transition-all duration-200"
             href={CONFIG.alphadayApp}
           >
             Launch app
           </a>
           <a
-            className="btn-primary rounded-lg px-4.5 py-2.5 text-[13.5px]"
+            className="btn-primary rounded-lg px-4.5 py-3 text-[13.5px]"
             href={CONFIG.api}
           >
             Start building

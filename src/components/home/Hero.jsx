@@ -31,19 +31,44 @@ const OUTPUTS = [
   { name: "Your portfolio tracker", detail: "context behind prices" },
 ];
 
+/**
+ * Entrance choreography, in ms. The hero animates once on load and never
+ * again — the point is to *perform* the claim the diagram makes (many types
+ * converge into one layer, which then feeds many things) rather than to
+ * decorate it, so the order matters more than the easing.
+ *
+ * Copy lands first so the page is readable almost immediately; the diagram
+ * then plays top-to-bottom in the direction the data travels. Everything is
+ * done by ~1.5s, and nothing blocks interaction at any point.
+ */
+const T = {
+  headline: 0,
+  paragraph: 90,
+  actions: 180,
+  chips: 140,
+  chipStagger: 26,
+  arrowsIn: 460,
+  layer: 560,
+  arrowsOut: 640,
+  outputs: 700,
+  outputStagger: 45,
+};
+
 const ConvergenceVisual = () => (
   <div
-    className="flex flex-col"
+    role="img"
     aria-label="Every crypto data type flows into the Alphaday Data Layer, which feeds whatever you build"
+    className="flex flex-col"
   >
     <div className="flex flex-wrap gap-2 justify-center">
-      {DATA_TYPES.map(({ label, more }) => (
+      {DATA_TYPES.map(({ label, more }, i) => (
         <span
           key={label}
-          className={`bg-surface-light border rounded-full px-3.25 py-1.5 text-[12.5px] font-medium whitespace-nowrap ${
+          style={{ animationDelay: `${T.chips + i * T.chipStagger}ms` }}
+          className={`animate-rise bg-surface-light border rounded-full px-3.25 py-1.5 text-[12.5px] font-medium whitespace-nowrap ${
             more
               ? "text-text-muted border-surface-border"
-              : "text-text border-[#4a4a4a]"
+              : "text-text border-surface-border-strong"
           }`}
         >
           {label}
@@ -51,26 +76,37 @@ const ConvergenceVisual = () => (
       ))}
     </div>
 
-    <FlowArrows count={4} direction="down" />
+    <FlowArrows count={4} direction="down" delay={T.arrowsIn} />
 
     {/* The convergence point. Outlined rather than filled: a solid orange
         rounded rect reads as a button, and the only button here is the CTA. */}
-    <div className="bg-surface border-2 border-primary text-primary text-center font-black uppercase tracking-[0.18em] text-[15px] py-4 px-2.5 rounded-[10px]">
+    <div
+      style={{ animationDelay: `${T.layer}ms` }}
+      className="animate-rise bg-surface border-2 border-primary text-primary text-center font-black uppercase tracking-[0.18em] text-[15px] py-4 px-2.5 rounded-[10px]"
+    >
       Alphaday Data Layer
     </div>
 
-    <FlowArrows count={4} direction="down" />
+    <FlowArrows count={4} direction="down" delay={T.arrowsOut} />
 
     <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-      {OUTPUTS.map(({ name, detail }) => (
+      {OUTPUTS.map(({ name, detail }, i) => (
         <div
           key={name}
-          className="bg-surface border border-surface-border rounded-[9px] px-1 py-2.75 text-center"
+          style={{ animationDelay: `${T.outputs + i * T.outputStagger}ms` }}
+          /* Five cards in two columns leaves the last one stranded alone on
+             mobile, so it spans the full row instead of sitting half-empty. */
+          /* flex + mt-auto pins the detail line to the bottom of every card.
+             Names wrap to one or two lines depending on length, which
+             otherwise leaves the details sitting at ragged heights. */
+          className={`animate-rise flex flex-col bg-surface border border-surface-border rounded-[9px] px-2 py-2.75 text-center ${
+            i === OUTPUTS.length - 1 ? "col-span-2 sm:col-span-1" : ""
+          }`}
         >
           <span className="block text-text font-extrabold text-[11.5px] leading-tight">
             {name}
           </span>
-          <span className="block text-text-muted/70 text-[9.5px] mt-0.75 leading-tight">
+          <span className="block text-text-muted text-[11px] mt-auto pt-0.75 leading-tight">
             {detail}
           </span>
         </div>
@@ -82,19 +118,28 @@ const ConvergenceVisual = () => (
 export default function Hero() {
   return (
     <Section className="relative overflow-hidden bg-background">
-      <div className="relative mx-auto w-11/12 max-w-7xl grid lg:grid-cols-[1.04fr_0.96fr] gap-12 lg:gap-16 items-center py-24 lg:py-26">
+      <div className="relative mx-auto w-11/12 max-w-7xl grid lg:grid-cols-[1.04fr_0.96fr] gap-12 lg:gap-16 items-center py-24">
         <div>
-          <h1 className="font-display text-[clamp(42px,5.8vw,66px)] leading-[1.04] font-extrabold tracking-tight text-text">
+          <h1
+            style={{ animationDelay: `${T.headline}ms` }}
+            className="animate-rise font-display text-[clamp(42px,5.8vw,66px)] leading-[1.04] font-extrabold tracking-tight text-text"
+          >
             All of crypto.
             <br />
             <span className="text-primary">One data layer.</span>
           </h1>
-          <p className="text-text-muted text-[18.5px] mt-5 max-w-140">
+          <p
+            style={{ animationDelay: `${T.paragraph}ms` }}
+            className="animate-rise text-text-muted text-[18.5px] mt-5 max-w-140"
+          >
             Alphaday structures every crypto data type into one queryable layer
             — for AI agents, apps, and humans. Plug in with MCP or REST. Free,
             no signup, no API key.
           </p>
-          <div className="mt-8 flex flex-wrap gap-3.5">
+          <div
+            style={{ animationDelay: `${T.actions}ms` }}
+            className="animate-rise mt-8 flex flex-wrap gap-3.5"
+          >
             <a
               className="btn-primary rounded-[10px] px-7 py-3.5 text-base"
               href={CONFIG.api}

@@ -14,7 +14,7 @@ function TrustStrip() {
   return (
     <Section className="bg-surface border-y border-surface-border">
       <div className="mx-auto w-11/12 max-w-7xl py-8 flex flex-col items-center gap-5">
-        <span className="text-xs font-bold uppercase tracking-[0.16em] text-text-muted/70 text-center">
+        <span className="text-xs font-bold uppercase tracking-[0.16em] text-text-muted text-center">
           The biggest projects in crypto already use us
         </span>
         <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-4 opacity-60 grayscale hover:grayscale-0 hover:opacity-90 transition-all duration-500">

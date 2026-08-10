@@ -70,7 +70,7 @@ const EXTRACTIONS = [
 ];
 
 const Punctuation = ({ children }) => (
-  <span className="text-text-muted/50">{children}</span>
+  <span className="text-text-muted">{children}</span>
 );
 
 const JsonRecord = ({ entries }) => (
@@ -140,7 +140,7 @@ function LayerDemo() {
                 <p className="text-text-muted text-[13.5px] italic mt-2 leading-normal [&_b]:text-text [&_b]:not-italic">
                   {quote}
                 </p>
-                <div className="text-text-muted/70 text-xs mt-2.5 font-mono">
+                <div className="text-text-muted text-xs mt-2.5 font-mono">
                   {meta}
                 </div>
               </div>
