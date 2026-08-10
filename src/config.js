@@ -8,6 +8,8 @@ const CONFIG = {
     link: "https://www.youtube.com/embed/ThCd_W3rK_8",
   },
   mobile: "/mobile",
+  pulse: "https://getpulse.xyz/",
+  recipes: "https://recipes.alphaday.com/",
   api: "/api",
   apiDocs: "/api/docs",
   appStore: {
