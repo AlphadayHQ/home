@@ -1,69 +1,52 @@
 import React from "react";
 import { backers, contributors } from "./backersData";
-import { Section, Div } from "../../shared";
+import { Section } from "../../shared";
 
 function Backers() {
   return (
-    <Section className="bg-eerie">
-      <Div>
-        <div className="">
-          <div className="mb-8">
-            <h2 className="text-[22px] font-medium text-aluminium text-center">
-              OUR BACKERS
-            </h2>
-          </div>
-          <div className="mb-8 grid place-content-center grid-cols-2 md:grid-cols-3 lg:grid-cols-6 w-full mx-auto gap-4">
-            {backers.map((item) => {
-              return (
-                <figure key={item.id} className="flex justify-center">
-                  <a
-                    target="_blank"
-                    href={item.link}
-                    className="transcale flex items-center"
-                  >
-                    <img
-                      src={item.img}
-                      className={`my-4 ${item.size}`}
-                      alt="partner"
-                    />
-                  </a>
-                </figure>
-              );
-            })}
-          </div>
+    <Section className="bg-background">
+      <div className="mx-auto w-11/12 max-w-7xl py-20 text-center">
+        <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-text-muted">
+          Our Backers
+        </h2>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full mx-auto max-w-xl">
-            {contributors.map((item) => {
-              return (
-                <div
-                  key={item.id}
-                  className="flex flex-col justify-center items-center"
-                >
-                  <figure className=" rounded-full mb-2">
-                    <a target="_blank" href={item.link}>
-                      <img
-                        src={item.img}
-                        className="w-[80px] h-[80px]"
-                        alt="contributor"
-                      />
-                    </a>
-                  </figure>
-                  <p className="mb-2 text-sm text-platinum">
-                    {item.contributor}
-                  </p>
-                  <a
-                    target="_blank"
-                    href={item.link}
-                    className="text-xs text-aluminium justify-self-center bg-black rounded-full px-4 py-2"
-                  >
-                    {item.handle}
-                  </a>
-                </div>
-              );
-            })}
-          </div>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-x-5 gap-y-6 mt-11 place-items-center">
+          {backers.map(({ id, img, partner, link, size }) => (
+            <a
+              key={id}
+              target="_blank"
+              rel="noreferrer"
+              href={link}
+              className="transcale flex items-center justify-center"
+            >
+              <img src={img} className={size} alt={partner} title={partner} />
+            </a>
+          ))}
         </div>
-      </Div>
+
+        <div className="flex flex-wrap justify-center gap-10 mt-12">
+          {contributors.map(({ id, img, contributor, handle, link }) => (
+            <div key={id} className="text-center">
+              <a target="_blank" rel="noreferrer" href={link}>
+                <img
+                  src={img}
+                  className="w-19 h-19 mx-auto mb-3"
+                  alt={contributor}
+                />
+              </a>
+              <p className="font-bold text-[15px] text-text">{contributor}</p>
+              <a
+                target="_blank"
+                rel="noreferrer"
+                href={link}
+                className="inline-block mt-1.75 bg-surface-light border border-surface-border rounded-full px-3 py-1 text-[12.5px] text-text-muted hover:text-text transition-colors"
+              >
+                {handle}
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
     </Section>
   );
 }

@@ -1,103 +1,127 @@
 import React from "react";
-import { Section, Div } from "../../shared";
+import { Section } from "../../shared";
+import alphaday from "../../images/logo.png";
 import discordLogo from "../../images/socials/discord.svg";
 import twitterLogo from "../../images/socials/twitter.svg";
 import linkedinLogo from "../../images/socials/linkedin.svg";
-import config from "../../config";
+import CONFIG from "../../config";
 
-const Col = ({ children, className }) => {
-  return <div className={`flex flex-col ${className}`}>{children}</div>;
-};
+const ColTitle = ({ children }) => (
+  <p className="text-xs font-bold uppercase tracking-[0.12em] text-text-muted mb-3.5">
+    {children}
+  </p>
+);
 
-const Anchor = ({ children, href, className, target }) => {
-  return (
-    <a
-      href={href}
-      target={target || "_blank"}
-      className={`text-aluminium text-sm ${className}`}
-    >
-      {children}
-    </a>
-  );
-};
-
-const ColTilte = ({ title }) => (
-  <p className="text-aluminium text-sm font-medium mb-4">{title}</p>
+const Anchor = ({ children, href, target }) => (
+  <a
+    href={href}
+    target={target || "_blank"}
+    rel={target === "_self" ? undefined : "noreferrer"}
+    className="block text-text-muted text-sm py-1 hover:text-text transition-colors"
+  >
+    {children}
+  </a>
 );
 
 function Footer({ isMobile }) {
   const {
+    api,
+    apiDocs,
+    alphadayApp,
     blog,
+    blogLinks,
     discord,
     feedBack,
     linkedin,
+    mobile,
     privacyPolicy,
     terms,
     twitter,
-    blogLinks,
-  } = config;
+  } = CONFIG;
+
+  const socials = [
+    { href: twitter, img: twitterLogo, label: "X (Twitter)" },
+    { href: discord, img: discordLogo, label: "Discord" },
+    { href: linkedin, img: linkedinLogo, label: "LinkedIn" },
+  ];
+
   return (
-    <Section className="">
-      <Div className={isMobile ? "pt-16" : "pt-0"}>
-        <div className="grid place-content-between gap-10 xl:gap-16 grid-cols-2 md:grid-cols-4">
-          <Col className="place-self-start flex">
-            <ColTilte title="About Us" />
-            <Anchor className="mb-4" href={terms}>
-              Terms of Use
+    <Section className="border-t border-surface-border">
+      <div className={`mx-auto w-11/12 max-w-7xl pb-9 ${isMobile ? "pt-16" : "pt-16"}`}>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-9">
+          <div className="col-span-2 md:col-span-3 lg:col-span-1">
+            <a href="/" aria-label="Alphaday home">
+              <img src={alphaday} className="h-6.25 object-fit" alt="Alphaday" />
+            </a>
+            <p className="text-text-muted text-[13.5px] mt-3 max-w-62.5">
+              The crypto data layer for humans, apps, and AI agents.
+            </p>
+          </div>
+
+          <div>
+            <ColTitle>Product</ColTitle>
+            <Anchor href={alphadayApp}>Launch app</Anchor>
+            <Anchor href={api} target="_self">
+              API &amp; MCP
             </Anchor>
-            <Anchor target="_self" href={privacyPolicy} className="mb-4">
+            <Anchor href={apiDocs} target="_self">
+              Docs
+            </Anchor>
+            <Anchor href={mobile} target="_self">
+              Mobile app
+            </Anchor>
+          </div>
+
+          <div>
+            <ColTitle>Company</ColTitle>
+            <Anchor href={blog}>Blog</Anchor>
+            <Anchor href="mailto:hello@alphaday.com">Contact</Anchor>
+            <Anchor href={feedBack}>Give Feedback</Anchor>
+            <Anchor href={terms}>Terms of Use</Anchor>
+            <Anchor href={privacyPolicy} target="_self">
               Privacy Policy
             </Anchor>
-            <Anchor href={blog} className="mb-4">
-              Blog
-            </Anchor>
-            <Anchor href="mailto:hello@alphaday.com" className="mb-4">
-              Contact
-            </Anchor>
-            <Anchor href={feedBack}>Give Feedback</Anchor>
-          </Col>
+          </div>
 
-          <Col className="place-self-start flex">
-            <ColTilte title="Crypto 101" />
+          <div>
+            <ColTitle>Crypto 101</ColTitle>
             {blogLinks["Crypto 101"].map(({ title, link }) => (
-              <Anchor key={link} href={link} className="mb-4">
+              <Anchor key={link} href={link}>
                 {title}
               </Anchor>
             ))}
-          </Col>
+          </div>
 
-          <Col className="place-self-start flex col-span-2 md:col-span-1">
-            <ColTilte title="Learn" />
+          <div>
+            <ColTitle>Learn</ColTitle>
             {blogLinks.learn.map(({ title, link }) => (
-              <Anchor key={link} href={link} className="mb-4">
+              <Anchor key={link} href={link}>
                 {title}
               </Anchor>
             ))}
-          </Col>
-
-          <div className="place-self-start pb-4 md:place-self-center items-end flex justify-between w-[130px] h-full col-span-2 md:col-span-1">
-            <a target="_blank" href={twitter}>
-              <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
-                <img src={twitterLogo} alt="twitter" />
-              </figure>
-            </a>
-            <a target="_blank" href={discord}>
-              <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
-                <img src={discordLogo} alt="discord" />
-              </figure>
-            </a>
-            <a target="_blank" href={linkedin}>
-              <figure className="w-[40px] h-[40px] rounded-full bg-black flex justify-center items-center">
-                <img src={linkedinLogo} alt="linkedin" />
-              </figure>
-            </a>
           </div>
         </div>
 
-        <div className="w-full flex justify-center items-center text-aluminium border-t border-[#A3A7B380] mt-16">
-          <small className="mt-4">&copy; 2024 Alphabox Solutions</small>
+        <div className="mt-12 pt-5.5 border-t border-surface-border flex flex-wrap justify-between items-center gap-3.5">
+          <small className="text-text-muted text-[13px]">
+            &copy; {new Date().getFullYear()} Alphabox Solutions
+          </small>
+          <div className="flex gap-3">
+            {socials.map(({ href, img, label }) => (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={label}
+                className="w-8 h-8 rounded-full bg-surface-light border border-surface-border flex justify-center items-center hover:border-primary/50 transition-colors"
+              >
+                <img src={img} alt="" className="w-4 h-4" />
+              </a>
+            ))}
+          </div>
         </div>
-      </Div>
+      </div>
     </Section>
   );
 }

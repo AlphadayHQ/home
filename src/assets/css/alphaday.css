@@ -18,6 +18,9 @@
   --color-surface: #191919;
   --color-surface-light: #242424;
   --color-surface-border: #3b3a3a;
+  /* One step up from surface-border, for outlining an element that should read
+     as present rather than recessive (e.g. the hero's data-type chips). */
+  --color-surface-border-strong: #4a4a4a;
 
   --color-text: #e7e7e7;
   --color-text-muted: #849399;
@@ -39,8 +42,19 @@
   --animate-progress-slide: progress-slide 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
   --animate-breathe-glow: breathe-glow 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 
+  /* Hero entrance. `rise` enters from below, `descend` from above, so an
+     element can be animated along the direction it's meant to be travelling —
+     the hero's down-arrows arrive downward. ease-out-quint: confident
+     deceleration, no bounce. `both` fill so elements start hidden and stay
+     put afterwards. Transform + opacity only, so these stay on the compositor. */
+  --animate-rise: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-descend: descend 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+
   --drop-shadow-eclipse: 4px 4px 0px #000000;
-  --shadow-primary-glow: 0 0 40px -10px rgba(250, 162, 2, 0.3);
+  /* No `--shadow-primary-glow` here on purpose. Orange glow on a dark
+     background is the AI/web3 template signature this brand is defined
+     against — the token was unused and removing it keeps it that way.
+     Emphasis comes from type, scale and a solid orange fill on CTAs. */
 
   @keyframes textFade {
     0%    { margin-top: -360px; }
@@ -69,6 +83,27 @@
   @keyframes breathe-glow {
     0%, 100% { opacity: 0.55; transform: scale(1);    box-shadow: 0 0 0px 0px rgba(0,0,0,0.0); }
     50%      { opacity: 1;    transform: scale(1.04); box-shadow: 0 0 24px 4px rgba(0,0,0,0.15); }
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translate3d(0, 14px, 0); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  @keyframes descend {
+    from { opacity: 0; transform: translate3d(0, -14px, 0); }
+    to   { opacity: 1; transform: none; }
+  }
+}
+
+@layer base {
+  /* Nothing on the site defined a focus style, so keyboard users were getting
+     the browser default — a dark ring that is close to invisible against
+     #121212. `:focus-visible` keeps it off mouse clicks. The offset gap keeps
+     the ring legible over both surface and primary-filled backgrounds. */
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
 }
 
@@ -120,14 +155,42 @@
   transform: translateY(-1px);
 }
 
+/* ---- Titling Gothic FB Narrow ----------------------------------------------
+ * Two cuts are licensed and shipped: Regular (400) and Medium (500).
+ *
+ * Components ask for font-semibold/bold/extrabold/black in ~90 places. With a
+ * bare `font-weight: 500` declaration the browser answered those by SMEARING
+ * the Medium outward (synthetic bold), which fills the tight counters and
+ * collapses the condensed proportions this family is chosen for — most visible
+ * on the 66px hero headline.
+ *
+ * Each face now claims a weight RANGE, so every request resolves to a real
+ * file: 100-400 -> Regular, 500-900 -> Medium. Nothing is faked. `main.css`
+ * sets `font-synthesis: none` as a backstop for any family that slips through.
+ *
+ * Effective type system while only two cuts exist:
+ *   400  body copy, muted and secondary text  (Tailwind default, no class)
+ *   500  headings, labels, buttons, emphasis  (medium/semibold/bold/black)
+ * Hierarchy is therefore carried by size, colour, case and tracking — which is
+ * how titling faces are meant to be set anyway.
+ *
+ * TO UPGRADE: drop real Bold/Black cuts into ../fonts/Titling/ (woff2 please —
+ * these .otf files are ~2x the transfer size of an equivalent woff2), then
+ * narrow the ranges: Medium -> `500 600`, Bold -> `700 800`, Black -> `900`.
+ * No component changes needed; the utility classes already say the right thing.
+ * -------------------------------------------------------------------------- */
 @font-face {
   font-family: titling;
-  font-weight: 400;
-  src: url("../fonts/Titling/TitlingGothicFBNar-Reg.otf");
+  font-weight: 100 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("../fonts/Titling/TitlingGothicFBNar-Reg.otf") format("opentype");
 }
 
 @font-face {
   font-family: titling;
-  font-weight: 500;
-  src: url("../fonts/Titling/TitlingGothicFBNar-Med.otf");
+  font-weight: 500 900;
+  font-style: normal;
+  font-display: swap;
+  src: url("../fonts/Titling/TitlingGothicFBNar-Med.otf") format("opentype");
 }

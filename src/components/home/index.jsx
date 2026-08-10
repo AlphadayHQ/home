@@ -1,9 +1,10 @@
 export { default as Hero } from "./Hero";
-export { default as Backers } from "./Backers";
+export { default as TrustStrip } from "./TrustStrip";
+export { default as LayerDemo } from "./LayerDemo";
+export { default as Builders } from "./Builders";
+export { default as Products } from "./Products";
 export { default as Partners } from "./Partners";
-export { default as Team } from "./Team";
+export { default as Backers } from "./Backers";
 export { default as FAQ } from "./FAQ";
-export { default as Getfeatures } from "./Getfeatures";
-export { default as Workflow } from "./WorkflowFrame";
-export { default as BoardLinks } from "./BoardLinks";
+export { default as FinalCTA } from "./FinalCTA";
 export { default as PrivacyPolicy } from "./PrivacyPolicy";
