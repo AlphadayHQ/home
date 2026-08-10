@@ -32,7 +32,7 @@ const products = [
     alt: "Pulse mobile app feed cards",
     // DEV: confirm whether Pulse is the existing Alphaday mobile app or a new
     // listing — currently points at the /mobile page.
-    link: { label: "Get the app", href: CONFIG.mobile },
+    link: { label: "Get the app", href: CONFIG.pulse },
   },
   {
     name: "Recipes",
@@ -40,7 +40,7 @@ const products = [
     img: recipes,
     focus: "object-center",
     alt: "Recipe builder configuring a Bitcoin price alert",
-    link: { label: "Cook your own", href: CONFIG.alphadayApp },
+    link: { label: "Cook your own", href: CONFIG.recipes },
   },
   {
     name: "Alphaday TV",
