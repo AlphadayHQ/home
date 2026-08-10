@@ -26,7 +26,7 @@ const products = [
   },
   {
     name: "Pulse",
-    blurb: "TikTok-style crypto app — the layer, in a scroll.",
+    blurb: "TikTok-style crypto app, the layer, in a scroll.",
     img: pulse,
     focus: "object-top",
     alt: "Pulse mobile app feed cards",
@@ -49,6 +49,7 @@ const products = [
     img: alphadaytv,
     focus: "object-top",
     alt: "Alphaday TV daily briefing broadcast frame",
+    link: { label: "Coming soon", href: "#" },
   },
 ];
 

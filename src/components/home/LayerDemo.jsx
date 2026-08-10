@@ -124,7 +124,7 @@ function LayerDemo() {
         </h2>
         <p className="text-text-muted text-[17px] max-w-165 mt-3.5">
           The same project gets discussed across every format. Alphaday turns
-          each one into machine-readable data — tagged, timestamped, queryable.
+          each one into machine-readable data, tagged, timestamped, queryable.
         </p>
 
         <div className="grid lg:grid-cols-3 gap-5 mt-13">

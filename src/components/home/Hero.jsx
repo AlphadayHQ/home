@@ -24,11 +24,11 @@ const DATA_TYPES = [
 // What the layer feeds. Approved as a set — do not edit individually.
 // Ordered by audience priority: agent builders, then developers, then app users.
 const OUTPUTS = [
-  { name: "Your AI agent", detail: "trades with sight" },
-  { name: "Your trading bot", detail: "live signals" },
-  { name: "Your data terminal", detail: "research anything" },
-  { name: "Your research desk", detail: "sourced in seconds" },
-  { name: "Your portfolio tracker", detail: "context behind prices" },
+  { name: "Your AI agent", detail: "Trades with sight" },
+  { name: "Your Trading bot", detail: "Live signals" },
+  { name: "Your Data terminal", detail: "Research anything" },
+  { name: "Your Research desk", detail: "Sourced in seconds" },
+  { name: "Your Portfolio tracker", detail: "Context behind prices" },
 ];
 
 /**
@@ -65,7 +65,7 @@ const ConvergenceVisual = () => (
         <span
           key={label}
           style={{ animationDelay: `${T.chips + i * T.chipStagger}ms` }}
-          className={`animate-rise bg-surface-light border rounded-full px-3.25 py-1.5 text-[12.5px] font-medium whitespace-nowrap ${
+          className={`animate-rise bg-surface-light border rounded-full px-3.25 pt-1.5 pb-1 text-[12.5px] font-medium whitespace-nowrap ${
             more
               ? "text-text-muted border-surface-border"
               : "text-text border-surface-border-strong"
@@ -103,7 +103,7 @@ const ConvergenceVisual = () => (
             i === OUTPUTS.length - 1 ? "col-span-2 sm:col-span-1" : ""
           }`}
         >
-          <span className="block text-text font-extrabold text-[11.5px] leading-tight">
+          <span className="block text-text font-extrabold text-[11.5px] leading-tight sm:mb-2">
             {name}
           </span>
           <span className="block text-text-muted text-[11px] mt-auto pt-0.75 leading-tight">
@@ -132,9 +132,9 @@ export default function Hero() {
             style={{ animationDelay: `${T.paragraph}ms` }}
             className="animate-rise text-text-muted text-[18.5px] mt-5 max-w-140"
           >
-            Alphaday structures every crypto data type into one queryable layer
-            — for AI agents, apps, and humans. Plug in with MCP or REST. Free,
-            no signup, no API key.
+            Alphaday structures every crypto data type into one queryable layer,
+            for AI agents, apps, and humans. Plug in with MCP or REST. Free, no
+            signup, no API key.
           </p>
           <div
             style={{ animationDelay: `${T.actions}ms` }}

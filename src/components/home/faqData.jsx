@@ -5,8 +5,8 @@ const FAQData = [
     answer: [
       <p>
         Alphaday is the crypto data layer. We structure every kind of crypto
-        data — market, on-chain, news, podcasts, video, governance, dev activity,
-        events — into one queryable layer. Humans use it through the Alphaday app
+        data, market, on-chain, news, podcasts, video, governance, dev activity,
+        events, into one queryable layer. Humans use it through the Alphaday app
         and dashboards; apps and AI agents plug in through the free API and MCP
         server. Try it out today at app.alphaday.com.
       </p>,
@@ -18,7 +18,7 @@ const FAQData = [
     answer: [
       <p>
         The Alphaday app is free at app.alphaday.com. The API and MCP server are
-        free too — no signup, no API key. Fair-use rate limits apply, and
+        free too, no signup, no API key. Fair-use rate limits apply, and
         we&apos;ll always tell you before anything changes.
       </p>,
     ],
@@ -28,8 +28,8 @@ const FAQData = [
     question: "What is the Alphaday API & MCP server?",
     answer: [
       <p>
-        One integration that returns every crypto content type — news, podcasts,
-        videos, governance votes, events and more — filtered by project, keyword,
+        One integration that returns every crypto content type, news, podcasts,
+        videos, governance votes, events and more, filtered by project, keyword,
         or time range. Use it as a REST API, or drop the MCP server into Claude,
         Cursor, or your own agent: every endpoint is a pre-described tool your
         agent already knows how to use.
@@ -41,7 +41,7 @@ const FAQData = [
     question: "Do I need to be an expert to use Alphaday?",
     answer: [
       <p>
-        No. The app works out of the box — pick an ecosystem board and go.
+        No. The app works out of the box, pick an ecosystem board and go.
         Developers get a single endpoint and readable docs; agents get
         pre-described MCP tools with zero setup.
       </p>,

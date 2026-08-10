@@ -33,7 +33,7 @@ function Products() {
               <div className="text-text font-extrabold text-[15px] flex items-center gap-2 flex-wrap leading-tight">
                 {name}
                 {badge && (
-                  <span className="text-[9px] font-bold uppercase tracking-wider text-background bg-text-muted rounded px-1.5 py-0.5">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-background bg-text-muted rounded px-1.5 pt-0.5 pb-0">
                     {badge}
                   </span>
                 )}
@@ -43,7 +43,7 @@ function Products() {
                 src={img}
                 alt={alt}
                 loading="lazy"
-                className={`w-full aspect-4/5 object-cover ${focus} rounded-lg border border-surface-border mt-auto`}
+                className={`w-full aspect-4/5 object-cover ${focus} rounded-xl border border-surface-border mt-auto`}
               />
               {link && (
                 <a
