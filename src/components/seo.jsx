@@ -1,8 +1,65 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { Helmet } from "react-helmet-async";
 import TagManager from "react-gtm-module";
 import config from "../config";
 import { CookieContext } from "../utils/CookieContext";
+
+// index.html ships a static copy of these tags so social scrapers — which do
+// not execute JS — always get something. Helmet can't replace tags it didn't
+// create, so it appends its own and the page ends up with two of each. On any
+// route other than /, the static pair describes the wrong page and lands first
+// in the document. Drop the static ones once Helmet has rendered: JS-executing
+// crawlers then see exactly one set (the route's), and the no-JS fallback in
+// the raw HTML is untouched.
+const MANAGED_META =
+  'meta[name="description"], meta[property^="og:"], meta[name^="twitter:"]';
+
+const isHelmetTag = (tag) =>
+  tag.hasAttribute("data-react-helmet") || tag.hasAttribute("data-rh");
+
+// og:* identify by `property`, description/twitter:* by `name`.
+const metaKey = (tag) => tag.getAttribute("property") || tag.getAttribute("name");
+
+/**
+ * Remove a static tag only when Helmet's replacement for that exact key is
+ * already in the head. Matching per key rather than per selector means a tag
+ * Helmet doesn't manage (or hasn't written yet) is never left with no
+ * counterpart — the failure mode is a surviving duplicate, not a missing tag.
+ */
+const pruneStaticDuplicates = () => {
+  const byKey = new Map();
+
+  document.head.querySelectorAll(MANAGED_META).forEach((tag) => {
+    const key = metaKey(tag);
+    if (!key) return;
+    byKey.set(key, [...(byKey.get(key) || []), tag]);
+  });
+
+  byKey.forEach((tags) => {
+    if (!tags.some(isHelmetTag)) return;
+    tags.filter((tag) => !isHelmetTag(tag)).forEach((tag) => tag.remove());
+  });
+};
+
+const useDedupeStaticMetaTags = () => {
+  useEffect(() => {
+    // react-helmet-async defers its DOM writes into requestAnimationFrame, which
+    // lands after every useEffect. Pruning here directly would delete the static
+    // tags before the replacements exist — and in a hidden tab, where rAF is
+    // throttled indefinitely, the head could sit with no SEO tags at all. Wait
+    // two frames so Helmet has committed; if rAF never fires we simply keep the
+    // duplicates, which is the safe direction to fail in.
+    let secondFrame;
+    const firstFrame = requestAnimationFrame(() => {
+      secondFrame = requestAnimationFrame(pruneStaticDuplicates);
+    });
+
+    return () => {
+      cancelAnimationFrame(firstFrame);
+      if (secondFrame) cancelAnimationFrame(secondFrame);
+    };
+  }, []);
+};
 
 // const tagManagerArgs = {
 //   gtmId: "G-ZT80HRR0MD",
@@ -20,6 +77,8 @@ const SEO = ({ title, description, canonical, ogImage, jsonLd }) => {
   const ogImageToShow = ogImage || cover;
   const canonicalUrl = canonical || domain;
   const { allowTracking } = useContext(CookieContext);
+
+  useDedupeStaticMetaTags();
 
   return (
     <Helmet>

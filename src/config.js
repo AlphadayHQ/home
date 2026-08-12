@@ -1,5 +1,8 @@
 const ALPHADAY_ROOT_URL = "https://alphaday.com/";
-const coverImg = "/assets/seo1200x627-black.png";
+// Absolute on purpose: several OG crawlers cannot resolve relative paths, and
+// this is the only copy of the tag once <Seo> prunes the static one from
+// index.html. Keep it in sync with the fallback in index.html.
+const coverImg = `${ALPHADAY_ROOT_URL}assets/seo1200x627-black.png`;
 
 const CONFIG = {
   privacyPolicy: "/privacy",
@@ -8,6 +11,8 @@ const CONFIG = {
     link: "https://www.youtube.com/embed/ThCd_W3rK_8",
   },
   mobile: "/mobile",
+  dashboards: "/dashboards",
+  dashboard: "/dashboard",
   api: "/api",
   apiDocs: "/api/docs",
   appStore: {
@@ -31,7 +36,9 @@ const CONFIG = {
     defaultTitle: "Alphaday",
     defaultDescription: "Everything Crypto, All in one place.",
     socialLinks: {
-      twitter: "https://twitter.com/AlphadayHQ",
+      // twitter:site expects the @handle, not a profile URL. Use CONFIG.twitter
+      // above for anything that needs a clickable link.
+      twitter: "@AlphadayHQ",
     },
     cover: coverImg,
   },
