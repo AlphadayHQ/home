@@ -13,6 +13,8 @@ const CONFIG = {
   mobile: "/mobile",
   dashboards: "/dashboards",
   dashboard: "/dashboard",
+  pulse: "https://getpulse.xyz/",
+  recipes: "https://recipes.alphaday.com/",
   api: "/api",
   apiDocs: "/api/docs",
   appStore: {

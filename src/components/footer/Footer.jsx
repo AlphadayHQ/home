@@ -34,7 +34,8 @@ function Footer({ isMobile }) {
     discord,
     feedBack,
     linkedin,
-    mobile,
+    pulse,
+    recipes,
     privacyPolicy,
     terms,
     twitter,
@@ -48,11 +49,17 @@ function Footer({ isMobile }) {
 
   return (
     <Section className="border-t border-surface-border">
-      <div className={`mx-auto w-11/12 max-w-7xl pb-9 ${isMobile ? "pt-16" : "pt-16"}`}>
+      <div
+        className={`mx-auto w-11/12 max-w-7xl pb-9 ${isMobile ? "pt-16" : "pt-16"}`}
+      >
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-9">
           <div className="col-span-2 md:col-span-3 lg:col-span-1">
             <a href="/" aria-label="Alphaday home">
-              <img src={alphaday} className="h-6.25 object-fit" alt="Alphaday" />
+              <img
+                src={alphaday}
+                className="h-6.25 object-fit"
+                alt="Alphaday"
+              />
             </a>
             <p className="text-text-muted text-[13.5px] mt-3 max-w-62.5">
               The crypto data layer for humans, apps, and AI agents.
@@ -71,8 +78,11 @@ function Footer({ isMobile }) {
             <Anchor href={apiDocs} target="_self">
               Docs
             </Anchor>
-            <Anchor href={mobile} target="_self">
-              Mobile app
+            <Anchor href={pulse} target="_self">
+              Pulse
+            </Anchor>
+            <Anchor href={recipes} target="_self">
+              Recipes
             </Anchor>
           </div>
 
