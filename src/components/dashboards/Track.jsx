@@ -54,7 +54,7 @@ function Track() {
               Keep an eye on:
               <br/>
               <br/>
-              <ul className=" list-disc list-inside-nested">
+              <ul className=" list-disc">
                 <li>Your portfolio allocation</li>
                 <li>Lending and Yield Farming Positions</li>
                 <li>Historical performance of tokens</li>

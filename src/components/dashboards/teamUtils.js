@@ -137,17 +137,29 @@ export const positionData = [
   },
 ];
 
+// Copies before shuffling — this runs during render against the imported
+// teamData, and reordering a module-level array in place makes the output
+// depend on how many times the component has rendered.
 export const shuffleArray = (a) => {
-  for (let i = a.length - 1; i > 0; i--) {
+  const shuffled = [...(a || [])];
+  for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]]; // The shuffle
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]]; // The shuffle
   }
-  return a;
+  return shuffled;
 };
 
+/**
+ * Pairs each layout position with a randomly assigned member.
+ *
+ * Positions get commented in and out of positionData as the team changes, so
+ * the two arrays cannot be assumed to be the same length: pair as far as the
+ * members go and drop the rest. Always returns an array — the caller slices it.
+ */
 export const shuffleTeam = (teamData, positionData) => {
-  if (teamData?.length === positionData?.length) {
-    const shuffledMembers = shuffleArray(teamData);
-    return positionData.map((data, i) => ({ ...data, ...shuffledMembers[i] }));
-  }
+  const members = shuffleArray(teamData);
+
+  return (positionData || [])
+    .map((position, i) => (members[i] ? { ...position, ...members[i] } : null))
+    .filter(Boolean);
 };

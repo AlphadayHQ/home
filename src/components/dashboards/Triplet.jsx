@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, CardText, CardTitle } from '../../shared';
+import { Card, CardTitle } from '../../shared';
 import nft from "../../images/workflow/nft2.png";
 import dapps from "../../images/workflow/dapps2.png";
 import code from "../../images/workflow/code2.png";
