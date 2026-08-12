@@ -53,6 +53,13 @@ const static_links = [
     changefreq: "monthly",
   },
   {
+    // The former home page. Carries the "crypto dashboards" search intent that
+    // / no longer targets since it was repositioned to the data layer.
+    loc: `${baseUrl}/dashboards`,
+    priority: "0.90",
+    changefreq: "monthly",
+  },
+  {
     loc: `${baseUrl}/blog`,
     priority: "0.80",
     changefreq: "weekly",

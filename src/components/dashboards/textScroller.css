@@ -1,0 +1,64 @@
+/* inspired by EricPorter/pen/JjPmOOb */
+/* may add 3d effect later check later kanishkkunal/pen/wgEBgX */
+
+.flip8 {
+  -webkit-animation: flip8 15s cubic-bezier(0.23, 1, 0.32, 1.2) infinite;
+  animation: flip8 15s cubic-bezier(0.23, 1, 0.32, 1.2) infinite;
+}
+
+@keyframes flip8 {
+  0% {
+    margin-top: -1120px;
+  }
+  5% {
+    margin-top: -980px;
+  }
+  12.5% {
+    margin-top: -980px;
+  }
+  17.5% {
+    margin-top: -840px;
+  }
+  25% {
+    margin-top: -840px;
+  }
+  30% {
+    margin-top: -700px;
+  }
+  37.5% {
+    margin-top: -700px;
+  }
+  42.5% {
+    margin-top: -560px;
+  }
+  50% {
+    margin-top: -560px;
+  }
+  55% {
+    margin-top: -420px;
+  }
+  62.5% {
+    margin-top: -420px;
+  }
+  67.5% {
+    margin-top: -280px;
+  }
+  75% {
+    margin-top: -280px;
+  }
+  80% {
+    margin-top: -140px;
+  }
+  87.5% {
+    margin-top: -140px;
+  }
+  93.5% {
+    margin-top: 0px;
+  }
+  99.99% {
+    margin-top: 0px;
+  }
+  100% {
+    margin-top: -1120px;
+  }
+}

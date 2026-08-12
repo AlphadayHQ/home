@@ -30,6 +30,7 @@ function Footer({ isMobile }) {
     alphadayApp,
     blog,
     blogLinks,
+    dashboards,
     discord,
     feedBack,
     linkedin,
@@ -68,6 +69,9 @@ function Footer({ isMobile }) {
           <div>
             <ColTitle>Product</ColTitle>
             <Anchor href={alphadayApp}>Launch app</Anchor>
+            <Anchor href={dashboards} target="_self">
+              Dashboards
+            </Anchor>
             <Anchor href={api} target="_self">
               API &amp; MCP
             </Anchor>
