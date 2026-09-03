@@ -3,6 +3,8 @@ import { Footer, Navbar } from "../components";
 import Seo from "../components/seo";
 import CONFIG from "../config";
 import { canonicalFor } from "../utils/canonical";
+import { buildFaqJsonLd } from "../utils/faqJsonLd";
+import { mobileFAQData } from "../components/home/faqData";
 import Hero from "../components/mobile/Hero";
 import Video from "../components/mobile/Video";
 import { Backers, FAQ } from "../components/home";
@@ -18,10 +20,14 @@ import JoinCommunity from "../components/mobile/JoinCommunity";
 const MobilePage = () => {
   return (
     <>
+      {/* mobileFAQData, matching the <FAQ isMobile /> rendered below — the home
+          page's four questions are a different set, and structured data must
+          describe the questions actually in this DOM. */}
       <Seo
         title="Alphaday Mobile — Crypto on the go"
         description="The whole Alphaday workspace in your pocket: news, market data, governance and alerts, with push notifications for the signals you care about."
         canonical={canonicalFor(CONFIG.mobile)}
+        jsonLd={buildFaqJsonLd(mobileFAQData)}
       />
       <Navbar />
       <Hero />

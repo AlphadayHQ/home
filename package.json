@@ -5,9 +5,10 @@
   "homepage": ".",
   "scripts": {
     "dev": "vite",
-    "build": "yarn build-api-docs && vite build && yarn build-sitemap",
+    "build": "yarn build-api-docs && yarn build-llms && vite build && yarn build-sitemap",
     "preview": "vite preview",
     "build-api-docs": "node scripts/build-api-docs.js",
+    "build-llms": "node scripts/build-llms.js",
     "build-sitemap": "node --env-file-if-exists=.env.local scripts/build-sitemap.js"
   },
   "dependencies": {

@@ -1,0 +1,2659 @@
+{
+  "fetchedAt": "2026-09-03T14:57:52.870Z",
+  "serverInfo": {
+    "name": "alphaday",
+    "version": "1.29.1"
+  },
+  "tools": [
+    {
+      "name": "get_server_instructions",
+      "description": "Return MCP server instructions (if any). Always call first.",
+      "inputSchema": {
+        "properties": {},
+        "title": "_get_server_instructionsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_fear_greed_index",
+      "description": "GET get for fear & greed index.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_fear_greed_indexArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_market_coins",
+      "description": "Coin prices & market data\n\nContinuously-updated market snapshots for the top coins by rank —\nprice, market cap and volume.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_market_coinsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_market_coins_history",
+      "description": "Coin price history\n\nHistorical price, market-cap and volume series for one coin, returned\nas a single object (not a paginated list). Set the window with\nrange: 1D, 1W, 1M, 3M, YTD, 1Y, 3Y or ALL (default 1D).",
+      "inputSchema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Coin identifier",
+            "title": "Id"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "title": "get_market_coins_historyArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_market_coins_detail",
+      "description": "Get a single coin's market data\n\nCurrent market data for one coin by ID, slug — price,\nmarket cap and volume.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_market_coins_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_market_trending",
+      "description": "Trending coins\n\nThe coins trending right now, ranked by score, with price\nand 24h change.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_market_trendingArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_market_trending_detail",
+      "description": "Get a single trending coin\n\nFetch one trending-coin snapshot by its ID.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_market_trending_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_tvl_fees",
+      "description": "Protocol fees & revenue\n\nFee and revenue data across DeFi protocols — 24h, 7d and 30d totals\nplus revenue. Filter by project, project type (protocol/chain) or tags.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_tvl_feesArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_tvl_fees_top",
+      "description": "Top protocols by fees/revenue\n\nThe top protocols ranked by fees or revenue over a timeframe, as a\n{protocols: {config, data}} object (not a paginated list).",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_tvl_fees_topArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_tvl_fees_detail",
+      "description": "Get a single protocol's fees\n\nFee and revenue data for one protocol by its ID.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_tvl_fees_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_tvl_yields",
+      "description": "Yield pools (APY)\n\nDeFi yield pools with APY (base and reward), TVL and\nimpermanent-loss risk. Filter by chain, project or pool symbol.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_tvl_yieldsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_tvl_yields_top",
+      "description": "Top yield pools by APY or TVL\n\nThe top yield pools ranked by APY or TVL, as a {pools: {config, data}}\nobject (not a paginated list). Powered by DefiLlama.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_tvl_yields_topArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_tvl_yields_detail",
+      "description": "Get a single yield pool\n\nData for one yield pool by its ID.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_tvl_yields_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_tvl_stablecoins",
+      "description": "Stablecoins\n\nStablecoin data — peg type and mechanism, price and circulating\nsupply. Filter by symbol, peg type or name. Use the detail endpoint\nfor the per-chain breakdown.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_tvl_stablecoinsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_tvl_stablecoins_detail",
+      "description": "Get a single stablecoin\n\nData for one stablecoin by its ID.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_tvl_stablecoins_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_blogs",
+      "description": "Latest crypto blog posts\n\nBrowse blog and research posts aggregated from 130+ project and research\nfeeds. Filter by project (tags), source, publication date or time period.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_blogsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_trending_blogs",
+      "description": "Trending blog posts\n\nThe posts getting the most attention right now, ranked by trendiness.\nOptionally narrow with tags.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_trending_blogsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_blogs_detail",
+      "description": "Get a single blog post\n\nFetch one blog post by its ID, with full detail.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_blogs_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_dao",
+      "description": "DAO governance proposals\n\nBrowse live governance proposals and votes across DAOs, with start and\nend dates. Filter by project (tags), active-only, or start/end date.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_daoArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_trending_dao",
+      "description": "Trending DAO proposals\n\nThe proposals drawing the most attention right now, ranked by\ntrendiness. Optionally narrow with tags.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_trending_daoArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_dao_detail",
+      "description": "Get a single DAO proposal\n\nFetch one DAO proposal by its ID, with full detail.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_dao_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_events",
+      "description": "Upcoming crypto events\n\nBrowse the crypto events calendar — conferences, community calls, token\nunlocks and more. Filter by event type, date range (period_after /\nperiod_before), active-only, or project (tags).",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_eventsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_events_subscriptions",
+      "description": "Your subscribed events\n\nThe events the signed-in user has subscribed to. Returns an empty\nlist for unauthenticated requests.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_events_subscriptionsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_events_this_week",
+      "description": "Events happening this week\n\nA lightweight list of event titles scheduled for the current week,\nMonday to Sunday (up to 200).",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_events_this_weekArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_trending_events",
+      "description": "Trending events\n\nThe events drawing the most attention right now, ranked by trendiness.\nOptionally narrow to projects with tags.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_trending_eventsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_events_detail",
+      "description": "Get a single event\n\nFetch one event by its ID, with full detail.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_events_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_forum",
+      "description": "Crypto governance forum posts\n\nBrowse discussion posts from 50+ governance and community forums. Filter\nby project (tags), source, publication date or time period.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_forumArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_trending_forum",
+      "description": "Trending forum posts\n\nThe forum discussions getting the most attention right now, ranked by\ntrendiness. Optionally narrow with tags.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_trending_forumArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_forum_detail",
+      "description": "Get a single forum post\n\nFetch one forum post by its ID, with full detail.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_forum_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_news",
+      "description": "Latest crypto news headlines\n\nBrowse real-time crypto news aggregated from ~50 outlets, each with a\nsentiment score and source. Filter by project (tags), source, sentiment,\npublication date or time period.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_newsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_news_last_24_hours",
+      "description": "News from the last 24 hours\n\nA lightweight list of news titles published in the last 24 hours (up to\n200) — handy for quick briefings and LLM prompts.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_news_last_24_hoursArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_news_summary",
+      "description": "AI summary of the news\n\nAn AI-generated briefing of recent crypto news. Optionally focus it on\nspecific projects by passing tags.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_news_summaryArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_trending_news",
+      "description": "Trending news\n\nThe crypto news drawing the most engagement right now, ranked by a\ntrendiness score. Optionally narrow to projects with tags.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_trending_newsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_news_detail",
+      "description": "Get a single news article\n\nFetch one news article by its ID, with full detail.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_news_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_podcasts",
+      "description": "Latest crypto podcasts\n\nBrowse crypto podcast episodes aggregated from ~120 feeds, with audio\nURL and duration. Filter by project (tags), source, publication date or\ntime period.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_podcastsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_trending_podcasts",
+      "description": "Trending podcasts\n\nThe podcast episodes drawing the most attention right now, ranked by\ntrendiness. Optionally narrow with tags.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_trending_podcastsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_podcasts_detail",
+      "description": "Get a single podcast episode\n\nFetch one podcast episode by its ID, with full detail.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_podcasts_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_videos",
+      "description": "Latest crypto videos\n\nBrowse crypto video content aggregated from ~120 YouTube channels.\nFilter by project (tags), source, publication date or time period.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_videosArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_latest_videos",
+      "description": "Latest video\n\nThe single most recent video (excluding YouTube Shorts). Optionally\nscope to projects with tags.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_latest_videosArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_trending_videos",
+      "description": "Trending videos\n\nThe videos getting the most engagement right now, ranked by trendiness.\nOptionally narrow to projects with tags.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_trending_videosArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_videos_detail",
+      "description": "Get a single video\n\nFetch one video by its ID, with full detail.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_videos_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_tags",
+      "description": "Tags\n\nBrowse the tag taxonomy (projects, chains, categories). Filter by\nitem type, keyword ids, or a parent tag's slug to list its children.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_tagsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_tags_detail",
+      "description": "Retrieve a single tag.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_tags_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_trending_keywords",
+      "description": "Trending keywords\n\nThe keywords and topics trending across crypto right now, each with a\nsentiment score and trendiness metric.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_trending_keywordsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_trending_keywords_detail",
+      "description": "Get a single trending keyword\n\nOne trending keyword by its ID, with its sentiment and trendiness.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_trending_keywords_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_coin_categories",
+      "description": "Token categories (sectors)\n\nCryptocurrency token categories (e.g. DeFi,\nLayer 1, memecoins), each with aggregate market cap, 24h change, volume\nand coin count. Filter by name or slug.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_coin_categoriesArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_coin_categories_detail",
+      "description": "Get a single token category\n\nOne token category by its ID, with its aggregate market metadata.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_coin_categories_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_developer_activity",
+      "description": "Developer activity\n\nGitHub developer-activity snapshots per coin — commits, contributors\nand related metrics over time. Filter by coin or date.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_developer_activityArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_developer_activity_detail",
+      "description": "Get a single developer-activity snapshot\n\nOne developer-activity snapshot by its ID.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_developer_activity_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_exchanges",
+      "description": "Centralized exchanges\n\nCentralized exchange (CEX) reference data — trust score, 24h BTC trading\nvolume, country and year established. Filter by country, trading\nincentive or minimum trust score; sort by trust score, volume, name or\nage.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_exchangesArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_exchanges_detail",
+      "description": "Get a single exchange\n\nOne centralized exchange by its ID, with its full profile and trust\nmetrics.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_exchanges_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_onchain_dexes",
+      "description": "On-chain DEXes\n\nDecentralized exchange (DEX) reference data with the blockchain\nnetworks each supports. Filter by project (tags, including\nparent-network tags) or DEX id.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_onchain_dexesArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_onchain_dexes_detail",
+      "description": "Get a single DEX\n\nOne decentralized exchange by its ID, with its network tags.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_onchain_dexes_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_kasandra_patterns",
+      "description": "AI-detected chart patterns\n\nRecent chart patterns Kasandra AI has matched on a coin's market\nhistory (e.g. double top, head-and-shoulders), each with a\nbullish/bearish signal and confidence score. Filter by interval or\npattern type; cap the count with limit (default 20, max 100).",
+      "inputSchema": {
+        "properties": {
+          "coin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Path parameter 'coin'.",
+            "title": "Coin"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "coin"
+        ],
+        "title": "get_kasandra_patternsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_security_exploits",
+      "description": "Exploits & security incidents\n\nOn-chain exploit and hack alerts sourced from DeFiHackLabs and\nRekt.news, with amount lost, chain, protocol and attack type. Filter\nby chain, attack type, protocol, minimum amount, date or period; sort\nby date or amount.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_security_exploitsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_security_exploits_detail",
+      "description": "Get a single security incident\n\nOne exploit/security alert by its ID, with its full details.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_security_exploits_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "search_projects",
+      "description": "Search project-tagged content across the aggregated superfeed.",
+      "inputSchema": {
+        "properties": {
+          "project": {
+            "description": "Project slug to search content for.",
+            "title": "Project",
+            "type": "string"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Comma-separated tag slugs to filter by.",
+            "title": "Tags"
+          },
+          "content_types": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Comma-separated content type filters.",
+            "title": "Content Types"
+          },
+          "days": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Number of days to look back.",
+            "title": "Days"
+          },
+          "sort_order": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Sort order for results (e.g. 'asc' or 'desc').",
+            "title": "Sort Order"
+          },
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          }
+        },
+        "required": [
+          "project"
+        ],
+        "title": "search_projectsArguments",
+        "type": "object"
+      }
+    }
+  ]
+}

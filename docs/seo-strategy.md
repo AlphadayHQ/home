@@ -43,6 +43,7 @@ nice-to-have.
 - [Appendix A — Cost model](#appendix-a--cost-model)
 - [Appendix B — Regression guard](#appendix-b--regression-guard)
 - [Appendix C — Migration and URL preservation](#appendix-c--migration-and-url-preservation)
+- [Appendix D — Enabling CloudFront access logs](#appendix-d--enabling-cloudfront-access-logs)
 
 ---
 
@@ -228,9 +229,41 @@ TanStack Start has no `next/image` equivalent, and **page weight is the dominant
 ~1.2M pageviews/month**: at 800 KB per pageview the CloudFront free tier covers ~1.2M pageviews; at
 300 KB it covers ~3.3M.
 
-This needs a decision before launch. Either a CloudFront image handler behind an `/img/` path prefix,
-or a third-party image CDN. Raw `<img src>` with unoptimised originals is not an acceptable outcome —
-it is the single largest controllable line in the infrastructure bill.
+**Decision: build-time optimisation in the Vite pipeline. No runtime image service.**
+
+The original framing — CloudFront image handler or third-party image CDN — assumed a dynamic image
+workload. Measuring the actual one shows there mostly is not one:
+
+| Source | Weight | Notes |
+| --- | --- | --- |
+| Build assets (`src/images`, `src/assets`) | **5,950 KB** across 61 files | Every one known at build time |
+| — of which base64-encoded rasters wrapped in `.svg` | **1,783 KB** across 4 files | See below |
+| API-supplied project icon | 44 KB PNG | Per landing page |
+| API-supplied dashboard screenshot | 204 KB **WebP** | Already optimised upstream |
+
+A runtime handler exists to resize images that are not known until request time. Here 96% of the
+weight is static build assets, and the dynamic remainder is ~250 KB per landing page already served
+as WebP. Paying per-request for a service to re-optimise two already-reasonable files, while the
+5.9 MB of build assets goes untouched, would be solving the wrong problem at a recurring cost.
+
+Build-time optimisation also survives Phase 2: §1.2 chose TanStack Start partly because it is Vite,
+and a Vite image plugin carries across the rebuild unchanged. A runtime service would be new
+infrastructure to operate, on a design whose entire premise (§2.7) is that $38/month buys
+availability not yet needed.
+
+**The specific defect to fix first.** Four contributor portraits ship as base64-encoded raster data
+inside an `<svg><image>` wrapper: `pierre` 532 KB, `anthony` 504 KB, `jordi` 444 KB, `mariano`
+312 KB. This is the worst available packaging — base64 inflates the bytes by ~33% over the raw
+image, and wrapping a bitmap in SVG defeats format negotiation, `srcset`, and every CDN resize path
+simultaneously. It is not a compression problem; it is a file-format mistake. `logo-white.svg` at
+216 KB for five paths is a separate, smaller instance of the same neglect and wants SVGO.
+
+Converting those four to AVIF/WebP at display resolution is the single largest weight reduction
+available on the site, and it needs no infrastructure decision at all.
+
+**Revisit this** if the API begins serving arbitrary user- or editor-supplied imagery at volume — a
+per-project hero image uploaded through a CMS, say. That is the workload a runtime handler is for,
+and it does not exist yet.
 
 ### 2.7 Deploys and the upgrade path
 
@@ -450,7 +483,11 @@ tags, and route-appropriate JSON-LD. No route inherits a site-wide default title
 ### 5.4 Structured data
 
 - `Organization` + `WebSite` + `sameAs` on the homepage.
-- `FAQPage` wherever an FAQ renders, including the homepage.
+- `FAQPage` wherever an FAQ renders, including the homepage. **Do not expect SERP changes from
+  this.** Google restricted FAQ rich results to government and health sites in August 2023, so the
+  markup earns no visual treatment on a commercial domain. It ships for the machine-readability
+  reason §6 argues — an answer engine parsing the page gets question/answer pairs it does not have
+  to infer — and §7 should not be read as a failure when no FAQ rich result appears.
 - `SoftwareApplication` + `BreadcrumbList` on project pages.
 - `Event` on event pages — this is what earns rich results for the events tier.
 
@@ -507,6 +544,9 @@ distribution for this audience are in
 Name the model crawlers explicitly as allowed in `robots.txt`: **GPTBot, OAI-SearchBot, ClaudeBot,
 PerplexityBot, CCBot, Google-Extended.**
 
+> **Implemented**, plus `ChatGPT-User`, `Claude-User` and `Bingbot` — the two user-initiated agents
+> matter because they are what fetches a page when someone asks a model about Alphaday directly.
+
 The current file permits them by default, but it is one careless edit from cutting off the audience
 the business is built around, and an explicit allow makes the intent legible to whoever edits it
 next.
@@ -519,10 +559,21 @@ Publish `/llms.txt` and `/llms-full.txt` — what Alphaday is, what the API retu
 working commands, rate limits. Static files, generated at build from the same source as the API
 surface so they cannot drift from reality.
 
+> **Implemented** — `scripts/build-llms.js`. The index file carries the access surface, the 16 data
+> collections and all 57 MCP tools; `llms-full.txt` adds per-endpoint parameters, response models
+> and field lists for all 59 endpoints. Both derive from `docs-spec.generated.js` and a live
+> `tools/list` call, so neither can drift from what `/api/docs` shows. Rate limits are stated as
+> unpublished rather than invented.
+
 ### 6.3 OpenAPI
 
 Serve the spec at `/openapi.json`, statically. `docs-spec.generated.js` already exists; this is a
-build-step export. It lets agents consume the API surface directly rather than parsing marketing copy
+build-step export.
+
+> **Implemented** — but "already exists" was the trap. The module existed; the URL feeding it had
+> been dead long enough for the API to change major spec versions underneath it. See Phase 1's notes
+> in §8. The spec is emitted to `public/openapi.json` with a `servers` block added, since upstream
+> omits one. It lets agents consume the API surface directly rather than parsing marketing copy
 about it, and it is the prerequisite for the API directory listings in the content plan.
 
 ---
@@ -559,6 +610,11 @@ on the highest-stated-priority work in the plan.
 
 It pays for itself twice: verified Googlebot fetches are also the crawl-status signal the pruning job
 in §4.3 depends on.
+
+**This is not yet enabled — see [Appendix D](#appendix-d--enabling-cloudfront-access-logs) for the
+runbook.** It could not be executed during implementation: AWS endpoints were unreachable from the
+build environment (`sts.eu-west-1.amazonaws.com` refused connection with valid credentials
+configured), so the commands are written out rather than run.
 
 ### 7.2 Alarm thresholds
 
@@ -700,15 +756,133 @@ to a build that passed:
 
 ### Phase 1 · Weeks 2–6 — Static machine-readable artifacts
 
+> **Status: implemented — 4 of 5 items.** The outstanding item (CloudFront access logs) needs AWS
+> access that the build environment does not have; the runbook is [Appendix D](#appendix-d--enabling-cloudfront-access-logs).
+> `yarn build` emits `/llms.txt`, `/llms-full.txt`, `/openapi.json`, `/robots.txt` and
+> `/sitemap.xml`, all generated from live sources.
+
 Shippable on the current site, no rebuild dependency.
 
-- [ ] `/llms.txt`, `/llms-full.txt`, `/openapi.json`
-- [ ] Explicit crawler allowances in `robots.txt`
-- [ ] `Organization`, `WebSite`, homepage `FAQPage` schema
+- [x] `/llms.txt`, `/llms-full.txt`, `/openapi.json` — generated by `scripts/build-llms.js` and
+      `scripts/build-api-docs.js` from the live spec and a live MCP `tools/list` call
+- [x] Explicit crawler allowances in `robots.txt`
+- [x] `Organization`, `WebSite`, homepage `FAQPage` schema — plus `FAQPage` on `/mobile`, which
+      renders a *different* ten-question set and had none (§5.4 says wherever an FAQ renders)
 - [ ] CloudFront access logs enabled and the §7.1 user-agent segmentation queryable — **before** §6
-      ships, so there is a before-and-after
-- [ ] **Decide** the image optimisation approach (§2.6). It is a choice, not a build; only the
-      implementation belongs in Phase 2
+      ships, so there is a before-and-after. **Not done:** AWS endpoints were unreachable from the
+      build environment. Runbook in Appendix D; it is the last thing gating the before-and-after,
+      so run it before deploying §6
+- [x] **Decide** the image optimisation approach (§2.6). It is a choice, not a build; only the
+      implementation belongs in Phase 2 — **decided: build-time Vite optimisation, no runtime image
+      service.** Rationale and measurements in §2.6
+
+**The build was shipping a stale API surface.** `build-api-docs.js` fetched Swagger 2.0 from
+`https://api.alphaday.com/docs/?format=openapi`. That URL now returns **404**: the API moved to
+**OpenAPI 3.0.3** at `https://api.alphaday.com/openapi.json`. The script's failure path keeps the
+last generated module and exits 0, so every build since the move has been green while serving a
+cached spec of unknown age. Three consequences, all fixed:
+
+1. **The transform read the wrong shape.** OpenAPI 3 puts models in `components.schemas` (not
+   `definitions`) and response schemas under `responses[].content[mediaType].schema` (not
+   `responses[].schema`). Pointed at the new spec unchanged, it would have produced 59 endpoints
+   with an empty `returns` on every one — and looked like a successful build. There is now a
+   version guard that refuses a non-v3 document outright.
+2. **Two presentational regressions the v3 shape introduced.** `drf-spectacular` emits no `summary`,
+   folding it into the first paragraph of `description` — so headings had to be split back out. And
+   the pagination wrapper is now a *named* schema behind a `$ref`, so detecting it requires
+   resolving the ref first; without that every list endpoint degraded to a bare object with no item
+   fields. Both fixed: 59/59 endpoints now carry real response fields, 58/59 a heading.
+3. **Silence was the actual bug.** The stale fallback now prints a boxed warning naming the URL, the
+   error and the cached copy's age, and **fails the build** once the cache is more than 7 days old.
+   A transient blip should not break a deploy; a dead source URL should not survive one.
+
+The surface grew from the stale 53 endpoints / 15 categories to **59 / 16** — a `tags` category that
+had been missing entirely, plus new market, TVL and coins endpoints.
+
+**Sources, and what was deliberately not used.** `/llms.txt` is generated from
+`src/api/docs-spec.generated.js` — the same module that renders `/api/docs`, so the two cannot
+disagree — and from a live MCP `tools/list` call. It is **not** generated from
+`src/data/apiSurface.js`, which carries a standing `!! PENDING API-TEAM SIGN-OFF !!` warning that its
+commands do not match the spec. That warning is correct, and now measured (below). Publishing those
+commands into the one file agent builders will execute verbatim would be the worst place on the site
+to be wrong.
+
+**Verified against the live API, resolving the pending sign-off:**
+
+| Claim | Result |
+| --- | --- |
+| `https://api.alphaday.com/mcp` | **Real.** Streamable HTTP, protocol `2024-11-05`, server `alphaday` v1.29.1, **57 tools**, no credentials |
+| "Free API & MCP, no signup" | **True.** `curl https://api.alphaday.com/items/news/` returns 200 with no headers |
+| Spec declares `tokenAuth`/`cookieAuth` on all 59 ops | Optional, not required: `/items/*/bookmarks/` returns 401 anonymously, public collections return 200 |
+| `curl .../search?project=arbitrum` | 301 → `/search/` (missing trailing slash) |
+| `curl .../news?tags=arbitrum` | **404.** The real path is `/items/news/?tags=…` |
+| `curl .../get-started` | 301 → `/get-started/` |
+| `API_TOOLS` names | 11 of 12 real; `get_market_coin` should be **`get_market_coins`** |
+| "12 tools at launch" | The MCP server exposes **57** |
+
+`apiSurface.js` was left unchanged — it is marked as approved launch copy, and rewriting it is a
+content decision, not a technical one. But the sign-off it is waiting on now has evidence.
+
+**Found in review, after the first pass was called done.** Both were the same defect this phase's
+own headline is about — a degraded artifact shipping behind a green build:
+
+- **`/openapi.json` vanished on the stale-fallback path.** `reportStaleFallback()` returned before
+  the spec was written, so a single fetch blip shipped a site where `/openapi.json` 404s while
+  `llms.txt` still advertises it as the first thing to fetch — and the warning banner claimed the
+  opposite, saying the spec would ship "from this cached copy". There was no cached copy of the
+  spec, only of the flattened module. The fallback now requires **both** artifacts to exist and
+  fails otherwise; the banner says what actually happens.
+- **`build-llms.js` documented a fallback it did not have.** The docstring promised the tool section
+  would be preserved when MCP was unreachable. It was not: `llms.txt` dropped from 11.5 KB to
+  3.3 KB, all 57 tools replaced by a stub, exit 0. The tool list is the single most valuable thing
+  in the one file written for audience one. It now falls back to a committed cache
+  (`src/api/mcp-tools.generated.json`) and **fails the build** if there is no cache either.
+
+Both fallbacks depend on the artifacts being in git, so `public/llms.txt`, `public/llms-full.txt`,
+`public/openapi.json` and both `.generated.json` caches are committed. A cache that only exists on
+the machine that wrote it is not a fallback. `llms.txt` records a date rather than a timestamp so
+the committed diff churns once a day at most.
+
+A third pass caught the asymmetry the second one introduced: **the MCP cache had no staleness
+ceiling.** `build-api-docs` refuses to ship a cached spec older than seven days; `build-llms`
+computed the cache's age, printed it, and shipped anyway — so a permanently moved MCP endpoint would
+publish a frozen tool list indefinitely, exiting 0 behind a warning nobody reads in CI. That is
+precisely the failure the sibling's guard exists to prevent, one script over.
+
+Both now share `scripts/staleness.js`, because two scripts holding independent copies of the same
+policy is how they diverged in the first place. Extracting it also closed a hole that was in **both**
+of them: an unreadable or missing timestamp was treated as fresh, when a cache whose age cannot be
+established is exactly the one least worth trusting. Unknown age now fails.
+
+Two smaller ones: `build-llms.js` regex-parsed `API_DOCS` out of the generated **JS** module,
+coupling two scripts to a third artifact's serialisation — `build-api-docs` now emits
+`docs-spec.generated.json` beside it and the regex is gone. And `robots.txt` covered only the
+well-known half of the crawler list; if the point is that a future wildcard `Disallow` cannot
+silently cut off audience one, the list has to be complete to do that job. Added
+`Applebot-Extended`, `meta-externalagent`, `Meta-ExternalFetcher`, `Amazonbot`, `Bytespider`,
+`cohere-ai`, `Diffbot`, `YouBot`. The `bingbot` entry's comment was also wrong — it is the search
+crawler, and Copilot grounds on the Bing index with no separate token, so unlike `Google-Extended`
+it is not an AI opt-in control.
+
+**Implementation notes:**
+
+1. **`/openapi.json` is served with a `servers` block added.** Upstream omits it, which leaves every
+   path relative and the base URL a guess. An agent cannot call an endpoint it cannot address, so
+   the production server URL is injected at build. This is the only modification made to the
+   upstream document.
+2. **`llms.txt` claims only what was probed.** The authentication section states the anonymous-200
+   result and the 401-on-bookmarks result explicitly, rather than asserting "no auth required" and
+   leaving an agent to discover the personalised endpoints the hard way.
+3. **Tool descriptions needed the same paragraph split as the OpenAPI ones.** MCP descriptions use
+   `Heading\n\nBody`; flattening whitespace before splitting welds them together
+   ("Coin prices & market data Continuously-updated snapshots…"). Same bug shape as (2) above,
+   found the same way — by reading the output rather than the exit code.
+4. **`robots.txt` gives each model crawler its own group.** A crawler obeys the single most specific
+   group matching its token and ignores the wildcard entirely, so an explicit per-crawler `Allow`
+   means a future `Disallow` added to `User-agent: *` cannot silently cut off audience one — which
+   is the failure §6.1 is guarding against.
+
+**Verified against the live API during implementation:**
 
 ### Phase 2 · Weeks 4–12 — The rebuild
 
@@ -905,3 +1079,142 @@ real 301 before cutover — not a 200 with client-side navigation.
    exact: monthly pageviews from GA4 (`G-ZT80HRR0MD`) and average page weight.
 3. **`/tvl/*` returns `401`** with app credentials — a different auth tier. Any route that plans to
    render yields, stablecoins or fees needs that resolved first.
+
+---
+
+# Appendix D — Enabling CloudFront access logs
+
+The §7.1 measurement, written out because it could not be run during implementation. AWS endpoints
+were unreachable from the build environment; `aws sts get-caller-identity` failed to connect with
+credentials present and a region configured. Nothing here has been executed — verify each step.
+
+Substitute the real distribution id for `DIST_ID` and pick a bucket name that does not already exist.
+
+### 1. Log destination
+
+```bash
+export REGION=eu-west-1
+export LOG_BUCKET=alphaday-cf-logs
+
+aws s3api create-bucket \
+  --bucket "$LOG_BUCKET" \
+  --region "$REGION" \
+  --create-bucket-configuration LocationConstraint="$REGION"
+
+# CloudFront's legacy logging writes via the S3 ACL path, so the bucket cannot
+# use the default "bucket owner enforced" ownership setting.
+aws s3api put-bucket-ownership-controls \
+  --bucket "$LOG_BUCKET" \
+  --ownership-controls 'Rules=[{ObjectOwnership=BucketOwnerPreferred}]'
+```
+
+Add a lifecycle rule before enabling logging, not after — access logs on a busy distribution grow
+without bound and this is the only line in Appendix A that can surprise you:
+
+```bash
+aws s3api put-bucket-lifecycle-configuration \
+  --bucket "$LOG_BUCKET" \
+  --lifecycle-configuration '{
+    "Rules": [{
+      "ID": "expire-cf-logs",
+      "Status": "Enabled",
+      "Filter": {"Prefix": "cf/"},
+      "Transitions": [{"Days": 30, "StorageClass": "STANDARD_IA"}],
+      "Expiration": {"Days": 180}
+    }]
+  }'
+```
+
+### 2. Enable logging on the distribution
+
+Logging is set inside the full distribution config, so it is a read-modify-write. Do not hand-author
+the config — fetch it, patch the one field, and send it back with its `ETag`:
+
+```bash
+aws cloudfront get-distribution-config --id "$DIST_ID" > dist-config.json
+ETAG=$(jq -r '.ETag' dist-config.json)
+
+jq --arg bucket "$LOG_BUCKET.s3.amazonaws.com" '
+  .DistributionConfig.Logging = {
+    Enabled: true, IncludeCookies: false, Bucket: $bucket, Prefix: "cf/"
+  } | .DistributionConfig' dist-config.json > patched-config.json
+
+aws cloudfront update-distribution \
+  --id "$DIST_ID" \
+  --if-match "$ETAG" \
+  --distribution-config file://patched-config.json
+```
+
+Logs appear within about an hour and are delivered on a best-effort basis — they are a measurement
+tool, not an audit trail. Do not build anything that requires completeness on them.
+
+### 3. Athena table
+
+```sql
+CREATE EXTERNAL TABLE IF NOT EXISTS cf_logs (
+  `date` DATE, time STRING, location STRING, bytes BIGINT, request_ip STRING,
+  method STRING, host STRING, uri STRING, status INT, referrer STRING,
+  user_agent STRING, query_string STRING, cookie STRING, result_type STRING,
+  request_id STRING, host_header STRING, request_protocol STRING,
+  request_bytes BIGINT, time_taken FLOAT, xforwarded_for STRING,
+  ssl_protocol STRING, ssl_cipher STRING, response_result_type STRING,
+  http_version STRING, fle_status STRING, fle_encrypted_fields INT,
+  c_port INT, time_to_first_byte FLOAT, x_edge_detailed_result_type STRING,
+  sc_content_type STRING, sc_content_len BIGINT,
+  sc_range_start BIGINT, sc_range_end BIGINT
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
+LOCATION 's3://alphaday-cf-logs/cf/'
+TBLPROPERTIES ('skip.header.line.count'='2');
+```
+
+The user-agent field is URL-encoded in CloudFront logs, so every query below decodes it first.
+
+### 4. The thesis query
+
+Fetches, status mix and bytes per crawler — the direct read on whether §6 worked:
+
+```sql
+SELECT
+  CASE
+    WHEN ua LIKE '%GPTBot%'         THEN 'GPTBot'
+    WHEN ua LIKE '%OAI-SearchBot%'  THEN 'OAI-SearchBot'
+    WHEN ua LIKE '%ChatGPT-User%'   THEN 'ChatGPT-User'
+    WHEN ua LIKE '%ClaudeBot%'      THEN 'ClaudeBot'
+    WHEN ua LIKE '%Claude-User%'    THEN 'Claude-User'
+    WHEN ua LIKE '%PerplexityBot%'  THEN 'PerplexityBot'
+    WHEN ua LIKE '%CCBot%'          THEN 'CCBot'
+    WHEN ua LIKE '%Google-Extended%' THEN 'Google-Extended'
+    WHEN ua LIKE '%Googlebot%'      THEN 'Googlebot'
+    WHEN ua LIKE '%bingbot%'        THEN 'Bingbot'
+    ELSE 'other'
+  END AS crawler,
+  COUNT(*) AS fetches,
+  COUNT_IF(status >= 400) AS errors,
+  ROUND(SUM(bytes) / 1048576.0, 1) AS mb,
+  ROUND(AVG(time_to_first_byte), 3) AS avg_ttfb
+FROM (SELECT *, url_decode(user_agent) AS ua FROM cf_logs
+      WHERE "date" >= current_date - INTERVAL '30' DAY)
+WHERE crawler <> 'other'
+GROUP BY 1 ORDER BY fetches DESC;
+```
+
+Two follow-ups worth having as saved queries:
+
+- **Are the §6 artifacts actually being fetched?** Filter `uri IN ('/llms.txt', '/llms-full.txt',
+  '/openapi.json', '/robots.txt')` and group by crawler. If §6 shipped and nothing fetches it, that
+  is the answer, and it is worth knowing early.
+- **Which URLs has Googlebot actually crawled?** `SELECT DISTINCT uri` filtered to Googlebot. This
+  is the crawled-and-indexed precondition the §4.3 pruning job depends on, and the reason §7.1 pays
+  for itself twice.
+
+### 5. Verify
+
+```bash
+aws s3 ls "s3://$LOG_BUCKET/cf/" --recursive | head
+aws cloudfront get-distribution-config --id "$DIST_ID" \
+  | jq '.DistributionConfig.Logging'
+```
+
+Costs are in Appendix A. The dominant term is Athena's per-TB scan charge, which the 180-day
+lifecycle rule above bounds.

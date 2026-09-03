@@ -3,6 +3,9 @@ import { Footer } from "../components";
 import HomeNavbar from "../components/navbar/HomeNavbar";
 import Seo from "../components/seo";
 import { canonicalFor } from "../utils/canonical";
+import { buildSiteJsonLd } from "../utils/siteJsonLd";
+import { buildFaqNode } from "../utils/faqJsonLd";
+import { FAQData } from "../components/home/faqData";
 import {
   Hero,
   TrustStrip,
@@ -23,7 +26,14 @@ const DESCRIPTION =
 function HomeContainer() {
   return (
     <>
-      <Seo title={TITLE} description={DESCRIPTION} canonical={canonicalFor("/")} />
+      {/* FAQData, not mobileFAQData: <FAQ /> below renders without `isMobile`,
+          and structured data must describe the questions actually in the DOM. */}
+      <Seo
+        title={TITLE}
+        description={DESCRIPTION}
+        canonical={canonicalFor("/")}
+        jsonLd={buildSiteJsonLd([buildFaqNode(FAQData)])}
+      />
       <HomeNavbar />
       <Hero />
       <TrustStrip />

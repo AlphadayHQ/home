@@ -11,8 +11,12 @@ const toPlainText = (node) => {
   return toPlainText(node?.props?.children);
 };
 
-export const buildFaqJsonLd = (faqs) => ({
-  "@context": "https://schema.org",
+/**
+ * The FAQPage node on its own, without `@context`, so it can be composed into
+ * an `@graph` alongside Organization and WebSite. A node inside a graph must
+ * not carry its own context.
+ */
+export const buildFaqNode = (faqs) => ({
   "@type": "FAQPage",
   mainEntity: (faqs || []).map(({ question, answer }) => ({
     "@type": "Question",
@@ -22,4 +26,10 @@ export const buildFaqJsonLd = (faqs) => ({
       text: toPlainText(answer).replace(/\s+/g, " ").trim(),
     },
   })),
+});
+
+/** Standalone FAQPage document, for pages whose only structured data is an FAQ. */
+export const buildFaqJsonLd = (faqs) => ({
+  "@context": "https://schema.org",
+  ...buildFaqNode(faqs),
 });
