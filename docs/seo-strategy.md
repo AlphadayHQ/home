@@ -584,6 +584,12 @@ Technical work only. Content sequencing is
 
 ### Phase 0 · Week 1 — Patch the live site
 
+> **Status: implemented — 11 of 12 items.** The outstanding item (`robots.txt` on
+> `app.alphaday.com`) lives in the `alphaFront` repo and is not actionable from here. `yarn build`
+> runs green from a clean environment; the sitemap emits 72 URLs (6 static, 66 landing pages, each
+> with a real `updated_at`). Everything below the checklist records decisions taken during the work
+> that were not in the original plan — read those before changing any of it.
+
 The rebuild takes months; production bleeds throughout. These are hours of work on the existing SPA.
 
 **Enabling change, do this first:** add a `robots` prop to `seo.jsx` — currently the tag is hardcoded
@@ -592,26 +598,105 @@ without it.
 
 Then, in dependency order:
 
-- [ ] Add the `robots` prop to `seo.jsx`; default `index, follow`, overridable — **gates the two
+- [x] Add the `robots` prop to `seo.jsx`; default `index, follow`, overridable — **gates the two
       `noindex` items below**
-- [ ] Make `canonical` required in the SEO component and pass it on every page — fixes findings #1
+- [x] Make `canonical` required in the SEO component and pass it on every page — fixes findings #1
       and #6 together, since `/mobile` and `/privacy` self-canonicalise through the same default
-- [ ] Remove the app-level `<Seo>` from `App.jsx` so each page owns its head tags exactly once
+- [x] Remove the app-level `<Seo>` from `App.jsx` so each page owns its head tags exactly once
       (finding #5)
-- [ ] **Switch the sitemap source to `/ui/landing-pages/`** — this one change also drops
+- [x] **Switch the sitemap source to `/ui/landing-pages/`** — this one change also drops
       `oceanprotocol` automatically, because it is not in that set. Do not hand-patch the
       views-based sitemap; that reintroduces the drift
-- [ ] Add `/api`, `/api/docs`, `/mobile`, `/privacy` to the sitemap's static links
-- [ ] Set a real `lastmod` per URL from the record's own updated timestamp, not build time
+- [x] Add `/api`, `/api/docs`, `/mobile`, `/privacy` to the sitemap's static links
+- [x] Set a real `lastmod` per URL from the record's own updated timestamp, not build time
       (finding #13)
-- [ ] Delete or regenerate the committed root `sitemap.xml` — it is malformed and dated 2022
+- [x] Delete or regenerate the committed root `sitemap.xml` — it is malformed and dated 2022
       (finding #12)
-- [ ] `noindex` on the 404 component
-- [ ] Real `robots.txt` on `app.alphaday.com`; `noindex` or canonical the app shell
-- [ ] Fix `berachain` — **separate from the sitemap work**: it is a homepage link, not a sitemap
+- [x] `noindex` on the 404 component — **Googlebot only.** It is emitted by Helmet after hydration
+      on an HTTP 200, so the JS-blind crawlers of §1.1 (GPTBot, ClaudeBot, PerplexityBot, CCBot)
+      still see `index, follow` and the home page's title in the static head. A real status code
+      is Phase 2 (§5.2); this closes the Google half now
+- [ ] Real `robots.txt` on `app.alphaday.com`; `noindex` or canonical the app shell —
+      **the only Phase 0 item not done here**: it lives in the `alphaFront` repo, which has no
+      `robots.txt` at any path (verified)
+- [x] Fix `berachain` — **separate from the sitemap work**: it is a homepage link, not a sitemap
       entry, so switching the source does not touch it
-- [ ] Fix the `href="#"` dead link on the homepage (finding #19)
-- [ ] Add the trailing slash in `boards.js` to stop the 301 on every landing page render
+- [x] Fix the `href="#"` dead link on the homepage (finding #19)
+- [x] Add the trailing slash in `boards.js` to stop the 301 on every landing page render
+
+**Implementation notes — decisions taken during the work, not in the original plan:**
+
+1. **`canonical` is enforced by indexability, not by presence.** A `noindex` page emits no canonical
+   at all, because `noindex` plus a canonical is a conflicting instruction: it asks Google to drop
+   the page and to consolidate it onto a target in the same breath. The dev-time throw therefore
+   fires only on indexable pages, which is what let the 404 component opt out cleanly.
+2. **The production canonical fallback changed from the site root to the page's own URL.** Requiring
+   the prop fixes today's pages; changing the fallback means the *next* forgotten canonical is a
+   harmless self-reference rather than a silent duplicate-of-`/` claim. The class of bug is closed,
+   not just its current instances.
+3. **The `sitemaps` npm package was removed.** It emits `link.lastmod || <build time>`, so there was
+   no way to express "no known modification date" through it — the honest-`lastmod` requirement was
+   unimplementable without replacing it. It is now ~20 lines of local XML emission.
+4. **`is_published` is filtered.** The `/ui/landing-pages/` list carries the flag; all 66 records are
+   currently published, but an unpublished slug in the sitemap is a soft 404 submitted on purpose,
+   and this script runs unattended.
+5. **Static routes carry no `lastmod`.** There is no record behind them, and the only available
+   substitutes are build time (the false signal being removed) or git commit dates (wrong under a
+   shallow CI checkout). An absent signal is correct here.
+6. **`ErrorState` is `noindex` too, not just the 404 — and the fetch now retries.** A fetch failure
+   rendered a 200 carrying `index.html`'s static head — home page title, home page description,
+   `index, follow`, no canonical — so an API outage turned all 66 project URLs into indexable
+   near-duplicates of `/`. That is finding #1 resurfacing in the one state no page passed a
+   canonical for.
+
+   The two failures are not equivalent, but neither is the `noindex` side cheap. `noindex` is an
+   **explicit removal directive**: recovery requires a recrawl, and on a domain whose crawl budget
+   §4 already describes as authority-constrained, recrawl latency is the thing least worth relying
+   on. Duplicate-title clustering is a **soft heuristic** Google reverses on its own without being
+   told. So the rule is not "the downside is small" — it is *the cheaper failure, and we reduce how
+   often it fires*.
+
+   Reducing how often it fires is why `boards.js` now retries. It previously entered the error
+   state on the first non-`ok` response, including 429 — and the moment we are most likely to be
+   rate-limited is Googlebot working briskly through all 66 project URLs, which is precisely when a
+   removal directive costs the most. Three attempts with exponential backoff on `408/429/500/502/
+   503/504` and on network-level failures; `404` still returns `null` on the first try because it
+   is an answer, not a failure; `Retry-After` is honoured but capped at 2s so a server asking for
+   two minutes cannot hang the render. Worst case is 1.2s added on plain backoff, 4s with a long
+   `Retry-After`.
+7. **`yarn build` needs `--env-file-if-exists=.env.local`.** Node does not read `.env` files, and
+   Vite only loads them into `import.meta.env` for the bundle — so the sitemap step failed for
+   anyone outside CI, where the workflows set the variables as step-level `env`. The flag is
+   correct in both places: CI ignores the missing file and uses the real environment.
+8. **`meta[name="robots"]` joined `MANAGED_META`.** The dedupe hook existed to stop `index.html`'s
+   static tags from colliding with Helmet's, but `robots` was not in its selector — so a `noindex`
+   page shipped two conflicting directives. `noindex` wins today only because Google resolves
+   conflicts by taking the most restrictive; §5.9's app shell needs the markup to be right, not
+   the tiebreak to be lucky.
+
+**Found in review, after the first pass was called done.** Recorded because each one was invisible
+to a build that passed:
+
+- **`yarn build` was broken outside CI.** Node does not read `.env` files and Vite only loads them
+  into `import.meta.env`, so the sitemap step failed for anyone whose shell had not exported the
+  variables. It had been verified in a shell that sourced `.env.local` by hand — the environment was
+  made to fit the test instead of the reverse.
+- **`ErrorState` had no `<Seo>` at all** — the one render path nobody passed a canonical for.
+- **`meta[name="robots"]` was missing from `MANAGED_META`**, so a `noindex` page shipped two
+  conflicting directives and won only on Google's most-restrictive tiebreak.
+- **The 404 `noindex` is Googlebot-only**, which a bare `[x]` concealed in a document whose §1.1
+  argues JS-blind crawlers are the point.
+- **The sitemap's root `<loc>` disagreed with `canonicalFor("/")`** on the trailing slash — harmless
+  under RFC 3986, but `canonical.js` exists to end exactly that drift.
+- **`ErrorState` fired on the first failed request**, with the `noindex` above attached to it.
+
+**Verified against the live API during implementation:**
+
+- `/ui/landing-pages/` returns exactly `{ slug, name, is_published, updated_at }`, 66 records, all
+  published, all with a parseable `updated_at`.
+- `berachain` is confirmed **absent** from the landing-pages set — the homepage link was live and
+  broken. `oceanprotocol` is likewise absent, and dropped automatically by the source switch.
+- The 7 remaining `featuredBoards` slugs all resolve to published records.
 
 ### Phase 1 · Weeks 2–6 — Static machine-readable artifacts
 
@@ -763,7 +848,7 @@ GET app.alphaday.com/b/ethereum            200  3,252 b  byte-identical to the a
 | 18 | No `Organization`, `WebSite` or homepage `FAQPage` schema | §5.4 |
 | 19 | Homepage "Coming soon" product card is `href="#"` (`productsData.jsx:52`) — a dead link on the page §5.8 designates as the discovery root | §5.8 |
 | 20 | `VITE_X_APP_SECRET` shipped in the public bundle | §5.10 |
-| 21 | *(non-SEO)* `index.html` ships `<link rel="icon" href="/src/favicon.svg">`, a dev-server path | — |
+| 21 | ~~`index.html` ships `<link rel="icon" href="/src/favicon.svg">`, a dev-server path~~ — **false positive, withdrawn.** Vite rewrites HTML asset references at build; the production bundle emits `/assets/favicon-<hash>.svg` and the icon resolves correctly | n/a |
 
 Findings 9–11 and 14 were verified against the live API by the content document's §14 and supersede
 earlier estimates in this document. Findings 4, 5, 12, 13, 15 and 19 were missed by the original

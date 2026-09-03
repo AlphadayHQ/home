@@ -1,5 +1,8 @@
 import React from "react";
 import { Footer, Navbar } from "../components";
+import Seo from "../components/seo";
+import CONFIG from "../config";
+import { canonicalFor } from "../utils/canonical";
 import Hero from "../components/mobile/Hero";
 import Video from "../components/mobile/Video";
 import { Backers, FAQ } from "../components/home";
@@ -15,6 +18,11 @@ import JoinCommunity from "../components/mobile/JoinCommunity";
 const MobilePage = () => {
   return (
     <>
+      <Seo
+        title="Alphaday Mobile — Crypto on the go"
+        description="The whole Alphaday workspace in your pocket: news, market data, governance and alerts, with push notifications for the signals you care about."
+        canonical={canonicalFor(CONFIG.mobile)}
+      />
       <Navbar />
       <Hero />
       <Video />

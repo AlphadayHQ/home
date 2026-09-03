@@ -55,7 +55,11 @@ const CONFIG = {
     { slug: "optimism", name: "Optimism" },
     { slug: "polygon", name: "Polygon" },
     { slug: "avalanche", name: "Avalanche" },
-    { slug: "berachain", name: "Berachain" },
+    // berachain removed: it is a board in /ui/views/ but has no record in
+    // /ui/landing-pages/, so /berachain rendered a 404 from the home page.
+    // Re-add only once the landing page exists — the sitemap now builds from
+    // the landing-pages endpoint, so it will never publish a slug this list
+    // gets wrong again, but this list is hand-maintained and still can.
   ],
   blogLinks: {
     learn: [

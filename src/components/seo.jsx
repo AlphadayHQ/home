@@ -11,8 +11,14 @@ import { CookieContext } from "../utils/CookieContext";
 // in the document. Drop the static ones once Helmet has rendered: JS-executing
 // crawlers then see exactly one set (the route's), and the no-JS fallback in
 // the raw HTML is untouched.
+// `robots` is in here for the same reason as the rest: index.html ships a
+// static `index, follow` that Helmet cannot replace, so a page overriding it
+// ends up with two conflicting directives. Google resolves a conflict by
+// taking the most restrictive, so `noindex` happens to win — but that is the
+// resolution rule saving us, not the markup being correct, and the app-shell
+// case relies on the same mechanism with more at stake.
 const MANAGED_META =
-  'meta[name="description"], meta[property^="og:"], meta[name^="twitter:"]';
+  'meta[name="description"], meta[name="robots"], meta[property^="og:"], meta[name^="twitter:"]';
 
 const isHelmetTag = (tag) =>
   tag.hasAttribute("data-react-helmet") || tag.hasAttribute("data-rh");
@@ -69,13 +75,56 @@ const useDedupeStaticMetaTags = () => {
 
 // recommended dimensions for thumbnail that appears when someone shares your website: 1200 pixels x 627 pixels (1.91/1 ratio)
 
-const SEO = ({ title, description, canonical, ogImage, jsonLd }) => {
+// Every page is indexable unless it opts out. Kept as a constant so a page that
+// only wants to change the index/follow half is not silently dropping the
+// snippet/preview directives with it.
+const DEFAULT_ROBOTS =
+  "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
+
+const isIndexable = (robots) => !/\bnoindex\b/i.test(robots);
+
+/**
+ * A missing canonical used to fall back to the site root, which pointed every
+ * page without an explicit one at the home page and told Google they were all
+ * duplicates of /. The fallback is now the page's own URL: a forgotten
+ * canonical becomes a harmless self-reference instead of a de-indexing bug.
+ * On an indexable page it also throws in dev, so a missing canonical is caught
+ * before it ships rather than after.
+ *
+ * A noindex page returns null and emits no canonical at all. Pairing noindex
+ * with a canonical is a conflicting signal — it asks Google to drop the page
+ * and to consolidate it onto a target in the same breath.
+ */
+const resolveCanonical = (canonical, robots) => {
+  if (!isIndexable(robots)) return null;
+  if (canonical) return canonical;
+
+  if (import.meta.env.DEV) {
+    throw new Error(
+      `<Seo> rendered without a \`canonical\` prop at ${window.location.pathname}. ` +
+        "Every indexable page must declare its own canonical URL."
+    );
+  }
+
+  const { origin, pathname } = window.location;
+  // Strip the trailing slash so /foo/ and /foo do not canonicalise to two URLs.
+  return pathname === "/" ? `${origin}/` : `${origin}${pathname.replace(/\/$/, "")}`;
+};
+
+const SEO = ({
+  title,
+  description,
+  canonical,
+  ogImage,
+  jsonLd,
+  robots = DEFAULT_ROBOTS,
+}) => {
   //date format: 2015-02-05T08:00:00+08:00
   const { domain, socialLinks, cover } = config.seo;
   const titleToShow = title || config.seo.defaultTitle;
   const descriptionToShow = description || config.seo.defaultDescription;
   const ogImageToShow = ogImage || cover;
-  const canonicalUrl = canonical || domain;
+  const canonicalUrl = resolveCanonical(canonical, robots);
   const { allowTracking } = useContext(CookieContext);
 
   useDedupeStaticMetaTags();
@@ -84,7 +133,7 @@ const SEO = ({ title, description, canonical, ogImage, jsonLd }) => {
     <Helmet>
       <meta
         name="robots"
-        content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+        content={robots}
         data-react-helmet="true"
       />
       <title>{titleToShow}</title>
@@ -93,14 +142,18 @@ const SEO = ({ title, description, canonical, ogImage, jsonLd }) => {
         content={descriptionToShow}
         data-react-helmet="true"
       />
-      <link rel="canonical" href={canonicalUrl} data-react-helmet="true" />
+      {canonicalUrl && (
+        <link rel="canonical" href={canonicalUrl} data-react-helmet="true" />
+      )}
       <meta
         property="og:site_name"
         content={config.seo.siteName}
         data-react-helmet="true"
       />
       {/* Opengraph meta tags for Facebook & LinkedIn */}
-      <meta property="og:url" content={canonicalUrl} data-react-helmet="true" />
+      {canonicalUrl && (
+        <meta property="og:url" content={canonicalUrl} data-react-helmet="true" />
+      )}
       <meta property="og:type" content={"website"} data-react-helmet="true" />
       <meta
         property="og:title"

@@ -554,11 +554,6 @@ shallowequal@^1.1.0:
   resolved "https://registry.yarnpkg.com/shallowequal/-/shallowequal-1.1.0.tgz#188d521de95b9087404fd4dcb68b13df0ae4e7f8"
   integrity sha512-y0m1JoUZSlPAjXVtPPW70aZWfIL/dSP7AFkRnniLCrK/8MDKog3TySTBmckD+RObVxH0v4Tox67+F14PdED2oQ==
 
-sitemaps@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/sitemaps/-/sitemaps-1.0.0.tgz#1a14c2300318d1dfcc7ede1a75f099117672a3a8"
-  integrity sha512-5M2TqsbMmDzz7UoYLOpeGLfxygNdZ0AYvNFUoAjoeVr2vkliYGZzO50kwvIh3TPUqrqmatAb+0+CYbpka8TROw==
-
 source-map-js@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/source-map-js/-/source-map-js-1.2.1.tgz#1ce5650fddd87abc099eda37dcff024c2667ae46"

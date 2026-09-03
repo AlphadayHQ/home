@@ -24,6 +24,7 @@ import {
   ExternalLink,
 } from "lucide-react";
 import Seo from "../components/seo";
+import { canonicalFor } from "../utils/canonical";
 import CONFIG from "../config";
 import alphaday from "../images/logo-notext.png";
 import { API_DOCS } from "../api/docs-spec.generated";
@@ -345,7 +346,7 @@ export default function ApiDocsPage() {
       <Seo
         title="Alphaday API — Full Reference"
         description="Browseable reference of every endpoint in the Alphaday REST API: parameters, response shapes and copy-ready cURL commands."
-        canonical="https://alphaday.com/api/docs"
+        canonical={canonicalFor(CONFIG.apiDocs)}
       />
 
       {/* slim sub-nav */}

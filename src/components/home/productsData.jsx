@@ -49,7 +49,8 @@ const products = [
     img: alphadaytv,
     focus: "object-top",
     alt: "Alphaday TV daily briefing broadcast frame",
-    link: { label: "Coming soon", href: "#" },
+    // No link until there is somewhere to go. The "Soon" badge already says
+    // this; href="#" was a link that scrolled the page to the top instead.
   },
 ];
 

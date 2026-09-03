@@ -1,6 +1,7 @@
 import React from "react";
 import { Footer, Navbar } from "../components";
 import Seo from "../components/seo";
+import { canonicalFor } from "../utils/canonical";
 import CONFIG from "../config";
 import { buildFaqJsonLd } from "../utils/faqJsonLd";
 import { FAQData } from "../components/dashboards/faqData";
@@ -28,7 +29,7 @@ function DashboardsContainer() {
       <Seo
         title={TITLE}
         description={DESCRIPTION}
-        canonical={`${CONFIG.seo.domain.replace(/\/$/, "")}${CONFIG.dashboards}`}
+        canonical={canonicalFor(CONFIG.dashboards)}
         jsonLd={buildFaqJsonLd(FAQData)}
       />
       <Navbar />

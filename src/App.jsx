@@ -1,5 +1,4 @@
 import Error404 from "./components/Error404";
-import Seo from "./components/seo";
 import CookieDisclaimer from "./components/CookieDisclaimer";
 import CONFIG from "./config";
 import HomeContainer from "./containers/HomeContainer";
@@ -72,15 +71,15 @@ function App() {
       );
     }
 
-    return <Error404 />;
+    return (
+      <HelmetProvider>
+        <Error404 />
+      </HelmetProvider>
+    );
   }
   return (
     <HelmetProvider>
       <CookieProvider>
-        <Seo
-          title="Alphaday"
-          description={"Everything about the Crypto ecosystem in one app"}
-        />
         {Object.keys(otherPages).includes(path) ? (
           <>{otherPages[path]}</>
         ) : (

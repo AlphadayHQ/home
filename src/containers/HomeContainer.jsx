@@ -2,6 +2,7 @@ import React from "react";
 import { Footer } from "../components";
 import HomeNavbar from "../components/navbar/HomeNavbar";
 import Seo from "../components/seo";
+import { canonicalFor } from "../utils/canonical";
 import {
   Hero,
   TrustStrip,
@@ -22,7 +23,7 @@ const DESCRIPTION =
 function HomeContainer() {
   return (
     <>
-      <Seo title={TITLE} description={DESCRIPTION} />
+      <Seo title={TITLE} description={DESCRIPTION} canonical={canonicalFor("/")} />
       <HomeNavbar />
       <Hero />
       <TrustStrip />

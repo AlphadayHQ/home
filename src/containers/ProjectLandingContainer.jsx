@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Seo from "../components/seo";
+import { canonicalFor } from "../utils/canonical";
 import Error404 from "../components/Error404";
 import { fetchLandingPageBySlug } from "../api/boards";
 import config from "../config";
@@ -144,15 +145,28 @@ function LoadingState({ slug }) {
 
 function ErrorState() {
   return (
-    <div className="min-h-screen bg-eerie flex flex-col items-center justify-center px-6 text-center">
-      <h1 className="text-platinum text-2xl mb-3">Something went wrong</h1>
-      <p className="text-aluminium mb-6">
-        We couldn't load this dashboard right now. Please try again later.
-      </p>
-      <a href="/" className="text-california underline">
-        Back to Alphaday
-      </a>
-    </div>
+    <>
+      {/* Without this the error state renders a 200 carrying index.html's
+          static head — the home page's title, description and `index, follow`,
+          with no canonical. An API outage would turn every project URL into an
+          indexable near-duplicate of /. `noindex` risks a good page dropping
+          out until the next recrawl, which is the cheaper of the two failures
+          by a wide margin. */}
+      <Seo
+        title="Temporarily unavailable — Alphaday"
+        description="This dashboard could not be loaded right now."
+        robots="noindex, follow"
+      />
+      <div className="min-h-screen bg-eerie flex flex-col items-center justify-center px-6 text-center">
+        <h1 className="text-platinum text-2xl mb-3">Something went wrong</h1>
+        <p className="text-aluminium mb-6">
+          We couldn't load this dashboard right now. Please try again later.
+        </p>
+        <a href="/" className="text-california underline">
+          Back to Alphaday
+        </a>
+      </div>
+    </>
   );
 }
 
@@ -240,7 +254,7 @@ function ProjectLandingContainer({ slug }) {
   if (state.status === "error") return <ErrorState />;
 
   const data = state.data;
-  const canonical = `https://alphaday.com/${data.slug}`;
+  const canonical = canonicalFor(`/${data.slug}`);
   const dashboardUrl = `${config.alphadayApp.replace(/\/$/, "")}/b/${data.slug}`;
   const jsonLd = buildJsonLd({ data, canonical });
 

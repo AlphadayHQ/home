@@ -1,5 +1,10 @@
 import { useState, createContext } from "react";
 
+// This default is load-bearing, not defensive boilerplate: <Seo> calls
+// useContext(CookieContext) and the 404 route in App.jsx renders outside
+// CookieProvider. Removing the default (or dropping `allowTracking` from it)
+// crashes the 404 page. `false` is also the correct value there — a page
+// nobody consented on should fire no trackers.
 export const CookieContext = createContext({
   allowTracking: false,
   noCookieChoice: true,
