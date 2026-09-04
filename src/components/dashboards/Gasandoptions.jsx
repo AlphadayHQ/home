@@ -10,8 +10,8 @@ import {
   FlipCardButton,
   FlipCardClose,
 } from "../../shared";
-import gas from "../../images/workflow/gas.png";
-import switchimage from "../../images/workflow/switch.png";
+import gas from "../../images/workflow/gas.webp";
+import switchimage from "../../images/workflow/switch.webp";
 
 function Gasandoptions() {
   const [gasToggler, setGasToggler] = useState(false);

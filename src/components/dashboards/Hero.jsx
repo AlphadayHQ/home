@@ -1,6 +1,6 @@
 import React from "react";
 import { Section } from "../../shared";
-import hero from "../../images/home/hero.png";
+import hero from "../../images/home/hero.webp";
 import "./textScroller.css";
 import LaunchAppButton from "../home/LaunchAppButton";
 

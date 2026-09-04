@@ -8,7 +8,7 @@ import {
   Search,
   Bot,
 } from "lucide-react";
-import alphaday from "../images/logo-notext.png";
+import alphaday from "../images/logo-notext.webp";
 import { CodeBlock } from "../components/ui/CodeBlock";
 import Seo from "../components/seo";
 import CONFIG from "../config";

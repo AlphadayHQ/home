@@ -107,12 +107,13 @@ small hot set that caches well.
 
 | Traffic | Human misses | Bot requests / misses | Renders/month | Sustained vCPU | vs 0.2 baseline |
 | --- | --- | --- | --- | --- | --- |
-| 100k PV | ~30% | 300k / ~50% | ~180,000 | 0.007 | 4% |
-| 1M PV | ~15% | 1M / ~50% | ~650,000 | 0.025 | 13% |
-| 5M PV | ~10% | 2M / ~50% | ~1,500,000 | 0.058 | 29% |
+| 100k PV | ~30% | 300k / ~50% | ~180,000 | 0.00015 | 0.08% |
+| 1M PV | ~15% | 1M / ~50% | ~650,000 | 0.00056 | 0.3% |
+| 5M PV | ~10% | 2M / ~50% | ~1,500,000 | 0.0013 | 0.6% |
 
-A `t4g.micro` serves 5M pageviews/month plus heavy crawl at under a third of its CPU baseline, with
-burst credits on top.
+**These figures are measured, not modelled** — see the calibration below. A `t4g.micro` serves 5M
+pageviews/month plus heavy crawl at well under **1%** of its CPU baseline. CPU is not a constraint on
+this workload at any traffic level the site will plausibly reach.
 
 **CPU is not the only ceiling, and probably not the first one.** Each render blocks on
 `api.alphaday.com`, so a single Node process is bounded by in-flight concurrency and upstream latency
@@ -125,10 +126,31 @@ plainly:** SWR means almost every render is a *background revalidation*, not a u
 is blocked on the queue, so upstream latency degrades throughput rather than user-visible TTFB. Take
 SWR away and the concurrency ceiling becomes the binding constraint immediately.
 
-> **The ~100 ms/render figure is asserted, not measured, and the whole instance-sizing argument rests
-> on it.** Calibrate it against a real page during Phase 2 — render one project page under load and
-> measure CPU time and wall-clock separately. If CPU per render is materially above ~100 ms, or
-> upstream latency above ~500 ms, revisit §2.7 before launch rather than after.
+**Calibrated — the ~100 ms/render figure was wrong by two orders of magnitude.**
+`scripts/calibrate-render.js` builds the real project-landing tree as an SSR bundle and renders 30
+distinct production payloads in a loop, reporting CPU and wall-clock separately.
+
+| | Measured |
+| --- | --- |
+| CPU per render | **0.74 ms** (0.70–0.74 across five runs of 1,000) |
+| Wall-clock | 0.59 ms median, 1.00 ms p95, 3.32 ms p99 |
+| Throughput | ~1,400 renders/sec on one core |
+| Output | 59.1 KB HTML per page |
+| Process heap | ~119 MB after 1,000 renders |
+
+Measured on Apple-silicon arm64, not the Neoverse N1 of a `t4g.micro`. Allowing a conservative 3×
+for the slower core puts a real render at **~2.2 ms** — the number the table above uses. The
+assertion was ~45× too pessimistic even after that adjustment.
+
+**The sizing decision in §2.1 survives, but not for the reason it was made.** The instance was
+justified on CPU headroom; CPU turns out to be irrelevant. What actually bounds this box is memory
+and in-flight concurrency, exactly as the paragraph above suspected. `t4g.micro` stays the right
+choice because 1 GB is the smallest sensible Node footprint, not because 0.2 vCPU was needed —
+`t4g.nano` is rejected on its 0.5 GB, not on its CPU.
+
+> **The corollary is that a CPU-hungry misconfiguration now has nothing to hide behind.** Render is
+> 0.74 ms; there is no headroom argument left to absorb something that costs 30. See §2.3 on
+> compression, which is the specific instance of this.
 
 Miss rates are pitched conservatively because CloudFront caches **per edge location**: a page fetched
 from twenty different edges produces twenty origin fetches, where a single origin cache would have
@@ -182,6 +204,23 @@ Cache-Control: public, max-age=0, s-maxage=3600,
   This is what keeps render volume low and TTFB flat.
 - `stale-if-error` — the edge serves stale when the origin errors. This is what makes a deploy or an
   instance replacement invisible. Set it generously; a week of stale beats an error page.
+
+**Compress at quality 4, never quality 11.** Measured on the same 59 KB render (§1.4):
+
+| Setting | CPU | Output | Cost vs one render |
+| --- | --- | --- | --- |
+| gzip level 6 | 0.30 ms | 11.6 KB | 0.4× |
+| **brotli quality 4** | **0.29 ms** | **9.9 KB** | **0.4×** |
+| brotli quality 11 | 31.0 ms | 8.3 KB | **42×** |
+
+Brotli 4 strictly dominates gzip 6 — smaller output for the same CPU, so there is no reason to
+prefer gzip. Brotli 11 buys 1.6 KB (16%) for **42 times the render's entire CPU cost**, which would
+make compression 97% of the per-request CPU and single-handedly invalidate the sizing in §1.4. Many
+Node compression middlewares default to the library maximum; this one must be set explicitly.
+
+Better still, **let CloudFront compress at the edge** and have the origin emit uncompressed HTML.
+The edge does it once per cached object rather than once per origin render, and it costs the origin
+nothing.
 
 Two behaviours worth knowing, both confirmed against
 [a published behavioural test](https://dev.classmethod.jp/en/articles/cloudfront-stale-if-error-origin-timeout-behavior/):
@@ -264,6 +303,41 @@ available on the site, and it needs no infrastructure decision at all.
 **Revisit this** if the API begins serving arbitrary user- or editor-supplied imagery at volume — a
 per-project hero image uploaded through a CMS, say. That is the workload a runtime handler is for,
 and it does not exist yet.
+
+**Implemented — `scripts/optimize-images.js`.** Bundled assets went from **6,280 KB to 2,231 KB, a
+64% reduction**, with no change to any rendered dimension.
+
+| | Before | After | |
+| --- | --- | --- | --- |
+| Four contributor portraits | 1,783 KB | **28.8 KB** | −98.4% |
+| `logo-white.svg` | 218 KB | **71 KB** | −67% |
+| 53 bundled rasters → WebP | 3,597 KB | 1,446 KB | −60% |
+
+Three notes on how this was done, because each was a judgement call:
+
+- **Converted at the source, not in a Vite plugin.** These are marketing assets that change a few
+  times a year; re-encoding all 53 on every CI build would spend deploy time producing byte-identical
+  output, and would put a native encoder (`sharp`) in the critical path of every deploy. Converting
+  once puts the result in the diff where a human can see it. The script is idempotent, so it stays
+  usable when someone adds an image. `sharp` is a `devDependency`, not a build dependency.
+- **Fidelity was measured, not assumed.** Every conversion was compared against its original from
+  git: median **41.1 dB PSNR**, worst **35.2 dB** — imperceptible to good across the set. The two
+  files where WebP came out larger were left as they were.
+- **Dimensions were preserved.** Downscaling needs each asset's display size, which the script has no
+  way to know; it reports oversized candidates instead of guessing. The contributor portraits are the
+  one exception — their 80 px display size was read off the markup first, so 400×400 (and one
+  790×796) became 240×240. Three assets remain wider than 2,000 px and are flagged for a human:
+  `alpha-notifications` (2607×1449), `superfeed-transparent` and `superfeed` (both 2048×1152).
+
+**The circular avatar crop moved from the asset to CSS.** The old portraits were bitmaps wrapped in
+an SVG whose rounded `<rect>` supplied the circle. A plain WebP is square, so `rounded-full` had to
+be added at both call sites — without it the avatars would have silently become squares. This is the
+kind of thing that makes format changes riskier than they look.
+
+**Separately: 610 KB of raster files in `src/images` are imported by nothing.** Vite does not bundle
+them, so they cost nothing at runtime and this is repo hygiene rather than page weight — but
+`on-the-go.jpg` alone is 445 KB. The script lists them; deleting them is a call for whoever knows
+whether they are coming back.
 
 ### 2.7 Deploys and the upgrade path
 
@@ -994,9 +1068,11 @@ it is not an AI opt-in control.
 
 Runs in parallel with Phase 1. **This phase gates the entire content programme.**
 
-- [ ] **Calibrate the §1.4 render cost** against a real project page under load — CPU time and
-      wall-clock measured separately. Do this early; it validates or invalidates the instance sizing
-- [ ] Implement the image optimisation approach decided in Phase 1 (§2.6)
+- [x] **Calibrate the §1.4 render cost** — `scripts/calibrate-render.js`. Result: **0.74 ms CPU per
+      render**, not the asserted 100 ms. §1.4 and §2.3 updated. The instance sizing survives on
+      memory grounds; the CPU argument behind it did not
+- [x] Implement the image optimisation approach decided in Phase 1 (§2.6) —
+      `scripts/optimize-images.js`. **6,280 KB → 2,231 KB of bundled assets (64% smaller)**
 - [ ] TanStack Start scaffold, route map per §3.2, CI build pipeline
 - [ ] Route test asserting `/projects/{slug}/this-week` resolves to the digest route, not `$topic`
 - [ ] `t4g.micro` provisioned in an ASG (min=max=1); per-route `Cache-Control` per §2.3; CloudFront
@@ -1009,6 +1085,27 @@ Runs in parallel with Phase 1. **This phase gates the entire content programme.*
 - [ ] `/dashboards` hub and server-rendered internal linking (§5.8)
 - [ ] Blog migrated to `/blog` with 301s from Substack
 - [ ] Server-side data fetching; `VITE_X_APP_SECRET` retired (§5.10)
+
+**SSR blockers found while building the calibration harness** — each one crashes or corrupts a
+server render today, and each has to be fixed on the way to Phase 2 regardless of framework:
+
+- **`useCookieChoice` reads `localStorage` unguarded on every render**
+  ([`src/utils/CookieContext.jsx:15`](../src/utils/CookieContext.jsx)). There is no `localStorage`
+  on the server, so this throws before any HTML is produced. Guarding it is necessary but not
+  sufficient: the server cannot know a consent choice, so it must render the unconsented state and
+  let the client correct it after hydration — which means the consent-gated `<script>` tags in
+  `<Seo>` are a hydration mismatch waiting to happen unless they are client-only by construction.
+- **`<Seo>`'s canonical fallback reads `window.location`**
+  ([`src/components/seo.jsx`](../src/components/seo.jsx)). Under SSR there is no `window`, so the
+  fallback path throws rather than falling back. §5.1 makes canonical a required field precisely to
+  delete this path — the migration should remove the fallback, not port it.
+- **`Navbar` reads `window.pageYOffset`** ([`src/components/navbar/Navbar.jsx`](../src/components/navbar/Navbar.jsx)),
+  inside a handler rather than at render, so it is survivable — but it is the same class of thing
+  and wants an audit pass rather than a one-off fix.
+
+`ProjectLandingContainer` has been split so the rendered tree (`ProjectLandingPage`) takes data as a
+prop, with the fetch left in the container. That is the shape a server loader needs, and it is what
+made the calibration measurable at all.
 
 ### Phase 3 · Month 3 onward — Corpus infrastructure
 

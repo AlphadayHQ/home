@@ -1,6 +1,6 @@
 import React from "react";
 import { Section } from "../../shared";
-import alphaday from "../../images/logo.png";
+import alphaday from "../../images/logo.webp";
 import discordLogo from "../../images/socials/discord.svg";
 import twitterLogo from "../../images/socials/twitter.svg";
 import linkedinLogo from "../../images/socials/linkedin.svg";

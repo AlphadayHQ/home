@@ -3,7 +3,7 @@ import { Section } from "../../shared";
 import ArrowDownSVG from "../../assets/svg/arrow-down.svg";
 import GooglePlayButton from "./GooglePlayButton";
 import AppleStoreButton from "./AppleStoreButton";
-import SuperfeedImage from "../../images/mobile/superfeed-transparent.png";
+import SuperfeedImage from "../../images/mobile/superfeed-transparent.webp";
 
 const HeroTextSm = () => (
   <h1 className="md:hidden flex flex-col text-black self-start text-center m-0 md:text-left font-medium leading-[60px] sm:leading-[70px] md:leading-[100px] lg:leading-[125px] text-[42px] sm:text-5xl md:text-7xl lg:text-[98px]">

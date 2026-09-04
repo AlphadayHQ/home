@@ -253,7 +253,17 @@ function ProjectLandingContainer({ slug }) {
   if (state.status === "not-found") return <Error404 />;
   if (state.status === "error") return <ErrorState />;
 
-  const data = state.data;
+  return <ProjectLandingPage data={state.data} />;
+}
+
+/**
+ * The rendered page, given data. Split out from the container so the tree can
+ * be rendered without a fetch — that is what the Phase 2 SSR calibration
+ * harness measures (`scripts/calibrate-render.js`), and it is the shape the
+ * TanStack Start migration needs anyway, where the data arrives from a server
+ * loader rather than a `useEffect`.
+ */
+export function ProjectLandingPage({ data }) {
   const canonical = canonicalFor(`/${data.slug}`);
   const dashboardUrl = `${config.alphadayApp.replace(/\/$/, "")}/b/${data.slug}`;
   const jsonLd = buildJsonLd({ data, canonical });

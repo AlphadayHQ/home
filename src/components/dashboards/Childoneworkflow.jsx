@@ -9,9 +9,9 @@ import {
   FlipCardButton,
   FlipCardClose,
 } from "../../shared";
-import calendar from "../../images/workflow/calendar.png";
-import list from "../../images/workflow/list.png";
-import market from "../../images/workflow/market.png";
+import calendar from "../../images/workflow/calendar.webp";
+import list from "../../images/workflow/list.webp";
+import market from "../../images/workflow/market.webp";
 
 function ChildOneWorkflow() {
   const [card1Toggler, setCard1Toggler] = useState(false);

@@ -26,7 +26,7 @@ import {
 import Seo from "../components/seo";
 import { canonicalFor } from "../utils/canonical";
 import CONFIG from "../config";
-import alphaday from "../images/logo-notext.png";
+import alphaday from "../images/logo-notext.webp";
 import { API_DOCS } from "../api/docs-spec.generated";
 
 const SWAGGER_URL = "https://api.alphaday.com/docs/";

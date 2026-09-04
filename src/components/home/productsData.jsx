@@ -1,8 +1,8 @@
-import dashboards from "../../images/products/dashboards.jpg";
-import apimcp from "../../images/products/apimcp.jpg";
-import pulse from "../../images/products/pulse.jpg";
-import recipes from "../../images/products/recipes.jpg";
-import alphadaytv from "../../images/products/alphadaytv.jpg";
+import dashboards from "../../images/products/dashboards.webp";
+import apimcp from "../../images/products/apimcp.webp";
+import pulse from "../../images/products/pulse.webp";
+import recipes from "../../images/products/recipes.webp";
+import alphadaytv from "../../images/products/alphadaytv.webp";
 import CONFIG from "../../config";
 
 // The source screenshots are tall deck slides. `focus` picks the region worth

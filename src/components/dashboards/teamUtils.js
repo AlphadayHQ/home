@@ -1,11 +1,11 @@
-import member1 from "../../images/team/member-1.jpg";
-import member3 from "../../images/team/member-3.jpg";
-import member4 from "../../images/team/member-4.jpg";
-import member5 from "../../images/team/member-5.jpg";
-import member6 from "../../images/team/member-6.jpg";
-import member7 from "../../images/team/member-7.jpg";
-import member9 from "../../images/team/member-9.jpg";
-import member10 from "../../images/team/member-10.jpg";
+import member1 from "../../images/team/member-1.webp";
+import member3 from "../../images/team/member-3.webp";
+import member4 from "../../images/team/member-4.webp";
+import member5 from "../../images/team/member-5.webp";
+import member6 from "../../images/team/member-6.webp";
+import member7 from "../../images/team/member-7.webp";
+import member9 from "../../images/team/member-9.webp";
+import member10 from "../../images/team/member-10.webp";
 
 /**
  * For every team member card the the info tooltip is
