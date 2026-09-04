@@ -640,11 +640,12 @@ Technical work only. Content sequencing is
 
 ### Phase 0 · Week 1 — Patch the live site
 
-> **Status: implemented — 11 of 12 items.** The outstanding item (`robots.txt` on
-> `app.alphaday.com`) lives in the `alphaFront` repo and is not actionable from here. `yarn build`
-> runs green from a clean environment; the sitemap emits 72 URLs (6 static, 66 landing pages, each
-> with a real `updated_at`). Everything below the checklist records decisions taken during the work
-> that were not in the original plan — read those before changing any of it.
+> **Status: complete — 12 of 12 items.** The last one shipped in the `alphaFront` repo on branch
+> `chore/seo-app-shell-noindex` (commit `57d91d8`), branched from `dev`; it is committed but not
+> pushed or merged. `yarn build` runs green from a clean environment in both repos; the sitemap
+> emits 72 URLs (6 static, 66 landing pages, each with a real `updated_at`). Everything below the
+> checklist records decisions taken during the work that were not in the original plan — read those
+> before changing any of it.
 
 The rebuild takes months; production bleeds throughout. These are hours of work on the existing SPA.
 
@@ -672,9 +673,9 @@ Then, in dependency order:
       on an HTTP 200, so the JS-blind crawlers of §1.1 (GPTBot, ClaudeBot, PerplexityBot, CCBot)
       still see `index, follow` and the home page's title in the static head. A real status code
       is Phase 2 (§5.2); this closes the Google half now
-- [ ] Real `robots.txt` on `app.alphaday.com`; `noindex` or canonical the app shell —
-      **the only Phase 0 item not done here**: it lives in the `alphaFront` repo, which has no
-      `robots.txt` at any path (verified)
+- [x] Real `robots.txt` on `app.alphaday.com`; `noindex` or canonical the app shell — done in the
+      `alphaFront` repo, branch `chore/seo-app-shell-noindex` off `dev`. **Chose `noindex` over
+      canonical**, see below
 - [x] Fix `berachain` — **separate from the sitemap work**: it is a homepage link, not a sitemap
       entry, so switching the source does not touch it
 - [x] Fix the `href="#"` dead link on the homepage (finding #19)
@@ -724,7 +725,30 @@ Then, in dependency order:
    Vite only loads them into `import.meta.env` for the bundle — so the sitemap step failed for
    anyone outside CI, where the workflows set the variables as step-level `env`. The flag is
    correct in both places: CI ignores the missing file and uses the real environment.
-8. **`meta[name="robots"]` joined `MANAGED_META`.** The dedupe hook existed to stop `index.html`'s
+8. **The app shell is `noindex`, not canonicalled — §5.9 offered both.** Every route on
+   `app.alphaday.com` returns the same 3,252-byte contentless shell with HTTP 200, including
+   `/robots.txt` and `/sitemap.xml`. A canonical would have been the more surgical option, but it
+   fails twice here: it needs JavaScript to vary per route, which the model crawlers of §1.1 do not
+   run, and its only sensible target — `alphaday.com/{slug}` — does not exist for every board that
+   has a dashboard on the app (`berachain` being the known case). Canonicalling to a URL that
+   returns a soft 404 is worse than not canonicalling at all. A static `noindex, follow` in
+   `index.html` costs nothing, since the shell has no indexable content for any crawler, and works
+   without JavaScript.
+
+   **`robots.txt` deliberately allows crawling.** `Disallow` blocks crawling, not indexing: a
+   crawler that cannot fetch the page never reads the `noindex`, and Google still lists blocked URLs
+   it finds linked elsewhere as bare entries with no snippet — strictly worse than either
+   alternative. Crawling must stay open for the directive in the HTML to be readable. Once Search
+   Console shows the URLs dropped out (weeks, not days), a `Disallow` can be added to save crawl
+   budget; adding it now would freeze them in the index in their current state.
+
+   **Verify after deploy** that `https://app.alphaday.com/robots.txt` returns `text/plain` and not
+   the shell. Files in `public/` reach S3 and are served ahead of the SPA fallback — confirmed via
+   `/favicon.ico`, which returns its real content type — but a CloudFront Function or Lambda@Edge
+   rewrite on that distribution could still intercept the path, and that could not be checked
+   without AWS access.
+
+9. **`meta[name="robots"]` joined `MANAGED_META`.** The dedupe hook existed to stop `index.html`'s
    static tags from colliding with Helmet's, but `robots` was not in its selector — so a `noindex`
    page shipped two conflicting directives. `noindex` wins today only because Google resolves
    conflicts by taking the most restrictive; §5.9's app shell needs the markup to be right, not
