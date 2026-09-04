@@ -75,7 +75,7 @@ function Products() {
               {boards.map(({ slug, name }) => (
                 <a
                   key={slug}
-                  href={`/${slug}`}
+                  href={`/projects/${slug}`}
                   aria-label={`${name} dashboard`}
                   className="group inline-flex items-center gap-1 bg-surface border border-surface-border rounded-lg px-3.5 py-1.75 font-semibold text-[13px] text-text hover:border-primary transition-colors"
                 >

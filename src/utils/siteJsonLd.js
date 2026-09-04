@@ -1,5 +1,5 @@
 import CONFIG from "../config";
-import { canonicalFor } from "./canonical";
+import { canonicalFor } from "../seo/head";
 
 const ORIGIN = canonicalFor("/").replace(/\/$/, "");
 

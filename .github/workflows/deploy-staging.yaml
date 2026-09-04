@@ -30,11 +30,23 @@ jobs:
         with:
           cmd: build # will run `yarn build` command
         env:
-          VITE_API_BASE_URL: https://api.gammaday.com/
-          VITE_X_APP_ID: sBnL0RkWkM
-          VITE_X_APP_SECRET: 21gPAwU3uOUisMJJFJjaotbDxCmvCHKMh76Xlvb8XK2RkkvZHhtSfcUfoz6QiFx8zhZf31vxvKAFD7pkdmbjHiKwoVuS2iDOLjvC
+          API_BASE_URL: https://api.gammaday.com/
+          API_APP_ID: ${{ secrets.API_APP_ID }}
+          API_APP_SECRET: ${{ secrets.API_APP_SECRET }}
 
-      - uses: kefranabg/s3-sync-action@master
+      # ------------------------------------------------------------------
+      # BLOCKED — this step no longer matches the build output.
+      #
+      # The app is a TanStack Start server (dist/client + dist/server, run via
+      # `yarn start`), not a static bundle. Syncing dist/ to S3 would publish a
+      # client tier with no origin to render it: every route would 404.
+      #
+      # Unblocking this is the origin-cutover item in Phase 2 (§2.1, §2.5):
+      # the t4g.micro ASG has to exist and CloudFront has to point at it. Until
+      # then this workflow must not run — see docs/seo-strategy.md.
+      # ------------------------------------------------------------------
+      - if: ${{ false }}
+        uses: kefranabg/s3-sync-action@master
         with:
           args: --follow-symlinks --delete --exclude '.git/*' --exclude '.github/*' --exclude '.gitignore' --exclude 'README.md'
         env:

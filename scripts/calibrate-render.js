@@ -12,9 +12,8 @@
  *
  *   node scripts/calibrate-render.js [--renders 300] [--warmup 50] [--slug avalanche]
  *
- * With VITE_API_BASE_URL / VITE_X_APP_ID / VITE_X_APP_SECRET set it calibrates
- * against a live payload; otherwise it uses the committed mock, which matches
- * the same contract. The payload shape matters — it is what the render walks —
+ * With API_APP_ID / API_APP_SECRET set it calibrates against live payloads;
+ * otherwise it uses the committed mocks, which match the same contract. The payload shape matters — it is what the render walks —
  * so the report states which one it used and how large the output was.
  */
 import { execFileSync } from "node:child_process";
@@ -62,13 +61,13 @@ function build() {
  * rotates across as many as it can get.
  */
 async function loadPayloads() {
-  // Default to production, not VITE_API_BASE_URL. `.env.local` points at
+  // Default to production, not the configured API base. `.env.local` points at
   // staging, which carries a single landing page — calibrating against it
   // would measure one payload and call it a distribution. The corpus this has
   // to render lives on the production API.
   const root = arg("api", "https://api.alphaday.com").replace(/\/$/, "");
-  const id = process.env.VITE_X_APP_ID;
-  const secret = process.env.VITE_X_APP_SECRET;
+  const id = process.env.API_APP_ID ?? process.env.VITE_X_APP_ID;
+  const secret = process.env.API_APP_SECRET ?? process.env.VITE_X_APP_SECRET;
 
   if (id && secret) {
     const headers = { "x-app-id": id, "x-app-secret": secret };

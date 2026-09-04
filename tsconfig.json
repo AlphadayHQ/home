@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "types": ["node", "vite/client"],
+
+    /*
+     * The presentational components are still .jsx and stay that way for now:
+     * the invariants §5 asks the compiler to enforce live in the routing and
+     * head layer, not in a button. `checkJs: false` keeps 9,400 lines of
+     * untyped JSX from failing the build while the routes above them are
+     * fully typed.
+     */
+    "allowJs": true,
+    "checkJs": false
+  },
+  "include": ["src", "scripts", "vite.config.ts"],
+  "exclude": ["node_modules", "dist", "src/**/*.generated.js"]
+}

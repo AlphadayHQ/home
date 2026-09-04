@@ -10,9 +10,7 @@ import {
 } from "lucide-react";
 import alphaday from "../images/logo-notext.webp";
 import { CodeBlock } from "../components/ui/CodeBlock";
-import Seo from "../components/seo";
 import CONFIG from "../config";
-import { canonicalFor } from "../utils/canonical";
 import {
   API_COMMANDS,
   API_STATS,
@@ -106,11 +104,6 @@ const ApiPage = () => {
 
   return (
     <div className="api-root min-h-screen bg-background text-text flex flex-col w-full relative selection:bg-primary/30 font-sans">
-      <Seo
-        title="Alphaday API"
-        description="All of crypto. One API. 1,000+ data sources, MCP and REST."
-        canonical={canonicalFor(CONFIG.api)}
-      />
 
       {/* 1. Minimal Nav */}
       <nav

@@ -1,19 +1,14 @@
-import React, { useEffect, useState } from "react";
-import Seo from "../components/seo";
-import { canonicalFor } from "../utils/canonical";
-import Error404 from "../components/Error404";
-import { fetchLandingPageBySlug } from "../api/boards";
-import config from "../config";
-import Hero from "../components/landing/Hero";
-import CategoryGrid from "../components/landing/CategoryGrid";
-import DashboardScreenshot from "../components/landing/DashboardScreenshot";
-import ValueProps from "../components/landing/ValueProps";
-import BottomCTA from "../components/landing/BottomCTA";
-import LandingFooter from "../components/landing/LandingFooter";
-import LongFormSection from "../components/landing/LongFormSection";
-import FAQ from "../components/landing/FAQ";
-import SiblingDashboards from "../components/landing/SiblingDashboards";
-import { Footer, Navbar } from "../components";
+import config from "../../config";
+import Hero from "./Hero";
+import CategoryGrid from "./CategoryGrid";
+import DashboardScreenshot from "./DashboardScreenshot";
+import ValueProps from "./ValueProps";
+import BottomCTA from "./BottomCTA";
+import LandingFooter from "./LandingFooter";
+import LongFormSection from "./LongFormSection";
+import FAQ from "./FAQ";
+import SiblingDashboards from "./SiblingDashboards";
+import { Footer, Navbar } from "../index";
 
 function slugToName(slug) {
   if (!slug) return null;
@@ -44,7 +39,7 @@ function SkelBar({ className = "", tone = "hero", delay = 0 }) {
   );
 }
 
-function LoadingState({ slug }) {
+export function LoadingState({ slug }) {
   const projectName = slugToName(slug);
 
   return (
@@ -143,20 +138,9 @@ function LoadingState({ slug }) {
   );
 }
 
-function ErrorState() {
+export function ErrorState() {
   return (
     <>
-      {/* Without this the error state renders a 200 carrying index.html's
-          static head — the home page's title, description and `index, follow`,
-          with no canonical. An API outage would turn every project URL into an
-          indexable near-duplicate of /. `noindex` risks a good page dropping
-          out until the next recrawl, which is the cheaper of the two failures
-          by a wide margin. */}
-      <Seo
-        title="Temporarily unavailable — Alphaday"
-        description="This dashboard could not be loaded right now."
-        robots="noindex, follow"
-      />
       <div className="min-h-screen bg-eerie flex flex-col items-center justify-center px-6 text-center">
         <h1 className="text-platinum text-2xl mb-3">Something went wrong</h1>
         <p className="text-aluminium mb-6">
@@ -170,92 +154,6 @@ function ErrorState() {
   );
 }
 
-function buildJsonLd({ data, canonical }) {
-  const graph = [
-    {
-      "@type": "SoftwareApplication",
-      name: `${data.name} Dashboard`,
-      description: data.meta.description,
-      url: canonical,
-      applicationCategory: "FinanceApplication",
-      operatingSystem: "Web",
-      offers: {
-        "@type": "Offer",
-        price: "0",
-        priceCurrency: "USD",
-      },
-      publisher: {
-        "@type": "Organization",
-        name: "Alphaday",
-        url: "https://alphaday.com",
-      },
-    },
-    {
-      "@type": "BreadcrumbList",
-      itemListElement: [
-        {
-          "@type": "ListItem",
-          position: 1,
-          name: "Alphaday",
-          item: "https://alphaday.com",
-        },
-        {
-          "@type": "ListItem",
-          position: 2,
-          name: data.name,
-          item: canonical,
-        },
-      ],
-    },
-  ];
-
-  if (data.faqs?.length) {
-    graph.push({
-      "@type": "FAQPage",
-      mainEntity: data.faqs.map((faq) => ({
-        "@type": "Question",
-        name: faq.question,
-        acceptedAnswer: {
-          "@type": "Answer",
-          text: faq.answer,
-        },
-      })),
-    });
-  }
-
-  return {
-    "@context": "https://schema.org",
-    "@graph": graph,
-  };
-}
-
-function ProjectLandingContainer({ slug }) {
-  const [state, setState] = useState({ status: "loading", data: null });
-
-  useEffect(() => {
-    let cancelled = false;
-    setState({ status: "loading", data: null });
-    fetchLandingPageBySlug(slug)
-      .then((data) => {
-        if (cancelled) return;
-        if (!data) setState({ status: "not-found", data: null });
-        else setState({ status: "ready", data });
-      })
-      .catch(() => {
-        if (!cancelled) setState({ status: "error", data: null });
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [slug]);
-
-  if (state.status === "loading") return <LoadingState slug={slug} />;
-  if (state.status === "not-found") return <Error404 />;
-  if (state.status === "error") return <ErrorState />;
-
-  return <ProjectLandingPage data={state.data} />;
-}
-
 /**
  * The rendered page, given data. Split out from the container so the tree can
  * be rendered without a fetch — that is what the Phase 2 SSR calibration
@@ -264,19 +162,10 @@ function ProjectLandingContainer({ slug }) {
  * loader rather than a `useEffect`.
  */
 export function ProjectLandingPage({ data }) {
-  const canonical = canonicalFor(`/${data.slug}`);
   const dashboardUrl = `${config.alphadayApp.replace(/\/$/, "")}/b/${data.slug}`;
-  const jsonLd = buildJsonLd({ data, canonical });
 
   return (
     <>
-      <Seo
-        title={data.meta.title}
-        description={data.meta.description}
-        canonical={canonical}
-        ogImage={data.meta.og_image}
-        jsonLd={jsonLd}
-      />
       <Navbar />
       <Hero
         headline={data.hero.headline}
@@ -308,5 +197,3 @@ export function ProjectLandingPage({ data }) {
     </>
   );
 }
-
-export default ProjectLandingContainer;

@@ -1073,21 +1073,65 @@ Runs in parallel with Phase 1. **This phase gates the entire content programme.*
       memory grounds; the CPU argument behind it did not
 - [x] Implement the image optimisation approach decided in Phase 1 (§2.6) —
       `scripts/optimize-images.js`. **6,280 KB → 2,231 KB of bundled assets (64% smaller)**
-- [ ] TanStack Start scaffold, route map per §3.2, CI build pipeline
-- [ ] Route test asserting `/projects/{slug}/this-week` resolves to the digest route, not `$topic`
-- [ ] `t4g.micro` provisioned in an ASG (min=max=1); per-route `Cache-Control` per §2.3; CloudFront
-      origin timeouts tuned per §2.5; origin cut over
-- [ ] Shared head helper with **compile-time-required canonical** (§5.1)
-- [ ] Real 404s and 301s verified end to end (§5.2)
-- [ ] Index state field, `X-Robots-Tag` emission, and sitemap gating (§4.2)
-- [ ] Sitemap index infrastructure, split by tier, honest `lastmod` (§4.4)
-- [ ] Migrate the 66 project pages; 301 map deployed and verified (Appendix C)
-- [ ] `/dashboards` hub and server-rendered internal linking (§5.8)
+- [x] TanStack Start scaffold, route map per §3.2, CI build pipeline
+- [x] Route test asserting `/projects/{slug}/this-week` resolves to the digest route, not `$topic` —
+      `src/__tests__/route-precedence.test.ts`
+- [ ] `t4g.micro` provisioned in an ASG (min=max=1); CloudFront origin timeouts tuned per §2.5;
+      origin cut over. **Cache-Control per §2.3 is done** (`server.mjs`); the rest needs AWS access
+- [x] Shared head helper with **compile-time-required canonical** (§5.1) — `src/seo/head.ts`
+- [x] Real 404s and 301s verified end to end (§5.2) — asserted in `scripts/verify-ssr.mjs`
+- [x] Index state field, `X-Robots-Tag` emission, and sitemap gating (§4.2) — `src/seo/indexState.ts`
+- [x] Sitemap index infrastructure, split by tier, honest `lastmod` (§4.4) — `scripts/build-sitemap.mjs`
+- [ ] Migrate the 66 project pages; 301 map deployed and verified (Appendix C). **Routing is done** —
+      `/{slug}` 301s to `/projects/{slug}` generically; deployment and verification need the cutover
+- [x] `/dashboards` hub and server-rendered internal linking (§5.8) — all 66 pages linked, server-rendered
 - [ ] Blog migrated to `/blog` with 301s from Substack
-- [ ] Server-side data fetching; `VITE_X_APP_SECRET` retired (§5.10)
+- [x] Server-side data fetching; `VITE_X_APP_SECRET` retired (§5.10) — `src/server/landingPages.ts`
 
-**SSR blockers found while building the calibration harness** — each one crashes or corrupts a
-server render today, and each has to be fixed on the way to Phase 2 regardless of framework:
+**The rebuild is built and verified locally.** `scripts/verify-ssr.mjs` asserts every testable
+finding in [Appendix B](#appendix-b--regression-guard) against real HTTP responses from the running
+server — **43/43 pass**, against a live SPA that fails almost all of them. Run it with the server up:
+
+```
+yarn build && yarn start          # terminal 1
+node scripts/verify-ssr.mjs       # terminal 2
+```
+
+What the migration actually changed, measured on `/projects/ethereum`:
+
+| | Live SPA | Rebuild |
+| --- | --- | --- |
+| Server-rendered words | 0 | **1,420** |
+| Unknown URL | `200` | **`404`** |
+| `/api` canonical | `https://alphaday.com/` | **`https://alphaday.com/api`** |
+| Project pages linked from a hub | 7 | **66** |
+| `/blog`, `/b/{slug}` | JS `location.replace()` | **`301`** |
+| `X-Robots-Tag` | absent | on every response |
+| App secret in client bundle | present | **absent** |
+
+Three things worth recording because they are not obvious from the checklist:
+
+- **The head helper enforces §5.1 with a discriminated union, not a runtime check.**
+  `seoHead({ index: true })` requires `canonical`; `seoHead({ index: false })` types it as `never`.
+  Omitting a canonical on an indexable route fails the build, and pairing `noindex` with a canonical
+  — the conflicting signal — is equally unrepresentable. There is no fallback left to get wrong.
+- **`noindex` is the default, at the root.** `__root.tsx` emits `noindex, follow`, and indexable
+  routes override it. Anything that reaches a client without having declared itself indexable is
+  excluded rather than included, which is §4.2's "promotion is an action, not an absence" made
+  structural.
+- **The sitemap imports the same module the routes do.** `scripts/build-sitemap.mjs` calls
+  `belongsInSitemap` from `src/seo/indexState.ts` — Node strips the types on import, so it is one
+  definition rather than a copy of the rule. The live site's sitemap and page set drift because they
+  are derived separately; these cannot.
+
+Two JSON-LD defects were introduced and caught by extending the guard rather than by reading the
+code: the site graph was emitted twice (the shared builder already prepends `Organization` and
+`WebSite`, and they were passed in again), and route-level structured data shipped as a bare array
+with no `@context`, which parses as HTML, validates as markup, and is silently ignored by every
+consumer. Both are now asserted against.
+
+**SSR blockers found while building the calibration harness** — each one crashed or corrupted a
+server render, and all three are now fixed:
 
 - **`useCookieChoice` reads `localStorage` unguarded on every render**
   ([`src/utils/CookieContext.jsx:15`](../src/utils/CookieContext.jsx)). There is no `localStorage`
@@ -1103,9 +1147,18 @@ server render today, and each has to be fixed on the way to Phase 2 regardless o
   inside a handler rather than at render, so it is survivable — but it is the same class of thing
   and wants an audit pass rather than a one-off fix.
 
-`ProjectLandingContainer` has been split so the rendered tree (`ProjectLandingPage`) takes data as a
-prop, with the fetch left in the container. That is the shape a server loader needs, and it is what
-made the calibration measurable at all.
+`ProjectLandingContainer` is gone. The rendered tree became
+`src/components/landing/ProjectLandingPage.jsx`, taking data as a prop; the fetch moved to a server
+function. `LoadingState` and `ErrorState` survive as the route's `pendingComponent` and
+`errorComponent` — they are still reached on a client-side navigation, which is the only place a
+loading state exists now that the first render is server-side.
+
+**Still blocking merge: the deploy.** The build no longer produces a static tree — it produces
+`dist/client` plus `dist/server`, run by `server.mjs`. The S3 sync step in all three workflows would
+publish a client tier with no origin to render it, so it is disabled behind `if: ${{ false }}` with
+the reason inline. The workflows also now read `API_APP_ID` / `API_APP_SECRET` from GitHub secrets
+instead of carrying `VITE_X_APP_SECRET` in plaintext — **those secrets do not exist yet and must be
+created, and the old credential should be rotated, because it is in the git history of this repo.**
 
 ### Phase 3 · Month 3 onward — Corpus infrastructure
 

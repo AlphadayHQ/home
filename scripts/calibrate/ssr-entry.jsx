@@ -8,7 +8,7 @@
  */
 import { renderToString } from "react-dom/server";
 import { HelmetProvider } from "react-helmet-async";
-import { ProjectLandingPage } from "../../src/containers/ProjectLandingContainer";
+import { ProjectLandingPage } from "../../src/components/landing/ProjectLandingPage";
 
 /**
  * No CookieProvider: it reads `localStorage` on every render and would throw
