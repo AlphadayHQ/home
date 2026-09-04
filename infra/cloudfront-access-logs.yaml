@@ -1,0 +1,104 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+# CloudFront standard logging (v2) for alphaday.com - docs/seo-strategy.md 7.1.
+#
+# MUST be deployed in us-east-1. The CloudWatch Logs delivery API is
+# us-east-1-only for CloudFront sources, regardless of where the bucket is.
+# The bucket itself is eu-west-1 and lives in cloudfront-log-storage.yaml,
+# which must be deployed first.
+#
+#   aws cloudformation deploy \
+#     --region us-east-1 \
+#     --stack-name alphaday-cf-access-logs \
+#     --template-file infra/cloudfront-access-logs.yaml
+#
+# VERIFIED against a live deploy on 2026-09-04. An earlier draft of this file
+# was written from the CloudFormation reference without being run, and was
+# wrong in four places: it named the legacy log bucket, used OutputFormat w3c,
+# used the uppercase {DistributionId} path variable, and omitted the field
+# delimiter. Each is annotated below. Do not "tidy" any of them back.
+
+Description: CloudFront standard logging (v2) delivery to S3, partitioned for Athena.
+
+Parameters:
+  DistributionId:
+    Type: String
+    Default: E1QZ56RJ904M5R
+    Description: alphaday.com / www.alphaday.com.
+
+  LogBucketName:
+    Type: String
+    Default: alphaday-cf-logs-v2
+    Description: >-
+      Created by the eu-west-1 cloudfront-log-storage stack. AWS attaches the
+      required bucket policy to it automatically when the delivery is created,
+      so there is no ownership-controls or ACL setup to do here. NOT the legacy
+      alphaday-cloudfront-logs bucket - see that template for why.
+
+Resources:
+  # 1. What is producing logs.
+  #
+  # Only ONE delivery source may exist per distribution, account-wide. If this
+  # resource fails with "This ResourceId has already been used in another
+  # Delivery Source in this account", something created one by hand: find it
+  # with `aws logs describe-delivery-sources --region us-east-1` and delete it
+  # before deploying, rather than renaming this resource.
+  AccessLogSource:
+    Type: AWS::Logs::DeliverySource
+    Properties:
+      Name: !Sub "${DistributionId}-access-logs"
+      ResourceArn: !Sub "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${DistributionId}"
+      LogType: ACCESS_LOGS
+
+  # 2. Where they go.
+  AccessLogDestination:
+    Type: AWS::Logs::DeliveryDestination
+    Properties:
+      Name: !Sub "${DistributionId}-access-logs-s3"
+      DestinationResourceArn: !Sub "arn:${AWS::Partition}:s3:::${LogBucketName}"
+      # plain, NOT w3c and NOT parquet.
+      #
+      # parquet is the one format that incurs CloudWatch vended-log charges;
+      # every other format delivers to S3 free.
+      #
+      # w3c is not a synonym for "plain text" - they are distinct formats with
+      # different headers. Measured: plain emits exactly ONE header line, a
+      # bare column-name row with no leading '#'. The Athena table therefore
+      # sets skip.header.line.count=1. Legacy logging emitted TWO '#'-prefixed
+      # lines and needed 2. Changing this format silently changes how many
+      # rows Athena discards from every file, with no error.
+      #
+      # OutputFormat cannot be changed in place. To change it, delete the
+      # delivery and destination and recreate them.
+      OutputFormat: plain
+
+  # 3. Pair them, and lay the keys out for partition projection.
+  AccessLogDelivery:
+    Type: AWS::Logs::Delivery
+    Properties:
+      DeliverySourceName: !Ref AccessLogSource
+      DeliveryDestinationArn: !GetAtt AccessLogDestination.Arn
+      FieldDelimiter: "\t"
+      # Hive-compatible paths turn each suffix token into a key=value segment,
+      # which is what lets the Athena table use partition projection with no
+      # crawler and no ALTER TABLE.
+      S3EnableHiveCompatiblePath: true
+      # LOWERCASE {distributionid}. AWS Glue and Athena expect lowercase
+      # partition names; the uppercase {DistributionId} variable emits a
+      # "DistributionId=" segment that will not match the projection template
+      # in athena/cf-logs-tables.sql.
+      #
+      # Because LogBucketName carries no prefix, CloudFront prepends
+      # "AWSLogs/{account-id}/CloudFront/" to this path by itself. Do not add
+      # it here. Observed result:
+      #   AWSLogs/aws-account-id=<acct>/CloudFront/distributionid=<id>/year=2026/month=09/day=04/
+      S3SuffixPath: "{distributionid}/{yyyy}/{MM}/{dd}"
+
+Outputs:
+  DeliveryId:
+    Description: Delivery id, for `aws logs describe-deliveries --region us-east-1`.
+    Value: !Ref AccessLogDelivery
+
+  LogPrefix:
+    Description: Athena LOCATION for the partitioned table.
+    Value: !Sub "s3://${LogBucketName}/AWSLogs/aws-account-id=${AWS::AccountId}/CloudFront/"

@@ -11,7 +11,7 @@ programmatic surfaces below; the product is the shop window, the layer is
 the thing.
 
 This file is generated at build time from the live API spec and a live MCP
-tools/list call. Generated: 2026-09-03
+tools/list call. Generated: 2026-09-04
 
 ## Start here
 

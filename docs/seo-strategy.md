@@ -43,7 +43,7 @@ nice-to-have.
 - [Appendix A — Cost model](#appendix-a--cost-model)
 - [Appendix B — Regression guard](#appendix-b--regression-guard)
 - [Appendix C — Migration and URL preservation](#appendix-c--migration-and-url-preservation)
-- [Appendix D — Enabling CloudFront access logs](#appendix-d--enabling-cloudfront-access-logs)
+- [Appendix D — CloudFront access logs](#appendix-d--cloudfront-access-logs)
 
 ---
 
@@ -611,10 +611,87 @@ on the highest-stated-priority work in the plan.
 It pays for itself twice: verified Googlebot fetches are also the crawl-status signal the pruning job
 in §4.3 depends on.
 
-**This is not yet enabled — see [Appendix D](#appendix-d--enabling-cloudfront-access-logs) for the
-runbook.** It could not be executed during implementation: AWS endpoints were unreachable from the
-build environment (`sts.eu-west-1.amazonaws.com` refused connection with valid credentials
-configured), so the commands are written out rather than run.
+**Live since 2026-09-04** on `alphaday.com` (`E1QZ56RJ904M5R`), queryable as
+`cf_logs.cf_logs_alphaday`. Configuration, corrections and cost: [Appendix D](#appendix-d--cloudfront-access-logs).
+Reproducible as [`infra/cloudfront-access-logs.yaml`](../infra/cloudfront-access-logs.yaml).
+
+**A three-year baseline also exists.** `app.alphaday.com` (`E3OO04R68QCILU`) has logged since
+**2023-06-05**, which supersedes an earlier claim in this document that no crawler data was
+recoverable — true of `alphaday.com`, wrong about the account.
+
+#### The baseline result — §1.1's premise, measured
+
+Queried 2026-09-04 against the full `app.alphaday.com` history (2023-06-05 onward, ~1 GB scanned,
+$0.005). **Model crawlers have been arriving for three years, and the premise holds.**
+
+| Crawler | 2023 | 2024 | 2025 | 2026 YTD | First seen |
+| --- | --- | --- | --- | --- | --- |
+| ClaudeBot | 25 | 432 | 4,153 | 2,123 | 2023-11-13 |
+| GPTBot | 113 | 1,859 | 3,260 | 1,311 | 2023-08-16 |
+| Meta-External | 0 | 160 | 3,095 | 2,831 | 2024-07-24 |
+| OAI-SearchBot | 0 | 115 | 1,410 | 1,667 | 2024-09-06 |
+| ChatGPT-User | 27 | 43 | 55 | 495 | 2023-06-12 |
+| Perplexity (bot + user) | 0 | 1 | 96 | 519 | 2024-12-07 |
+| CCBot | 28 | 96 | 115 | 303 | 2023-09-19 |
+| Claude-User | 0 | 0 | 4 | 144 | 2025-09-08 |
+| *Googlebot (reference)* | *4,940* | *29,221* | *18,601* | *9,440* | *2023-06-05* |
+| *"Google-Extended" — **not a real crawler**, see below* | *0* | *0* | *0* | *102* | *2026-05-31* |
+
+> **The `Google-Extended` row is excluded from the totals.** Google-Extended is a **robots.txt
+> control token, not a fetching user-agent** — Google's ordinary crawl infrastructure does the
+> fetching, and the token only governs how the crawled data may be used. It cannot appear in an
+> access log. Those 102 requests are therefore something else wearing the string: most likely an SEO
+> scanner probing robots handling, or a spoofed agent. Worth pulling the raw user-agent values
+> behind them and either relabelling the row or dropping it. It is ~1% of the total, so no
+> conclusion below moves either way. Keeping `Google-Extended` in `robots.txt` (§6.1) remains
+> correct — that is the one place the token *is* meaningful.
+
+Annualising 2026, model crawlers total **~13,900 fetches/year against Googlebot's ~14,000**. On this
+host they now fetch about as often as Googlebot does. **Zero 4xx/5xx** across every one of them.
+
+That parity is two-sided, and worth stating precisely before anyone quotes it: since 2024 model
+crawlers are **+413%** while Googlebot is **-52%**. The convergence is mostly real growth, but about
+a third of it is Googlebot pulling back.
+
+**The composition shift matters more than the total, and it is the finding.** The pre-training
+crawlers are flat-to-down annualised — ClaudeBot -24%, GPTBot -41% — while the *user-initiated*
+agents are climbing steeply: ChatGPT-User +1,230%, Claude-User +5,220%, Perplexity +699%. Those fire
+when a person asks a model about Alphaday and it goes and looks. That is not a proxy for audience
+one; it is audience one, observed directly, on a subdomain that has nothing to offer them.
+
+**What they actually fetched is the other half of the finding.** `/robots.txt` accounts for 7,487
+model-crawler fetches and `/sitemap.xml` a further 2,475 — **about 40% of their entire budget spent
+asking for directives.** Across all crawlers, `/robots.txt` on this host has returned `text/html` on
+an HTTP 200 **34,294 times**, still today, plus 7,830 more as a 301. It has served `text/plain` only
+8,894 times ever, and not since 2023-12-11. §5.9 identified that defect; this quantifies the cost of
+it, and it is the strongest available argument for landing Phase 0's `chore/seo-app-shell-noindex`
+branch, which is committed but not merged.
+
+**That last date has a cause, and it changes how the fix should be read.** This was never "the app
+had no robots.txt" — it *regressed*. `robots.txt` has never existed in the `alphaFront` repository
+at any commit before `chore/seo-app-shell-noindex`, so whatever served `text/plain` until
+2023-12-11 was uploaded to the S3 bucket by hand. Four days earlier:
+
+```
+f94d729  2023-12-07  ops: Add back --delete in zetta and prod deployment (skip-ci) (#170)
+```
+
+The prod deploy syncs `dist/` to S3 with `--follow-symlinks --delete`. Re-adding `--delete` meant
+the next deploy removed every object not present in `dist/` — including a hand-placed `robots.txt`.
+The gap between the workflow change and the last correct response is exactly one deploy cycle.
+
+This **validates the Phase 0 fix rather than merely explaining the past**: the file now lives in
+`packages/frontend/public/`, so it is built into `dist/`, so `--delete` cannot remove it. The
+regression is structurally prevented, not patched. It also means the 34,294 HTML responses have a
+specific, dated, non-recurring cause — worth knowing before assuming a CloudFront rewrite is
+shadowing the path.
+
+Read it with two caveats. This is the app subdomain, which has no useful content for a model crawler
+and never had an `llms.txt` — so these numbers are a **floor**, not a ceiling, and certainly not
+proof of what `alphaday.com` will see once §6 ships. Given that 40% of the budget went on a
+`robots.txt` that was never served correctly, the post-§6 numbers on the main host should be
+materially higher. And Phase 0 sets this host to `noindex`, so the series changes meaning from that
+deploy onward: **this is the last clean read of it.**
 
 ### 7.2 Alarm thresholds
 
@@ -780,10 +857,12 @@ to a build that passed:
 
 ### Phase 1 · Weeks 2–6 — Static machine-readable artifacts
 
-> **Status: implemented — 4 of 5 items.** The outstanding item (CloudFront access logs) needs AWS
-> access that the build environment does not have; the runbook is [Appendix D](#appendix-d--enabling-cloudfront-access-logs).
-> `yarn build` emits `/llms.txt`, `/llms-full.txt`, `/openapi.json`, `/robots.txt` and
-> `/sitemap.xml`, all generated from live sources.
+> **Status: complete — 5 of 5 items.** `yarn build` emits `/llms.txt`, `/llms-full.txt`,
+> `/openapi.json`, `/robots.txt` and `/sitemap.xml`, all generated from live sources; CloudFront
+> access logs went live 2026-09-04 and are queryable; the three-year crawler baseline is recorded in
+> §7.1. **The premise Phase 2 rests on is now evidenced rather than assumed** — model crawlers fetch
+> `app.alphaday.com` about as often as Googlebot does (+413% since 2024, against Googlebot's -52%),
+> and the retrieval-time agents that represent audience one are growing fastest.
 
 Shippable on the current site, no rebuild dependency.
 
@@ -792,10 +871,13 @@ Shippable on the current site, no rebuild dependency.
 - [x] Explicit crawler allowances in `robots.txt`
 - [x] `Organization`, `WebSite`, homepage `FAQPage` schema — plus `FAQPage` on `/mobile`, which
       renders a *different* ten-question set and had none (§5.4 says wherever an FAQ renders)
-- [ ] CloudFront access logs enabled and the §7.1 user-agent segmentation queryable — **before** §6
-      ships, so there is a before-and-after. **Not done:** AWS endpoints were unreachable from the
-      build environment. Runbook in Appendix D; it is the last thing gating the before-and-after,
-      so run it before deploying §6
+- [x] CloudFront access logs enabled and the §7.1 user-agent segmentation queryable — **live
+      2026-09-04** on `E1QZ56RJ904M5R`, v2 logging, Hive-partitioned, verified at 1,342 bytes
+      scanned for a single-day query. Setup cost $0.02; steady state ~$0.08/month. Captured as two
+      CloudFormation stacks and a SQL file under `infra/` (two stacks because the delivery API is
+      us-east-1-only while the buckets are eu-west-1). The three-year `app.alphaday.com` baseline is
+      recorded in §7.1 — it was captured **before** `chore/seo-app-shell-noindex` deploys, which is
+      what makes it a clean before-picture
 - [x] **Decide** the image optimisation approach (§2.6). It is a choice, not a build; only the
       implementation belongs in Phase 2 — **decided: build-time Vite optimisation, no runtime image
       service.** Rationale and measurements in §2.6
@@ -953,13 +1035,20 @@ from the audit environment. Verify in the AWS Pricing Calculator before committi
 | Auto Scaling Group | $0 |
 | CloudFront *(incl. SWR / stale-if-error)* | $0 — within the 1 TB / 10M request free tier |
 | **Subtotal, launch** | **≈ $12/month** |
-| CloudFront access logs to S3 (§7.1) + Athena | ~$1–5 |
+| CloudFront access logs to S3 (§7.1) + Athena | **~$0.08** — measured, see Appendix D |
 | Search Console bulk export to BigQuery (§4.2) | ~$5–20 |
-| **Total once §4 and §7 are operating** | **≈ $18–37/month** |
+| **Total once §4 and §7 are operating** | **≈ $17–32/month** |
 
 Current production (S3 + CloudFront static) is effectively $0–5/month, almost entirely Route 53. The
 comparison starts from approximately free; this is a real increase in percentage terms and a trivial
 one in absolute terms.
+
+> **Measured, August 2026.** CloudFront across the whole account: 267k requests / 2.56 GB in June,
+> 359k / 5.09 GB in July, 609k / 10.37 GB in August — **$0.04 total**, inside the free tier by three
+> orders of magnitude. Requests are up 128% and egress 305% since June, so the trend is real but the
+> absolute numbers are nowhere near any threshold in this appendix. The §7.1 logging line was
+> originally modelled at $1–5/month and measured at **$0.08**; every other figure here is still
+> modelled and should be treated as an upper bound until it is checked the same way.
 
 **Two caveats on the free tiers.** The CloudFront 1 TB / 10M request allowance is **per AWS account,
 not per distribution**, and the existing production distribution is already consuming some of it —
@@ -1098,84 +1187,88 @@ real 301 before cutover — not a 200 with client-side navigation.
 ### Still unverified
 
 1. **Current index coverage** — inferred from served HTML, not observed. Needs Search Console.
-2. **Real traffic and current AWS spend** — DNS was unavailable during the audit, so Cost Explorer and
-   the CloudFront API could not be reached. Appendix A is modelled, not measured. Two numbers make it
-   exact: monthly pageviews from GA4 (`G-ZT80HRR0MD`) and average page weight.
+2. **Real traffic and current AWS spend** — ~~DNS was unavailable during the audit~~. **Resolved
+   2026-09-04**: Cost Explorer and the CloudFront API were reached, and the §7.1 logging line in
+   Appendix A is now measured rather than modelled. Everything else in Appendix A is still modelled.
+   Two numbers would make the rest exact: monthly pageviews from GA4 (`G-ZT80HRR0MD`) and average
+   page weight.
 3. **`/tvl/*` returns `401`** with app credentials — a different auth tier. Any route that plans to
    render yields, stablecoins or fees needs that resolved first.
 
 ---
 
-# Appendix D — Enabling CloudFront access logs
+# Appendix D — CloudFront access logs
 
-The §7.1 measurement, written out because it could not be run during implementation. AWS endpoints
-were unreachable from the build environment; `aws sts get-caller-identity` failed to connect with
-credentials present and a region configured. Nothing here has been executed — verify each step.
+**Status: live since 2026-09-04** on `alphaday.com` (`E1QZ56RJ904M5R`), delivering to
+`s3://alphaday-cf-logs-v2` and queryable as `cf_logs.cf_logs_alphaday`.
 
-Substitute the real distribution id for `DIST_ID` and pick a bucket name that does not already exist.
+Reproducible as three files. Note the deploy order — **CloudFormation is single-region, but the
+CloudWatch Logs delivery API only accepts CloudFront sources in `us-east-1` while the buckets are in
+`eu-west-1`, so this cannot be one stack:**
 
-### 1. Log destination
+| File | Region | What |
+| --- | --- | --- |
+| [`infra/cloudfront-log-storage.yaml`](../infra/cloudfront-log-storage.yaml) | eu-west-1 | Buckets. Deploy **first** |
+| [`infra/cloudfront-access-logs.yaml`](../infra/cloudfront-access-logs.yaml) | us-east-1 | The three delivery resources |
+| [`infra/athena/cf-logs-tables.sql`](../infra/athena/cf-logs-tables.sql) | eu-west-1 | Both tables and the thesis query |
 
-```bash
-export REGION=eu-west-1
-export LOG_BUCKET=alphaday-cf-logs
+> **How to read this appendix.** It was originally written blind — AWS was unreachable from the
+> authoring environment — and **every substantive step in it was wrong**. It is preserved as a
+> corrected record rather than rewritten clean, because the errors are more instructive than the
+> procedure. The table below is the whole of it:
+>
+> | Original said | Reality |
+> | --- | --- |
+> | `create-bucket` + `BucketOwnerPreferred` ACL | Bucket already existed; v2 needs no ACL, AWS writes the bucket policy |
+> | `update-distribution` read-modify-write with `ETag` | Wrong API — `put-delivery-source` → `put-delivery-destination` → `create-delivery`, in **us-east-1** |
+> | Partition projection over `cf/${day}/` | No such path. Real layout is Hive `key=value` segments |
+> | `skip.header.line.count = 2` | **`1`** for v2 plain — otherwise it silently drops rows |
+> | Standard-IA lifecycle transition | No-op at 1,773-byte objects; would bill at the 128 KB minimum if it did fire |
+> | "Logs appear within about an hour" | ~3 minutes |
+> | Athena cost ~$1–5/month, "partitioning is the cost control" | ~$0.08/month; partitioning saves ~2¢ and is for query latency |
+> | The thesis query itself | Did not run. `WHERE crawler <> 'other'` cannot reference a `SELECT` alias; needs a CTE |
+>
+> **The header count is the one that mattered**, and it is a different class from the rest. The
+> others fail loudly — a wrong API errors, a wrong path returns nothing. `skip.header.line.count=2`
+> against a v2 plain file, which carries **one** bare column-name header row rather than legacy's
+> `#Version:`/`#Fields:` pair, discards the first real log line of every file with no error at all.
+> At ~7 lines per file that is **~14% of all rows**, silently. Every crawler count would have been
+> understated by roughly a seventh, and the numbers would have looked entirely plausible.
+>
+> An appendix built to measure something would have quietly corrupted that measurement. "Untested"
+> on the label did not prevent that; it only moved the debugging cost onto whoever ran it.
 
-aws s3api create-bucket \
-  --bucket "$LOG_BUCKET" \
-  --region "$REGION" \
-  --create-bucket-configuration LocationConstraint="$REGION"
+### What exists
 
-# CloudFront's legacy logging writes via the S3 ACL path, so the bucket cannot
-# use the default "bucket owner enforced" ownership setting.
-aws s3api put-bucket-ownership-controls \
-  --bucket "$LOG_BUCKET" \
-  --ownership-controls 'Rules=[{ObjectOwnership=BucketOwnerPreferred}]'
+| | |
+| --- | --- |
+| v2 log bucket | `alphaday-cf-logs-v2` (eu-west-1), 180-day expiry, `DeletionPolicy: Retain` |
+| Legacy log bucket | `alphaday-cloudfront-logs` (eu-west-1) — **historical only, do not deliver here** |
+| Athena results | `alphaday-athena-results` (eu-west-1), 30-day expiry |
+| `alphaday.com` / `www` | `E1QZ56RJ904M5R` — **v2 logging live 2026-09-04** |
+| `app.alphaday.com` | `E3OO04R68QCILU` — legacy logging since **2023-06-05** (three-year baseline) |
+| Athena tables | `cf_logs.cf_logs_alphaday` (partitioned), `cf_logs.cf_logs_app_history` (legacy, flat) |
+
+**The two buckets must stay separate.** The obvious economy — pointing v2 delivery at the existing
+`alphaday-cloudfront-logs` under a new prefix — quietly destroys the baseline. `cf_logs_app_history`
+uses that bucket's **root** as its `LOCATION`, and Athena reads a `LOCATION` recursively, so any new
+prefix pulls a second distribution and a second log format into the pre-`noindex` crawler series and
+raises the scan cost of every query against it. The legacy bucket also has no expiration rule, so
+logs delivered there accumulate indefinitely.
+
+Actual key layout:
+
+```
+AWSLogs/aws-account-id=<acct>/CloudFront/distributionid=E1QZ56RJ904M5R/year=2026/month=09/day=04/E1QZ56RJ904M5R.2026-09-04-07.43e2d1fb.gz
 ```
 
-Add a lifecycle rule before enabling logging, not after — access logs on a busy distribution grow
-without bound and this is the only line in Appendix A that can surprise you:
+Fully Hive-compatible, so projection needs no crawler, no `MSCK REPAIR`, no `ALTER TABLE`. A verified
+single-day query scanned **1,342 bytes**.
 
-```bash
-aws s3api put-bucket-lifecycle-configuration \
-  --bucket "$LOG_BUCKET" \
-  --lifecycle-configuration '{
-    "Rules": [{
-      "ID": "expire-cf-logs",
-      "Status": "Enabled",
-      "Filter": {"Prefix": "cf/"},
-      "Transitions": [{"Days": 30, "StorageClass": "STANDARD_IA"}],
-      "Expiration": {"Days": 180}
-    }]
-  }'
-```
-
-### 2. Enable logging on the distribution
-
-Logging is set inside the full distribution config, so it is a read-modify-write. Do not hand-author
-the config — fetch it, patch the one field, and send it back with its `ETag`:
-
-```bash
-aws cloudfront get-distribution-config --id "$DIST_ID" > dist-config.json
-ETAG=$(jq -r '.ETag' dist-config.json)
-
-jq --arg bucket "$LOG_BUCKET.s3.amazonaws.com" '
-  .DistributionConfig.Logging = {
-    Enabled: true, IncludeCookies: false, Bucket: $bucket, Prefix: "cf/"
-  } | .DistributionConfig' dist-config.json > patched-config.json
-
-aws cloudfront update-distribution \
-  --id "$DIST_ID" \
-  --if-match "$ETAG" \
-  --distribution-config file://patched-config.json
-```
-
-Logs appear within about an hour and are delivered on a best-effort basis — they are a measurement
-tool, not an audit trail. Do not build anything that requires completeness on them.
-
-### 3. Athena table
+### Athena table
 
 ```sql
-CREATE EXTERNAL TABLE IF NOT EXISTS cf_logs (
+CREATE EXTERNAL TABLE IF NOT EXISTS cf_logs.cf_logs_alphaday (
   `date` DATE, time STRING, location STRING, bytes BIGINT, request_ip STRING,
   method STRING, host STRING, uri STRING, status INT, referrer STRING,
   user_agent STRING, query_string STRING, cookie STRING, result_type STRING,
@@ -1187,58 +1280,137 @@ CREATE EXTERNAL TABLE IF NOT EXISTS cf_logs (
   sc_content_type STRING, sc_content_len BIGINT,
   sc_range_start BIGINT, sc_range_end BIGINT
 )
+PARTITIONED BY (distributionid STRING, year INT, month INT, day INT)
 ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t'
-LOCATION 's3://alphaday-cf-logs/cf/'
-TBLPROPERTIES ('skip.header.line.count'='2');
+LOCATION 's3://alphaday-cf-logs-v2/AWSLogs/aws-account-id=<acct>/CloudFront/'
+TBLPROPERTIES (
+  -- ONE, not two. v2 plain emits a single bare column-name row; legacy emits
+  -- #Version: and #Fields:. Using 2 here drops the first real record of every
+  -- file and reports no error.
+  'skip.header.line.count'='1',
+  'projection.enabled'='true',
+  'projection.distributionid.type'='enum',
+  'projection.distributionid.values'='E1QZ56RJ904M5R',
+  'projection.year.type'='integer',  'projection.year.range'='2026,2035', 'projection.year.digits'='4',
+  'projection.month.type'='integer', 'projection.month.range'='1,12',     'projection.month.digits'='2',
+  'projection.day.type'='integer',   'projection.day.range'='1,31',       'projection.day.digits'='2',
+  'storage.location.template'='s3://alphaday-cf-logs-v2/AWSLogs/aws-account-id=<acct>/CloudFront/distributionid=${distributionid}/year=${year}/month=${month}/day=${day}'
+);
 ```
 
-The user-agent field is URL-encoded in CloudFront logs, so every query below decodes it first.
+Two details in that statement are load-bearing and easy to lose in a tidy-up. The partition columns
+are **`INT`, not `STRING`** — they pair with `projection.*.type=integer`, and the `digits` properties
+are what reconcile an `INT` value of `9` with the zero-padded `month=09` in the path. And **`date`
+needs backticks**, not double quotes: Athena's Hive DDL parser rejects `"date"` here, and the error it
+returns points at `EXTERNAL` on line 1 rather than at the column, which sends you looking in the wrong
+place entirely.
 
-### 4. The thesis query
+The three-year `app.alphaday.com` history is in the **legacy flat layout** and needs a separate
+unpartitioned table with `skip.header.line.count='2'`. Roughly 1 GB, so a full scan is under a cent.
+
+### The thesis query
 
 Fetches, status mix and bytes per crawler — the direct read on whether §6 worked:
 
 ```sql
-SELECT
+WITH tagged AS (
+SELECT status, bytes, uri, time_to_first_byte,
   CASE
-    WHEN ua LIKE '%GPTBot%'         THEN 'GPTBot'
-    WHEN ua LIKE '%OAI-SearchBot%'  THEN 'OAI-SearchBot'
-    WHEN ua LIKE '%ChatGPT-User%'   THEN 'ChatGPT-User'
-    WHEN ua LIKE '%ClaudeBot%'      THEN 'ClaudeBot'
-    WHEN ua LIKE '%Claude-User%'    THEN 'Claude-User'
-    WHEN ua LIKE '%PerplexityBot%'  THEN 'PerplexityBot'
-    WHEN ua LIKE '%CCBot%'          THEN 'CCBot'
-    WHEN ua LIKE '%Google-Extended%' THEN 'Google-Extended'
-    WHEN ua LIKE '%Googlebot%'      THEN 'Googlebot'
-    WHEN ua LIKE '%bingbot%'        THEN 'Bingbot'
+    WHEN ua LIKE '%GPTBot%'             THEN 'GPTBot'
+    WHEN ua LIKE '%OAI-SearchBot%'      THEN 'OAI-SearchBot'
+    WHEN ua LIKE '%ChatGPT-User%'       THEN 'ChatGPT-User'
+    WHEN ua LIKE '%ClaudeBot%'          THEN 'ClaudeBot'
+    WHEN ua LIKE '%Claude-User%'        THEN 'Claude-User'
+    WHEN ua LIKE '%PerplexityBot%'      THEN 'PerplexityBot'
+    WHEN ua LIKE '%CCBot%'              THEN 'CCBot'
+    WHEN ua LIKE '%Google-Extended%'    THEN 'Google-Extended'
+    WHEN ua LIKE '%Perplexity-User%'    THEN 'Perplexity-User'
+    WHEN ua LIKE '%Applebot-Extended%'  THEN 'Applebot-Extended'
+    WHEN ua LIKE '%meta-externalagent%' OR ua LIKE '%Meta-ExternalFetcher%'
+                                        THEN 'Meta-External'
+    WHEN ua LIKE '%Bytespider%'         THEN 'Bytespider'
+    WHEN ua LIKE '%Googlebot%'          THEN 'Googlebot'
+    WHEN ua LIKE '%bingbot%'            THEN 'Bingbot'
     ELSE 'other'
-  END AS crawler,
+  END AS crawler
+FROM (SELECT *, url_decode(user_agent) AS ua FROM cf_logs.cf_logs_alphaday
+      WHERE year = 2026 AND month = 9)          -- projection prunes on this
+)
+SELECT crawler,
   COUNT(*) AS fetches,
   COUNT_IF(status >= 400) AS errors,
+  COUNT(DISTINCT uri) AS distinct_uris,
   ROUND(SUM(bytes) / 1048576.0, 1) AS mb,
   ROUND(AVG(time_to_first_byte), 3) AS avg_ttfb
-FROM (SELECT *, url_decode(user_agent) AS ua FROM cf_logs
-      WHERE "date" >= current_date - INTERVAL '30' DAY)
+FROM tagged
 WHERE crawler <> 'other'
-GROUP BY 1 ORDER BY fetches DESC;
+GROUP BY crawler ORDER BY fetches DESC;
 ```
 
-Two follow-ups worth having as saved queries:
+**The CTE is not stylistic.** An earlier form of this query put the `CASE` directly in the `SELECT`
+list and filtered with `WHERE crawler <> 'other'` in the same statement. Athena rejects that —
+`COLUMN_NOT_FOUND: Column 'crawler' cannot be resolved` — because a `SELECT` alias is not in scope in
+its own `WHERE`. The tagging has to happen in a subquery or CTE before it can be filtered on.
 
-- **Are the §6 artifacts actually being fetched?** Filter `uri IN ('/llms.txt', '/llms-full.txt',
-  '/openapi.json', '/robots.txt')` and group by crawler. If §6 shipped and nothing fetches it, that
-  is the answer, and it is worth knowing early.
-- **Which URLs has Googlebot actually crawled?** `SELECT DISTINCT uri` filtered to Googlebot. This
-  is the crawled-and-indexed precondition the §4.3 pruning job depends on, and the reason §7.1 pays
-  for itself twice.
+The `year`/`month`/`day` predicate belongs **inside** the CTE, where it can prune, not outside it.
 
-### 5. Verify
+Two follow-ups worth saving:
 
-```bash
-aws s3 ls "s3://$LOG_BUCKET/cf/" --recursive | head
-aws cloudfront get-distribution-config --id "$DIST_ID" \
-  | jq '.DistributionConfig.Logging'
-```
+- **Are the §6 artifacts being fetched?** Filter `uri IN ('/llms.txt', '/llms-full.txt',
+  '/openapi.json', '/robots.txt')`, group by crawler. If §6 shipped and nothing fetches it, that is
+  the answer, and it is worth knowing early.
+- **Which URLs has Googlebot actually crawled?** `SELECT DISTINCT uri` filtered to Googlebot — the
+  crawled-and-indexed precondition §4.3's pruning job depends on, and why §7.1 pays for itself twice.
 
-Costs are in Appendix A. The dominant term is Athena's per-TB scan charge, which the 180-day
-lifecycle rule above bounds.
+Fetches are not citations. Logs show GPTBot pulling `/llms.txt`; nothing here shows whether Alphaday
+was recommended in an answer. `ChatGPT-User` and `Claude-User` are retrieval-time fetches — someone
+asked and the model went to look — which is a materially better signal than a training crawl, and
+worth separating for that reason.
+
+### Bucket hygiene
+
+**The legacy bucket**, `alphaday-cloudfront-logs`, has `abort-incomplete-multipart`,
+noncurrent-version expiry, and an intelligent-tiering transition. **That last rule cannot fire**: the
+bucket carries `TransitionDefaultMinimumObjectSize: all_storage_classes_128K` and the average log
+object is **1,773 bytes**. It wants a 180-day expiration and no tiering rule — merged with the
+existing rules, since `put-bucket-lifecycle-configuration` replaces the whole configuration.
+
+Not urgent: three years of unmanaged logs (325,402 objects, 1.06 GB) currently cost **$0.024/month**.
+This is hygiene, not savings. The v2 bucket already has the 180-day rule, set by its stack.
+
+**The bucket policy is AWS-managed and outside CloudFormation.** AWS attaches the `s3:PutObject`
+grant itself when a delivery is created, and does **not** remove it when one is deleted — the stale
+statement is scoped by `aws:SourceArn` to the dead delivery source, so it grants nothing, but it
+accumulates one statement per delete/recreate cycle. Neither stack creates or cleans it. Check
+`get-bucket-policy` after any recreate; one orphan was removed by hand on 2026-09-04. This is the
+one part of the setup that IaC does not actually cover, which is worth knowing before trusting the
+templates to describe the whole system.
+
+### Cost — measured
+
+Calibrated against `app.alphaday.com`'s August output: **158,606 requests → 9,607 log objects,
+16.2 MiB gzipped** — 107 gzipped bytes and 0.061 log files per request. eu-west-1 list prices from
+the Pricing API: PUT $0.005/1,000, Standard $0.023/GB-mo, Athena $5.00/TB.
+
+| Scenario | Requests/mo | Log GB/mo | Total/month |
+| --- | --- | --- | --- |
+| `alphaday.com` today | 231,973 | 0.02 | **$0.05 – $0.08** |
+| + `app.alphaday.com` | 390,579 | 0.04 | $0.05 – $0.13 |
+| 100k PV/mo | 1.2M | 0.13 | $0.07 – $0.38 |
+| 1M PV/mo | 12M | 1.29 | $0.40 – $3.82 |
+| 5M PV/mo | 60M | 6.44 | $2.00 – $19.09 |
+
+Setup day cost **$0.02** — six queries, ~4.2 GB scanned.
+
+The range widens with scale because **S3 PUTs are the only line that matters**, and their scaling is
+not pinned: file count is driven by edge fan-out and flush interval rather than request volume, so it
+grows sub-linearly — but with no published ceiling on file size, the high column assumes linear
+growth.
+
+> **Re-measure in a week.** The first v2 file held **7 log lines in ~1.8 KB**. If v2 keeps writing
+> files that small, the PUT-per-request ratio lands near the **top** of the range above rather than
+> the bottom — the extrapolation is from the legacy distribution and may not carry. Check against a
+> full month before treating the low column as the estimate.
+
+Delivery to S3 is free. The CloudWatch Logs destination is metered beyond 750 bytes per request, and
+Parquet output carries vended-log charges — neither is used.
