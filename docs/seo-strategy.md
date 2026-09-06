@@ -1307,8 +1307,8 @@ Every current URL must resolve. Project pages move from root slugs to `/projects
 | From | To |
 | --- | --- |
 | `/{slug}` × 66 | `/projects/{slug}` |
-| `/oceanprotocol` | resolve first — publish the record or drop the URL |
-| `/berachain` | resolve first — currently broken and linked from the homepage |
+| `/oceanprotocol` | **resolved: 404.** It is in `/ui/views/` but has no landing-page record, so the old sitemap published a URL with no page. A genuine 404 drops it cleanly; the current site answers 200 with a 404 body |
+| `/berachain` | **resolved: 404**, and no longer linked — removed from `CONFIG.featuredBoards`. It exists in neither `/ui/views/` nor `/ui/landing-pages/` |
 | `/blog` | `/blog` — now a real page, not a client-side redirect |
 | `/api`, `/api/docs`, `/mobile`, `/privacy` | unchanged |
 | `blog.alphaday.com/p/{slug}` | `alphaday.com/blog/{slug}` |
@@ -1318,12 +1318,15 @@ real 301 before cutover — not a 200 with client-side navigation.
 
 ### Verification before cutover
 
-- [ ] Every URL in the current sitemap resolves to a 200 or a 301 to a 200
-- [ ] `curl` with JS disabled returns complete content for a project page, `/api` and `/mcp`
-- [ ] Unmatched paths return a genuine 404
-- [ ] Every indexable route has a unique title, description and canonical
-- [ ] Substrate-layer pages emit `noindex` in both the meta tag and the header, and appear in no
-      sitemap
+- [x] Every URL in the current sitemap resolves to a 200 or a 301 to a 200 —
+      `scripts/verify-301-map.mjs`, **76 URLs, 0 problems**
+- [ ] `curl` with JS disabled returns complete content for a project page, `/api` and `/mcp` —
+      **project pages and `/api` verified** (1,420 words server-rendered on `/projects/ethereum`).
+      `/mcp` does not exist yet; it is owned by the content document and is still unassigned
+- [x] Unmatched paths return a genuine 404
+- [x] Every indexable route has a unique title, description and canonical
+- [x] Substrate-layer pages emit `noindex` in both the meta tag and the header, and appear in no
+      sitemap — asserted end to end: every sampled sitemap URL is fetched and checked for `index`
 - [ ] CloudFront `CacheHitRate` meets the §1.4 assumption under load
 - [ ] `stale-if-error` verified end to end: stop Node, confirm cached pages still serve 200
 

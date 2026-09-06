@@ -110,6 +110,18 @@ async function main() {
     titles.join(" | ")
   );
 
+  // Appendix C: every indexable route needs a unique description too, not just
+  // a unique title. The SPA inherited a site-wide default for both.
+  const descriptions = [home, api, apiDocs, mobile, privacy, dashboards].map(
+    (p) => p.body.match(/<meta[^>]+name="description"[^>]+content="([^"]*)"/)?.[1]
+  );
+  check(
+    "6",
+    "every route has a unique description",
+    new Set(descriptions).size === descriptions.length && descriptions.every(Boolean),
+    `${new Set(descriptions).size} unique of ${descriptions.length}`
+  );
+
   // 7 — one h1 per page.
   for (const [path, page] of [
     ["/", home],
@@ -279,6 +291,40 @@ async function main() {
     );
   } else {
     check("8,9,12,13", "sitemap present", false, "dist/client/sitemap.xml missing — run build-sitemap");
+  }
+
+  // §4.2's central invariant, asserted end to end rather than by reading the
+  // code: fetch every URL the sitemap publishes and confirm the page itself
+  // agrees it is indexable. If the gate ever lets a substrate page through,
+  // this is what catches it — the two sides are supposed to be incapable of
+  // disagreeing, and this is the check that the shared module actually works.
+  const projectsXml = join(process.cwd(), "dist/client/sitemaps/projects.xml");
+  if (existsSync(projectsXml)) {
+    const locs = [
+      ...readFileSync(projectsXml, "utf8").matchAll(/<loc>([^<]+)<\/loc>/g),
+    ].map((m) => new URL(m[1]).pathname);
+
+    // A sample, not all 66 — enough to catch a systematic gate failure without
+    // making the guard take a minute to run.
+    const sample = locs.slice(0, 6);
+    const states = await Promise.all(
+      sample.map(async (path) => {
+        const page = await get(path);
+        const robots = page.body.match(
+          /<meta[^>]+name="robots"[^>]+content="([^"]+)"/
+        )?.[1];
+        return [path, page.status, robots];
+      })
+    );
+    check(
+      "4.2",
+      "every sampled sitemap URL is 200 and indexable",
+      states.every(([, status, robots]) => status === 200 && robots?.startsWith("index")),
+      states
+        .filter(([, s2, r]) => s2 !== 200 || !r?.startsWith("index"))
+        .map(([p2, s2]) => `${p2}:${s2}`)
+        .join(" ") || `${sample.length} sampled of ${locs.length}`
+    );
   }
 
   const failed = results.filter((r) => !r.pass);
