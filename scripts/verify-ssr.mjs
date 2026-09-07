@@ -122,12 +122,19 @@ async function main() {
     `${new Set(descriptions).size} unique of ${descriptions.length}`
   );
 
-  // 7 — one h1 per page.
+  // 7 — one h1 per page. The plan asked for this to be enforced by lint; there
+  // is no linter in this repo, and asserting it on the rendered HTML is the
+  // stronger check anyway — it catches a second h1 arriving from a component
+  // the route did not obviously include, which a source rule would miss.
+  const project = await get("/projects/ethereum");
   for (const [path, page] of [
     ["/", home],
-    ["/mobile", mobile],
-    ["/dashboards", dashboards],
     ["/api", api],
+    ["/api/docs", apiDocs],
+    ["/mobile", mobile],
+    ["/privacy", privacy],
+    ["/dashboards", dashboards],
+    ["/projects/ethereum", project],
   ]) {
     const n = countMatches(page.body, /<h1[\s>]/g);
     check("7", `${path} has exactly one <h1>`, n === 1, `${n} found`);
