@@ -331,9 +331,12 @@ const ApiPage = () => {
                   <div className="w-3 h-3 rounded-full bg-surface-border"></div>
                   <div className="w-3 h-3 rounded-full bg-success"></div>
                 </div>
+                {/* Reads from API_COMMANDS like every other command on this
+                    page. Hardcoding it here is how this one stayed broken
+                    after the shared copy was fixed — the mobile variant below
+                    already used the shared string, so the two disagreed. */}
                 <div className="mt-2 whitespace-nowrap max-sm:hidden">
-                  <span className="text-primary mr-1">$</span> curl
-                  https://api.alphaday.com/news/trending?limit=3
+                  <span className="text-primary mr-1">$</span> {trendingCurl}
                 </div>
                 <div className="mt-2 whitespace-nowrap sm:hidden">
                   <span className="flex tracking-tight text-left whitespace-nowrap">
