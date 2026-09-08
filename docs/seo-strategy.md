@@ -1286,10 +1286,18 @@ GET app.alphaday.com/b/ethereum            200  3,252 b  byte-identical to the a
 | 19 | Homepage "Coming soon" product card is `href="#"` (`productsData.jsx:52`) — a dead link on the page §5.8 designates as the discovery root | §5.8 |
 | 20 | `VITE_X_APP_SECRET` shipped in the public bundle | §5.10 |
 | 21 | ~~`index.html` ships `<link rel="icon" href="/src/favicon.svg">`, a dev-server path~~ — **false positive, withdrawn.** Vite rewrites HTML asset references at build; the production bundle emits `/assets/favicon-<hash>.svg` and the icon resolves correctly | n/a |
+| 22 | **All four `curl` commands on `/api` are wrong** (`src/data/apiSurface.js:22-25`). Two are outright 404s — `/news?tags=arbitrum` and `/news/trending?limit=3`; the collections live under `/items/`. The other two, `/search?project=arbitrum` and `/get-started`, omit the trailing slash, so they 301 and print nothing when pasted verbatim. This is a developer page's first impression, and a model reading it copies the broken version | §5.10, content §9 |
 
 Findings 9–11 and 14 were verified against the live API by the content document's §14 and supersede
 earlier estimates in this document. Findings 4, 5, 12, 13, 15 and 19 were missed by the original
 audit and found on review.
+
+Finding 22 was carried over from the content document, which numbered it `P1-3` under a phase-based
+scheme that no longer exists. **Appendix B is now the single finding register** — the content
+document's `P0-2`, `P1-1`, `P1-3` and `P2-4` are findings 2, 9, 22 and 20 here, and its references
+have been rewritten to match. Verified against the live API 7 Sep 2026: the corrected calls are
+`/items/news/?tags=arbitrum`, `/items/news/trending/?limit=3`, `/search/?project=arbitrum` and
+`/get-started/`, all of which return 200.
 
 **Finding 4 is a prerequisite, not a line item.** Phase 0 asks for `noindex` on the 404 component and
 §5.9 asks for it on the app shell; neither is possible until the robots prop exists. It is the same

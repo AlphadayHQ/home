@@ -22,7 +22,7 @@ the rendering decision, indexation tiering and crawl budget. This one does not r
 6. [Engine C — Corpus](#6-engine-c--corpus-captures-demand)
 7. [The blog decision](#7-the-blog-decision)
 8. [How a page is written](#8-how-a-page-is-written)
-9. [Distribution](#9-distribution-where-audience-one-actually-is)
+9. [Distribution](#9-distribution--where-audience-one-actually-is)
 10. [Cadence and ownership](#10-cadence-and-ownership)
 11. [Measurement by engine](#11-measurement-by-engine)
 12. [Kill list](#12-kill-list)
@@ -309,7 +309,7 @@ platform" is not.
 ## 6. Engine C — Corpus (captures demand)
 
 Architecture, indexation tiering and crawl budget are covered in
-[seo-strategy.md §4](./seo-strategy.md#4-content-architecture-at-scale) and are not repeated. Four
+[seo-strategy.md §4](./seo-strategy.md#4-indexation-control) and are not repeated. Four
 content-side amendments — of which [C3](#c3--weekly-recap-pages--entitythis-week) is the one that
 changed most under research, and the one with a hard prerequisite attached.
 
@@ -417,11 +417,11 @@ for the dashboard. The recap feeds the pitch instead of competing with it. It al
 
 This is the single most important implementation constraint. If the recap arrives via a browser fetch
 to `api.alphaday.com`, then GPTBot, ClaudeBot, PerplexityBot and CCBot see an empty div — and those
-are exactly the crawlers for the AEO play that is this page's main justification. It is finding P0-2
+are exactly the crawlers for the AEO play that is this page's main justification. It is finding #2
 in the companion document, reproduced on a new page. It also puts `x-app-secret` back in the public
-bundle (P2-4).
+bundle (#20).
 
-Under the ISR decision in [seo-strategy.md §3](./seo-strategy.md#3-the-rendering-decision): the recap
+Under the ISR decision in [seo-strategy.md §1.3](./seo-strategy.md#13-rendering-strategy-ssr--stale-while-revalidate-at-the-edge): the recap
 lives **in the ISR-cached HTML**, regenerated on a revalidation window. A client fetch on top is fine
 as a top-up for a user with the tab open — it just cannot be where the content comes from. Crawlers
 get complete HTML; users get live data.
@@ -533,7 +533,7 @@ Vague breadth claims are not reproduced by models; numbers are.
 extracted far more reliably from a table.
 
 **Show working code, not code-shaped decoration.** Per
-[CLAUDE.md](../CLAUDE.md)'s design principles, and per finding P1-3 in the companion document — the
+[CLAUDE.md](../CLAUDE.md)'s design principles, and per finding #22 in the companion document — the
 `curl` commands currently on `/api` do not resolve. A broken command on a developer page is worse
 than no command, because it is the first thing both a prospect and a model will try.
 
@@ -591,7 +591,7 @@ citing, and it is roughly thirty minutes of work.
 
 ## 11. Measurement by engine
 
-The companion document's [§8](./seo-strategy.md#8-measurement) covers indexation and cohort
+The companion document's [§7](./seo-strategy.md#7-measurement) covers indexation and cohort
 measurement for the corpus. Add per-engine outcome metrics, because the three engines fail in
 different ways and a shared dashboard hides that.
 
@@ -650,7 +650,7 @@ Things that will be proposed and should be refused.
 ## 13. First 90 days
 
 Sequenced against the companion document's phases. Content work only; the technical prerequisites are
-in [seo-strategy.md §9](./seo-strategy.md#9-sequence) and gate everything below.
+in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything below.
 
 > **Resequenced 31 Aug** after the SERP research in
 > [B5](#b5--media-discovery--the-best-shaped-opportunity-found-in-the-research) and the revised
@@ -706,7 +706,7 @@ Verified against the live API on 31 Aug 2026. All minor, all worth fixing before
 quoted in a deck.
 
 1. **There are 66 published landing pages, not 70.** `/ui/landing-pages/` returns 66, all published.
-   `/ui/views/` returns 67. The sitemap claims 70. The drift flagged as P1-1 is real and now
+   `/ui/views/` returns 67. The sitemap claims 70. The drift flagged as #9 is real and now
    measured.
 2. **`oceanprotocol` is the specific orphan.** It is a view with no landing-page record, so the
    sitemap submits a URL that renders a 404 body at HTTP 200.
