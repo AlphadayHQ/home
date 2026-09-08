@@ -24,11 +24,18 @@ const API = arg("api", "https://api.alphaday.com").replace(/\/$/, "");
 
 const appId = process.env.API_APP_ID ?? process.env.VITE_X_APP_ID;
 const appSecret = process.env.API_APP_SECRET ?? process.env.VITE_X_APP_SECRET;
-if (!appId || !appSecret) {
-  console.error("verify-301-map: set API_APP_ID / API_APP_SECRET");
-  process.exit(1);
-}
-const headers = { "x-app-id": appId, "x-app-secret": appSecret };
+
+/**
+ * `/ui/landing-pages/` answers anonymously, but `/ui/views/` does not — and
+ * views is the set the *old* sitemap was built from, so it is exactly the set
+ * of URLs Google may already have indexed. Without credentials this still runs,
+ * but it can only prove the pages that exist now resolve; it cannot prove the
+ * legacy-only URLs do. Say so rather than implying full coverage.
+ */
+const authenticated = Boolean(appId && appSecret);
+const headers = authenticated
+  ? { "x-app-id": appId, "x-app-secret": appSecret }
+  : {};
 
 async function paginate(url) {
   const out = [];
@@ -49,10 +56,17 @@ const hit = async (path) => {
 };
 
 async function main() {
-  const [views, pages] = await Promise.all([
-    paginate(`${API}/ui/views/`),
-    paginate(`${API}/ui/landing-pages/`),
-  ]);
+  const pages = await paginate(`${API}/ui/landing-pages/`);
+  let views = [];
+  if (authenticated) {
+    views = await paginate(`${API}/ui/views/`);
+  } else {
+    console.warn(
+      "  No API credentials: /ui/views/ requires auth, so legacy-only slugs\n" +
+        "  (the ones the old sitemap published without a landing page) are NOT\n" +
+        "  covered by this run. Set API_APP_ID / API_APP_SECRET for full coverage.\n"
+    );
+  }
 
   const published = new Set(
     pages.filter((p) => p.is_published !== false).map((p) => p.slug)
@@ -65,7 +79,7 @@ async function main() {
   ].sort();
 
   console.log(
-    `Checking ${indexedSlugs.length} slugs (${views.length} views ∪ ${pages.length} landing pages) ` +
+    `Checking ${indexedSlugs.length} slugs (${views.length} views ∪ ${pages.length} landing pages)${authenticated ? "" : " [partial: views unavailable]"} ` +
       `plus static routes, against ${BASE}\n`
   );
 

@@ -26,17 +26,22 @@ const MAX_RETRY_AFTER_MS = 2000;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+/**
+ * Credentials are optional, and that is deliberate.
+ *
+ * Verified 8 Sep 2026: every endpoint this site reads — `/ui/landing-pages/`
+ * and the item collections — returns 200 anonymously. Only `/ui/views/` demands
+ * auth, and the rebuild does not use it. So the site does not need the
+ * credential at all, and hard-failing without one would turn a missing GitHub
+ * secret into a total outage for no benefit.
+ *
+ * They are still sent when present, so that if the API tightens access later
+ * the fix is setting an env var rather than shipping code.
+ */
 function authHeaders(): Record<string, string> {
   const id = process.env.API_APP_ID;
   const secret = process.env.API_APP_SECRET;
-  if (!id || !secret) {
-    throw new Error(
-      "landingPages: API_APP_ID / API_APP_SECRET are not set. Refusing to " +
-        "fetch — an unauthenticated response would render an error state and " +
-        "noindex a live page."
-    );
-  }
-  return { "x-app-id": id, "x-app-secret": secret };
+  return id && secret ? { "x-app-id": id, "x-app-secret": secret } : {};
 }
 
 function retryDelay(res: Response, attempt: number): number {

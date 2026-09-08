@@ -16,7 +16,7 @@ tools/list call. Generated: 2026-09-08
 ## Start here
 
 - [OpenAPI spec](https://alphaday.com/openapi.json): OpenAPI 3.0.3 description of all 59 REST endpoints. Also served at https://api.alphaday.com/openapi.json
-- [MCP endpoint](https://api.alphaday.com/mcp): streamable HTTP, protocol 2024-11-05 (v1.29.1), 57 tools. No credentials required
+- [MCP endpoint](https://api.alphaday.com/mcp): streamable HTTP, protocol 2024-11-05 (v1.30.0), 57 tools. No credentials required
 - [API overview](https://alphaday.com/api): what the layer covers and how to reach it
 - [Endpoint reference](https://alphaday.com/api/docs): browsable reference for every endpoint
 
@@ -80,7 +80,7 @@ Full parameter and response detail: https://alphaday.com/llms-full.txt
 
 ## MCP tools
 
-57 tools on `alphaday` v1.29.1. Call `get_server_instructions` first — the server says so in its own
+57 tools on `alphaday` v1.30.0. Call `get_server_instructions` first — the server says so in its own
 initialize response.
 
 - `get_server_instructions` — Return MCP server instructions (if any). Always call first.

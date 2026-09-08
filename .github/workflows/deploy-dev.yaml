@@ -27,6 +27,12 @@ jobs:
           cmd: build # will run `yarn build` command
         env:
           API_BASE_URL: https://api.zettaday.com/
+          # Optional. Verified 8 Sep 2026: /ui/landing-pages/ and the item
+          # collections all answer anonymously, so the build and the running
+          # site need no credential. Left wired so that if the API tightens
+          # access later this becomes a secrets change, not a code change —
+          # and absent secrets are empty strings, which the code treats as
+          # "send no auth header" rather than failing.
           API_APP_ID: ${{ secrets.API_APP_ID }}
           API_APP_SECRET: ${{ secrets.API_APP_SECRET }}
 

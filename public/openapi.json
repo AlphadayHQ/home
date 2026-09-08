@@ -3945,7 +3945,6 @@
           "id",
           "is_subscribed",
           "source",
-          "starts_at",
           "title",
           "url"
         ]
@@ -4036,8 +4035,7 @@
           }
         },
         "required": [
-          "name",
-          "profession"
+          "name"
         ]
       },
       "EventSpeaker": {
@@ -4067,9 +4065,7 @@
           }
         },
         "required": [
-          "company",
-          "name",
-          "profession"
+          "name"
         ]
       },
       "ExchangeReadOnly": {

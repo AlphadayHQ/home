@@ -257,20 +257,52 @@ async function main() {
     countMatches(home.body, /href="#"/g) + " found"
   );
 
-  // 20 — the app secret must not be in any client asset.
-  const assetsDir = join(process.cwd(), "dist/client/assets");
-  let leaked = [];
-  if (existsSync(assetsDir)) {
-    for (const file of readdirSync(assetsDir).filter((f) => f.endsWith(".js"))) {
-      const text = readFileSync(join(assetsDir, file), "utf8");
-      if (/x-app-secret|X_APP_SECRET/i.test(text)) leaked.push(file);
+  // 20 — the app secret must not reach any client asset.
+  //
+  // Checking for the *name* is not enough and would have given false comfort:
+  // Vite inlines `import.meta.env.VITE_*` as a string literal, so a leak is the
+  // secret's VALUE appearing with no variable name anywhere near it. When the
+  // credential is in the environment this greps for the literal; the name check
+  // stays as a backstop for when it is not.
+  const clientDir = join(process.cwd(), "dist/client");
+  const secrets = [
+    process.env.API_APP_SECRET,
+    process.env.VITE_X_APP_SECRET,
+    process.env.API_APP_ID,
+    process.env.VITE_X_APP_ID,
+  ].filter((value) => value && value.length >= 8);
+
+  const walkFiles = (dir) =>
+    existsSync(dir)
+      ? readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+          const full = join(dir, entry.name);
+          return entry.isDirectory() ? walkFiles(full) : [full];
+        })
+      : [];
+
+  const leaked = [];
+  // Every emitted file, not just .js — a sourcemap, a JSON chunk or the HTML
+  // shell would carry it just as far.
+  for (const file of walkFiles(clientDir)) {
+    let text;
+    try {
+      text = readFileSync(file, "utf8");
+    } catch {
+      continue; // binary asset
+    }
+    if (/x-app-secret|X_APP_SECRET/i.test(text)) leaked.push(`${file} (name)`);
+    if (secrets.some((value) => text.includes(value))) {
+      leaked.push(`${file} (VALUE)`);
     }
   }
   check(
     "20",
-    "app secret absent from the client bundle",
+    "app credentials absent from every client asset",
     leaked.length === 0,
-    leaked.join(", ") || "clean"
+    leaked.join(", ") ||
+      (secrets.length
+        ? `clean — ${secrets.length} credential(s) checked by value across the client build`
+        : "clean by name only — no credentials in env to check by value")
   );
 
   // 8, 9, 10, 12, 13 — the sitemap.

@@ -40,13 +40,12 @@ const API_BASE = process.env.API_BASE_URL ?? "https://api.alphaday.com";
 const appId = process.env.API_APP_ID ?? process.env.VITE_X_APP_ID;
 const appSecret = process.env.API_APP_SECRET ?? process.env.VITE_X_APP_SECRET;
 
-if (!appId || !appSecret) {
-  throw new Error(
-    "build-sitemap: missing API_APP_ID / API_APP_SECRET — cannot fetch landing " +
-      "pages. Refusing to build a sitemap without them, because a silently " +
-      "empty sitemap is worse than a failed build."
-  );
-}
+// Optional, for the reason in src/server/landingPages.ts: /ui/landing-pages/
+// answers anonymously, so a missing secret must not fail the build. The run
+// still fails loudly if the fetch itself fails, which is the case that would
+// otherwise produce a silently empty sitemap.
+const authHeaders =
+  appId && appSecret ? { "x-app-id": appId, "x-app-secret": appSecret } : {};
 
 const escapeXml = (value) =>
   String(value).replace(/[<>&'"]/g, (char) =>
@@ -94,7 +93,7 @@ function write(relativePath, xml) {
 }
 
 async function fetchLandingPages() {
-  const headers = { "x-app-id": appId, "x-app-secret": appSecret };
+  const headers = authHeaders;
   const pages = [];
   let next = `${API_BASE}/ui/landing-pages/`;
 
