@@ -705,6 +705,30 @@ earlier does not make it rank faster — it makes it rank less.
 Verified against the live API on 31 Aug 2026. All minor, all worth fixing before the numbers get
 quoted in a deck.
 
+> **Re-measured 8 Sep 2026.** Two of the unblock items in the combined checklist were audited against
+> the live API rather than estimated, and both moved.
+>
+> **The tag audit is worse than "four slugs".** It is 14 of 66 boards, and the cause is not missing
+> coverage — it is that the board slug is used verbatim as the tag filter while the taxonomy uses a
+> different one. Polygon's tag is still `matic-network` (pre-rebrand; the token is now `POL`),
+> Avalanche is `avalanche-2`, and five more are simply unhyphenated. Worldcoin alone hides 5,173
+> articles under `world`. `celestia`, named in the original four, in fact returns 285 and is fine.
+> **This breaks the dashboards, not just SEO** — each of those boards renders an empty feed today.
+> The mapping is recovered in `scripts/audit-tag-coverage.mjs`, but the fix belongs on the
+> landing-page record so one source drives the dashboard, the recap and the sitemap alike. Logged as
+> finding 23.
+>
+> **C3 can now be sized: 16 of 66 boards clear 20 news items a week** — 6 over 100/wk, 10 between 20
+> and 100, 20 below 20, 30 at zero. That lands inside this document's own "expect 15–30 entities, not
+> 66", which the estimate got right. Sized against the broken slugs it would have read 13.
+>
+> **The exploit backfill has not started, and the gap is widening.** `amount_usd` is 27/175 (15.4%,
+> from 15.2%) and `chain` is 4/175 (2.3%, from 2.4% — coverage *fell*, because 11 new incidents
+> arrived and none carried a chain). The number that decides the tier is the intersection, not either
+> field: **3 of 175 records (1.7%) have both**, so the 164-page tracker currently has three publishable
+> pages. The week-4 gate asks whether this is visibly converging; measured, it is moving the other
+> way. Track it with `scripts/audit-exploit-backfill.mjs`.
+
 1. **There are 66 published landing pages, not 70.** `/ui/landing-pages/` returns 66, all published.
    `/ui/views/` returns 67. The sitemap claims 70. The drift flagged as #9 is real and now
    measured.
