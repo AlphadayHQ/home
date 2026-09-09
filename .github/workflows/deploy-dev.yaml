@@ -18,6 +18,7 @@ env:
   AWS_REGION: eu-west-1
   API_BASE_URL: https://api.zettaday.com
   ECR_REPOSITORY: alphaday-home-dev
+  MEMORY_LIMIT: 425m
   ORIGIN_STACK: alphaday-home-dev-origin
   VITE_CLARITY_PROJECT_ID: ${{ secrets.DEV__LANDING__CLARITY_PROJECT_ID }}
 
@@ -51,7 +52,7 @@ jobs:
             --build-arg API_BASE_URL="$API_BASE_URL" \
             --tag alphaday-home:runtime .
           docker run --detach \
-            --memory 900m \
+            --memory "$MEMORY_LIMIT" \
             --name alphaday-home-runtime \
             alphaday-home:runtime
           for _ in $(seq 1 30); do
@@ -92,24 +93,20 @@ jobs:
       - name: Deploy image through Systems Manager
         env:
           IMAGE_URI: ${{ steps.image.outputs.uri }}
-          INSTANCE_QUERY: AutoScalingGroups[0].Instances[?LifecycleState==`InService`].InstanceId | [0]
         run: |
-          asg="$(aws cloudformation describe-stacks \
+          instance_id="$(aws cloudformation describe-stacks \
             --stack-name "$ORIGIN_STACK" \
-            --query "Stacks[0].Outputs[?OutputKey=='AutoScalingGroupName'].OutputValue" \
-            --output text)"
-          instance_id="$(aws autoscaling describe-auto-scaling-groups \
-            --auto-scaling-group-names "$asg" \
-            --query "$INSTANCE_QUERY" \
+            --query "Stacks[0].Outputs[?OutputKey=='InstanceId'].OutputValue" \
             --output text)"
           test -n "$instance_id"
           test "$instance_id" != None
-          script="$(base64 scripts/deploy-container.sh | tr -d '\n')"
+          script="$(base64 < scripts/deploy-container.sh | tr -d '\n')"
           parameters="$(jq -cn \
             --arg image "$IMAGE_URI" \
             --arg region "$AWS_REGION" \
+            --arg memory "$MEMORY_LIMIT" \
             --arg script "$script" \
-            '{commands:["echo " + $script + " | base64 -d > /tmp/deploy-container.sh", "chmod 700 /tmp/deploy-container.sh", "/tmp/deploy-container.sh " + ($image | @sh) + " " + ($region | @sh)]}')"
+            '{commands:["echo " + $script + " | base64 -d > /tmp/deploy-container.sh", "chmod 700 /tmp/deploy-container.sh", "/tmp/deploy-container.sh " + ($image | @sh) + " " + ($region | @sh) + " " + ($memory | @sh)]}')"
           command_id="$(aws ssm send-command \
             --document-name AWS-RunShellScript \
             --instance-ids "$instance_id" \
