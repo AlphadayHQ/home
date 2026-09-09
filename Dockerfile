@@ -25,7 +25,7 @@ RUN npm prune --omit=dev
 FROM node:22-bookworm-slim AS runtime
 
 ENV NODE_ENV=production \
-    NODE_OPTIONS=--max-old-space-size=700 \
+    NODE_OPTIONS=--max-old-space-size=320 \
     PORT=3000
 
 WORKDIR /app
