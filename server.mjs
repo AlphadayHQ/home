@@ -134,3 +134,8 @@ const server = createServer(async (req, res) => {
 server.listen(PORT, HOST, () => {
   console.log(`alphaday listening on http://${HOST}:${PORT}`);
 });
+
+const shutdown = () => server.close((error) => process.exit(error ? 1 : 0));
+
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
