@@ -687,7 +687,7 @@ in §4.3 depends on.
 
 **Live since 2026-09-04** on `alphaday.com` (`E1QZ56RJ904M5R`), queryable as
 `cf_logs.cf_logs_alphaday`. Configuration, corrections and cost: [Appendix D](#appendix-d--cloudfront-access-logs).
-Reproducible as [`infra/cloudfront-access-logs.yaml`](../infra/cloudfront-access-logs.yaml).
+Reproducible as [`templates/cloudfront/access_logs.yaml`](https://github.com/AlphadayHQ/infrastructure/blob/main/templates/cloudfront/access_logs.yaml).
 
 **A three-year baseline also exists.** `app.alphaday.com` (`E3OO04R68QCILU`) has logged since
 **2023-06-05**, which supersedes an earlier claim in this document that no crawler data was
@@ -948,7 +948,7 @@ Shippable on the current site, no rebuild dependency.
 - [x] CloudFront access logs enabled and the §7.1 user-agent segmentation queryable — **live
       2026-09-04** on `E1QZ56RJ904M5R`, v2 logging, Hive-partitioned, verified at 1,342 bytes
       scanned for a single-day query. Setup cost $0.02; steady state ~$0.08/month. Captured as two
-      CloudFormation stacks and a SQL file under `infra/` (two stacks because the delivery API is
+      CloudFormation stacks and an Athena SQL file in the infrastructure repository (two stacks because the delivery API is
       us-east-1-only while the buckets are eu-west-1). The three-year `app.alphaday.com` baseline is
       recorded in §7.1 — it was captured **before** `chore/seo-app-shell-noindex` deploys, which is
       what makes it a clean before-picture
@@ -1371,9 +1371,9 @@ CloudWatch Logs delivery API only accepts CloudFront sources in `us-east-1` whil
 
 | File | Region | What |
 | --- | --- | --- |
-| [`infra/cloudfront-log-storage.yaml`](../infra/cloudfront-log-storage.yaml) | eu-west-1 | Buckets. Deploy **first** |
-| [`infra/cloudfront-access-logs.yaml`](../infra/cloudfront-access-logs.yaml) | us-east-1 | The three delivery resources |
-| [`infra/athena/cf-logs-tables.sql`](../infra/athena/cf-logs-tables.sql) | eu-west-1 | Both tables and the thesis query |
+| [`templates/cloudfront/log_storage.yaml`](https://github.com/AlphadayHQ/infrastructure/blob/main/templates/cloudfront/log_storage.yaml) | eu-west-1 | Buckets. Deploy **first** |
+| [`templates/cloudfront/access_logs.yaml`](https://github.com/AlphadayHQ/infrastructure/blob/main/templates/cloudfront/access_logs.yaml) | us-east-1 | The three delivery resources |
+| [`queries/athena/cloudfront_logs.sql`](https://github.com/AlphadayHQ/infrastructure/blob/main/queries/athena/cloudfront_logs.sql) | eu-west-1 | Both tables and the thesis query |
 
 > **How to read this appendix.** It was originally written blind — AWS was unreachable from the
 > authoring environment — and **every substantive step in it was wrong**. It is preserved as a
