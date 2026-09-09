@@ -20,7 +20,7 @@ function BoardLinks() {
           {boards.map((b) => (
             <a
               key={b.slug}
-              href={`/${b.slug}`}
+              href={`/projects/${b.slug}`}
               className="group inline-flex items-center gap-1.5 bg-black/40 border border-white/5 text-platinum hover:border-california/40 hover:text-california transition-colors duration-200 rounded-full px-4 py-2 text-sm md:text-base"
               aria-label={`${b.name} dashboard`}
             >

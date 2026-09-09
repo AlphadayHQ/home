@@ -43,8 +43,12 @@ function Backers() {
                     <a target="_blank" href={item.link}>
                       <img
                         src={item.img}
-                        className="w-[80px] h-[80px]"
-                        alt="contributor"
+                        width={80}
+                        height={80}
+                        loading="lazy"
+                        decoding="async"
+                        className="w-[80px] h-[80px] rounded-full object-cover"
+                        alt={item.contributor}
                       />
                     </a>
                   </figure>

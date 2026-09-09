@@ -1,7 +1,7 @@
 const ALPHADAY_ROOT_URL = "https://alphaday.com/";
-// Absolute on purpose: several OG crawlers cannot resolve relative paths, and
-// this is the only copy of the tag once <Seo> prunes the static one from
-// index.html. Keep it in sync with the fallback in index.html.
+// Absolute on purpose: several OG crawlers cannot resolve relative paths.
+// There is no longer a static fallback to keep in sync — index.html is gone and
+// every page server-renders its own head, so this is the single source.
 const coverImg = `${ALPHADAY_ROOT_URL}assets/seo1200x627-black.png`;
 
 const CONFIG = {
@@ -46,7 +46,7 @@ const CONFIG = {
   },
   CLARITY_ID: import.meta.env.VITE_CLARITY_PROJECT_ID ?? "",
   // Curated board landing pages featured on the home page (internal-linking / SEO).
-  // Each slug must map to a published page served at alphaday.com/{slug}.
+  // Each slug must map to a published page served at alphaday.com/projects/{slug}.
   featuredBoards: [
     { slug: "ethereum", name: "Ethereum" },
     { slug: "solana", name: "Solana" },
@@ -55,7 +55,11 @@ const CONFIG = {
     { slug: "optimism", name: "Optimism" },
     { slug: "polygon", name: "Polygon" },
     { slug: "avalanche", name: "Avalanche" },
-    { slug: "berachain", name: "Berachain" },
+    // berachain removed: it is a board in /ui/views/ but has no record in
+    // /ui/landing-pages/, so /berachain rendered a 404 from the home page.
+    // Re-add only once the landing page exists — the sitemap now builds from
+    // the landing-pages endpoint, so it will never publish a slug this list
+    // gets wrong again, but this list is hand-maintained and still can.
   ],
   blogLinks: {
     learn: [

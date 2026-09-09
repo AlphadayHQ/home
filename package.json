@@ -5,12 +5,17 @@
   "homepage": ".",
   "scripts": {
     "dev": "vite",
-    "build": "yarn build-api-docs && vite build && yarn build-sitemap",
+    "build": "yarn build-api-docs && yarn build-llms && vite build && yarn build-sitemap",
     "preview": "vite preview",
     "build-api-docs": "node scripts/build-api-docs.js",
-    "build-sitemap": "node scripts/build-sitemap.js"
+    "build-llms": "node scripts/build-llms.js",
+    "build-sitemap": "node --env-file-if-exists=.env.local scripts/build-sitemap.mjs",
+    "start": "node --max-old-space-size=700 server.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
+    "@tanstack/react-router": "^1.170.32",
+    "@tanstack/react-start": "^1.168.49",
     "lucide-react": "^0.400.0",
     "node-fetch": "2",
     "react": "^18.0.0",
@@ -22,12 +27,17 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "@tanstack/router-plugin": "^1.168.35",
+    "@types/node": "^26.4.1",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
     "@vitejs/plugin-react": "^6.0.0",
     "postcss": "^8.4.31",
-    "sitemaps": "^1.0.0",
+    "sharp": "^0.35.4",
     "tailwindcss": "^4.3.0",
-    "vite": "^8.0.0"
+    "typescript": "^7.0.2",
+    "vite": "^8.0.0",
+    "vitest": "^5.0.0"
   }
 }

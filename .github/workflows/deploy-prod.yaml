@@ -1,65 +1,26 @@
-name: Deploy to alphaday (production)
+name: Deploy to alphaday
 
 on: workflow_dispatch
 
-env:
-  ENVIRONMENT: production
-  VITE_CLARITY_PROJECT_ID: ${{ secrets.PROD__LANDING__CLARITY_PROJECT_ID }}
-
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
+    uses: ./.github/workflows/deploy-ssr.yaml
+    with:
+      aws_role: arn:aws:iam::402248308880:role/alphaday-home-production-home-deployer
+      build_api_base_url: https://api.alphaday.com
+      origin_stack: alphaday-home-production-origin
+    secrets:
+      clarity_project_id: ${{ secrets.PROD__LANDING__CLARITY_PROJECT_ID }}
 
-      - uses: borales/actions-yarn@v3.0.0
-        with:
-          cmd: install # will run `yarn install` command
-
-      - uses: borales/actions-yarn@v3.0.0
-        with:
-          cmd: build # will run `yarn build` command
-        env:
-          VITE_API_BASE_URL: https://api.alphaday.com/
-          VITE_X_APP_ID: sBnL0RkWkM
-          VITE_X_APP_SECRET: 21gPAwU3uOUisMJJFJjaotbDxCmvCHKMh76Xlvb8XK2RkkvZHhtSfcUfoz6QiFx8zhZf31vxvKAFD7pkdmbjHiKwoVuS2iDOLjvC
-
-      - uses: kefranabg/s3-sync-action@master
-        with:
-          args: --follow-symlinks --delete --exclude '.git/*' --exclude '.github/*' --exclude '.gitignore' --exclude 'README.md'
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.DEPLOYER__AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.DEPLOYER__SECRET_ACCESS_KEY }}
-          AWS_S3_BUCKET: ${{ secrets.PROD__LANDING__S3_BUCKET }}
-          DISTRIBUTION_ID: ${{ secrets.PROD__LANDING__DISTRIBUTION_ID }}
-          AWS_REGION: "eu-west-1" # optional: defaults to us-east-1
-          SOURCE_DIR: "dist"
-
-  # Get message VARs and Notify team through discord of deployment
   notify:
     name: Notify
     runs-on: ubuntu-latest
     needs: deploy
-
+    if: ${{ needs.deploy.result == 'success' }}
     steps:
-      - uses: actions/checkout@v2.2.0
-        with:
-          fetch-depth: 0
-
-      - name: Get Repo Name
-        run: echo "REPOSITORY_NAME=$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
-
-      - name: "Get Latest Tag"
-        id: previoustag
-        uses: "WyriHaximus/github-action-get-previous-tag@v1"
-
-      - name: Set branch name
-        run: echo "BRANCH_NAME=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-
-        # Notify Discord
       - name: Discord notification
+        uses: Ilshidur/action-discord@0c4b27844ba47cb1c7bee539c8eead5284ce9fa9
         env:
           DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK__OPS_CHANNEL }}
-        uses: "Ilshidur/action-discord@0c4b27844ba47cb1c7bee539c8eead5284ce9fa9"
         with:
-          args: "${{ env.REPOSITORY_NAME }}-${{ steps.previoustag.outputs.tag }} (${{ env.BRANCH_NAME }}) has been deployed on ${{ env.ENVIRONMENT }}."
+          args: "${{ github.event.repository.name }} (${{ github.ref_name }}) has been deployed on production."

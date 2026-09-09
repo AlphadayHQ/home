@@ -9,7 +9,7 @@ import {
   FlipCardClose,
   FlipCardButton,
 } from "../../shared/index";
-// import searchbg from "../../images/bg-text.png";
+// import searchbg from "../../images/bg-text.webp";
 
 const Form = () => {
   const submitHandler = (e) => {
@@ -52,7 +52,7 @@ function Searchandfilter() {
             <div
               className={` ${
                 searchToggle ? "" : "relative"
-              } h-full w-full md:bg-[url('../../images/bg-text.png')] bg-no-repeat bg-center flex flex-col xl:flex-row`}
+              } h-full w-full md:bg-[url('../../images/bg-text.webp')] bg-no-repeat bg-center flex flex-col xl:flex-row`}
             >
               <div>
                 <CardTitle className="w-full md:w-[300px]">

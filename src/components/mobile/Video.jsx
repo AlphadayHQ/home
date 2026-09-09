@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { Section } from "../../shared";
 // import CONFIG from "../../config";
-import SuperfeedImage from "../../images/mobile/superfeed.jpg";
+import SuperfeedImage from "../../images/mobile/superfeed.webp";
 
 const Video = () => {
   /**

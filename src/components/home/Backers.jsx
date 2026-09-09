@@ -30,7 +30,11 @@ function Backers() {
               <a target="_blank" rel="noreferrer" href={link}>
                 <img
                   src={img}
-                  className="w-19 h-19 mx-auto mb-3"
+                  width={80}
+                  height={80}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-19 h-19 mx-auto mb-3 rounded-full object-cover"
                   alt={contributor}
                 />
               </a>

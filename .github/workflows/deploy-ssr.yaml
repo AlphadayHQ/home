@@ -1,0 +1,109 @@
+name: Deploy SSR artifact
+
+on:
+  workflow_call:
+    inputs:
+      aws_role:
+        required: true
+        type: string
+      build_api_base_url:
+        required: true
+        type: string
+      origin_stack:
+        required: true
+        type: string
+    secrets:
+      clarity_project_id:
+        required: false
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-${{ inputs.origin_stack }}
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04-arm
+    env:
+      AWS_REGION: eu-west-1
+      BUILD_API_BASE_URL: ${{ inputs.build_api_base_url }}
+      MEMORY_LIMIT: 425m
+      VITE_CLARITY_PROJECT_ID: ${{ secrets.clarity_project_id }}
+    steps:
+      - uses: actions/checkout@v6.0.2
+
+      - name: Build and test image
+        run: |
+          docker build --build-arg API_BASE_URL="$BUILD_API_BASE_URL" --target test --tag alphaday-home:test .
+          docker run --rm alphaday-home:test
+          docker build --build-arg API_BASE_URL="$BUILD_API_BASE_URL" --tag alphaday-home:runtime .
+          docker run --detach \
+            --memory "$MEMORY_LIMIT" \
+            --name alphaday-home-runtime \
+            alphaday-home:runtime
+          for _ in $(seq 1 30); do
+            if [ "$(docker inspect --format '{{.State.Health.Status}}' alphaday-home-runtime)" = healthy ]; then
+              break
+            fi
+            sleep 2
+          done
+          test "$(docker inspect --format '{{.State.Health.Status}}' alphaday-home-runtime)" = healthy
+          runtime_dist="$(mktemp -d)"
+          docker cp alphaday-home-runtime:/app/dist/. "$runtime_dist"
+          docker run --rm \
+            --network container:alphaday-home-runtime \
+            --volume "$runtime_dist:/app/dist:ro" \
+            --workdir /app \
+            alphaday-home:test \
+            node scripts/verify-ssr.mjs http://127.0.0.1:3000
+          docker stop --timeout 10 alphaday-home-runtime
+          test "$(docker inspect --format '{{.State.ExitCode}}' alphaday-home-runtime)" = 0
+          docker rm alphaday-home-runtime
+
+      - name: Package image
+        id: artifact
+        run: |
+          image="alphaday-home:sha-${GITHUB_SHA::12}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          archive="$(mktemp)/landing.tar.gz"
+          docker tag alphaday-home:runtime "$image"
+          docker save "$image" | gzip -1 >"$archive"
+          checksum="$(sha256sum "$archive" | cut -d ' ' -f 1)"
+          key="artifacts/${image#*:}.tar.gz"
+          deployment_id="${image#*:}"
+          printf '%s\n%s\n%s\n%s\n' "$key" "$checksum" "$image" "$deployment_id" >manifest
+          printf 'archive=%s\ndeployment_id=%s\nkey=%s\n' "$archive" "$deployment_id" "$key" >>"$GITHUB_OUTPUT"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6.2.3
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ inputs.aws_role }}
+
+      - name: Publish artifact
+        env:
+          ARCHIVE: ${{ steps.artifact.outputs.archive }}
+          ARTIFACT_KEY: ${{ steps.artifact.outputs.key }}
+          DEPLOYMENT_ID: ${{ steps.artifact.outputs.deployment_id }}
+          ORIGIN_STACK: ${{ inputs.origin_stack }}
+        run: |
+          bucket="$(aws cloudformation describe-stacks \
+            --stack-name "$ORIGIN_STACK" \
+            --query "Stacks[0].Outputs[?OutputKey=='ArtifactBucketName'].OutputValue" \
+            --output text)"
+          test -n "$bucket"
+          test "$bucket" != None
+          aws s3 cp "$ARCHIVE" "s3://$bucket/$ARTIFACT_KEY" --only-show-errors
+          aws s3 cp manifest "s3://$bucket/manifest" --only-show-errors
+          for _ in $(seq 1 60); do
+            status="$(aws s3 cp "s3://$bucket/deployments/$DEPLOYMENT_ID" - --only-show-errors 2>/dev/null || true)"
+            case "$status" in
+              success*) exit 0 ;;
+              failed*) printf '%s\n' "$status"; exit 1 ;;
+            esac
+            sleep 10
+          done
+          echo "Deployment acknowledgement timed out" >&2
+          exit 1

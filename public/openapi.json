@@ -1,0 +1,6781 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Alphaday API",
+    "version": "v1 (v1)"
+  },
+  "paths": {
+    "/coins/categories/": {
+      "get": {
+        "operationId": "coins_categories_list",
+        "description": "Token categories (sectors)\n\nCryptocurrency token categories (e.g. DeFi,\nLayer 1, memecoins), each with aggregate market cap, 24h change, volume\nand coin count. Filter by name or slug.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Category name — substring match"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "slug",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Category slug — exact, case-insensitive (e.g. defi)"
+          }
+        ],
+        "tags": [
+          "coins"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedCoinCategoryList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/coins/categories/{id}/": {
+      "get": {
+        "operationId": "coins_categories_retrieve",
+        "description": "Get a single token category\n\nOne token category by its ID, with its aggregate market metadata.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this coin category.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "coins"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoinCategory"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/coins/developer-activity/": {
+      "get": {
+        "operationId": "coins_developer_activity_list",
+        "description": "Developer activity\n\nGitHub developer-activity snapshots per coin — commits, contributors\nand related metrics over time. Filter by coin or date.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "date",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Snapshot date (YYYY-MM-DD)."
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "managed",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Managed by termite (true/false)."
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "repo_name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Repository name (substring)."
+          },
+          {
+            "in": "query",
+            "name": "repo_url",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Repository URL (substring)."
+          },
+          {
+            "in": "query",
+            "name": "sort_by",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "-commits_last_4_weeks",
+                  "-date",
+                  "-stars",
+                  "commits_last_4_weeks",
+                  "date",
+                  "stars"
+                ]
+              }
+            },
+            "description": "Ordering\n\n* `date` - Date\n* `-date` - Date (descending)\n* `stars` - Stars\n* `-stars` - Stars (descending)\n* `commits_last_4_weeks` - Commits last 4 weeks\n* `-commits_last_4_weeks` - Commits last 4 weeks (descending)",
+            "explode": false,
+            "style": "form"
+          }
+        ],
+        "tags": [
+          "coins"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedDeveloperActivityList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/coins/developer-activity/{id}/": {
+      "get": {
+        "operationId": "coins_developer_activity_retrieve",
+        "description": "Get a single developer-activity snapshot\n\nOne developer-activity snapshot by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this developer activity.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "coins"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeveloperActivity"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/exchanges/": {
+      "get": {
+        "operationId": "exchanges_list",
+        "description": "Centralized exchanges\n\nCentralized exchange (CEX) reference data — trust score, 24h BTC trading\nvolume, country and year established. Filter by country, trading\nincentive or minimum trust score; sort by trust score, volume, name or\nage.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "country",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Country — substring match"
+          },
+          {
+            "in": "query",
+            "name": "exchange_id",
+            "schema": {
+              "type": "string"
+            },
+            "description": "CoinGecko exchange id — exact match"
+          },
+          {
+            "in": "query",
+            "name": "has_trading_incentive",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Has a trading incentive (true/false)"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "min_trust_score",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Minimum trust score (0–10)"
+          },
+          {
+            "name": "ordering",
+            "required": false,
+            "in": "query",
+            "description": "Which field to use when ordering the results.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "A search term.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sort_by",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "-name",
+                  "-trade_volume_24h_btc",
+                  "-trust_score_rank",
+                  "-year_established",
+                  "name",
+                  "trade_volume_24h_btc",
+                  "trust_score_rank",
+                  "year_established"
+                ]
+              }
+            },
+            "description": "Sort by — trust_score_rank, trade_volume_24h_btc, name or year_established (prefix with - to reverse)\n\n* `trust_score_rank` - Trust score rank\n* `-trust_score_rank` - Trust score rank (descending)\n* `trade_volume_24h_btc` - Trade volume 24h btc\n* `-trade_volume_24h_btc` - Trade volume 24h btc (descending)\n* `name` - Name\n* `-name` - Name (descending)\n* `year_established` - Year established\n* `-year_established` - Year established (descending)",
+            "explode": false,
+            "style": "form"
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by project — comma-separated tag slugs, e.g. ethereum,defi"
+          }
+        ],
+        "tags": [
+          "exchanges"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedExchangeReadOnlyList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/exchanges/{id}/": {
+      "get": {
+        "operationId": "exchanges_retrieve",
+        "description": "Get a single exchange\n\nOne centralized exchange by its ID, with its full profile and trust\nmetrics.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this exchange.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "exchanges"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExchangeReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/blogs/": {
+      "get": {
+        "operationId": "items_blogs_list",
+        "description": "Latest crypto blog posts\n\nBrowse blog and research posts aggregated from 130+ project and research\nfeeds. Filter by project (tags), source, publication date or time period.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "period",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ]
+            },
+            "description": "Time window — preset range (see accepted values)\n\n* `0` - LAST_24\n* `1` - LAST_WEEK\n* `2` - LAST_MONTH\n* `3` - LAST_QUARTER"
+          },
+          {
+            "in": "query",
+            "name": "published_at",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Publication date — exact day, YYYY-MM-DD"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Full-text search over title, short description and description"
+          },
+          {
+            "in": "query",
+            "name": "sources",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by source — comma-separated source slugs"
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by project — comma-separated tag slugs, e.g. ethereum,defi"
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedBlogItemReadOnlyList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/blogs/{id}/": {
+      "get": {
+        "operationId": "items_blogs_retrieve",
+        "description": "Get a single blog post\n\nFetch one blog post by its ID, with full detail.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this blog item.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogItemReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/blogs/bookmarks/": {
+      "get": {
+        "operationId": "items_blogs_bookmarks_retrieve",
+        "description": "Your bookmarked blog posts\n\nThe signed-in user's saved blog posts. Requires an authenticated request.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogItemReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/blogs/trending/": {
+      "get": {
+        "operationId": "items_blogs_trending_retrieve",
+        "description": "Trending blog posts\n\nThe posts getting the most attention right now, ranked by trendiness.\nOptionally narrow with tags.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogItemReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/dao/": {
+      "get": {
+        "operationId": "items_dao_list",
+        "description": "DAO governance proposals\n\nBrowse live governance proposals and votes across DAOs, with start and\nend dates. Filter by project (tags), active-only, or start/end date.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "active",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Only currently-active proposals (true/false)"
+          },
+          {
+            "in": "query",
+            "name": "ends_at",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "End date — exact day, YYYY-MM-DD"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "sources",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by source — comma-separated source slugs"
+          },
+          {
+            "in": "query",
+            "name": "starts_at",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Start date — exact day, YYYY-MM-DD"
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by project — comma-separated tag slugs, e.g. ethereum,defi"
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedDaoReadOnlyList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/dao/{id}/": {
+      "get": {
+        "operationId": "items_dao_retrieve",
+        "description": "Get a single DAO proposal\n\nFetch one DAO proposal by its ID, with full detail.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this dao item.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DaoReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/dao/trending/": {
+      "get": {
+        "operationId": "items_dao_trending_retrieve",
+        "description": "Trending DAO proposals\n\nThe proposals drawing the most attention right now, ranked by\ntrendiness. Optionally narrow with tags.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DaoReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/events/": {
+      "get": {
+        "operationId": "items_events_list",
+        "description": "Upcoming crypto events\n\nBrowse the crypto events calendar — conferences, community calls, token\nunlocks and more. Filter by event type, date range (period_after /\nperiod_before), active-only, or project (tags).",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "active",
+            "schema": {
+              "type": "boolean"
+            },
+            "description": "Only currently-active events (true/false)"
+          },
+          {
+            "in": "query",
+            "name": "ends_at",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Event ends at (exact)."
+          },
+          {
+            "in": "query",
+            "name": "ends_at__gt",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Event ends after."
+          },
+          {
+            "in": "query",
+            "name": "ends_at__gte",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Event ends at or after."
+          },
+          {
+            "in": "query",
+            "name": "ends_at__lt",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Event ends before."
+          },
+          {
+            "in": "query",
+            "name": "ends_at__lte",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Event ends at or before."
+          },
+          {
+            "in": "query",
+            "name": "item_type",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Event type (case-insensitive)"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "period_after",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Period eg. ?period_after=2022-04-19&period_before=2022-04-19"
+          },
+          {
+            "in": "query",
+            "name": "period_before",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Period eg. ?period_after=2022-04-19&period_before=2022-04-19"
+          },
+          {
+            "in": "query",
+            "name": "sort_by",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "-ends_at",
+                  "-starts_at",
+                  "ends_at",
+                  "starts_at"
+                ]
+              }
+            },
+            "description": "Sort by — starts_at or ends_at (prefix with - to reverse)\n\n* `starts_at` - Starts at\n* `-starts_at` - Starts at (descending)\n* `ends_at` - Ends at\n* `-ends_at` - Ends at (descending)",
+            "explode": false,
+            "style": "form"
+          },
+          {
+            "in": "query",
+            "name": "sources",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by source — comma-separated source slugs"
+          },
+          {
+            "in": "query",
+            "name": "starts_at",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Event starts at (exact)."
+          },
+          {
+            "in": "query",
+            "name": "starts_at__gt",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Event starts after."
+          },
+          {
+            "in": "query",
+            "name": "starts_at__gte",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Event starts at or after."
+          },
+          {
+            "in": "query",
+            "name": "starts_at__lt",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Event starts before."
+          },
+          {
+            "in": "query",
+            "name": "starts_at__lte",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Event starts at or before."
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by project — comma-separated tag slugs, e.g. ethereum,defi"
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedEventMiniList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/events/{id}/": {
+      "get": {
+        "operationId": "items_events_retrieve",
+        "description": "Get a single event\n\nFetch one event by its ID, with full detail.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this event item.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/events/subscriptions/": {
+      "get": {
+        "operationId": "items_events_subscriptions_retrieve",
+        "description": "Your subscribed events\n\nThe events the signed-in user has subscribed to. Returns an empty\nlist for unauthenticated requests.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventMini"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/events/this_week/": {
+      "get": {
+        "operationId": "items_events_this_week_retrieve",
+        "description": "Events happening this week\n\nA lightweight list of event titles scheduled for the current week,\nMonday to Sunday (up to 200).",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Event"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/events/trending/": {
+      "get": {
+        "operationId": "items_events_trending_retrieve",
+        "description": "Trending events\n\nThe events drawing the most attention right now, ranked by trendiness.\nOptionally narrow to projects with tags.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventMini"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/forum/": {
+      "get": {
+        "operationId": "items_forum_list",
+        "description": "Crypto governance forum posts\n\nBrowse discussion posts from 50+ governance and community forums. Filter\nby project (tags), source, publication date or time period.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "period",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ]
+            },
+            "description": "Time window — preset range (see accepted values)\n\n* `0` - LAST_24\n* `1` - LAST_WEEK\n* `2` - LAST_MONTH\n* `3` - LAST_QUARTER"
+          },
+          {
+            "in": "query",
+            "name": "published_at",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Publication date — exact day, YYYY-MM-DD"
+          },
+          {
+            "in": "query",
+            "name": "sources",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by source — comma-separated source slugs"
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by project — comma-separated tag slugs, e.g. ethereum,defi"
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedForumItemReadOnlyList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/forum/{id}/": {
+      "get": {
+        "operationId": "items_forum_retrieve",
+        "description": "Get a single forum post\n\nFetch one forum post by its ID, with full detail.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this forum item.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForumItemReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/forum/trending/": {
+      "get": {
+        "operationId": "items_forum_trending_retrieve",
+        "description": "Trending forum posts\n\nThe forum discussions getting the most attention right now, ranked by\ntrendiness. Optionally narrow with tags.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ForumItemReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/news/": {
+      "get": {
+        "operationId": "items_news_list",
+        "description": "Latest crypto news headlines\n\nBrowse real-time crypto news aggregated from ~50 outlets, each with a\nsentiment score and source. Filter by project (tags), source, sentiment,\npublication date or time period.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "period",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ]
+            },
+            "description": "Time window — preset range (see accepted values)\n\n* `0` - LAST_24\n* `1` - LAST_WEEK\n* `2` - LAST_MONTH\n* `3` - LAST_QUARTER"
+          },
+          {
+            "in": "query",
+            "name": "published_at",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Publication date — exact day, YYYY-MM-DD"
+          },
+          {
+            "in": "query",
+            "name": "search",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Full-text search over title, short description and description"
+          },
+          {
+            "in": "query",
+            "name": "sentiment",
+            "schema": {
+              "type": "integer",
+              "nullable": true,
+              "enum": [
+                "negative",
+                "neutral",
+                "positive"
+              ]
+            },
+            "description": "Sentiment — positive, neutral or negative\n\n* `positive` - Positive\n* `neutral` - Neutral\n* `negative` - Negative"
+          },
+          {
+            "in": "query",
+            "name": "sources",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by source — comma-separated source slugs"
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by project — comma-separated tag slugs, e.g. ethereum,defi"
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedNewsReadOnlyList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/news/{id}/": {
+      "get": {
+        "operationId": "items_news_retrieve",
+        "description": "Get a single news article\n\nFetch one news article by its ID, with full detail.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this news item.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/news/bookmarks/": {
+      "get": {
+        "operationId": "items_news_bookmarks_retrieve",
+        "description": "Your bookmarked news\n\nThe signed-in user's saved news. Requires an authenticated request.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/news/last_24_hours/": {
+      "get": {
+        "operationId": "items_news_last_24_hours_retrieve",
+        "description": "News from the last 24 hours\n\nA lightweight list of news titles published in the last 24 hours (up to\n200) — handy for quick briefings and LLM prompts.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsTitles"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/news/summary/": {
+      "get": {
+        "operationId": "items_news_summary_retrieve",
+        "description": "AI summary of the news\n\nAn AI-generated briefing of recent crypto news. Optionally focus it on\nspecific projects by passing tags.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "tags",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated project tag slugs."
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsSummary"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/news/trending/": {
+      "get": {
+        "operationId": "items_news_trending_retrieve",
+        "description": "Trending news\n\nThe crypto news drawing the most engagement right now, ranked by a\ntrendiness score. Optionally narrow to projects with tags.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NewsReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/podcasts/": {
+      "get": {
+        "operationId": "items_podcasts_list",
+        "description": "Latest crypto podcasts\n\nBrowse crypto podcast episodes aggregated from ~120 feeds, with audio\nURL and duration. Filter by project (tags), source, publication date or\ntime period.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "period",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ]
+            },
+            "description": "Time window — preset range (see accepted values)\n\n* `0` - LAST_24\n* `1` - LAST_WEEK\n* `2` - LAST_MONTH\n* `3` - LAST_QUARTER"
+          },
+          {
+            "in": "query",
+            "name": "published_at",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Publication date — exact day, YYYY-MM-DD"
+          },
+          {
+            "in": "query",
+            "name": "sources",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by source — comma-separated source slugs"
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by project — comma-separated tag slugs, e.g. ethereum,defi"
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedPodcastItemReadOnlyList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/podcasts/{id}/": {
+      "get": {
+        "operationId": "items_podcasts_retrieve",
+        "description": "Get a single podcast episode\n\nFetch one podcast episode by its ID, with full detail.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this podcast item.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PodcastItemReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/podcasts/bookmarks/": {
+      "get": {
+        "operationId": "items_podcasts_bookmarks_retrieve",
+        "description": "Your bookmarked podcasts\n\nThe signed-in user's saved podcasts. Requires an authenticated request.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PodcastItemReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/podcasts/trending/": {
+      "get": {
+        "operationId": "items_podcasts_trending_retrieve",
+        "description": "Trending podcasts\n\nThe podcast episodes drawing the most attention right now, ranked by\ntrendiness. Optionally narrow with tags.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PodcastItemReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/videos/": {
+      "get": {
+        "operationId": "items_videos_list",
+        "description": "Latest crypto videos\n\nBrowse crypto video content aggregated from ~120 YouTube channels.\nFilter by project (tags), source, publication date or time period.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "period",
+            "schema": {
+              "type": "string",
+              "format": "date-time",
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ]
+            },
+            "description": "Time window — preset range (see accepted values)\n\n* `0` - LAST_24\n* `1` - LAST_WEEK\n* `2` - LAST_MONTH\n* `3` - LAST_QUARTER"
+          },
+          {
+            "in": "query",
+            "name": "published_at",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Publication date — exact day, YYYY-MM-DD"
+          },
+          {
+            "in": "query",
+            "name": "sources",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by source — comma-separated source slugs"
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by project — comma-separated tag slugs, e.g. ethereum,defi"
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedVideoItemMiniList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/videos/{id}/": {
+      "get": {
+        "operationId": "items_videos_retrieve",
+        "description": "Get a single video\n\nFetch one video by its ID, with full detail.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this video item.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoItem"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/videos/bookmarks/": {
+      "get": {
+        "operationId": "items_videos_bookmarks_retrieve",
+        "description": "Your bookmarked videos\n\nThe signed-in user's saved videos. Requires an authenticated request.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoItemMini"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/videos/latest/": {
+      "get": {
+        "operationId": "items_videos_latest_retrieve",
+        "description": "Latest video\n\nThe single most recent video (excluding YouTube Shorts). Optionally\nscope to projects with tags.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoItemReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/items/videos/trending/": {
+      "get": {
+        "operationId": "items_videos_trending_retrieve",
+        "description": "Trending videos\n\nThe videos getting the most engagement right now, ranked by trendiness.\nOptionally narrow to projects with tags.",
+        "tags": [
+          "items"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoItemMini"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/kasandra/patterns/{coin}/": {
+      "get": {
+        "operationId": "kasandra_patterns_list",
+        "description": "AI-detected chart patterns\n\nRecent chart patterns Kasandra AI has matched on a coin's market\nhistory (e.g. double top, head-and-shoulders), each with a\nbullish/bearish signal and confidence score. Filter by interval or\npattern type; cap the count with limit (default 20, max 100).",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "coin",
+            "schema": {
+              "type": "string"
+            },
+            "description": "The coin's slug (case-insensitive), e.g. 'bitcoin'. Not the ticker symbol or numeric id.",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20
+            }
+          }
+        ],
+        "tags": [
+          "kasandra"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PatternMatch"
+                  }
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/keywords/trending/": {
+      "get": {
+        "operationId": "keywords_trending_list",
+        "description": "Trending keywords\n\nThe keywords and topics trending across crypto right now, each with a\nsentiment score and trendiness metric.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "keywords"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTrendingKeywordList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/keywords/trending/{id}/": {
+      "get": {
+        "operationId": "keywords_trending_retrieve",
+        "description": "Get a single trending keyword\n\nOne trending keyword by its ID, with its sentiment and trendiness.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this trending keyword.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "keywords"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrendingKeyword"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/market/coins/": {
+      "get": {
+        "operationId": "market_coins_list",
+        "description": "Coin prices & market data\n\nContinuously-updated market snapshots for the top coins by rank —\nprice, market cap and volume.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "market"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedAggregateMarketPriceList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/market/coins/{id}/": {
+      "get": {
+        "operationId": "market_coins_retrieve",
+        "description": "Get a single coin's market data\n\nCurrent market data for one coin by ID, slug — price,\nmarket cap and volume.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this aggregate market price history.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "market"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AggregateMarketPrice"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/market/coins/history/{id}/": {
+      "get": {
+        "operationId": "market_coins_history_retrieve",
+        "description": "Coin price history\n\nHistorical price, market-cap and volume series for one coin, returned\nas a single object (not a paginated list). Set the window with\nrange: 1D, 1W, 1M, 3M, YTD, 1Y, 3Y or ALL (default 1D).",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "days",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "History window length in days. Takes precedence over range."
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this aggregate market price history.",
+            "required": true
+          },
+          {
+            "in": "query",
+            "name": "range",
+            "schema": {
+              "enum": [
+                "1D",
+                "1W",
+                "1M",
+                "3M",
+                "YTD",
+                "1Y",
+                "3Y",
+                "ALL"
+              ],
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "History window.\n\n* `1D` - 1D\n* `1W` - 1W\n* `1M` - 1M\n* `3M` - 3M\n* `YTD` - YTD\n* `1Y` - 1Y\n* `3Y` - 3Y\n* `ALL` - ALL"
+          }
+        ],
+        "tags": [
+          "market"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MarketCoinHistory"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/market/fear-greed/": {
+      "get": {
+        "operationId": "market_fear_greed_list",
+        "description": "Returns the latest fear & greed index values.\n\nOptionally filter by asset: ?asset=BTC or ?asset=ETH",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "asset",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Asset, e.g. BTC or ETH (case-insensitive)."
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "market"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          },
+          {}
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedFearGreedIndexList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/market/trending/": {
+      "get": {
+        "operationId": "market_trending_list",
+        "description": "Trending coins\n\nThe coins trending right now, ranked by score, with price\nand 24h change.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "tags": [
+          "market"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTrendingCoinList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/market/trending/{id}/": {
+      "get": {
+        "operationId": "market_trending_retrieve",
+        "description": "Get a single trending coin\n\nFetch one trending-coin snapshot by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this trending coin.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "market"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrendingCoin"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/onchain-dexes/": {
+      "get": {
+        "operationId": "onchain_dexes_list",
+        "description": "On-chain DEXes\n\nDecentralized exchange (DEX) reference data with the blockchain\nnetworks each supports. Filter by project (tags, including\nparent-network tags) or DEX id.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "dex_id",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by exact DEX id."
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by project — comma-separated tag slugs (includes parent-network tags)."
+          }
+        ],
+        "tags": [
+          "onchain-dexes"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedOnChainDexReadOnlyList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/onchain-dexes/{id}/": {
+      "get": {
+        "operationId": "onchain_dexes_retrieve",
+        "description": "Get a single DEX\n\nOne decentralized exchange by its ID, with its network tags.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this on chain dex.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "onchain-dexes"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OnChainDexReadOnly"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/security/exploits/": {
+      "get": {
+        "operationId": "security_exploits_list",
+        "description": "Exploits & security incidents\n\nOn-chain exploit and hack alerts sourced from DeFiHackLabs and\nRekt.news, with amount lost, chain, protocol and attack type. Filter\nby chain, attack type, protocol, minimum amount, date or period; sort\nby date or amount.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "attack_type",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Attack type slug — case-insensitive"
+          },
+          {
+            "in": "query",
+            "name": "chain",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Blockchain — case-insensitive, e.g. ethereum"
+          },
+          {
+            "in": "query",
+            "name": "date",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Exact date — YYYY-MM-DD"
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "min_amount",
+            "schema": {
+              "type": "number"
+            },
+            "description": "Minimum amount lost, in USD"
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "period",
+            "schema": {
+              "type": "string",
+              "format": "date",
+              "enum": [
+                0,
+                1,
+                2,
+                3
+              ]
+            },
+            "description": "Time window — preset range (see accepted values)\n\n* `0` - LAST_24\n* `1` - LAST_WEEK\n* `2` - LAST_MONTH\n* `3` - LAST_QUARTER"
+          },
+          {
+            "in": "query",
+            "name": "protocol",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Protocol name — substring match"
+          },
+          {
+            "in": "query",
+            "name": "sort_by",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "-amount_usd",
+                  "-date",
+                  "amount_usd",
+                  "date"
+                ]
+              }
+            },
+            "description": "Sort by — date or amount_usd (prefix with - to reverse)\n\n* `date` - Date\n* `-date` - Date (descending)\n* `amount_usd` - Amount usd\n* `-amount_usd` - Amount usd (descending)",
+            "explode": false,
+            "style": "form"
+          },
+          {
+            "in": "query",
+            "name": "sources",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by source — comma-separated source slugs"
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by project — comma-separated tag slugs, e.g. ethereum,defi"
+          }
+        ],
+        "tags": [
+          "security"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedSecurityAlertList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/security/exploits/{id}/": {
+      "get": {
+        "operationId": "security_exploits_retrieve",
+        "description": "Get a single security incident\n\nOne exploit/security alert by its ID, with its full details.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this security alert.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "security"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecurityAlert"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/tags/": {
+      "get": {
+        "operationId": "tags_list",
+        "description": "Tags\n\nBrowse the tag taxonomy (projects, chains, categories). Filter by\nitem type, keyword ids, or a parent tag's slug to list its children.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "item_type",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "coin",
+                "dao",
+                "event",
+                "news",
+                "project"
+              ]
+            },
+            "description": "Restrict to tags used on this item type, ordered by search frequency.\n\n* `coin` - Coin\n* `dao` - DAO\n* `event` - Event\n* `project` - Project\n* `news` - News"
+          },
+          {
+            "in": "query",
+            "name": "keywords",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by related keyword ids — comma-separated."
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "parent",
+            "schema": {
+              "type": "string"
+            },
+            "description": "List the children of this parent tag's slug."
+          }
+        ],
+        "tags": [
+          "tags"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedTagList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/tags/{id}/": {
+      "get": {
+        "operationId": "tags_retrieve",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this tag.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "tags"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Tag"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/tvl/fees/": {
+      "get": {
+        "operationId": "tvl_fees_list",
+        "description": "Protocol fees & revenue\n\nFee and revenue data across DeFi protocols — 24h, 7d and 30d totals\nplus revenue. Filter by project, project type (protocol/chain) or tags.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "project",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project slug — exact."
+          },
+          {
+            "in": "query",
+            "name": "project_type",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project Type"
+          },
+          {
+            "in": "query",
+            "name": "tags",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Tags"
+          }
+        ],
+        "tags": [
+          "tvl"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedProtocolFeesReadList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/tvl/fees/{id}/": {
+      "get": {
+        "operationId": "tvl_fees_retrieve",
+        "description": "Get a single protocol's fees\n\nFee and revenue data for one protocol by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this protocol fees.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "tvl"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProtocolFeesRead"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/tvl/fees/top/": {
+      "get": {
+        "operationId": "tvl_fees_top_retrieve",
+        "description": "Top protocols by fees/revenue\n\nThe top protocols ranked by fees or revenue over a timeframe, as a\n{protocols: {config, data}} object (not a paginated list).",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "metric",
+            "schema": {
+              "enum": [
+                "revenue",
+                "total"
+              ],
+              "type": "string",
+              "default": "revenue",
+              "minLength": 1
+            },
+            "description": "* `revenue` - revenue\n* `total` - total"
+          },
+          {
+            "in": "query",
+            "name": "mode",
+            "schema": {
+              "enum": [
+                "absolute",
+                "pct_change"
+              ],
+              "type": "string",
+              "default": "absolute",
+              "minLength": 1
+            },
+            "description": "* `absolute` - absolute\n* `pct_change` - pct_change"
+          },
+          {
+            "in": "query",
+            "name": "timeframe",
+            "schema": {
+              "enum": [
+                "24h",
+                "7d",
+                "30d"
+              ],
+              "type": "string",
+              "default": "24h",
+              "minLength": 1
+            },
+            "description": "* `24h` - 24h\n* `7d` - 7d\n* `30d` - 30d"
+          }
+        ],
+        "tags": [
+          "tvl"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopProtocols"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/tvl/stablecoins/": {
+      "get": {
+        "operationId": "tvl_stablecoins_list",
+        "description": "Stablecoins\n\nStablecoin data — peg type and mechanism, price and circulating\nsupply. Filter by symbol, peg type or name. Use the detail endpoint\nfor the per-chain breakdown.",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name — substring."
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "peg_type",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Peg type — exact."
+          },
+          {
+            "in": "query",
+            "name": "symbol",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Symbol — exact."
+          }
+        ],
+        "tags": [
+          "tvl"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedStablecoinListList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/tvl/stablecoins/{id}/": {
+      "get": {
+        "operationId": "tvl_stablecoins_retrieve",
+        "description": "Get a single stablecoin\n\nData for one stablecoin by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this stablecoin.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "tvl"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StablecoinRead"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/tvl/yields/": {
+      "get": {
+        "operationId": "tvl_yields_list",
+        "description": "Yield pools (APY)\n\nDeFi yield pools with APY (base and reward), TVL and\nimpermanent-loss risk. Filter by chain, project or pool symbol.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "chain",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Chain name — exact."
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of results to return per page.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "A page number within the paginated result set.",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "project",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Project name — exact."
+          },
+          {
+            "in": "query",
+            "name": "symbol",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Pool symbol — substring."
+          }
+        ],
+        "tags": [
+          "tvl"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedYieldPoolReadList"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/tvl/yields/{id}/": {
+      "get": {
+        "operationId": "tvl_yields_retrieve",
+        "description": "Get a single yield pool\n\nData for one yield pool by its ID.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "A unique integer value identifying this yield pool.",
+            "required": true
+          }
+        ],
+        "tags": [
+          "tvl"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/YieldPoolRead"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/tvl/yields/top/": {
+      "get": {
+        "operationId": "tvl_yields_top_retrieve",
+        "description": "Top yield pools by APY or TVL\n\nThe top yield pools ranked by APY or TVL, as a {pools: {config, data}}\nobject (not a paginated list). Powered by DefiLlama.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "metric",
+            "schema": {
+              "enum": [
+                "apy",
+                "tvl"
+              ],
+              "type": "string",
+              "default": "apy",
+              "minLength": 1
+            },
+            "description": "* `apy` - apy\n* `tvl` - tvl"
+          }
+        ],
+        "tags": [
+          "tvl"
+        ],
+        "security": [
+          {
+            "tokenAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TopPools"
+                }
+              }
+            },
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AggregateMarketPrice": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "ticker": {
+            "type": "string",
+            "readOnly": true
+          },
+          "slug": {
+            "type": "string",
+            "readOnly": true
+          },
+          "icon": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          },
+          "rank": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "market_cap": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "volume": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "price_percent_change_24h": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "price_percent_change_7d": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "price_percent_change_30d": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "high_24h": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "low_24h": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "ath": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "atl": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "ath",
+          "atl",
+          "high_24h",
+          "icon",
+          "id",
+          "low_24h",
+          "market_cap",
+          "name",
+          "price",
+          "price_percent_change_24h",
+          "price_percent_change_30d",
+          "price_percent_change_7d",
+          "rank",
+          "slug",
+          "ticker",
+          "updated_at",
+          "volume"
+        ]
+      },
+      "AssetEnum": {
+        "enum": [
+          "BTC",
+          "ETH"
+        ],
+        "type": "string",
+        "description": "* `BTC` - Bitcoin\n* `ETH` - Ethereum"
+      },
+      "AttackType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "slug": {
+            "type": "string",
+            "readOnly": true,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "description": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          }
+        },
+        "required": [
+          "description",
+          "id",
+          "name",
+          "slug"
+        ]
+      },
+      "BlankEnum": {
+        "enum": [
+          ""
+        ]
+      },
+      "BlogItemReadOnly": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "hash": {
+            "type": "string",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true
+          },
+          "author": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "icon",
+              "name",
+              "slug"
+            ],
+            "description": "Get custom_data from the associated dataset if custom_data is blank or empty.",
+            "readOnly": true
+          },
+          "is_bookmarked": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "is_liked": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "likes": {
+            "type": "integer",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "author",
+          "hash",
+          "id",
+          "image",
+          "is_bookmarked",
+          "is_liked",
+          "likes",
+          "published_at",
+          "source",
+          "title",
+          "url"
+        ]
+      },
+      "CoinCategory": {
+        "type": "object",
+        "description": "Read serializer for the CoinGecko token-category catalog.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "slug": {
+            "type": "string",
+            "readOnly": true,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "market_cap": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "market_cap_change_24h": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "volume_24h": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "coin_count": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "coin_count",
+          "id",
+          "market_cap",
+          "market_cap_change_24h",
+          "name",
+          "slug",
+          "updated_at",
+          "volume_24h"
+        ]
+      },
+      "CurrencyEnum": {
+        "enum": [
+          "AFN",
+          "DZD",
+          "ARS",
+          "AMD",
+          "AWG",
+          "AUD",
+          "AZN",
+          "BSD",
+          "BHD",
+          "THB",
+          "PAB",
+          "BBD",
+          "BYN",
+          "BZD",
+          "BMD",
+          "BOB",
+          "VES",
+          "VED",
+          "BRL",
+          "BND",
+          "BGN",
+          "BIF",
+          "CVE",
+          "CAD",
+          "KYD",
+          "CLP",
+          "COP",
+          "KMF",
+          "CDF",
+          "BAM",
+          "NIO",
+          "CRC",
+          "CUP",
+          "CZK",
+          "GMD",
+          "DKK",
+          "MKD",
+          "DJF",
+          "STN",
+          "DOP",
+          "VND",
+          "XCD",
+          "EGP",
+          "SVC",
+          "ETB",
+          "EUR",
+          "FKP",
+          "FJD",
+          "HUF",
+          "GHS",
+          "GIP",
+          "XAU",
+          "HTG",
+          "PYG",
+          "GNF",
+          "GYD",
+          "HKD",
+          "UAH",
+          "ISK",
+          "INR",
+          "IRR",
+          "IQD",
+          "JMD",
+          "JOD",
+          "KES",
+          "PGK",
+          "HRK",
+          "KWD",
+          "AOA",
+          "MMK",
+          "LAK",
+          "GEL",
+          "LBP",
+          "ALL",
+          "HNL",
+          "SLL",
+          "LRD",
+          "LYD",
+          "SZL",
+          "LSL",
+          "MGA",
+          "MWK",
+          "MYR",
+          "MUR",
+          "MXN",
+          "MDL",
+          "MAD",
+          "MZN",
+          "BOV",
+          "NGN",
+          "ERN",
+          "NAD",
+          "NPR",
+          "ANG",
+          "ILS",
+          "TWD",
+          "NZD",
+          "BTN",
+          "KPW",
+          "NOK",
+          "MRU",
+          "PKR",
+          "XPD",
+          "MOP",
+          "TOP",
+          "CUC",
+          "UYU",
+          "PHP",
+          "XPT",
+          "GBP",
+          "BWP",
+          "QAR",
+          "GTQ",
+          "ZAR",
+          "OMR",
+          "KHR",
+          "RON",
+          "MVR",
+          "IDR",
+          "RUB",
+          "RWF",
+          "SHP",
+          "SAR",
+          "RSD",
+          "SCR",
+          "XAG",
+          "SGD",
+          "PEN",
+          "SBD",
+          "KGS",
+          "SOS",
+          "TJS",
+          "SSP",
+          "LKR",
+          "XSU",
+          "SDG",
+          "SRD",
+          "SEK",
+          "CHF",
+          "SYP",
+          "BDT",
+          "WST",
+          "TZS",
+          "KZT",
+          "TTD",
+          "MNT",
+          "TND",
+          "TRY",
+          "TMT",
+          "AED",
+          "USD",
+          "UGX",
+          "UYW",
+          "CLF",
+          "COU",
+          "UYI",
+          "UZS",
+          "VUV",
+          "KRW",
+          "YER",
+          "JPY",
+          "CNY",
+          "ZMW",
+          "ZWL",
+          "PLN"
+        ],
+        "type": "string",
+        "description": "* `AFN` - Afghani\n* `DZD` - Algerian Dinar\n* `ARS` - Argentine Peso\n* `AMD` - Armenian Dram\n* `AWG` - Aruban Florin\n* `AUD` - Australian Dollar\n* `AZN` - Azerbaijan Manat\n* `BSD` - Bahamian Dollar\n* `BHD` - Bahraini Dinar\n* `THB` - Baht\n* `PAB` - Balboa\n* `BBD` - Barbados Dollar\n* `BYN` - Belarusian Ruble\n* `BZD` - Belize Dollar\n* `BMD` - Bermudian Dollar\n* `BOB` - Boliviano\n* `VES` - Bolívar Soberano\n* `VED` - Bolívar Soberano\n* `BRL` - Brazilian Real\n* `BND` - Brunei Dollar\n* `BGN` - Bulgarian Lev\n* `BIF` - Burundi Franc\n* `CVE` - Cabo Verde Escudo\n* `CAD` - Canadian Dollar\n* `KYD` - Cayman Islands Dollar\n* `CLP` - Chilean Peso\n* `COP` - Colombian Peso\n* `KMF` - Comorian Franc \n* `CDF` - Congolese Franc\n* `BAM` - Convertible Mark\n* `NIO` - Cordoba Oro\n* `CRC` - Costa Rican Colon\n* `CUP` - Cuban Peso\n* `CZK` - Czech Koruna\n* `GMD` - Dalasi\n* `DKK` - Danish Krone\n* `MKD` - Denar\n* `DJF` - Djibouti Franc\n* `STN` - Dobra\n* `DOP` - Dominican Peso\n* `VND` - Dong\n* `XCD` - East Caribbean Dollar\n* `EGP` - Egyptian Pound\n* `SVC` - El Salvador Colon\n* `ETB` - Ethiopian Birr\n* `EUR` - Euro\n* `FKP` - Falkland Islands Pound\n* `FJD` - Fiji Dollar\n* `HUF` - Forint\n* `GHS` - Ghana Cedi\n* `GIP` - Gibraltar Pound\n* `XAU` - Gold\n* `HTG` - Gourde\n* `PYG` - Guarani\n* `GNF` - Guinean Franc\n* `GYD` - Guyana Dollar\n* `HKD` - Hong Kong Dollar\n* `UAH` - Hryvnia\n* `ISK` - Iceland Krona\n* `INR` - Indian Rupee\n* `IRR` - Iranian Rial\n* `IQD` - Iraqi Dinar\n* `JMD` - Jamaican Dollar\n* `JOD` - Jordanian Dinar\n* `KES` - Kenyan Shilling\n* `PGK` - Kina\n* `HRK` - Kuna\n* `KWD` - Kuwaiti Dinar\n* `AOA` - Kwanza\n* `MMK` - Kyat\n* `LAK` - Lao Kip\n* `GEL` - Lari\n* `LBP` - Lebanese Pound\n* `ALL` - Lek\n* `HNL` - Lempira\n* `SLL` - Leone\n* `LRD` - Liberian Dollar\n* `LYD` - Libyan Dinar\n* `SZL` - Lilangeni\n* `LSL` - Loti\n* `MGA` - Malagasy Ariary\n* `MWK` - Malawi Kwacha\n* `MYR` - Malaysian Ringgit\n* `MUR` - Mauritius Rupee\n* `MXN` - Mexican Peso\n* `MDL` - Moldovan Leu\n* `MAD` - Moroccan Dirham\n* `MZN` - Mozambique Metical\n* `BOV` - Mvdol\n* `NGN` - Naira\n* `ERN` - Nakfa\n* `NAD` - Namibia Dollar\n* `NPR` - Nepalese Rupee\n* `ANG` - Netherlands Antillean Guilder\n* `ILS` - New Israeli Sheqel\n* `TWD` - New Taiwan Dollar\n* `NZD` - New Zealand Dollar\n* `BTN` - Ngultrum\n* `KPW` - North Korean Won\n* `NOK` - Norwegian Krone\n* `MRU` - Ouguiya\n* `PKR` - Pakistan Rupee\n* `XPD` - Palladium\n* `MOP` - Pataca\n* `TOP` - Pa’anga\n* `CUC` - Peso Convertible\n* `UYU` - Peso Uruguayo\n* `PHP` - Philippine Peso\n* `XPT` - Platinum\n* `GBP` - Pound Sterling\n* `BWP` - Pula\n* `QAR` - Qatari Rial\n* `GTQ` - Quetzal\n* `ZAR` - Rand\n* `OMR` - Rial Omani\n* `KHR` - Riel\n* `RON` - Romanian Leu\n* `MVR` - Rufiyaa\n* `IDR` - Rupiah\n* `RUB` - Russian Ruble\n* `RWF` - Rwanda Franc\n* `SHP` - Saint Helena Pound\n* `SAR` - Saudi Riyal\n* `RSD` - Serbian Dinar\n* `SCR` - Seychelles Rupee\n* `XAG` - Silver\n* `SGD` - Singapore Dollar\n* `PEN` - Sol\n* `SBD` - Solomon Islands Dollar\n* `KGS` - Som\n* `SOS` - Somali Shilling\n* `TJS` - Somoni\n* `SSP` - South Sudanese Pound\n* `LKR` - Sri Lanka Rupee\n* `XSU` - Sucre\n* `SDG` - Sudanese Pound\n* `SRD` - Surinam Dollar\n* `SEK` - Swedish Krona\n* `CHF` - Swiss Franc\n* `SYP` - Syrian Pound\n* `BDT` - Taka\n* `WST` - Tala\n* `TZS` - Tanzanian Shilling\n* `KZT` - Tenge\n* `TTD` - Trinidad and Tobago Dollar\n* `MNT` - Tugrik\n* `TND` - Tunisian Dinar\n* `TRY` - Turkish Lira\n* `TMT` - Turkmenistan New Manat\n* `AED` - UAE Dirham\n* `USD` - US Dollar\n* `UGX` - Uganda Shilling\n* `UYW` - Unidad Previsional\n* `CLF` - Unidad de Fomento\n* `COU` - Unidad de Valor Real\n* `UYI` - Uruguay Peso en Unidades Indexadas (UI)\n* `UZS` - Uzbekistan Sum\n* `VUV` - Vatu\n* `KRW` - Won\n* `YER` - Yemeni Rial\n* `JPY` - Yen\n* `CNY` - Yuan Renminbi\n* `ZMW` - Zambian Kwacha\n* `ZWL` - Zimbabwe Dollar\n* `PLN` - Zloty"
+      },
+      "DaoReadOnly": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "hash": {
+            "type": "string",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "ends_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true
+          },
+          "source": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SourceMini"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "ends_at",
+          "hash",
+          "id",
+          "image",
+          "source",
+          "starts_at",
+          "title",
+          "url"
+        ]
+      },
+      "DeveloperActivity": {
+        "type": "object",
+        "description": "Read serializer for GitHub developer-activity snapshots.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "repo_url": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true,
+            "description": "GitHub repository URL for tracking developer activity."
+          },
+          "repo_name": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true,
+            "description": "Repository name (owner/repo)."
+          },
+          "commits_last_4_weeks": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "contributors_count": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "open_issues": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "stars": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "forks": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "commits_last_4_weeks",
+          "contributors_count",
+          "date",
+          "forks",
+          "id",
+          "open_issues",
+          "repo_name",
+          "repo_url",
+          "stars"
+        ]
+      },
+      "Event": {
+        "type": "object",
+        "description": "Used for only re-tagging via PATCH request\n\nOverrides the update method of a serializer that:\n- is for models that define a `add_tags` method\n- defines a `tags` field",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "hash": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 250
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceMini"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            }
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 255
+          },
+          "is_approved": {
+            "type": "boolean"
+          },
+          "short_description": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true,
+            "description": "short description is automatically truncated to 80 characters"
+          },
+          "item_type": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ItemTypeEnum"
+              },
+              {
+                "$ref": "#/components/schemas/BlankEnum"
+              }
+            ]
+          },
+          "organizers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventOrganizer"
+            }
+          },
+          "speakers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventSpeaker"
+            }
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ends_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "location": {
+            "type": "string",
+            "nullable": true,
+            "description": "Text-format location (for now). Add 'Online' if it is an online event. And, also 'On-Chain' if it's an on-chain event",
+            "maxLength": 500
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "maxLength": 255
+          },
+          "block_number": {
+            "type": "integer",
+            "maximum": 2147483647,
+            "minimum": 0,
+            "nullable": true,
+            "description": "Only relevant for on-chain events"
+          },
+          "price": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,8}(?:\\.\\d{0,2})?$",
+            "nullable": true,
+            "description": "Price in USD, Lowest price available. All price information should go in the description"
+          },
+          "is_subscribed": {
+            "type": "string",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "hash",
+          "id",
+          "is_subscribed",
+          "source",
+          "title",
+          "url"
+        ]
+      },
+      "EventMini": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "hash": {
+            "type": "string",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "readOnly": true
+          },
+          "item_type": {
+            "readOnly": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ItemTypeEnum"
+              },
+              {
+                "$ref": "#/components/schemas/BlankEnum"
+              }
+            ]
+          },
+          "starts_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true,
+            "nullable": true
+          },
+          "ends_at": {
+            "type": "string",
+            "readOnly": true
+          },
+          "location": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true,
+            "description": "Text-format location (for now). Add 'Online' if it is an online event. And, also 'On-Chain' if it's an on-chain event"
+          },
+          "is_subscribed": {
+            "type": "string",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "ends_at",
+          "hash",
+          "id",
+          "is_subscribed",
+          "item_type",
+          "location",
+          "starts_at",
+          "title"
+        ]
+      },
+      "EventOrganizer": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "maxLength": 255
+          },
+          "image": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "profession": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "EventSpeaker": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "avatar": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "company": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 100
+          },
+          "profession": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "ExchangeReadOnly": {
+        "type": "object",
+        "description": "Read-only serializer for Exchange model",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "exchange_id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "year_established": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true
+          },
+          "has_trading_incentive": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "trust_score": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true
+          },
+          "trust_score_rank": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true
+          },
+          "trade_volume_24h_btc": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "trade_volume_24h_btc_normalized": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagReadOnly"
+            },
+            "readOnly": true
+          }
+        },
+        "required": [
+          "country",
+          "description",
+          "exchange_id",
+          "has_trading_incentive",
+          "id",
+          "image",
+          "name",
+          "tags",
+          "trade_volume_24h_btc",
+          "trade_volume_24h_btc_normalized",
+          "trust_score",
+          "trust_score_rank",
+          "url",
+          "year_established"
+        ]
+      },
+      "FearGreedIndex": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "asset": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AssetEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "value": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "value_classification": {
+            "type": "string",
+            "readOnly": true
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "time_until_update": {
+            "type": "string",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "asset",
+          "id",
+          "time_until_update",
+          "timestamp",
+          "updated_at",
+          "value",
+          "value_classification"
+        ]
+      },
+      "ForumItemReadOnly": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "hash": {
+            "type": "string",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          },
+          "author": {
+            "type": "string",
+            "readOnly": true
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true
+          },
+          "source": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SourceMini"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "required": [
+          "author",
+          "hash",
+          "id",
+          "image",
+          "published_at",
+          "source",
+          "title",
+          "url"
+        ]
+      },
+      "IntervalEnum": {
+        "enum": [
+          "1D",
+          "1W",
+          "1M",
+          "3M",
+          "1Y",
+          "3Y",
+          "ALL"
+        ],
+        "type": "string",
+        "description": "* `1D` - 1-Day\n* `1W` - 1-Week\n* `1M` - 1-Month\n* `3M` - 3-Months\n* `1Y` - 1-Year\n* `3Y` - 3-Years\n* `ALL` - All"
+      },
+      "ItemTypeEnum": {
+        "enum": [
+          "Co",
+          "Hk",
+          "DC",
+          "DV",
+          "PR",
+          "EE",
+          "CC",
+          "MU",
+          "SF",
+          "HF",
+          "EDU",
+          "INT",
+          "PY",
+          "WK",
+          "***"
+        ],
+        "type": "string",
+        "description": "* `` - \n* `Co` - Conference\n* `Hk` - Hackathon\n* `DC` - Dev Call\n* `DV` - DAO Votes\n* `PR` - Project Release\n* `EE` - Economic Event\n* `CC` - Community Call\n* `MU` - Meetup\n* `SF` - Network Soft Fork\n* `HF` - Network Hard Fork\n* `EDU` - Education & Learning\n* `INT` - Interviews & AMAs\n* `PY` - Party\n* `WK` - Workshop\n* `***` - Unfiltered"
+      },
+      "KasandraCoin": {
+        "type": "object",
+        "description": "Serializer for the Coin model as used within Kasandra app data.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "ticker": {
+            "type": "string",
+            "maxLength": 20
+          },
+          "slug": {
+            "type": "string",
+            "maxLength": 50,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "icon": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "slug",
+          "ticker"
+        ]
+      },
+      "KeywordReadOnly": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "tag": {
+            "$ref": "#/components/schemas/KeywordTag"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "tag"
+        ]
+      },
+      "KeywordTag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "slug": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "slug"
+        ]
+      },
+      "MarketCoin": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "ticker": {
+            "type": "string",
+            "readOnly": true
+          },
+          "slug": {
+            "type": "string",
+            "readOnly": true,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "icon": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true
+          },
+          "rank": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true
+          }
+        },
+        "required": [
+          "icon",
+          "id",
+          "name",
+          "rank",
+          "slug",
+          "ticker"
+        ]
+      },
+      "MarketCoinHistory": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "ticker": {
+            "type": "string",
+            "readOnly": true
+          },
+          "slug": {
+            "type": "string",
+            "readOnly": true
+          },
+          "icon": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          },
+          "rank": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "market_cap": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "volume": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "price_percent_change_24h": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "price_percent_change_7d": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "price_percent_change_30d": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "high_24h": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "low_24h": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "ath": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "atl": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "history": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MarketCoinHistorySeries"
+              }
+            ],
+            "description": "Nested price/market-cap/volume series."
+          },
+          "interval": {
+            "type": "string",
+            "description": "Resolved sampling interval, e.g. '5m' or '1d'."
+          }
+        },
+        "required": [
+          "ath",
+          "atl",
+          "high_24h",
+          "history",
+          "icon",
+          "id",
+          "interval",
+          "low_24h",
+          "market_cap",
+          "name",
+          "price",
+          "price_percent_change_24h",
+          "price_percent_change_30d",
+          "price_percent_change_7d",
+          "rank",
+          "slug",
+          "ticker",
+          "updated_at",
+          "volume"
+        ]
+      },
+      "MarketCoinHistorySeries": {
+        "type": "object",
+        "properties": {
+          "prices": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "market_caps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "total_volumes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "market_caps",
+          "prices",
+          "total_volumes"
+        ]
+      },
+      "NewsReadOnly": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "hash": {
+            "type": "string",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true
+          },
+          "author": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "icon",
+              "name",
+              "slug"
+            ],
+            "description": "Get custom_data from the associated dataset if custom_data is blank or empty.",
+            "readOnly": true
+          },
+          "is_bookmarked": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "is_liked": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "sentiment": {
+            "readOnly": true,
+            "nullable": true,
+            "description": "Categorical sentiment label derived from sentiment_score.\n\n* `2` - Very Positive\n* `1` - Positive\n* `0` - Neutral\n* `-1` - Negative\n* `-2` - Very Negative",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/SentimentEnum"
+              },
+              {
+                "$ref": "#/components/schemas/NullEnum"
+              }
+            ]
+          },
+          "sentiment_score": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,8}(?:\\.\\d{0,2})?$",
+            "readOnly": true,
+            "nullable": true,
+            "description": "Overall sentiment conveyed by the item content expressed as a numerical rating. Also known as polarity."
+          },
+          "likes": {
+            "type": "integer",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "author",
+          "hash",
+          "id",
+          "image",
+          "is_bookmarked",
+          "is_liked",
+          "likes",
+          "published_at",
+          "sentiment",
+          "sentiment_score",
+          "source",
+          "title",
+          "url"
+        ]
+      },
+      "NewsSummary": {
+        "type": "object",
+        "description": "Response shape of ``/items/news/summary/``: a bare\n``{tags, summary, updated_at}`` object (not a paginated list).\n\nThe action serializes through this class so the OpenAPI schema is derived\nfrom the real response. ``updated_at`` is emitted as the raw ISO 8601 string\nthe action produces, so it is a ``CharField`` (not ``DateTimeField``) to keep\nthe wire format byte-identical.",
+        "properties": {
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true,
+            "description": "Tag names the summary was focused on, or null for the global feed."
+          },
+          "summary": {
+            "type": "string",
+            "description": "AI-generated news briefing text."
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "When this summary was generated (ISO 8601 string)."
+          }
+        },
+        "required": [
+          "summary",
+          "tags",
+          "updated_at"
+        ]
+      },
+      "NewsTitles": {
+        "type": "object",
+        "description": "Response shape of ``/items/news/last_24_hours/``: a bare\n``{\"titles\": [...]}`` object (not a paginated list).\n\nThe action serializes through this class, so the OpenAPI schema is derived\nfrom the real response rather than a parallel hand-maintained description.",
+        "properties": {
+          "titles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "News titles published in the window (up to 200)."
+          }
+        },
+        "required": [
+          "titles"
+        ]
+      },
+      "NullEnum": {
+        "enum": [
+          null
+        ]
+      },
+      "OnChainDexReadOnly": {
+        "type": "object",
+        "description": "Read-only serializer for OnChainDex model",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "dex_id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "slug": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "description": {
+            "type": "string",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true
+          },
+          "volume_1d": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,22}(?:\\.\\d{0,2})?$",
+            "readOnly": true,
+            "nullable": true,
+            "description": "24h trading volume in USD"
+          },
+          "volume_1d_change": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,22}(?:\\.\\d{0,2})?$",
+            "readOnly": true,
+            "nullable": true,
+            "description": "24h volume change percentage"
+          },
+          "volume_7d": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,22}(?:\\.\\d{0,2})?$",
+            "readOnly": true,
+            "nullable": true,
+            "description": "7d trading volume in USD"
+          },
+          "volume_30d": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,22}(?:\\.\\d{0,2})?$",
+            "readOnly": true,
+            "nullable": true,
+            "description": "30d trading volume in USD"
+          },
+          "volume_all_time": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,22}(?:\\.\\d{0,2})?$",
+            "readOnly": true,
+            "nullable": true,
+            "description": "All-time trading volume in USD"
+          },
+          "tvl": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,22}(?:\\.\\d{0,2})?$",
+            "readOnly": true,
+            "nullable": true,
+            "description": "Total Value Locked in USD"
+          },
+          "fees_24h": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,22}(?:\\.\\d{0,2})?$",
+            "readOnly": true,
+            "nullable": true,
+            "description": "24h fees in USD (from DefiLlama)"
+          },
+          "fees_7d": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,22}(?:\\.\\d{0,2})?$",
+            "readOnly": true,
+            "nullable": true,
+            "description": "7d fees in USD (from DefiLlama)"
+          },
+          "fees_30d": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,22}(?:\\.\\d{0,2})?$",
+            "readOnly": true,
+            "nullable": true,
+            "description": "30d fees in USD (from DefiLlama)"
+          },
+          "chain": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true,
+            "description": "Primary blockchain network"
+          },
+          "protocol": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true,
+            "description": "DEX protocol type (e.g., AMM, Orderbook)"
+          },
+          "disabled": {
+            "type": "boolean",
+            "readOnly": true,
+            "description": "Whether the DEX is disabled"
+          },
+          "rank": {
+            "type": "integer",
+            "readOnly": true,
+            "nullable": true,
+            "description": "DEX ranking by volume"
+          },
+          "market_share": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,6}(?:\\.\\d{0,4})?$",
+            "readOnly": true,
+            "nullable": true,
+            "description": "Market share percentage"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagReadOnly"
+            },
+            "readOnly": true
+          }
+        },
+        "required": [
+          "chain",
+          "description",
+          "dex_id",
+          "disabled",
+          "fees_24h",
+          "fees_30d",
+          "fees_7d",
+          "id",
+          "image",
+          "market_share",
+          "name",
+          "protocol",
+          "rank",
+          "slug",
+          "tags",
+          "tvl",
+          "url",
+          "volume_1d",
+          "volume_1d_change",
+          "volume_30d",
+          "volume_7d",
+          "volume_all_time"
+        ]
+      },
+      "PaginatedAggregateMarketPriceList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AggregateMarketPrice"
+            }
+          }
+        }
+      },
+      "PaginatedBlogItemReadOnlyList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BlogItemReadOnly"
+            }
+          }
+        }
+      },
+      "PaginatedCoinCategoryList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CoinCategory"
+            }
+          }
+        }
+      },
+      "PaginatedDaoReadOnlyList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DaoReadOnly"
+            }
+          }
+        }
+      },
+      "PaginatedDeveloperActivityList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DeveloperActivity"
+            }
+          }
+        }
+      },
+      "PaginatedEventMiniList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventMini"
+            }
+          }
+        }
+      },
+      "PaginatedExchangeReadOnlyList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExchangeReadOnly"
+            }
+          }
+        }
+      },
+      "PaginatedFearGreedIndexList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FearGreedIndex"
+            }
+          }
+        }
+      },
+      "PaginatedForumItemReadOnlyList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ForumItemReadOnly"
+            }
+          }
+        }
+      },
+      "PaginatedNewsReadOnlyList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewsReadOnly"
+            }
+          }
+        }
+      },
+      "PaginatedOnChainDexReadOnlyList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OnChainDexReadOnly"
+            }
+          }
+        }
+      },
+      "PaginatedPodcastItemReadOnlyList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PodcastItemReadOnly"
+            }
+          }
+        }
+      },
+      "PaginatedProtocolFeesReadList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProtocolFeesRead"
+            }
+          }
+        }
+      },
+      "PaginatedSecurityAlertList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SecurityAlert"
+            }
+          }
+        }
+      },
+      "PaginatedStablecoinListList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StablecoinList"
+            }
+          }
+        }
+      },
+      "PaginatedTagList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            }
+          }
+        }
+      },
+      "PaginatedTrendingCoinList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrendingCoin"
+            }
+          }
+        }
+      },
+      "PaginatedTrendingKeywordList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrendingKeyword"
+            }
+          }
+        }
+      },
+      "PaginatedVideoItemMiniList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VideoItemMini"
+            }
+          }
+        }
+      },
+      "PaginatedYieldPoolReadList": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "object",
+            "properties": {
+              "next": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=4"
+              },
+              "previous": {
+                "type": "string",
+                "nullable": true,
+                "format": "uri",
+                "example": "http://api.example.org/accounts/?page=2"
+              }
+            }
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "results": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/YieldPoolRead"
+            }
+          }
+        }
+      },
+      "PatternMatch": {
+        "type": "object",
+        "description": "Serializer for the PatternMatch model. (Read only)",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "coin": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/KasandraCoin"
+              }
+            ],
+            "readOnly": true
+          },
+          "interval": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/IntervalEnum"
+              }
+            ],
+            "readOnly": true,
+            "description": "Market history interval the pattern was detected on (e.g., 1D, 1W).\n\n* `1D` - 1-Day\n* `1W` - 1-Week\n* `1M` - 1-Month\n* `3M` - 3-Months\n* `1Y` - 1-Year\n* `3Y` - 3-Years\n* `ALL` - All"
+          },
+          "pattern_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PatternTypeEnum"
+              }
+            ],
+            "readOnly": true,
+            "description": "Classified chart pattern (e.g., head-and-shoulders, double-bottom).\n\n* `head_and_shoulders` - Head & Shoulders\n* `inverse_head_and_shoulders` - Inverse Head & Shoulders\n* `double_top` - Double Top\n* `double_bottom` - Double Bottom\n* `triple_top` - Triple Top\n* `triple_bottom` - Triple Bottom\n* `ascending_triangle` - Ascending Triangle\n* `descending_triangle` - Descending Triangle"
+          },
+          "signal": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/SignalEnum"
+              }
+            ],
+            "readOnly": true,
+            "description": "Directional bias implied by the pattern.\n\n* `bullish` - Bullish\n* `bearish` - Bearish"
+          },
+          "confidence": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "description": "Detection confidence between 0 and 1."
+          },
+          "start_timestamp": {
+            "type": "integer",
+            "readOnly": true,
+            "description": "Unix timestamp in milliseconds of the first pattern pivot."
+          },
+          "end_timestamp": {
+            "type": "integer",
+            "readOnly": true,
+            "description": "Unix timestamp in milliseconds of the last pattern pivot."
+          },
+          "key_points": {
+            "readOnly": true,
+            "description": "Pivot points defining the pattern. List of {timestamp, price} dicts."
+          },
+          "modified": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "coin",
+          "confidence",
+          "end_timestamp",
+          "id",
+          "interval",
+          "key_points",
+          "modified",
+          "pattern_type",
+          "signal",
+          "start_timestamp"
+        ]
+      },
+      "PatternTypeEnum": {
+        "enum": [
+          "head_and_shoulders",
+          "inverse_head_and_shoulders",
+          "double_top",
+          "double_bottom",
+          "triple_top",
+          "triple_bottom",
+          "ascending_triangle",
+          "descending_triangle"
+        ],
+        "type": "string",
+        "description": "* `head_and_shoulders` - Head & Shoulders\n* `inverse_head_and_shoulders` - Inverse Head & Shoulders\n* `double_top` - Double Top\n* `double_bottom` - Double Bottom\n* `triple_top` - Triple Top\n* `triple_bottom` - Triple Bottom\n* `ascending_triangle` - Ascending Triangle\n* `descending_triangle` - Descending Triangle"
+      },
+      "PodcastItemReadOnly": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "hash": {
+            "type": "string",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "short_description": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "duration": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "file_url": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "icon",
+              "name",
+              "slug"
+            ],
+            "description": "Get custom_data from the associated dataset if custom_data is blank or empty.",
+            "readOnly": true
+          },
+          "is_bookmarked": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "is_liked": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "likes": {
+            "type": "integer",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "duration",
+          "file_url",
+          "hash",
+          "id",
+          "image",
+          "is_bookmarked",
+          "is_liked",
+          "likes",
+          "published_at",
+          "short_description",
+          "source",
+          "title",
+          "url"
+        ]
+      },
+      "Pools": {
+        "type": "object",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/TopPoolsConfig"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TopPoolItem"
+            }
+          }
+        },
+        "required": [
+          "config",
+          "data"
+        ]
+      },
+      "ProtocolFeesRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "project": {
+            "$ref": "#/components/schemas/TVLProject"
+          },
+          "currency": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CurrencyEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "total_24h": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "total_7d": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "total_30d": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "revenue_24h": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "revenue_7d": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "revenue_30d": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "currency",
+          "date",
+          "id",
+          "project",
+          "revenue_24h",
+          "revenue_30d",
+          "revenue_7d",
+          "total_24h",
+          "total_30d",
+          "total_7d"
+        ]
+      },
+      "Protocols": {
+        "type": "object",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/TopProtocolsConfig"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TopProtocolItem"
+            }
+          }
+        },
+        "required": [
+          "config",
+          "data"
+        ]
+      },
+      "SecurityAlert": {
+        "type": "object",
+        "description": "Read serializer for exploit / security alerts.",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "hash": {
+            "type": "string",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true
+          },
+          "short_description": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "protocol": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "amount_usd": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,18}(?:\\.\\d{0,2})?$",
+            "readOnly": true,
+            "nullable": true
+          },
+          "chain": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "attack_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AttackType"
+              }
+            ],
+            "readOnly": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "readOnly": true
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "icon",
+              "name",
+              "slug"
+            ],
+            "description": "Get custom_data from the associated dataset if custom_data is blank or empty.",
+            "readOnly": true
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagReadOnly"
+            },
+            "readOnly": true
+          }
+        },
+        "required": [
+          "amount_usd",
+          "attack_type",
+          "chain",
+          "date",
+          "description",
+          "hash",
+          "id",
+          "image",
+          "protocol",
+          "short_description",
+          "source",
+          "tags",
+          "title",
+          "url"
+        ]
+      },
+      "SentimentEnum": {
+        "enum": [
+          2,
+          1,
+          0,
+          -1,
+          -2
+        ],
+        "type": "integer",
+        "description": "* `2` - Very Positive\n* `1` - Positive\n* `0` - Neutral\n* `-1` - Negative\n* `-2` - Very Negative"
+      },
+      "SignalEnum": {
+        "enum": [
+          "bullish",
+          "bearish"
+        ],
+        "type": "string",
+        "description": "* `bullish` - Bullish\n* `bearish` - Bearish"
+      },
+      "SourceMini": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "slug": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "icon",
+          "name",
+          "slug"
+        ]
+      },
+      "StablecoinList": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "stablecoin_id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "symbol": {
+            "type": "string",
+            "readOnly": true
+          },
+          "peg_type": {
+            "type": "string",
+            "readOnly": true
+          },
+          "peg_mechanism": {
+            "type": "string",
+            "readOnly": true
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "circulating_usd": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "circulating_usd",
+          "date",
+          "id",
+          "name",
+          "peg_mechanism",
+          "peg_type",
+          "price",
+          "stablecoin_id",
+          "symbol"
+        ]
+      },
+      "StablecoinRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "stablecoin_id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "symbol": {
+            "type": "string",
+            "readOnly": true
+          },
+          "peg_type": {
+            "type": "string",
+            "readOnly": true
+          },
+          "peg_mechanism": {
+            "type": "string",
+            "readOnly": true
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "circulating_usd": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "chain_data": {
+            "readOnly": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "chain_data",
+          "circulating_usd",
+          "date",
+          "id",
+          "name",
+          "peg_mechanism",
+          "peg_type",
+          "price",
+          "stablecoin_id",
+          "symbol"
+        ]
+      },
+      "TVLProject": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "slug": {
+            "type": "string"
+          },
+          "project_type": {
+            "type": "string",
+            "readOnly": true
+          },
+          "network_id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "icon": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "icon",
+          "name",
+          "network_id",
+          "project_type",
+          "slug",
+          "url"
+        ]
+      },
+      "Tag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagKeyword"
+            }
+          },
+          "parents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagBase"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "slug"
+        ]
+      },
+      "TagBase": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TagKeyword"
+            }
+          }
+        },
+        "required": [
+          "slug"
+        ]
+      },
+      "TagKeyword": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string"
+          },
+          "is_excluded": {
+            "type": "boolean"
+          },
+          "ignore_trending": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "TagMeta": {
+        "type": "object",
+        "properties": {
+          "tag_type": {
+            "$ref": "#/components/schemas/TagTypeEnum"
+          },
+          "is_source_tag": {
+            "type": "boolean"
+          },
+          "is_locked": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TagReadOnly": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "readOnly": true
+          },
+          "slug": {
+            "type": "string",
+            "readOnly": true,
+            "pattern": "^[-a-zA-Z0-9_]+$"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "slug"
+        ]
+      },
+      "TagTypeEnum": {
+        "enum": [
+          "drct",
+          "prnt"
+        ],
+        "type": "string",
+        "description": "* `drct` - Direct\n* `prnt` - Parent"
+      },
+      "TopPoolItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Yield pool id."
+          },
+          "name": {
+            "type": "string",
+            "description": "Pool symbol."
+          },
+          "project": {
+            "type": "string",
+            "description": "Project the pool belongs to."
+          },
+          "chain": {
+            "type": "string",
+            "description": "Chain the pool is on."
+          },
+          "value": {
+            "type": "number",
+            "format": "double",
+            "description": "APY (metric=apy) or TVL in USD (metric=tvl)."
+          }
+        },
+        "required": [
+          "chain",
+          "id",
+          "name",
+          "project",
+          "value"
+        ]
+      },
+      "TopPools": {
+        "type": "object",
+        "description": "Shape of ``/tvl/yields/top/``.",
+        "properties": {
+          "pools": {
+            "$ref": "#/components/schemas/Pools"
+          }
+        },
+        "required": [
+          "pools"
+        ]
+      },
+      "TopPoolsConfig": {
+        "type": "object",
+        "properties": {
+          "metric": {
+            "type": "string"
+          },
+          "attribution": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "attribution",
+          "metric"
+        ]
+      },
+      "TopProtocolItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Project id."
+          },
+          "name": {
+            "type": "string",
+            "description": "Project name."
+          },
+          "value": {
+            "type": "number",
+            "format": "double",
+            "description": "Metric value — absolute fees/revenue, or % change when mode=pct_change."
+          },
+          "icon": {
+            "type": "string",
+            "nullable": true,
+            "description": "Project icon URL."
+          }
+        },
+        "required": [
+          "icon",
+          "id",
+          "name",
+          "value"
+        ]
+      },
+      "TopProtocols": {
+        "type": "object",
+        "description": "Shape of ``/tvl/fees/top/``.",
+        "properties": {
+          "protocols": {
+            "$ref": "#/components/schemas/Protocols"
+          }
+        },
+        "required": [
+          "protocols"
+        ]
+      },
+      "TopProtocolsConfig": {
+        "type": "object",
+        "properties": {
+          "timeframe": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "attribution": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "attribution",
+          "metric",
+          "mode",
+          "timeframe"
+        ]
+      },
+      "TrendingCoin": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "rank": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "score": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "snapshot_time": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "coin": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MarketCoin"
+              }
+            ],
+            "readOnly": true
+          },
+          "price": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "price_percent_change_24h": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "market_cap": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,30}(?:\\.\\d{0,0})?$",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "coin",
+          "id",
+          "market_cap",
+          "price",
+          "price_percent_change_24h",
+          "rank",
+          "score",
+          "snapshot_time"
+        ]
+      },
+      "TrendingKeyword": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "keyword": {
+            "$ref": "#/components/schemas/KeywordReadOnly"
+          },
+          "sentiment_score": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,8}(?:\\.\\d{0,2})?$",
+            "readOnly": true,
+            "nullable": true,
+            "description": "Overall sentiment conveyed by the item content expressed as a numerical rating. Also known as polarity."
+          },
+          "trending_order": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "trendiness": {
+            "type": "string",
+            "format": "decimal",
+            "pattern": "^-?\\d{0,8}(?:\\.\\d{0,2})?$",
+            "readOnly": true,
+            "nullable": true,
+            "description": "Indicates the trendiness of this keyword."
+          }
+        },
+        "required": [
+          "id",
+          "keyword",
+          "sentiment_score",
+          "trendiness",
+          "trending_order"
+        ]
+      },
+      "VideoItem": {
+        "type": "object",
+        "description": "Used for only re-tagging via PATCH request\n\nOverrides the update method of a serializer that:\n- is for models that define a `add_tags` method\n- defines a `tags` field",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "hash": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 250
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "maxLength": 255
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "short_description": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "maxLength": 255
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceMini"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Tag"
+            }
+          },
+          "is_bookmarked": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "is_liked": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "likes": {
+            "type": "integer",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "hash",
+          "id",
+          "is_bookmarked",
+          "is_liked",
+          "likes",
+          "source",
+          "title",
+          "url"
+        ]
+      },
+      "VideoItemMini": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "source": {
+            "$ref": "#/components/schemas/SourceMini"
+          },
+          "is_bookmarked": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true
+          },
+          "short_description": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "image",
+          "is_bookmarked",
+          "published_at",
+          "short_description",
+          "title",
+          "url"
+        ]
+      },
+      "VideoItemReadOnly": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "hash": {
+            "type": "string",
+            "readOnly": true
+          },
+          "title": {
+            "type": "string",
+            "readOnly": true
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          },
+          "short_description": {
+            "type": "string",
+            "readOnly": true,
+            "nullable": true
+          },
+          "image": {
+            "type": "string",
+            "format": "uri",
+            "readOnly": true,
+            "nullable": true
+          },
+          "source": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "slug": {
+                "type": "string"
+              },
+              "icon": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "icon",
+              "name",
+              "slug"
+            ],
+            "description": "Get custom_data from the associated dataset if custom_data is blank or empty.",
+            "readOnly": true
+          },
+          "is_bookmarked": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "is_liked": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "likes": {
+            "type": "integer",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "hash",
+          "id",
+          "image",
+          "is_bookmarked",
+          "is_liked",
+          "likes",
+          "published_at",
+          "short_description",
+          "source",
+          "title",
+          "url"
+        ]
+      },
+      "YieldPoolRead": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "readOnly": true
+          },
+          "pool_id": {
+            "type": "string",
+            "readOnly": true
+          },
+          "project": {
+            "type": "string",
+            "readOnly": true
+          },
+          "chain": {
+            "type": "string",
+            "readOnly": true
+          },
+          "symbol": {
+            "type": "string",
+            "readOnly": true
+          },
+          "apy": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "apy_base": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "apy_reward": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "tvl_usd": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true,
+            "nullable": true
+          },
+          "il_risk": {
+            "type": "string",
+            "readOnly": true
+          },
+          "date": {
+            "type": "string",
+            "format": "date-time",
+            "readOnly": true
+          }
+        },
+        "required": [
+          "apy",
+          "apy_base",
+          "apy_reward",
+          "chain",
+          "date",
+          "id",
+          "il_risk",
+          "pool_id",
+          "project",
+          "symbol",
+          "tvl_usd"
+        ]
+      }
+    },
+    "securitySchemes": {
+      "cookieAuth": {
+        "type": "apiKey",
+        "in": "cookie",
+        "name": "sessionid"
+      },
+      "tokenAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Token-based authentication with required prefix \"Token\""
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.alphaday.com",
+      "description": "Production"
+    }
+  ]
+}

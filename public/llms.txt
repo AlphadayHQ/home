@@ -1,0 +1,148 @@
+# Alphaday
+
+> A crypto data layer. One REST API and one MCP server over market data,
+> on-chain metrics, news, governance, research, podcasts, video, events and
+> security incidents — aggregated, normalised and queryable from a single
+> surface. Public reads need no account, no API key and no signup.
+
+Alphaday aggregates crypto's fragmented sources into typed, queryable
+collections. The same data powers the dashboards at https://alphaday.com and the
+programmatic surfaces below; the product is the shop window, the layer is
+the thing.
+
+This file is generated at build time from the live API spec and a live MCP
+tools/list call. Generated: 2026-09-08
+
+## Start here
+
+- [OpenAPI spec](https://alphaday.com/openapi.json): OpenAPI 3.0.3 description of all 59 REST endpoints. Also served at https://api.alphaday.com/openapi.json
+- [MCP endpoint](https://api.alphaday.com/mcp): streamable HTTP, protocol 2024-11-05 (v1.30.0), 57 tools. No credentials required
+- [API overview](https://alphaday.com/api): what the layer covers and how to reach it
+- [Endpoint reference](https://alphaday.com/api/docs): browsable reference for every endpoint
+
+## Authentication
+
+Public reads are open — no account, no key, no signup. Verified against the
+live API: `curl https://api.alphaday.com/items/news/` returns 200 with no headers set.
+
+The OpenAPI document declares `tokenAuth` and `cookieAuth` on every
+operation. That reflects the optional per-user layer, not a requirement:
+personalised endpoints (`/items/*/bookmarks/`) return 401 anonymously, while
+every public collection returns 200. Per-user fields such as
+`is_bookmarked` and `is_liked` are the reason the schemes are declared.
+
+## Connecting an agent
+
+```bash
+# REST — no auth
+curl https://api.alphaday.com/items/news/
+
+# Filter and paginate
+curl "https://api.alphaday.com/items/news/?limit=10&page=1"
+```
+
+MCP client configuration:
+
+```json
+{
+  "mcpServers": {
+    "alphaday": {
+      "type": "http",
+      "url": "https://api.alphaday.com/mcp"
+    }
+  }
+}
+```
+
+## Data collections
+
+59 endpoints across 16 collections, all
+under `https://api.alphaday.com`.
+
+- **News** (6 endpoints) — `/items/news/`
+- **Events** (5 endpoints) — `/items/events/`
+- **Videos** (5 endpoints) — `/items/videos/`
+- **Market** (6 endpoints) — `/market/coins/`
+- **TVL Suite** (8 endpoints) — `/tvl/fees/`
+- **Podcasts** (4 endpoints) — `/items/podcasts/`
+- **Blogs** (4 endpoints) — `/items/blogs/`
+- **DAO** (3 endpoints) — `/items/dao/`
+- **Forum** (3 endpoints) — `/items/forum/`
+- **Coins & Categories** (4 endpoints) — `/coins/categories/`
+- **Exchanges** (2 endpoints) — `/exchanges/`
+- **On-chain DEXes** (2 endpoints) — `/onchain-dexes/`
+- **Security & Exploits** (2 endpoints) — `/security/exploits/`
+- **Trending Keywords** (2 endpoints) — `/keywords/trending/`
+- **Kasandra AI** (1 endpoint) — `/kasandra/patterns/{coin}/`
+- **Tags & Projects** (2 endpoints) — `/tags/`
+
+Full parameter and response detail: https://alphaday.com/llms-full.txt
+
+## MCP tools
+
+57 tools on `alphaday` v1.30.0. Call `get_server_instructions` first — the server says so in its own
+initialize response.
+
+- `get_server_instructions` — Return MCP server instructions (if any). Always call first.
+- `get_fear_greed_index` — GET get for fear & greed index.
+- `get_market_coins` — **Coin prices & market data.** Continuously-updated market snapshots for the top coins by rank — price, market cap and volume.
+- `get_market_coins_history` — **Coin price history.** Historical price, market-cap and volume series for one coin, returned as a single object (not a paginated list). Set the window with range: 1D, 1W,…
+- `get_market_coins_detail` — **Get a single coin's market data.** Current market data for one coin by ID, slug — price, market cap and volume.
+- `get_market_trending` — **Trending coins.** The coins trending right now, ranked by score, with price and 24h change.
+- `get_market_trending_detail` — **Get a single trending coin.** Fetch one trending-coin snapshot by its ID.
+- `get_tvl_fees` — **Protocol fees & revenue.** Fee and revenue data across DeFi protocols — 24h, 7d and 30d totals plus revenue. Filter by project, project type (protocol/chain) or tags.
+- `get_tvl_fees_top` — **Top protocols by fees/revenue.** The top protocols ranked by fees or revenue over a timeframe, as a {protocols: {config, data}} object (not a paginated list).
+- `get_tvl_fees_detail` — **Get a single protocol's fees.** Fee and revenue data for one protocol by its ID.
+- `get_tvl_yields` — **Yield pools (APY).** DeFi yield pools with APY (base and reward), TVL and impermanent-loss risk. Filter by chain, project or pool symbol.
+- `get_tvl_yields_top` — **Top yield pools by APY or TVL.** The top yield pools ranked by APY or TVL, as a {pools: {config, data}} object (not a paginated list). Powered by DefiLlama.
+- `get_tvl_yields_detail` — **Get a single yield pool.** Data for one yield pool by its ID.
+- `get_tvl_stablecoins` — **Stablecoins.** Stablecoin data — peg type and mechanism, price and circulating supply. Filter by symbol, peg type or name. Use the detail endpoint for the…
+- `get_tvl_stablecoins_detail` — **Get a single stablecoin.** Data for one stablecoin by its ID.
+- `get_blogs` — **Latest crypto blog posts.** Browse blog and research posts aggregated from 130+ project and research feeds. Filter by project (tags), source, publication date or time period.
+- `get_trending_blogs` — **Trending blog posts.** The posts getting the most attention right now, ranked by trendiness. Optionally narrow with tags.
+- `get_blogs_detail` — **Get a single blog post.** Fetch one blog post by its ID, with full detail.
+- `get_dao` — **DAO governance proposals.** Browse live governance proposals and votes across DAOs, with start and end dates. Filter by project (tags), active-only, or start/end date.
+- `get_trending_dao` — **Trending DAO proposals.** The proposals drawing the most attention right now, ranked by trendiness. Optionally narrow with tags.
+- `get_dao_detail` — **Get a single DAO proposal.** Fetch one DAO proposal by its ID, with full detail.
+- `get_events` — **Upcoming crypto events.** Browse the crypto events calendar — conferences, community calls, token unlocks and more. Filter by event type, date range (period_after /…
+- `get_events_subscriptions` — **Your subscribed events.** The events the signed-in user has subscribed to. Returns an empty list for unauthenticated requests.
+- `get_events_this_week` — **Events happening this week.** A lightweight list of event titles scheduled for the current week, Monday to Sunday (up to 200).
+- `get_trending_events` — **Trending events.** The events drawing the most attention right now, ranked by trendiness. Optionally narrow to projects with tags.
+- `get_events_detail` — **Get a single event.** Fetch one event by its ID, with full detail.
+- `get_forum` — **Crypto governance forum posts.** Browse discussion posts from 50+ governance and community forums. Filter by project (tags), source, publication date or time period.
+- `get_trending_forum` — **Trending forum posts.** The forum discussions getting the most attention right now, ranked by trendiness. Optionally narrow with tags.
+- `get_forum_detail` — **Get a single forum post.** Fetch one forum post by its ID, with full detail.
+- `get_news` — **Latest crypto news headlines.** Browse real-time crypto news aggregated from ~50 outlets, each with a sentiment score and source. Filter by project (tags), source, sentiment,…
+- `get_news_last_24_hours` — **News from the last 24 hours.** A lightweight list of news titles published in the last 24 hours (up to 200) — handy for quick briefings and LLM prompts.
+- `get_news_summary` — **AI summary of the news.** An AI-generated briefing of recent crypto news. Optionally focus it on specific projects by passing tags.
+- `get_trending_news` — **Trending news.** The crypto news drawing the most engagement right now, ranked by a trendiness score. Optionally narrow to projects with tags.
+- `get_news_detail` — **Get a single news article.** Fetch one news article by its ID, with full detail.
+- `get_podcasts` — **Latest crypto podcasts.** Browse crypto podcast episodes aggregated from ~120 feeds, with audio URL and duration. Filter by project (tags), source, publication date or time…
+- `get_trending_podcasts` — **Trending podcasts.** The podcast episodes drawing the most attention right now, ranked by trendiness. Optionally narrow with tags.
+- `get_podcasts_detail` — **Get a single podcast episode.** Fetch one podcast episode by its ID, with full detail.
+- `get_videos` — **Latest crypto videos.** Browse crypto video content aggregated from ~120 YouTube channels. Filter by project (tags), source, publication date or time period.
+- `get_latest_videos` — **Latest video.** The single most recent video (excluding YouTube Shorts). Optionally scope to projects with tags.
+- `get_trending_videos` — **Trending videos.** The videos getting the most engagement right now, ranked by trendiness. Optionally narrow to projects with tags.
+- `get_videos_detail` — **Get a single video.** Fetch one video by its ID, with full detail.
+- `get_tags` — **Tags.** Browse the tag taxonomy (projects, chains, categories). Filter by item type, keyword ids, or a parent tag's slug to list its children.
+- `get_tags_detail` — Retrieve a single tag.
+- `get_trending_keywords` — **Trending keywords.** The keywords and topics trending across crypto right now, each with a sentiment score and trendiness metric.
+- `get_trending_keywords_detail` — **Get a single trending keyword.** One trending keyword by its ID, with its sentiment and trendiness.
+- `get_coin_categories` — **Token categories (sectors).** Cryptocurrency token categories (e.g. DeFi, Layer 1, memecoins), each with aggregate market cap, 24h change, volume and coin count. Filter by name…
+- `get_coin_categories_detail` — **Get a single token category.** One token category by its ID, with its aggregate market metadata.
+- `get_developer_activity` — **Developer activity.** GitHub developer-activity snapshots per coin — commits, contributors and related metrics over time. Filter by coin or date.
+- `get_developer_activity_detail` — **Get a single developer-activity snapshot.** One developer-activity snapshot by its ID.
+- `get_exchanges` — **Centralized exchanges.** Centralized exchange (CEX) reference data — trust score, 24h BTC trading volume, country and year established. Filter by country, trading incentive…
+- `get_exchanges_detail` — **Get a single exchange.** One centralized exchange by its ID, with its full profile and trust metrics.
+- `get_onchain_dexes` — **On-chain DEXes.** Decentralized exchange (DEX) reference data with the blockchain networks each supports. Filter by project (tags, including parent-network tags) or…
+- `get_onchain_dexes_detail` — **Get a single DEX.** One decentralized exchange by its ID, with its network tags.
+- `get_kasandra_patterns` — **AI-detected chart patterns.** Recent chart patterns Kasandra AI has matched on a coin's market history (e.g. double top, head-and-shoulders), each with a bullish/bearish signal…
+- `get_security_exploits` — **Exploits & security incidents.** On-chain exploit and hack alerts sourced from DeFiHackLabs and Rekt.news, with amount lost, chain, protocol and attack type. Filter by chain, attack…
+- `get_security_exploits_detail` — **Get a single security incident.** One exploit/security alert by its ID, with its full details.
+- `search_projects` — Search project-tagged content across the aggregated superfeed.
+
+## Notes
+
+- Rate limits are not published. The API is open; use it considerately.
+- `https://alphaday.com/sitemap.xml` lists the indexable pages on the marketing site.
+- The dashboards at https://alphaday.com and app.alphaday.com are built on this same layer.

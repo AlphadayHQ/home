@@ -18,7 +18,7 @@ function SiblingDashboards({ siblings, currentName }) {
           {siblings.map((s) => (
             <a
               key={s.slug}
-              href={`/${s.slug}`}
+              href={`/projects/${s.slug}`}
               className="group inline-flex items-center gap-1.5 bg-black/40 border border-white/5 text-platinum hover:border-california/40 hover:text-california transition-colors duration-200 rounded-full px-4 py-2 text-sm md:text-base"
               aria-label={`${s.name} dashboard`}
             >

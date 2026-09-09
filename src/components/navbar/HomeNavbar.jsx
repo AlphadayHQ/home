@@ -1,5 +1,5 @@
 import React from "react";
-import alphaday from "../../images/logo.png";
+import alphaday from "../../images/logo.webp";
 import CONFIG from "../../config";
 
 const NAV_LINKS = [

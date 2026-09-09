@@ -1,8 +1,8 @@
-import dashboards from "../../images/products/dashboards.jpg";
-import apimcp from "../../images/products/apimcp.jpg";
-import pulse from "../../images/products/pulse.jpg";
-import recipes from "../../images/products/recipes.jpg";
-import alphadaytv from "../../images/products/alphadaytv.jpg";
+import dashboards from "../../images/products/dashboards.webp";
+import apimcp from "../../images/products/apimcp.webp";
+import pulse from "../../images/products/pulse.webp";
+import recipes from "../../images/products/recipes.webp";
+import alphadaytv from "../../images/products/alphadaytv.webp";
 import CONFIG from "../../config";
 
 // The source screenshots are tall deck slides. `focus` picks the region worth
@@ -49,7 +49,8 @@ const products = [
     img: alphadaytv,
     focus: "object-top",
     alt: "Alphaday TV daily briefing broadcast frame",
-    link: { label: "Coming soon", href: "#" },
+    // No link until there is somewhere to go. The "Soon" badge already says
+    // this; href="#" was a link that scrolled the page to the top instead.
   },
 ];
 

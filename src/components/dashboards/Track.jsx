@@ -9,7 +9,7 @@ import {
   FlipCardClose,
   FlipCardBack,
 } from "../../shared";
-import track from "../../images/workflow/track.png";
+import track from "../../images/workflow/track.webp";
 
 function Track() {
   const [trackCardToggler, setTrackCardToggler] = useState(false);

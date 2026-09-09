@@ -4,25 +4,41 @@
  * The home page shows a condensed view (6 tools, the stat band) and /api shows
  * the full one. Both read from here so the counts can never drift apart.
  *
- * !! PENDING API-TEAM SIGN-OFF !!
- * The commands in API_COMMANDS below do not match the live OpenAPI spec
- * (src/api/docs-spec.generated.js): the real paths are /items/news/trending/,
- * /items/dao/ etc., and there is no /search endpoint or /mcp path in the spec.
- * These strings are the approved launch copy — confirm them against the real
- * API before launch. Fixing them here fixes them on every page at once.
+ * Verified against the live API on 8 Sep 2026 (Appendix B finding 22). Every
+ * command below was previously broken, in two different ways:
+ *
+ *  - `/news` and `/news/trending` returned 404 outright — the collections live
+ *    under `/items/`.
+ *  - `/search` and `/get-started` returned 301, because the API requires a
+ *    trailing slash. Pasted verbatim into a terminal those printed nothing at
+ *    all, which reads as "the API is broken" rather than "the URL is wrong".
+ *
+ * That distinction is why the trailing slash is not cosmetic here, and why
+ * `src/__tests__/api-surface.test.js` asserts it. This is the page CLAUDE.md
+ * names as the primary conversion target for audience one, and a model reading
+ * it copies whatever it finds.
+ *
+ * `/search/`, `/get-started/` and `/mcp` are live but absent from the generated
+ * OpenAPI spec, so the test allowlists them rather than treating them as typos.
  */
 
 export const API_STATS = [
   { num: "1,000+", label: "Data sources" },
   { num: "500k+", label: "Indexed items" },
+  // Copy decision, deliberately left alone: the live MCP server advertises 57
+  // tools (src/api/mcp-tools.generated.json), not 12. Twelve is the curated
+  // showcase in API_TOOLS below. If "at launch" is meant literally this
+  // undersells the layer by 45 tools to the one audience that counts them —
+  // but it is a claim about the product, not a broken string, so it needs an
+  // owner's decision rather than a silent edit.
   { num: "12", label: "Tools at launch" },
 ];
 
 export const API_COMMANDS = {
-  search: "curl https://api.alphaday.com/search?project=arbitrum",
-  news: "curl https://api.alphaday.com/news?tags=arbitrum",
-  trending: "curl https://api.alphaday.com/news/trending?limit=3",
-  getStarted: "curl https://api.alphaday.com/get-started",
+  search: "curl https://api.alphaday.com/search/?project=arbitrum",
+  news: "curl https://api.alphaday.com/items/news/?tags=arbitrum",
+  trending: "curl https://api.alphaday.com/items/news/trending/?limit=3",
+  getStarted: "curl https://api.alphaday.com/get-started/",
   mcpUrl: "https://api.alphaday.com/mcp",
   mcporter: "mcporter config add alphaday --url https://api.alphaday.com/mcp",
 };
@@ -42,7 +58,7 @@ export const API_TOOLS = [
     desc: "What crypto is talking about, right now",
   },
   { name: "search_projects", desc: "Discover tags for any project" },
-  { name: "get_market_coin", desc: "Prices and metadata for the top 100 coins" },
+  { name: "get_market_coins", desc: "Prices and metadata for the top 100 coins" },
 ];
 
 /** The six tools surfaced on the home page, in the approved order. */
@@ -52,7 +68,7 @@ const HOME_TOOL_NAMES = [
   "get_dao",
   "get_trending_keywords",
   "get_videos",
-  "get_market_coin",
+  "get_market_coins",
 ];
 
 export const HOME_TOOLS = HOME_TOOL_NAMES.map((name) =>

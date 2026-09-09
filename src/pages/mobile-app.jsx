@@ -1,11 +1,14 @@
 import React from "react";
 import { Footer, Navbar } from "../components";
+import CONFIG from "../config";
+import { buildFaqJsonLd } from "../utils/faqJsonLd";
+import { mobileFAQData } from "../components/home/faqData";
 import Hero from "../components/mobile/Hero";
 import Video from "../components/mobile/Video";
 import { Backers, FAQ } from "../components/home";
 import Info from "../components/mobile/Info";
-import onTheGoImage from "../images/mobile/crypto-on-the-go.jpg";
-import NotificationsImage from "../images/mobile/alpha-notifications.jpg";
+import onTheGoImage from "../images/mobile/crypto-on-the-go.webp";
+import NotificationsImage from "../images/mobile/alpha-notifications.webp";
 import Stats from "../components/home/Stats";
 import SuperfeedInfo from "../components/mobile/SuperfeedInfo";
 import SomeFeatures from "../components/mobile/SomeFeatures";

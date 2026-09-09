@@ -8,9 +8,9 @@ import {
   Search,
   Bot,
 } from "lucide-react";
-import alphaday from "../images/logo-notext.png";
+import alphaday from "../images/logo-notext.webp";
 import { CodeBlock } from "../components/ui/CodeBlock";
-import Seo from "../components/seo";
+import CONFIG from "../config";
 import {
   API_COMMANDS,
   API_STATS,
@@ -104,10 +104,6 @@ const ApiPage = () => {
 
   return (
     <div className="api-root min-h-screen bg-background text-text flex flex-col w-full relative selection:bg-primary/30 font-sans">
-      <Seo
-        title="Alphaday API"
-        description="All of crypto. One API. 1,000+ data sources, MCP and REST."
-      />
 
       {/* 1. Minimal Nav */}
       <nav
@@ -335,9 +331,12 @@ const ApiPage = () => {
                   <div className="w-3 h-3 rounded-full bg-surface-border"></div>
                   <div className="w-3 h-3 rounded-full bg-success"></div>
                 </div>
+                {/* Reads from API_COMMANDS like every other command on this
+                    page. Hardcoding it here is how this one stayed broken
+                    after the shared copy was fixed — the mobile variant below
+                    already used the shared string, so the two disagreed. */}
                 <div className="mt-2 whitespace-nowrap max-sm:hidden">
-                  <span className="text-primary mr-1">$</span> curl
-                  https://api.alphaday.com/news/trending?limit=3
+                  <span className="text-primary mr-1">$</span> {trendingCurl}
                 </div>
                 <div className="mt-2 whitespace-nowrap sm:hidden">
                   <span className="flex tracking-tight text-left whitespace-nowrap">

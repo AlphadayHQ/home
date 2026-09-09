@@ -2,7 +2,7 @@ import React from "react";
 import { Section, Div } from "../../shared";
 import discordLogo from "../../images/socials/discord.svg";
 import twitterLogo from "../../images/socials/twitter.svg";
-import alphadayLogo from "../../images/logo.png";
+import alphadayLogo from "../../images/logo.webp";
 import config from "../../config";
 
 function LandingFooter() {
