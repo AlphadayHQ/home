@@ -67,7 +67,7 @@ jobs:
         id: artifact
         run: |
           image="alphaday-home:sha-${GITHUB_SHA::12}-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
-          archive="$(mktemp)/landing.tar.gz"
+          archive="$(mktemp -d)/landing.tar.gz"
           docker tag alphaday-home:runtime "$image"
           docker save "$image" | gzip -1 >"$archive"
           checksum="$(sha256sum "$archive" | cut -d ' ' -f 1)"
