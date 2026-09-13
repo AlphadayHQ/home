@@ -26,6 +26,7 @@ import {
   belongsInSitemap,
   indexStateFor,
   projectIndexState,
+  staticPaths,
 } from "../src/seo/indexState.ts";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -122,17 +123,17 @@ function lastmodOf(record) {
   return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
 }
 
-// Static routes, filtered through the same gate as everything else. A route
-// that is not `promoted` in src/seo/indexState.ts cannot appear here, no matter
-// what this list says.
-const STATIC_PATHS = ["/", "/api", "/api/docs", "/dashboards", "/mobile", "/privacy"];
-
 async function main() {
   if (!existsSync(distPath)) mkdirSync(distPath, { recursive: true });
 
-  const staticLinks = STATIC_PATHS.filter((path) =>
-    belongsInSitemap(indexStateFor(path))
-  ).map((path) => ({ loc: path === "/" ? `${baseUrl}/` : `${baseUrl}${path}` }));
+  // Static routes come from src/seo/indexState.ts, not from a list kept here.
+  // This file used to hold its own copy of the paths, so adding a page meant
+  // editing two files and forgetting the second one silently dropped the page
+  // from the sitemap. Each path is still filtered through the same gate, so a
+  // route that is not `promoted` cannot be listed either way.
+  const staticLinks = staticPaths()
+    .filter((path) => belongsInSitemap(indexStateFor(path)))
+    .map((path) => ({ loc: path === "/" ? `${baseUrl}/` : `${baseUrl}${path}` }));
 
   const pages = await fetchLandingPages();
   const projectLinks = pages

@@ -56,6 +56,24 @@ export function indexStateFor(path: string): IndexState {
 }
 
 /**
+ * Every static route this site declares.
+ *
+ * The sitemap used to repeat these paths in a second array of its own, which
+ * made adding a page a two-file edit with no failure if you only did one. The
+ * gate already caught one direction — a route that is not `promoted` cannot be
+ * listed no matter what the array says — but not the reverse: a promoted page
+ * missing from the sitemap's copy was simply, silently, never submitted.
+ *
+ * Returning the keys here removes the second list. `STATIC_STATES` is now the
+ * only place a static route is declared, which is the same property
+ * `belongsInSitemap` gives the index state: one definition, so the two sides
+ * cannot disagree.
+ */
+export function staticPaths(): string[] {
+  return Object.keys(STATIC_STATES);
+}
+
+/**
  * Project landing pages are promoted when the API says they are published.
  * The same predicate serves the route (which decides `noindex`) and the sitemap
  * (which decides listing), so a page pulled from publication disappears from
