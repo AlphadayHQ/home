@@ -708,17 +708,28 @@ quoted in a deck.
 > **Re-measured 8 Sep 2026.** Two of the unblock items in the combined checklist were audited against
 > the live API rather than estimated, and both moved.
 >
-> **The tag audit is worse than "four slugs".** It is 14 of 66 boards, and the cause is not missing
-> coverage — it is that the board slug is used verbatim as the tag filter while the taxonomy uses a
-> different one. Polygon's tag is still `matic-network` (pre-rebrand; the token is now `POL`),
-> Avalanche is `avalanche-2`, and five more are simply unhyphenated. Worldcoin alone hides 5,173
-> articles under `world`. `celestia`, named in the original four, in fact returns 285 and is fine.
-> **This breaks the dashboards, not just SEO** — each of those boards renders an empty feed today.
-> The mapping is recovered in `scripts/audit-tag-coverage.mjs`, but the fix belongs on the
-> landing-page record so one source drives the dashboard, the recap and the sitemap alike. Logged as
-> finding 23.
+> **The tag audit is worse than "four slugs" — and re-diagnosed on 13 Sep.** It is 15 of 66 boards,
+> and **this paragraph's original explanation was wrong.** The cause is not that the taxonomy uses a
+> different slug. The board slug usually *does* exist as a tag; it simply carries **zero keywords**,
+> so it never attaches to an item, while a keyworded twin of the same name holds the content —
+> `polygon` has no keywords, `matic-network` has `MATIC, Polygon` and 1,932 articles. 860 of 17,403
+> tags are in that state and 335 shadow a working twin. `celestia`, named in the original four, in
+> fact returns 285 and is fine.
 >
-> **C3 can now be sized: 16 of 66 boards clear 20 news items a week** — 6 over 100/wk, 10 between 20
+> The claim that **"Worldcoin alone hides 5,173 articles under `world`" is false.** The `world` tag's
+> only keyword is the word "world", so it collects the FIFA World Cup, the Ironman World Championship
+> and Apple Watch reviews. Worldcoin's real coverage is 981 items under `worldcoin-org`.
+>
+> **This breaks the dashboards, not just SEO** — each of those boards renders an empty feed today.
+> The fix needs neither a merge nor a mapping table: resolve a board to its slug-matched tag *plus*
+> every tag named the board slug, and query them together (`?tags=a,b` unions and de-duplicates).
+> Measured at **18 boards improved, 0 regressed**, with 3 manual pairings left over. Specified in
+> [tag-taxonomy-fix.md](./tag-taxonomy-fix.md), audited by `scripts/audit-tag-resolution.mjs`.
+> Logged as finding 23.
+>
+> **C3 sizing has moved three times since and is now 12 of 66** under the corrected resolution rule
+> (13 Sep) — the phantom volume from `world` and `rise-chain` was inflating it. The figure below is
+> the 8 Sep measurement, kept for the trend: **16 of 66 boards clear 20 news items a week** — 6 over 100/wk, 10 between 20
 > and 100, 20 below 20, 30 at zero. That lands inside this document's own "expect 15–30 entities, not
 > 66", which the estimate got right. Sized against the broken slugs it would have read 13.
 >
