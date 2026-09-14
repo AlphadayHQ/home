@@ -37,7 +37,11 @@ const OUT_FULL = resolve(__dirname, "../public/llms-full.txt");
 const SITE = "https://alphaday.com";
 const API_BASE = "https://api.alphaday.com";
 const MCP_URL = process.env.ALPHADAY_MCP_URL || `${API_BASE}/mcp`;
-const MCP_PROTOCOL = "2024-11-05";
+// The server negotiates 2025-06-18; this was pinned two revisions behind. It
+// still worked, because the handshake downgrades rather than refusing — which
+// is exactly why a stale pin here is easy to miss. Kept explicit rather than
+// omitted: the version we ask for should be a decision, not a default.
+const MCP_PROTOCOL = "2025-06-18";
 
 // ---------------------------------------------------------------------------
 // Sources
