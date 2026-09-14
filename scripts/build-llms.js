@@ -191,6 +191,7 @@ function accessSection(docs, mcp) {
 
 - [OpenAPI spec](${SITE}/openapi.json): OpenAPI ${docs.openapiVersion} description of all ${docs.totalEndpoints} REST endpoints. Also served at ${API_BASE}/openapi.json
 - [MCP endpoint](${MCP_URL}): streamable HTTP, protocol ${MCP_PROTOCOL}${version}${`, ${toolCount} tools`}. No credentials required
+- [MCP setup guide](${SITE}/mcp): what the server holds and how to connect each client
 - [API overview](${SITE}/api): what the layer covers and how to reach it
 - [Endpoint reference](${SITE}/api/docs): browsable reference for every endpoint
 

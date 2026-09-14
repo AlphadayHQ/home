@@ -6,6 +6,7 @@ const NAV_LINKS = [
   { label: "The Layer", href: "#layer" },
   { label: "Builders", href: "#builders" },
   { label: "Products", href: "#products" },
+  { label: "MCP", href: CONFIG.mcp },
   { label: "FAQ", href: "#faq" },
   { label: "Docs", href: CONFIG.apiDocs },
 ];

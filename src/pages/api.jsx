@@ -11,6 +11,7 @@ import {
 import alphaday from "../images/logo-notext.webp";
 import { CodeBlock } from "../components/ui/CodeBlock";
 import CONFIG from "../config";
+import { MCP_CLIENTS, MCP_JSON_CONFIG } from "../data/mcpClients";
 import {
   API_COMMANDS,
   API_STATS,
@@ -42,36 +43,13 @@ const trendingJson = `{
     }
   ]
 }`;
-const mcpConfig = `{
-  "mcpServers": {
-    "alphaday": {
-      "url": "${API_COMMANDS.mcpUrl}"
-    }
-  }
-}`;
-const mcpClients = [
-  {
-    name: "MCP Importer",
-    command: API_COMMANDS.mcporter,
-    label: "Terminal",
-  },
-  {
-    name: "Claude Code",
-    command: `claude mcp add --transport http alphaday ${API_COMMANDS.mcpUrl}`,
-    label: "Terminal",
-  },
-  {
-    name: "Codex",
-    command: `codex mcp add alphaday --url ${API_COMMANDS.mcpUrl}`,
-    label: "Terminal",
-  },
-  {
-    name: "JSON Config",
-    command: mcpConfig,
-    language: "json",
-    label: "config.json",
-  },
-];
+// mcpConfig and mcpClients used to be declared here. /mcp needs the same four,
+// and two pages each holding their own copy of one command is finding 22 in
+// miniature - the desktop and mobile variants of the trending curl disagreed on
+// this very page. Both now read src/data/mcpClients.js.
+const mcpConfig = MCP_JSON_CONFIG;
+const mcpClients = MCP_CLIENTS;
+
 const restCurl = API_COMMANDS.news;
 const finalCurl = API_COMMANDS.getStarted;
 const docsUrl = "/api/docs";

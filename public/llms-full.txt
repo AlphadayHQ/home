@@ -17,6 +17,7 @@ tools/list call. Generated: 2026-09-14
 
 - [OpenAPI spec](https://alphaday.com/openapi.json): OpenAPI 3.0.3 description of all 59 REST endpoints. Also served at https://api.alphaday.com/openapi.json
 - [MCP endpoint](https://api.alphaday.com/mcp): streamable HTTP, protocol 2025-06-18 (v1.30.0), 57 tools. No credentials required
+- [MCP setup guide](https://alphaday.com/mcp): what the server holds and how to connect each client
 - [API overview](https://alphaday.com/api): what the layer covers and how to reach it
 - [Endpoint reference](https://alphaday.com/api/docs): browsable reference for every endpoint
 

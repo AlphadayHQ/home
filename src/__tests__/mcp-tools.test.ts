@@ -7,6 +7,10 @@ import {
   domainsNotCovering,
 } from "../data/mcpTools";
 import { API_STATS, TOOL_COUNT, API_TOOLS } from "../data/apiSurface";
+import {
+  CAPABILITY_COPY,
+  HEADLINE_CAPABILITIES,
+} from "../data/mcpCapabilities";
 import mcp from "../api/mcp-tools.generated.json";
 
 /**
@@ -64,6 +68,29 @@ describe("the tool map covers the live server", () => {
       duplicated,
       `filed under more than one domain: ${duplicated.join(", ")}`
     ).toEqual([]);
+  });
+});
+
+describe("capability copy", () => {
+  it("describes every domain, and no domain that does not exist", () => {
+    // /mcp renders one card per domain. A domain with no copy renders a blank
+    // card rather than throwing, which is the failure mode most likely to ship
+    // unnoticed — so the filing obligation covers the sentence, not just the
+    // tool name.
+    const domains = Object.keys(TOOL_DOMAINS).sort();
+    const described = Object.keys(CAPABILITY_COPY).sort();
+    expect(described, "CAPABILITY_COPY keys must match TOOL_DOMAINS exactly").toEqual(
+      domains
+    );
+  });
+
+  it("leads with capabilities that actually exist", () => {
+    for (const slug of HEADLINE_CAPABILITIES) {
+      expect(
+        Object.keys(TOOL_DOMAINS),
+        `${slug} is headlined on /mcp but is not a domain`
+      ).toContain(slug);
+    }
   });
 });
 

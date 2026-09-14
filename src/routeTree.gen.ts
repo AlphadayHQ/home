@@ -19,6 +19,7 @@ import { Route as ApiIndexRouteImport } from './routes/api.index'
 import { Route as ApiDocsRouteImport } from './routes/api.docs'
 import { Route as BSplatRouteImport } from './routes/b.$'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as McpIndexRouteImport } from './routes/mcp.index'
 import { Route as ProjectsSlugIndexRouteImport } from './routes/projects.$slug.index'
 import { Route as ProjectsSlugTopicRouteImport } from './routes/projects.$slug.$topic'
 import { Route as ProjectsSlugThisWeekRouteImport } from './routes/projects.$slug.this-week'
@@ -73,6 +74,11 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/blog/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const McpIndexRoute = McpIndexRouteImport.update({
+  id: '/mcp/',
+  path: '/mcp/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsSlugIndexRoute = ProjectsSlugIndexRouteImport.update({
   id: '/projects/$slug/',
   path: '/projects/$slug/',
@@ -100,6 +106,7 @@ export interface FileRoutesByFullPath {
   '/b/$': typeof BSplatRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/mcp/': typeof McpIndexRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/b/$': typeof BSplatRoute
   '/api': typeof ApiIndexRoute
   '/blog': typeof BlogIndexRoute
+  '/mcp': typeof McpIndexRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
   '/projects/$slug': typeof ProjectsSlugIndexRoute
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/b/$': typeof BSplatRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/mcp/': typeof McpIndexRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/b/$'
     | '/api/'
     | '/blog/'
+    | '/mcp/'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
     | '/projects/$slug/'
@@ -163,6 +173,7 @@ export interface FileRouteTypes {
     | '/b/$'
     | '/api'
     | '/blog'
+    | '/mcp'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
     | '/projects/$slug'
@@ -178,6 +189,7 @@ export interface FileRouteTypes {
     | '/b/$'
     | '/api/'
     | '/blog/'
+    | '/mcp/'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
     | '/projects/$slug/'
@@ -194,6 +206,7 @@ export interface RootRouteChildren {
   BSplatRoute: typeof BSplatRoute
   ApiIndexRoute: typeof ApiIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  McpIndexRoute: typeof McpIndexRoute
   ProjectsSlugTopicRoute: typeof ProjectsSlugTopicRoute
   ProjectsSlugThisWeekRoute: typeof ProjectsSlugThisWeekRoute
   ProjectsSlugIndexRoute: typeof ProjectsSlugIndexRoute
@@ -271,6 +284,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mcp/': {
+      id: '/mcp/'
+      path: '/mcp'
+      fullPath: '/mcp/'
+      preLoaderRoute: typeof McpIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects/$slug/': {
       id: '/projects/$slug/'
       path: '/projects/$slug'
@@ -306,6 +326,7 @@ const rootRouteChildren: RootRouteChildren = {
   BSplatRoute: BSplatRoute,
   ApiIndexRoute: ApiIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
+  McpIndexRoute: McpIndexRoute,
   ProjectsSlugTopicRoute: ProjectsSlugTopicRoute,
   ProjectsSlugThisWeekRoute: ProjectsSlugThisWeekRoute,
   ProjectsSlugIndexRoute: ProjectsSlugIndexRoute,
