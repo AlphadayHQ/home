@@ -20,6 +20,7 @@ import { Route as ApiDocsRouteImport } from './routes/api.docs'
 import { Route as BSplatRouteImport } from './routes/b.$'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as McpIndexRouteImport } from './routes/mcp.index'
+import { Route as McpClientRouteImport } from './routes/mcp.$client'
 import { Route as ProjectsSlugIndexRouteImport } from './routes/projects.$slug.index'
 import { Route as ProjectsSlugTopicRouteImport } from './routes/projects.$slug.$topic'
 import { Route as ProjectsSlugThisWeekRouteImport } from './routes/projects.$slug.this-week'
@@ -79,6 +80,11 @@ const McpIndexRoute = McpIndexRouteImport.update({
   path: '/mcp/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const McpClientRoute = McpClientRouteImport.update({
+  id: '/mcp/$client',
+  path: '/mcp/$client',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsSlugIndexRoute = ProjectsSlugIndexRouteImport.update({
   id: '/projects/$slug/',
   path: '/projects/$slug/',
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
+  '/mcp/$client': typeof McpClientRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/mcp/': typeof McpIndexRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
+  '/mcp/$client': typeof McpClientRoute
   '/api': typeof ApiIndexRoute
   '/blog': typeof BlogIndexRoute
   '/mcp': typeof McpIndexRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
+  '/mcp/$client': typeof McpClientRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/mcp/': typeof McpIndexRoute
@@ -155,6 +164,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/api/docs'
     | '/b/$'
+    | '/mcp/$client'
     | '/api/'
     | '/blog/'
     | '/mcp/'
@@ -171,6 +181,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/api/docs'
     | '/b/$'
+    | '/mcp/$client'
     | '/api'
     | '/blog'
     | '/mcp'
@@ -187,6 +198,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/api/docs'
     | '/b/$'
+    | '/mcp/$client'
     | '/api/'
     | '/blog/'
     | '/mcp/'
@@ -204,6 +216,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ApiDocsRoute: typeof ApiDocsRoute
   BSplatRoute: typeof BSplatRoute
+  McpClientRoute: typeof McpClientRoute
   ApiIndexRoute: typeof ApiIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
   McpIndexRoute: typeof McpIndexRoute
@@ -291,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/mcp/$client': {
+      id: '/mcp/$client'
+      path: '/mcp/$client'
+      fullPath: '/mcp/$client'
+      preLoaderRoute: typeof McpClientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects/$slug/': {
       id: '/projects/$slug/'
       path: '/projects/$slug'
@@ -324,6 +344,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ApiDocsRoute: ApiDocsRoute,
   BSplatRoute: BSplatRoute,
+  McpClientRoute: McpClientRoute,
   ApiIndexRoute: ApiIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
   McpIndexRoute: McpIndexRoute,

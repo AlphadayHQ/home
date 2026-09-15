@@ -15,7 +15,11 @@ import {
   CAPABILITY_LABELS,
   HEADLINE_CAPABILITIES,
 } from "../data/mcpCapabilities";
-import { MCP_CLIENTS, MCP_CLIENTS_VERIFIED_ON } from "../data/mcpClients";
+import {
+  FEATURED_INSTALLS,
+  MCP_CLIENTS,
+  MCP_CLIENTS_VERIFIED_ON,
+} from "../data/mcpClients";
 
 /**
  * /mcp — the MCP server page.
@@ -106,7 +110,7 @@ const McpPage = () => (
         </p>
 
         <div className="grid sm:grid-cols-2 gap-5 mt-8">
-          {MCP_CLIENTS.map(({ slug, name, label: kind, command, language }) => (
+          {FEATURED_INSTALLS.map(({ slug, name, label: kind, command, language }) => (
             <div key={slug} className="flex flex-col">
               <div className="flex items-center gap-2.5 mb-3.5">
                 <h3 className="text-[15.5px] font-extrabold text-text">{name}</h3>
@@ -116,10 +120,33 @@ const McpPage = () => (
               </div>
               <CodeBlock
                 code={command}
-                language={language ?? "bash"}
+                language={language}
                 className="grow flex items-center"
               />
+              <a
+                href={`${CONFIG.mcp}/${slug}`}
+                className="text-[13px] font-bold text-text-muted hover:text-primary transition-colors mt-2.5"
+              >
+                {name} setup, in full &rarr;
+              </a>
             </div>
+          ))}
+        </div>
+
+        {/*
+          Every client gets a link, not just the four with a quick-start. /mcp
+          shipped promoted and linked from nowhere; doing that again one level
+          down would be the same mistake with eight more URLs.
+        */}
+        <div className="flex flex-wrap gap-2.5 mt-8">
+          {MCP_CLIENTS.map(({ slug, name }) => (
+            <a
+              key={slug}
+              href={`${CONFIG.mcp}/${slug}`}
+              className="text-[13.5px] font-medium text-text-muted border border-surface-border rounded-lg px-3.5 py-2 hover:border-primary/50 hover:text-text transition-colors"
+            >
+              {name}
+            </a>
           ))}
         </div>
 

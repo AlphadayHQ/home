@@ -55,21 +55,54 @@ describe("static route declaration", () => {
      * declared paths against the files that actually exist, which is what
      * makes "the sitemap lists a URL that 404s" detectable here rather than
      * in Search Console six weeks later.
+     *
+     * Dynamic segments are the wrinkle. `mcp.$client.tsx` serves `/mcp/claude`,
+     * `/mcp/cursor` and every other client, but flattening it literally yields
+     * `/mcp/$client`, which matches no promoted path. The first version of this
+     * test did exactly that, and the effect was that promoting any client page
+     * failed with "no route file serves it" — the guard blocking the thing it
+     * was meant to protect. Each `$segment` becomes a wildcard instead.
      */
-    const served = new Set(
-      readdirSync(routesDir)
-        .filter((file) => /\.tsx$/.test(file) && !file.startsWith("__"))
-        .map((file) => {
-          const stem = file.replace(/\.tsx$/, "");
-          if (stem === "index") return "/";
-          return `/${stem.replace(/\.index$/, "").split(".").join("/")}`;
-        })
-    );
+    const patterns = readdirSync(routesDir)
+      .filter((file) => /\.tsx$/.test(file) && !file.startsWith("__"))
+      .map((file) => {
+        const stem = file.replace(/\.tsx$/, "");
+        if (stem === "index") return "/";
+        return `/${stem.replace(/\.index$/, "").split(".").join("/")}`;
+      })
+      .map((route) => {
+        if (!route.includes("$")) return { route, test: (p: string) => p === route };
+
+        /*
+         * A dynamic route only vouches for a promoted path if it is namespaced —
+         * that is, its first segment is a literal. `/mcp/$client` genuinely
+         * serves `/mcp/claude`. `/$slug` does not genuinely serve anything: it
+         * is the root catch-all, and it answers 404 unless the API confirms a
+         * landing page for that exact slug. Letting it match would make this
+         * assertion pass for any single-segment path anyone promoted, which is
+         * the whole failure it exists to catch.
+         */
+        const segments = route.split("/").filter(Boolean);
+        if (segments[0]?.startsWith("$")) return { route, test: () => false };
+
+        const source = route
+          .split("/")
+          .map((seg) =>
+            seg === "$"
+              ? ".*" // splat: swallows the remainder
+              : seg.startsWith("$")
+                ? "[^/]+" // param: exactly one segment
+                : seg.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+          )
+          .join("/");
+        const re = new RegExp(`^${source}$`);
+        return { route, test: (p: string) => re.test(p) };
+      });
 
     for (const path of staticPaths()) {
       if (!belongsInSitemap(indexStateFor(path))) continue;
       expect(
-        served.has(path),
+        patterns.some(({ test }) => test(path)),
         `${path} is promoted but no route file serves it`
       ).toBe(true);
     }

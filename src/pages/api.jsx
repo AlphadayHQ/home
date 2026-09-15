@@ -11,7 +11,7 @@ import {
 import alphaday from "../images/logo-notext.webp";
 import { CodeBlock } from "../components/ui/CodeBlock";
 import CONFIG from "../config";
-import { MCP_CLIENTS, MCP_JSON_CONFIG } from "../data/mcpClients";
+import { FEATURED_INSTALLS } from "../data/mcpClients";
 import {
   API_COMMANDS,
   API_STATS,
@@ -47,8 +47,7 @@ const trendingJson = `{
 // and two pages each holding their own copy of one command is finding 22 in
 // miniature - the desktop and mobile variants of the trending curl disagreed on
 // this very page. Both now read src/data/mcpClients.js.
-const mcpConfig = MCP_JSON_CONFIG;
-const mcpClients = MCP_CLIENTS;
+const mcpClients = FEATURED_INSTALLS;
 
 const restCurl = API_COMMANDS.news;
 const finalCurl = API_COMMANDS.getStarted;
