@@ -22,16 +22,37 @@
  * OpenAPI spec, so the test allowlists them rather than treating them as typos.
  */
 
+import { CAPABILITY_COUNT, MCP_TOOL_COUNT } from "./mcpTools";
+
+/*
+ * Re-exported because this file calls itself the single source of truth for the
+ * public API surface, and a component reaching past it to mcpTools.js for one
+ * of the two numbers it renders makes that false. Components import the surface;
+ * the surface decides where its numbers come from.
+ */
+export { CAPABILITY_COUNT };
+
 export const API_STATS = [
   { num: "1,000+", label: "Data sources" },
   { num: "500k+", label: "Indexed items" },
-  // Copy decision, deliberately left alone: the live MCP server advertises 57
-  // tools (src/api/mcp-tools.generated.json), not 12. Twelve is the curated
-  // showcase in API_TOOLS below. If "at launch" is meant literally this
-  // undersells the layer by 45 tools to the one audience that counts them —
-  // but it is a claim about the product, not a broken string, so it needs an
-  // owner's decision rather than a silent edit.
-  { num: "12", label: "Tools at launch" },
+  /*
+   * Was a hardcoded "12 Tools at launch" while the live server exposed 57. The
+   * note here used to say that undersold the layer by 45 tools to the one
+   * audience that counts them, and that changing it needed an owner's decision
+   * rather than a silent edit. That decision was taken: publish capabilities.
+   *
+   * "12" was never just this stat - TOOL_COUNT rendered it as "12 tools" in
+   * four more places, so the page understated itself in prose as well.
+   *
+   * Both numbers now derive from src/data/mcpTools.js, which is CI-checked
+   * against the live tool list. Note what that does and does not buy: a new
+   * tool on the server does NOT move these numbers on its own, it fails the
+   * build until someone files it. See the contract in mcpTools.js.
+   *
+   * The label changed because it now counts a different thing - capabilities,
+   * not tools - and "at launch" was never true of either.
+   */
+  { num: String(CAPABILITY_COUNT), label: "Data capabilities" },
 ];
 
 export const API_COMMANDS = {
@@ -75,4 +96,12 @@ export const HOME_TOOLS = HOME_TOOL_NAMES.map((name) =>
   API_TOOLS.find((tool) => tool.name === name),
 );
 
-export const TOOL_COUNT = API_TOOLS.length;
+/**
+ * The live MCP tool count, rendered as "{n} tools" on the home page and /api.
+ *
+ * Deliberately NOT `API_TOOLS.length`. API_TOOLS is a twelve-tool showcase -
+ * how many cards to draw - and using its length as the public tool count meant
+ * every "all 12 tools" on the site was wrong by 45.
+ */
+export const TOOL_COUNT = MCP_TOOL_COUNT;
+

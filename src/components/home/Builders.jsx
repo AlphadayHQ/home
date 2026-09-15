@@ -3,7 +3,13 @@ import { ArrowRight } from "lucide-react";
 import { Section } from "../../shared";
 import { CodeBlock } from "../ui/CodeBlock";
 import CONFIG from "../../config";
-import { API_COMMANDS, API_STATS, HOME_TOOLS, TOOL_COUNT } from "../../data/apiSurface";
+import {
+  API_COMMANDS,
+  API_STATS,
+  CAPABILITY_COUNT,
+  HOME_TOOLS,
+  TOOL_COUNT,
+} from "../../data/apiSurface";
 
 const QUICKSTARTS = [
   {
@@ -75,7 +81,20 @@ function Builders() {
           className="group inline-flex items-center gap-2 mt-5 font-bold text-[14.5px] text-text hover:text-primary transition-colors"
           href={CONFIG.api}
         >
-          {TOOL_COUNT} tools, zero setup — see all
+          {/*
+            Three numbers land within one screen here: six tool cards above,
+            this link, and the stat band below reading "{CAPABILITY_COUNT} Data
+            capabilities". All three are correct and none explains the others,
+            so the band's number had no antecedent. Naming both here is the
+            bridge.
+            The noun has to be the band's noun. An earlier version said
+            "datasets", which is the truer word and the one mcpTools.js uses in
+            its own definition — but it left the reader inferring that datasets
+            and data capabilities are the same thing, from two words six inches
+            apart. One number, one name.
+          */}
+          {TOOL_COUNT} tools across {CAPABILITY_COUNT} capabilities, zero setup
+          — see all
           <ArrowRight className="w-4 h-4 text-primary transition-transform group-hover:translate-x-1" />
         </a>
       </div>

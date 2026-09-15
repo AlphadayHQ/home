@@ -37,7 +37,11 @@ const OUT_FULL = resolve(__dirname, "../public/llms-full.txt");
 const SITE = "https://alphaday.com";
 const API_BASE = "https://api.alphaday.com";
 const MCP_URL = process.env.ALPHADAY_MCP_URL || `${API_BASE}/mcp`;
-const MCP_PROTOCOL = "2024-11-05";
+// The server negotiates 2025-06-18; this was pinned two revisions behind. It
+// still worked, because the handshake downgrades rather than refusing — which
+// is exactly why a stale pin here is easy to miss. Kept explicit rather than
+// omitted: the version we ask for should be a decision, not a default.
+const MCP_PROTOCOL = "2025-06-18";
 
 // ---------------------------------------------------------------------------
 // Sources
@@ -187,6 +191,7 @@ function accessSection(docs, mcp) {
 
 - [OpenAPI spec](${SITE}/openapi.json): OpenAPI ${docs.openapiVersion} description of all ${docs.totalEndpoints} REST endpoints. Also served at ${API_BASE}/openapi.json
 - [MCP endpoint](${MCP_URL}): streamable HTTP, protocol ${MCP_PROTOCOL}${version}${`, ${toolCount} tools`}. No credentials required
+- [MCP setup guide](${SITE}/mcp): what the server holds and how to connect each client
 - [API overview](${SITE}/api): what the layer covers and how to reach it
 - [Endpoint reference](${SITE}/api/docs): browsable reference for every endpoint
 
