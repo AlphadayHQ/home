@@ -18,6 +18,7 @@ const CONFIG = {
   api: "/api",
   apiDocs: "/api/docs",
   mcp: "/mcp",
+  cookbook: "/cookbook",
   appStore: {
     apple: "https://apps.apple.com/us/app/alphaday/id1581443943",
     google: "https://play.google.com/store/apps/details?id=com.alphaday",

@@ -194,6 +194,7 @@ function accessSection(docs, mcp) {
 - [MCP setup guide](${SITE}/mcp): what the server holds and how to connect each client
 - [API overview](${SITE}/api): what the layer covers and how to reach it
 - [Endpoint reference](${SITE}/api/docs): browsable reference for every endpoint
+- [Cookbook](${SITE}/cookbook): six worked use cases, each with runnable code and the output it produced
 
 ## Authentication
 

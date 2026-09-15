@@ -2,6 +2,7 @@ import React from "react";
 import { ArrowLeft, AlertTriangle, Check, Terminal } from "lucide-react";
 import { Layout, Section } from "../shared";
 import { CodeBlock } from "../components/ui/CodeBlock";
+import { Rich } from "../components/ui/Rich";
 import CONFIG from "../config";
 import { CAPABILITY_COUNT, TOOL_COUNT, API_COMMANDS } from "../data/apiSurface";
 import {
@@ -48,43 +49,6 @@ import {
  * not. Everything else on the page is per-client by construction. Principle 7
  * survives: nothing here is present to make the page longer.
  */
-
-/**
- * Renders `backticked` spans as real code and `**bold**` as bold.
- *
- * The previous version stripped both characters out with a regex, which is how
- * "the top-level key is `servers`, not `mcpServers`" — a sentence whose entire
- * content is the difference between two identifiers — reached the reader as
- * undifferentiated prose. The markers are in the source because the distinction
- * matters; rendering them is cheaper than removing them.
- */
-const Rich = ({ children }) => {
-  const parts = String(children).split(/(`[^`]+`|\*\*[^*]+\*\*)/g);
-  return (
-    <>
-      {parts.map((part, i) => {
-        if (part.startsWith("`") && part.endsWith("`") && part.length > 2) {
-          return (
-            <code
-              key={i}
-              className="font-mono text-[0.92em] text-primary/90 bg-surface-light border border-surface-border rounded px-1 py-px"
-            >
-              {part.slice(1, -1)}
-            </code>
-          );
-        }
-        if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
-          return (
-            <strong key={i} className="text-text font-semibold">
-              {part.slice(2, -2)}
-            </strong>
-          );
-        }
-        return <React.Fragment key={i}>{part}</React.Fragment>;
-      })}
-    </>
-  );
-};
 
 const H2 = ({ children }) => (
   <h2 className="font-display text-[clamp(22px,3vw,30px)] leading-tight font-extrabold tracking-tight text-text">
