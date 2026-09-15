@@ -93,17 +93,22 @@ jobs:
             --stack-name "$ORIGIN_STACK" \
             --query "Stacks[0].Outputs[?OutputKey=='ArtifactBucketName'].OutputValue" \
             --output text)"
+          instance_id="$(aws cloudformation describe-stacks \
+            --stack-name "$ORIGIN_STACK" \
+            --query "Stacks[0].Outputs[?OutputKey=='InstanceId'].OutputValue" \
+            --output text)"
           test -n "$bucket"
           test "$bucket" != None
+          test -n "$instance_id"
+          test "$instance_id" != None
           aws s3 cp "$ARCHIVE" "s3://$bucket/$ARTIFACT_KEY" --only-show-errors
           aws s3 cp manifest "s3://$bucket/manifest" --only-show-errors
           for _ in $(seq 1 60); do
-            status="$(aws s3 cp "s3://$bucket/deployments/$DEPLOYMENT_ID" - --only-show-errors 2>/dev/null || true)"
-            case "$status" in
-              success*) exit 0 ;;
-              failed*) printf '%s\n' "$status"; exit 1 ;;
-            esac
+            instance_deployment="$(aws s3 cp "s3://$bucket/state/origins/$instance_id" - --only-show-errors 2>/dev/null || true)"
+            test "$instance_deployment" != "$DEPLOYMENT_ID" || exit 0
             sleep 10
           done
-          echo "Deployment acknowledgement timed out" >&2
+          status="$(aws s3 cp "s3://$bucket/deployments/$DEPLOYMENT_ID" - --only-show-errors 2>/dev/null || true)"
+          test -z "$status" || printf 'Last deployment status:\n%s\n' "$status" >&2
+          echo "Deployment acknowledgement timed out for $instance_id" >&2
           exit 1
