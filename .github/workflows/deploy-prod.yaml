@@ -6,9 +6,9 @@ jobs:
   deploy:
     uses: ./.github/workflows/deploy-ssr.yaml
     with:
-      aws_role: arn:aws:iam::402248308880:role/alphaday-home-production-home-deployer
+      aws_role: arn:aws:iam::402248308880:role/alphaday-landing-home-deployer
       build_api_base_url: https://api.alphaday.com
-      origin_stack: alphaday-home-production-origin
+      origin_stack: alphaday-landing-origin
     secrets:
       clarity_project_id: ${{ secrets.PROD__LANDING__CLARITY_PROJECT_ID }}
 

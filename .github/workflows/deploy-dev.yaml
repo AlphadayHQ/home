@@ -9,9 +9,9 @@ jobs:
   deploy:
     uses: ./.github/workflows/deploy-ssr.yaml
     with:
-      aws_role: arn:aws:iam::402248308880:role/alphaday-home-dev-home-deployer
+      aws_role: arn:aws:iam::402248308880:role/zettaday-landing-home-deployer
       build_api_base_url: https://api.zettaday.com
-      origin_stack: alphaday-home-dev-origin
+      origin_stack: zettaday-landing-origin
     secrets:
       clarity_project_id: ${{ secrets.DEV__LANDING__CLARITY_PROJECT_ID }}
 
