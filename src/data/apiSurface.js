@@ -76,15 +76,15 @@ export const API_COMMANDS = {
 };
 
 export const API_TOOLS = [
-  { name: "get_news", desc: "Real-time news from 49 crypto outlets" },
+  { name: "get_news", desc: "Real-time news from 49 crypto outlets — 440,000+ articles" },
   { name: "get_trending_news", desc: "What the crypto media is buzzing about" },
   { name: "get_news_summary", desc: "AI-generated daily crypto briefing" },
-  { name: "get_blogs", desc: "133 project blogs, one feed" },
-  { name: "get_podcasts", desc: "118 podcast feeds, latest episodes" },
-  { name: "get_videos", desc: "121 YouTube channels, timestamped" },
+  { name: "get_blogs", desc: "133 project blogs — 19,000+ posts" },
+  { name: "get_podcasts", desc: "118 podcast feeds — 22,000+ episodes" },
+  { name: "get_videos", desc: "121 YouTube channels — 34,000+ videos" },
   { name: "get_events", desc: "Conferences, meetups, side events" },
   { name: "get_dao", desc: "Live Snapshot votes across 51 DAOs" },
-  { name: "get_forum", desc: "59 governance forums, one endpoint" },
+  { name: "get_forum", desc: "59 governance forums — 60,000+ posts" },
   {
     name: "get_trending_keywords",
     desc: "What crypto is talking about, right now",

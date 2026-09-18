@@ -44,11 +44,11 @@
  * line rather than rendering as a blank card.
  */
 export const CAPABILITY_COPY = {
-  news: "Real-time news from 49 crypto outlets, tagged and deduped.",
+  news: "Real-time news from 49 crypto outlets — 440,000+ articles, tagged and deduped.",
   "news-summary": "An AI briefing over the whole news corpus, focusable by project.",
-  blogs: "133 project blogs in one feed.",
-  podcasts: "118 podcast feeds with their latest episodes.",
-  videos: "121 YouTube channels, timestamped.",
+  blogs: "133 project blogs — 19,000+ posts — in one feed.",
+  podcasts: "118 crypto podcast feeds — 22,000+ episodes, each with its audio URL and duration.",
+  videos: "121 YouTube channels — 34,000+ videos — timestamped.",
   events: "6,000+ conferences, meetups, hackathons and side events.",
   dao: "Live Snapshot proposals across 51 DAOs.",
   forum: "59 governance forums — 60,000+ posts — behind one endpoint.",
@@ -75,12 +75,24 @@ export const CAPABILITY_COPY = {
  * database, per-coin developer activity, AI-detected chart patterns — and they
  * are also, not coincidentally, in the set the site has never advertised. They
  * are the reason this page counts capabilities rather than tools.
+ *
+ * Batch 2 (PR #230) extended this from four to nine with the five content
+ * feeds (news, blogs, podcasts, videos, forum). The page set is read from
+ * this array by both `/api` and the route at `/api/data/{slug}`, and the
+ * test in `src/__tests__/capability-pages.test.ts` asserts both directions.
+ * A slug here that does not have a `CAPABILITY_PAGES` entry, or vice versa,
+ * fails the build rather than rendering as a blank card.
  */
 export const HEADLINE_CAPABILITIES = [
   "security-exploits",
   "developer-activity",
   "kasandra",
   "tvl-yields",
+  "news",
+  "forum",
+  "blogs",
+  "podcasts",
+  "videos",
 ];
 
 /**

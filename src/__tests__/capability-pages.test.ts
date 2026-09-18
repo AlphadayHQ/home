@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { HEADLINE_CAPABILITIES } from "../data/mcpCapabilities";
+import { CAPABILITY_COPY, HEADLINE_CAPABILITIES } from "../data/mcpCapabilities";
 import { TOOL_DOMAINS } from "../data/mcpTools";
 import {
   CAPABILITY_PAGES,
@@ -56,6 +56,11 @@ describe("the page set", () => {
     expect(pageBySlug("developer-activity")?.slug).toBe("developer-activity");
     expect(pageBySlug("tvl-yields")?.slug).toBe("tvl-yields");
     expect(pageBySlug("kasandra")?.slug).toBe("kasandra");
+    expect(pageBySlug("news")?.slug).toBe("news");
+    expect(pageBySlug("forum")?.slug).toBe("forum");
+    expect(pageBySlug("blogs")?.slug).toBe("blogs");
+    expect(pageBySlug("podcasts")?.slug).toBe("podcasts");
+    expect(pageBySlug("videos")?.slug).toBe("videos");
     expect(pageBySlug("nope")).toBeUndefined();
   });
 });
@@ -97,6 +102,57 @@ describe("per-page integrity", () => {
       ).toBe(true);
     });
   }
+});
+
+describe("copy corrections (plan §3 — volume claims on the five content feeds)", () => {
+  /*
+   * Plan §3: "Every large feed advertises its source count and hides its
+   * volume". Apply the same treatment forum got in batch 1 (volume claim
+   * "60,000+ posts") to news, blogs, podcasts and videos. The headline
+   * number on each capability page (heroFigure.big) and the one-line
+   * copy on /api (CAPABILITY_COPY) MUST carry the volume claim. Without
+   * this assertion, a future copywriter can quietly drop "440,000+
+   * articles" from the news card and ship a vague "49 outlets" line.
+   */
+  it("CAPABILITY_COPY carries a volume figure for every content feed", () => {
+    const expectations: Record<string, RegExp> = {
+      news: /440[,.]?000\+/,
+      blogs: /19[,.]?000\+/,
+      podcasts: /22[,.]?000\+/,
+      videos: /34[,.]?000\+/,
+      forum: /60[,.]?000\+/,
+    };
+    for (const [slug, pattern] of Object.entries(expectations)) {
+      expect(
+        pattern.test(CAPABILITY_COPY[slug as keyof typeof CAPABILITY_COPY]),
+        `CAPABILITY_COPY.${slug} is missing a volume claim matching ${pattern}`,
+      ).toBe(true);
+    }
+  });
+
+  it("every content-feed heroFigure.big matches its CAPABILITY_COPY volume claim", () => {
+    /*
+     * The one-liner on /api and the headline number on /api/data/{slug}
+     * are written in two places; they must agree. A typo that ships
+     * "440,000+" on /api and "440,000+" on the page is fine; one that
+     * ships "440,000+" on /api and "44,000+" on the page is the kind of
+     * inconsistency review catches.
+     */
+    for (const slug of ["news", "blogs", "podcasts", "videos", "forum"] as const) {
+      const copy = CAPABILITY_COPY[slug];
+      const big = CAPABILITY_PAGES[slug].heroFigure.big;
+      // Volume figure pattern: "440,000+", "60,000+", "440k+", "60k+".
+      const match = copy.match(/\d{1,3}(?:[,]\d{3})*\+|\d{1,3}k\+/);
+      expect(
+        match,
+        `${slug}: CAPABILITY_COPY has no parseable volume claim`,
+      ).not.toBeNull();
+      expect(
+        match![0],
+        `${slug}: CAPABILITY_COPY volume "${match![0]}" disagrees with heroFigure.big "${big}"`,
+      ).toBe(big);
+    }
+  });
 });
 
 describe("payload-level traps (plan §4)", () => {
