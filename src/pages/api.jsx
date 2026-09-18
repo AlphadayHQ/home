@@ -62,12 +62,15 @@ const githubUrl = "https://github.com/AlphadayHQ/";
 const tools = API_TOOLS;
 
 /*
- * The four headline capabilities get their own pages. The set is read from
+ * The headline capabilities get their own pages. The set is read from
  * `HEADLINE_CAPABILITIES` (also imported by the route), so the page list
  * here and the page set on disk cannot drift apart — `src/__tests__/
  * capability-pages.test.ts` asserts they match. This is the §6.5 fix:
  * promoted pages must be linked from somewhere, and the only "home" for a
- * crypto API is this page.
+ * crypto API is this page. As of batch 2 the set is nine (was four in
+ * batch 1): four from the original round (security-exploits, dev-activity,
+ * kasandra, tvl-yields) plus the five content feeds (news, forum, blogs,
+ * podcasts, videos).
  */
 const headlineCapabilities = HEADLINE_CAPABILITIES.map((slug) => ({
   slug,
@@ -395,7 +398,7 @@ const ApiPage = () => {
           </div>
         </section>
 
-        {/* 7b. Headline capabilities — the four pages that earn their own URL. */}
+        {/* 7b. Headline capabilities — the pages that earn their own URL. */}
         <section className="pb-32 px-6">
           <div className="max-w-7xl mx-auto">
             <div className="text-center mb-16">
@@ -403,7 +406,7 @@ const ApiPage = () => {
                 Beyond the twelve
               </h3>
               <p className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-4 max-w-3xl mx-auto">
-                Four datasets you will not find at a general crypto API.
+                Nine datasets you will not find at a general crypto API.
               </p>
               <p className="text-text-muted max-w-2xl mx-auto">
                 Each gets its own page with a real <code className="font-mono text-[0.92em] text-primary/90 bg-surface-light border border-surface-border rounded px-1.5 py-0.5">curl</code>,
