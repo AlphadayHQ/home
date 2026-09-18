@@ -34,7 +34,18 @@ export { CAPABILITY_COUNT };
 
 export const API_STATS = [
   { num: "1,000+", label: "Data sources" },
-  { num: "500k+", label: "Indexed items" },
+  /*
+   * "500k+" was last verified on 8 Sep and measured 478,206 — it was already
+   * understating then. Measured corpus-wide on 18 Sep: news 444,175 + forum
+   * 62,402 + videos 34,569 + podcasts 22,772 + blogs 19,016 + dao 6,603 +
+   * events 6,542 = 596,079. `500k+` understated the corpus by ~19%.
+   *
+   * The same `rounded down + 1` convention the rest of the stat band uses —
+   * `500k+` was the previous bound, 590k+ is the next sensible one above the
+   * measured 596,079. The figure stays true as the corpus grows rather than
+   * decaying the morning after the build ships.
+   */
+  { num: "590k+", label: "Indexed items" },
   /*
    * Was a hardcoded "12 Tools at launch" while the live server exposed 57. The
    * note here used to say that undersold the layer by 45 tools to the one
