@@ -129,10 +129,6 @@ export const TOOL_DOMAINS = {
    * Fees, stablecoins and yields share a URL prefix and nothing else — three
    * datasets with different shapes, which DefiLlama also treats separately.
    * Counting TVL as a single capability gives 20.
-   *
-   * Note for anyone planning content on these: they are reachable over MCP but
-   * `/tvl/*` returns 401 over REST with app credentials, so they cannot be
-   * demonstrated with a `curl` command the way the other domains can.
    */
   "tvl-fees": ["get_tvl_fees", "get_tvl_fees_detail", "get_tvl_fees_top"],
   "tvl-stablecoins": ["get_tvl_stablecoins", "get_tvl_stablecoins_detail"],

@@ -4346,11 +4346,29 @@
           },
           "tag": {
             "$ref": "#/components/schemas/KeywordTag"
+          },
+          "match_type": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MatchTypeEnum"
+              }
+            ],
+            "readOnly": true
+          },
+          "case_sensitive": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "required_terms": {
+            "readOnly": true
           }
         },
         "required": [
+          "case_sensitive",
           "id",
+          "match_type",
           "name",
+          "required_terms",
           "tag"
         ]
       },
@@ -4562,6 +4580,15 @@
           "prices",
           "total_volumes"
         ]
+      },
+      "MatchTypeEnum": {
+        "enum": [
+          "phrase",
+          "token",
+          "contextual"
+        ],
+        "type": "string",
+        "description": "* `phrase` - Phrase\n* `token` - Token\n* `contextual` - Contextual"
       },
       "NewsReadOnly": {
         "type": "object",
@@ -6208,6 +6235,18 @@
           },
           "ignore_trending": {
             "type": "boolean"
+          },
+          "match_type": {
+            "$ref": "#/components/schemas/MatchTypeEnum"
+          },
+          "case_sensitive": {
+            "type": "boolean"
+          },
+          "required_terms": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         },
         "required": [

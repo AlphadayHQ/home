@@ -18,6 +18,11 @@ import {
   API_TOOLS,
   TOOL_COUNT,
 } from "../data/apiSurface";
+import {
+  CAPABILITY_COPY,
+  CAPABILITY_LABELS,
+  HEADLINE_CAPABILITIES,
+} from "../data/mcpCapabilities";
 
 const heroCurl = API_COMMANDS.search;
 const trendingCurl = API_COMMANDS.trending;
@@ -55,6 +60,20 @@ const docsUrl = "/api/docs";
 const githubUrl = "https://github.com/AlphadayHQ/";
 
 const tools = API_TOOLS;
+
+/*
+ * The four headline capabilities get their own pages. The set is read from
+ * `HEADLINE_CAPABILITIES` (also imported by the route), so the page list
+ * here and the page set on disk cannot drift apart — `src/__tests__/
+ * capability-pages.test.ts` asserts they match. This is the §6.5 fix:
+ * promoted pages must be linked from somewhere, and the only "home" for a
+ * crypto API is this page.
+ */
+const headlineCapabilities = HEADLINE_CAPABILITIES.map((slug) => ({
+  slug,
+  label: CAPABILITY_LABELS[slug] ?? slug.replace(/-/g, " "),
+  blurb: CAPABILITY_COPY[slug],
+}));
 
 const ApiPage = () => {
   const [copied, setCopied] = useState(false);
@@ -371,6 +390,44 @@ const ApiPage = () => {
                     {tool.desc}
                   </p>
                 </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 7b. Headline capabilities — the four pages that earn their own URL. */}
+        <section className="pb-32 px-6">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-16">
+              <h3 className="text-primary font-mono text-sm tracking-[0.2em] uppercase font-bold mb-4">
+                Beyond the twelve
+              </h3>
+              <p className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-4 max-w-3xl mx-auto">
+                Four datasets you will not find at a general crypto API.
+              </p>
+              <p className="text-text-muted max-w-2xl mx-auto">
+                Each gets its own page with a real <code className="font-mono text-[0.92em] text-primary/90 bg-surface-light border border-surface-border rounded px-1.5 py-0.5">curl</code>,
+                a real payload, and an honest list of what it does not cover.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {headlineCapabilities.map((cap) => (
+                <a
+                  key={cap.slug}
+                  href={`/api/data/${cap.slug}`}
+                  className="group bg-surface border border-surface-border rounded-2xl p-7 hover:border-primary/50 hover:bg-surface-light transition-all flex flex-col"
+                >
+                  <div className="flex items-center justify-between gap-3 mb-4">
+                    <h4 className="font-display text-xl font-bold tracking-tight">
+                      {cap.label}
+                    </h4>
+                    <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-primary group-hover:translate-x-1 transition-all shrink-0" />
+                  </div>
+                  <p className="text-text-muted text-[14.5px] leading-relaxed">
+                    {cap.blurb}
+                  </p>
+                </a>
               ))}
             </div>
           </div>

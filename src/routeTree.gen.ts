@@ -23,6 +23,7 @@ import { Route as CookbookIndexRouteImport } from './routes/cookbook.index'
 import { Route as CookbookRecipeRouteImport } from './routes/cookbook.$recipe'
 import { Route as McpIndexRouteImport } from './routes/mcp.index'
 import { Route as McpClientRouteImport } from './routes/mcp.$client'
+import { Route as ApiDataCapabilityRouteImport } from './routes/api.data.$capability'
 import { Route as ProjectsSlugIndexRouteImport } from './routes/projects.$slug.index'
 import { Route as ProjectsSlugTopicRouteImport } from './routes/projects.$slug.$topic'
 import { Route as ProjectsSlugThisWeekRouteImport } from './routes/projects.$slug.this-week'
@@ -97,6 +98,11 @@ const McpClientRoute = McpClientRouteImport.update({
   path: '/mcp/$client',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiDataCapabilityRoute = ApiDataCapabilityRouteImport.update({
+  id: '/api/data/$capability',
+  path: '/api/data/$capability',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProjectsSlugIndexRoute = ProjectsSlugIndexRouteImport.update({
   id: '/projects/$slug/',
   path: '/projects/$slug/',
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/blog/': typeof BlogIndexRoute
   '/cookbook/': typeof CookbookIndexRoute
   '/mcp/': typeof McpIndexRoute
+  '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/blog': typeof BlogIndexRoute
   '/cookbook': typeof CookbookIndexRoute
   '/mcp': typeof McpIndexRoute
+  '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
   '/projects/$slug': typeof ProjectsSlugIndexRoute
@@ -167,6 +175,7 @@ export interface FileRoutesById {
   '/blog/': typeof BlogIndexRoute
   '/cookbook/': typeof CookbookIndexRoute
   '/mcp/': typeof McpIndexRoute
+  '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
@@ -188,6 +197,7 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/cookbook/'
     | '/mcp/'
+    | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
     | '/projects/$slug/'
@@ -207,6 +217,7 @@ export interface FileRouteTypes {
     | '/blog'
     | '/cookbook'
     | '/mcp'
+    | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
     | '/projects/$slug'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/blog/'
     | '/cookbook/'
     | '/mcp/'
+    | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
     | '/projects/$slug/'
@@ -246,6 +258,7 @@ export interface RootRouteChildren {
   BlogIndexRoute: typeof BlogIndexRoute
   CookbookIndexRoute: typeof CookbookIndexRoute
   McpIndexRoute: typeof McpIndexRoute
+  ApiDataCapabilityRoute: typeof ApiDataCapabilityRoute
   ProjectsSlugTopicRoute: typeof ProjectsSlugTopicRoute
   ProjectsSlugThisWeekRoute: typeof ProjectsSlugThisWeekRoute
   ProjectsSlugIndexRoute: typeof ProjectsSlugIndexRoute
@@ -351,6 +364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpClientRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/data/$capability': {
+      id: '/api/data/$capability'
+      path: '/api/data/$capability'
+      fullPath: '/api/data/$capability'
+      preLoaderRoute: typeof ApiDataCapabilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/projects/$slug/': {
       id: '/projects/$slug/'
       path: '/projects/$slug'
@@ -390,6 +410,7 @@ const rootRouteChildren: RootRouteChildren = {
   BlogIndexRoute: BlogIndexRoute,
   CookbookIndexRoute: CookbookIndexRoute,
   McpIndexRoute: McpIndexRoute,
+  ApiDataCapabilityRoute: ApiDataCapabilityRoute,
   ProjectsSlugTopicRoute: ProjectsSlugTopicRoute,
   ProjectsSlugThisWeekRoute: ProjectsSlugThisWeekRoute,
   ProjectsSlugIndexRoute: ProjectsSlugIndexRoute,

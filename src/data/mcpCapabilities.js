@@ -23,11 +23,17 @@
  * false today. Both round down to the previous step: 140+ and 700+. Rounding
  * down only works if you actually round down.
  *
- * Measured: exchanges 150 · dexes 748 · exploits 184 · yields 32,770 ·
- * stablecoins 426 · fees 2,199 · categories 750 · dev-activity 3,276 ·
- * tags 17,407 · events 6,337. Source-count claims (49 outlets, 133 blogs, 118
- * podcasts, 121 channels, 51 DAOs, 59 forums) match the approved copy in
- * `apiSurface.js` and are not restated differently here.
+ * Measured: exchanges 150 · dexes 748 · exploits 190 · yields 33,613 ·
+ * stablecoins 426 · fees 2,199 · categories 750 · dev-activity 3,822 ·
+ * tags 17,407 · events 6,542. Source-count claims (49 outlets, 133 blogs,
+ * 118 podcasts, 121 channels, 51 DAOs, 59 forums, 60,000+ forum posts)
+ * match the approved copy in `apiSurface.js` and are not restated
+ * differently here.
+ *
+ * Re-measured corpus-wide on 18 Sep 2026 — replaces the 14 Sep figures above.
+ * Rounded copy strings in `CAPABILITY_COPY` below stay as written; only the
+ * ledger line is updated, because that line is a measurement record rather
+ * than published copy.
  */
 
 /**
@@ -45,7 +51,7 @@ export const CAPABILITY_COPY = {
   videos: "121 YouTube channels, timestamped.",
   events: "6,000+ conferences, meetups, hackathons and side events.",
   dao: "Live Snapshot proposals across 51 DAOs.",
-  forum: "59 governance forums behind one endpoint.",
+  forum: "59 governance forums — 60,000+ posts — behind one endpoint.",
   keywords: "What crypto is talking about, ranked, right now.",
   projects: "Search project-tagged content across the whole superfeed.",
   tags: "A 17,000+ tag taxonomy — projects, chains and categories, with parents and children.",
