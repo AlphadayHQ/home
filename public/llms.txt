@@ -11,7 +11,7 @@ programmatic surfaces below; the product is the shop window, the layer is
 the thing.
 
 This file is generated at build time from the live API spec and a live MCP
-tools/list call. Generated: 2026-09-14
+tools/list call. Generated: 2026-09-15
 
 ## Start here
 
@@ -20,6 +20,7 @@ tools/list call. Generated: 2026-09-14
 - [MCP setup guide](https://alphaday.com/mcp): what the server holds and how to connect each client
 - [API overview](https://alphaday.com/api): what the layer covers and how to reach it
 - [Endpoint reference](https://alphaday.com/api/docs): browsable reference for every endpoint
+- [Cookbook](https://alphaday.com/cookbook): six worked use cases, each with runnable code and the output it produced
 
 ## Authentication
 

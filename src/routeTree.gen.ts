@@ -19,6 +19,8 @@ import { Route as ApiIndexRouteImport } from './routes/api.index'
 import { Route as ApiDocsRouteImport } from './routes/api.docs'
 import { Route as BSplatRouteImport } from './routes/b.$'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as CookbookIndexRouteImport } from './routes/cookbook.index'
+import { Route as CookbookRecipeRouteImport } from './routes/cookbook.$recipe'
 import { Route as McpIndexRouteImport } from './routes/mcp.index'
 import { Route as McpClientRouteImport } from './routes/mcp.$client'
 import { Route as ProjectsSlugIndexRouteImport } from './routes/projects.$slug.index'
@@ -75,6 +77,16 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/blog/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CookbookIndexRoute = CookbookIndexRouteImport.update({
+  id: '/cookbook/',
+  path: '/cookbook/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookbookRecipeRoute = CookbookRecipeRouteImport.update({
+  id: '/cookbook/$recipe',
+  path: '/cookbook/$recipe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const McpIndexRoute = McpIndexRouteImport.update({
   id: '/mcp/',
   path: '/mcp/',
@@ -110,9 +122,11 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
+  '/cookbook/$recipe': typeof CookbookRecipeRoute
   '/mcp/$client': typeof McpClientRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/cookbook/': typeof CookbookIndexRoute
   '/mcp/': typeof McpIndexRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
@@ -127,9 +141,11 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
+  '/cookbook/$recipe': typeof CookbookRecipeRoute
   '/mcp/$client': typeof McpClientRoute
   '/api': typeof ApiIndexRoute
   '/blog': typeof BlogIndexRoute
+  '/cookbook': typeof CookbookIndexRoute
   '/mcp': typeof McpIndexRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
@@ -145,9 +161,11 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
+  '/cookbook/$recipe': typeof CookbookRecipeRoute
   '/mcp/$client': typeof McpClientRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
+  '/cookbook/': typeof CookbookIndexRoute
   '/mcp/': typeof McpIndexRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
@@ -164,9 +182,11 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/api/docs'
     | '/b/$'
+    | '/cookbook/$recipe'
     | '/mcp/$client'
     | '/api/'
     | '/blog/'
+    | '/cookbook/'
     | '/mcp/'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
@@ -181,9 +201,11 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/api/docs'
     | '/b/$'
+    | '/cookbook/$recipe'
     | '/mcp/$client'
     | '/api'
     | '/blog'
+    | '/cookbook'
     | '/mcp'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
@@ -198,9 +220,11 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/api/docs'
     | '/b/$'
+    | '/cookbook/$recipe'
     | '/mcp/$client'
     | '/api/'
     | '/blog/'
+    | '/cookbook/'
     | '/mcp/'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
@@ -216,9 +240,11 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   ApiDocsRoute: typeof ApiDocsRoute
   BSplatRoute: typeof BSplatRoute
+  CookbookRecipeRoute: typeof CookbookRecipeRoute
   McpClientRoute: typeof McpClientRoute
   ApiIndexRoute: typeof ApiIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  CookbookIndexRoute: typeof CookbookIndexRoute
   McpIndexRoute: typeof McpIndexRoute
   ProjectsSlugTopicRoute: typeof ProjectsSlugTopicRoute
   ProjectsSlugThisWeekRoute: typeof ProjectsSlugThisWeekRoute
@@ -297,6 +323,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cookbook/': {
+      id: '/cookbook/'
+      path: '/cookbook'
+      fullPath: '/cookbook/'
+      preLoaderRoute: typeof CookbookIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookbook/$recipe': {
+      id: '/cookbook/$recipe'
+      path: '/cookbook/$recipe'
+      fullPath: '/cookbook/$recipe'
+      preLoaderRoute: typeof CookbookRecipeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mcp/': {
       id: '/mcp/'
       path: '/mcp'
@@ -344,9 +384,11 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   ApiDocsRoute: ApiDocsRoute,
   BSplatRoute: BSplatRoute,
+  CookbookRecipeRoute: CookbookRecipeRoute,
   McpClientRoute: McpClientRoute,
   ApiIndexRoute: ApiIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
+  CookbookIndexRoute: CookbookIndexRoute,
   McpIndexRoute: McpIndexRoute,
   ProjectsSlugTopicRoute: ProjectsSlugTopicRoute,
   ProjectsSlugThisWeekRoute: ProjectsSlugThisWeekRoute,

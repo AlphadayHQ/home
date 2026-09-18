@@ -40,6 +40,7 @@ const STATIC_STATES: Record<string, IndexState> = {
   "/api": "promoted",
   "/api/docs": "promoted",
   "/mcp": "promoted",
+  "/cookbook": "promoted",
   "/dashboards": "promoted",
   "/mobile": "promoted",
   "/privacy": "promoted",
