@@ -1041,6 +1041,379 @@ export const CAPABILITY_PAGES = {
       },
     ],
   },
+
+  dao: {
+    slug: "dao",
+    title: "DAO governance",
+    blurb:
+      "Live and historical governance proposals across DAOs, each with the voting window attached — the one crypto event you cannot catch up on afterwards.",
+    heroFigure: {
+      big: "6,600+",
+      suffix: "proposals",
+      note:
+        "Every record carries `starts_at` and `ends_at`, which is what makes \"can I still vote on this\" answerable. Read the limits before relying on the `active` filter to answer it for you.",
+    },
+    recordShape: [
+      "id", "hash", "title", "url", "starts_at", "ends_at", "image", "source",
+    ],
+    samplePayload: `{
+  "id": 8443,
+  "hash": "60b76edbdb9d7dda6737cc89763dcbe1740477756358c0dd025f4fd6dafe38b6",
+  "title": "Rotate Sentinel Addresses on the DUNI-Owned Uniswap Earn Vaults",
+  "url": "https://snapshot.org/#/uniswapgovernance.eth/proposal/0x...",
+  "starts_at": "2026-09-18T20:00:00Z",
+  "ends_at": "2026-09-23T20:00:00Z",
+  "image": null,
+  "source": {
+    "name": "Uniswap",
+    "slug": "uniswap_dao",
+    "icon": "https://cdn.alphaday.com/media/icons/sources/uniswap.jpg"
+  }
+}`,
+    getIt: {
+      curl: `curl ${API_BASE}/items/dao/?sources=arbitrum_dao`,
+      mcpTools: ["get_dao", "get_dao_detail", "get_trending_dao"],
+    },
+    whatItsFor: [
+      "Deadline alerting, which is the whole point: a proposal closing in six hours cannot be acted on retroactively, and `ends_at` makes \"closing soon\" a computation rather than a subscription.",
+      "Scoping to one DAO: `?sources=arbitrum_dao` returns that DAO's own proposals, where `?tags=arbitrum` returns the wider Ethereum-ecosystem set.",
+      "Joining a vote to its discussion: the forum capability covers the same protocols, so a proposal and the debate behind it can be reconstructed from two calls on the same slug.",
+    ],
+    knownLimits: [
+      {
+        title: "`?active=true` returns nothing on the public API.",
+        body:
+          "Verified 20 Sep 2026: `?active=true` returns 0 while 6 of 200 sampled proposals are provably open (`starts_at` <= now <= `ends_at`). It is fixed on the dev API and verified there, but not yet live here. Until it ships, compute the window yourself from the two date fields — which is what `/cookbook/dao-proposal-alerts` does.",
+      },
+      {
+        title: "`?period=` does nothing here.",
+        body:
+          "`period` filters on `published_at`, and proposals have no such field — they carry a date range instead. On the public API the parameter passes through silently and returns the whole corpus, so a \"proposals this week\" query built on it is quietly wrong. Window on `starts_at` / `ends_at`.",
+      },
+      {
+        title: "Titles are not unique.",
+        body:
+          "Distinct proposals routinely share a title prefix — a DAO batching three related votes will file three near-identical titles. Identify on `hash` or `url`; use the title only to display, and do not truncate it for deduplication.",
+      },
+    ],
+  },
+
+  events: {
+    slug: "events",
+    title: "Events",
+    blurb:
+      "Conferences, meetups, hackathons and community calls with dates, locations and a type code on every record.",
+    heroFigure: {
+      big: "6,500+",
+      suffix: "events",
+      note:
+        "`item_type` classifies each one — EDU, MU (meetup), Co (conference), Hk (hackathon) and a handful more. `location` is populated on 96% of records.",
+    },
+    recordShape: [
+      "id", "hash", "title", "item_type", "starts_at", "ends_at",
+      "location", "is_subscribed",
+    ],
+    samplePayload: `{
+  "id": 6288,
+  "hash": "a4c1e0b7f3d25a918e6b0c4d7f2a83915ec0d4b6",
+  "title": "Valley of the Commons",
+  "item_type": "Co",
+  "starts_at": "2026-08-24T00:00:00Z",
+  "ends_at": "2026-09-20T00:00:00Z",
+  "location": "Zurich, Switzerland",
+  "is_subscribed": false
+}`,
+    getIt: {
+      curl: `curl ${API_BASE}/items/events/?item_type=Hk`,
+      mcpTools: [
+        "get_events", "get_events_detail", "get_trending_events", "get_events_this_week",
+      ],
+    },
+    whatItsFor: [
+      "A filtered calendar without scraping event sites: `item_type` separates hackathons from conferences from meetups, so \"hackathons in the next quarter\" is one call plus a date comparison.",
+      "Travel and presence planning: `location` is a real string on 96% of records, so a city or region filter needs no geocoding step.",
+      "Multi-day handling that most calendars get wrong: `starts_at` and `ends_at` are both present, so a week-long conference renders as a span rather than a point.",
+    ],
+    knownLimits: [
+      {
+        title: "`?active=` does not partition on the public API.",
+        body:
+          "Verified 20 Sep 2026: `?active=true` returns 864 and `?active=false` returns 6,568 — the entire corpus — against a total of 6,568. The two sets overlap, so paginating \"inactive\" events returns active ones mixed in. Fixed on the dev API and verified there; not yet live here.",
+      },
+      {
+        title: "`?period=` is silently ignored.",
+        body:
+          "Same cause as on governance: `period` filters on `published_at`, and events carry a date range instead. The parameter neither narrows nor errors on the public API. Window on `starts_at` / `ends_at`.",
+      },
+      {
+        title: "`item_type` includes an undocumented placeholder.",
+        body:
+          "Over 600 rows the values are EDU (259), MU (161), Co (118), Hk (26), CC (11), `***` (11), WK (9), PY (3) and PR (2). The `***` entries are a placeholder rather than a category — filter them out of anything user-facing, and treat the enum as open rather than fixed.",
+      },
+    ],
+  },
+
+  tags: {
+    slug: "tags",
+    title: "Tag taxonomy",
+    blurb:
+      "The vocabulary every other endpoint filters by — projects, chains, categories and people, with keyword rules and parent relationships.",
+    heroFigure: {
+      big: "17,500+",
+      suffix: "tags",
+      note:
+        "Two-thirds carry a parent, giving the taxonomy real hierarchy rather than a flat list. Each tag matches content through its `keywords`, which is the mechanism — and the failure mode, below.",
+    },
+    recordShape: ["id", "name", "slug", "keywords", "parents"],
+    samplePayload: `{
+  "id": 136,
+  "name": "bitcoin",
+  "slug": "bitcoin",
+  "keywords": [
+    {
+      "id": 211,
+      "name": "Bitcoin",
+      "is_excluded": false,
+      "ignore_trending": false,
+      "match_type": "phrase",
+      "case_sensitive": false,
+      "required_terms": []
+    }
+  ],
+  "parents": []
+}`,
+    getIt: {
+      curl: `curl ${API_BASE}/tags/?search=arbitrum`,
+      mcpTools: ["get_tags", "get_tags_detail"],
+    },
+    whatItsFor: [
+      "Resolving a user's input to something the API accepts: every `?tags=` filter on every other endpoint takes a slug from here, so autocomplete against this beats guessing.",
+      "Understanding why a query matched: `keywords` carries the actual rule — `match_type`, `case_sensitive`, `required_terms`, `is_excluded` — so a surprising result is explainable rather than mysterious.",
+      "Walking a hierarchy: 11,781 of 17,582 tags carry `parents`, so a chain rolls up its protocols and a category rolls up its projects without a mapping table of your own.",
+    ],
+    knownLimits: [
+      {
+        title: "914 tags have no keywords, and match nothing.",
+        body:
+          "Walked all 17,582 tags on 20 Sep 2026: 914 (5.2%) carry an empty `keywords` array. A tag matches content only through its keywords, so these return zero results on every endpoint — not because the project has no coverage, but because nothing connects the tag to it. Check a tag returns results before building a scheduled job on it.",
+      },
+      {
+        title: "516 names are shared by more than one tag.",
+        body:
+          "1,033 tags collide on 516 lowercased names. When a name is duplicated, one of the pair is often the keyword-less one — so picking a tag by name rather than slug can silently select the version that matches nothing.",
+      },
+      {
+        title: "Most tags carry one or two keywords.",
+        body:
+          "The distribution over the full corpus: 9,297 tags have exactly one keyword, 6,982 have two, 381 have three or more. A single-keyword tag is as narrow as that one term, which is why an obvious project name can still under-match.",
+      },
+    ],
+  },
+
+  "news-summary": {
+    slug: "news-summary",
+    title: "News summary",
+    blurb:
+      "An AI briefing written over the whole news corpus, optionally focused on a project — prose, not rows.",
+    heroFigure: {
+      big: "1 call",
+      suffix: "one briefing",
+      note:
+        "Returns a single object, not a list: `{ tags, summary, updated_at }`. Pass `?tags=` to focus it on a project; omit it for the market-wide brief.",
+    },
+    recordShape: ["tags", "summary", "updated_at"],
+    samplePayload: `{
+  "tags": ["bitcoin"],
+  "summary": "The US House Committee advances a Bitcoin reserve bill on a party line split. H100 CEO increases shares as Bitcoin treasury holds 3506 BTC. Bitcoin remains resilient amid broader market softness.",
+  "updated_at": "2026-09-20T06:16:31.794075+00:00"
+}`,
+    getIt: {
+      curl: `curl ${API_BASE}/items/news/summary/?tags=bitcoin`,
+      mcpTools: ["get_news_summary"],
+    },
+    whatItsFor: [
+      "The cheapest possible \"what happened\" call: one request returns written prose an agent can relay directly, with no summarisation step and no token cost on your side.",
+      "Project briefings on demand: `?tags=ethereum` narrows the briefing to that project rather than returning a filtered article list to summarise yourself.",
+      "A grounded opening paragraph for a digest, with the headline feed underneath it as the evidence — which is what `/cookbook/weekly-ecosystem-digest` builds.",
+    ],
+    knownLimits: [
+      {
+        title: "It is a singleton, not a collection.",
+        body:
+          "No `total`, no `results`, no pagination. Anything written to consume the other endpoints' `{count, next, results}` envelope will fail here.",
+      },
+      {
+        title: "`updated_at` is the server's schedule, not yours.",
+        body:
+          "The briefing is recomputed server-side on its own cadence, so two calls minutes apart usually return identical text. Treat it as a cached artifact and show its timestamp rather than implying it was written for this request.",
+      },
+      {
+        title: "`tags` is null when unfocused.",
+        body:
+          "Called without a tag, the response carries `tags: null` rather than an empty array. Destructuring it as an array will throw.",
+      },
+    ],
+  },
+
+  keywords: {
+    slug: "keywords",
+    title: "Trending keywords",
+    blurb:
+      "What the corpus is actually talking about right now, ranked, each with a sentiment score and a link into the tag taxonomy.",
+    heroFigure: {
+      big: "18",
+      suffix: "trending now",
+      note:
+        "A rolling window, not a corpus — 18 is the complete current set, and it turns over as coverage moves. The value is the ranking, not the volume.",
+    },
+    recordShape: ["id", "keyword", "sentiment_score", "trending_order", "trendiness"],
+    samplePayload: `{
+  "id": 40834,
+  "keyword": {
+    "id": 211,
+    "name": "Bitcoin",
+    "tag": { "id": 136, "slug": "bitcoin", "name": "bitcoin" },
+    "match_type": "phrase",
+    "case_sensitive": false,
+    "required_terms": []
+  },
+  "sentiment_score": "0.00",
+  "trending_order": 0,
+  "trendiness": "0.63"
+}`,
+    getIt: {
+      curl: `curl ${API_BASE}/keywords/trending/`,
+      mcpTools: ["get_trending_keywords", "get_trending_keywords_detail"],
+    },
+    whatItsFor: [
+      "Letting the data pick the subject: an agent that starts here finds stories nobody put on a watchlist, which is the loop `/cookbook/crypto-research-agent` runs.",
+      "Composability, which is the real reason to use this: each entry carries `keyword.tag.slug`, and that slug is accepted by every other feed — so a trending term turns straight into news, governance and price queries.",
+      "Mood alongside momentum: `trendiness` says how much attention a term is getting, `sentiment_score` says how the coverage reads. A term trending hard at negative sentiment is a different story from one trending hard at positive.",
+    ],
+    knownLimits: [
+      {
+        title: "There is no history.",
+        body:
+          "The endpoint returns the current window only. There is no date parameter and no archive, so \"what was trending last Tuesday\" cannot be answered — snapshot it yourself if you need a series.",
+      },
+      {
+        title: "The set is small and complete.",
+        body:
+          "`total` is 18 and all 18 come back in one page. Pagination is unnecessary, and a `limit` above 18 changes nothing. Do not build an infinite scroll on it.",
+      },
+      {
+        title: "Scores are strings.",
+        body:
+          "`sentiment_score` and `trendiness` are quoted decimals — `\"0.63\"`, not `0.63`. Sorting without casting gives lexicographic order.",
+      },
+    ],
+  },
+
+  projects: {
+    slug: "projects",
+    title: "Project search",
+    blurb:
+      "One call, one project, every feed at once — news, podcasts, forums, videos, governance, blogs and events in a single ranked result set.",
+    heroFigure: {
+      big: "7 feeds",
+      suffix: "in one call",
+      note:
+        "`?project=ethereum` returns 1,732 items spanning newsitem, podcastitem, forumitem, videoitem, daoitem, blogitem and eventitem — each tagged with its `content_type` and a `trendiness` score.",
+    },
+    recordShape: [
+      "id", "content_type", "item_id", "title", "url", "item_date",
+      "trendiness", "short_description", "source", "tags", "starts_at",
+      "ends_at", "duration", "file_url",
+    ],
+    samplePayload: `{
+  "id": 49,
+  "content_type": "podcastitem",
+  "item_id": 161694,
+  "title": "ROLLUP: The Bull Market Test | Clarity Dies | SEC Opens the Door",
+  "item_date": "2026-09-18T10:30:00Z",
+  "trendiness": 0.35160497562,
+  "url": "https://pscrb.fm/rss/p/...",
+  "source": { "name": "Bankless", "slug": "bankless_podcast" }
+}`,
+    getIt: {
+      curl: `curl ${API_BASE}/search/?project=ethereum`,
+      mcpTools: ["search_projects"],
+    },
+    whatItsFor: [
+      "A project page in one request rather than seven: the alternative is calling news, blogs, podcasts, videos, forum, dao and events separately and merging them yourself.",
+      "Cross-feed ranking: `trendiness` is comparable across content types, so a podcast episode and a governance proposal can sit in one ordered list without inventing a scoring scheme.",
+      "Union-shaped records that stay usable: `duration` and `file_url` appear for podcasts, `starts_at` and `ends_at` for events and proposals — switch on `content_type` and the right fields are already there.",
+    ],
+    knownLimits: [
+      {
+        title: "`project` is required, and the bare call 400s.",
+        body:
+          "`/search/` with no parameters returns 400. `?q=` and `?search=` are not accepted either — `project` is the only entry point, and it takes a tag slug. Resolve the slug from the tag taxonomy first.",
+      },
+      {
+        title: "The mix is dominated by news.",
+        body:
+          "Over 200 rows for `ethereum`: 131 news, 28 podcasts, 18 forum, 14 video, 6 governance, 2 blog, 1 event. A UI that renders the raw order shows a news feed with occasional others — group by `content_type` if the point is breadth.",
+      },
+      {
+        title: "Fields are conditional on type.",
+        body:
+          "Every record carries the union of all feeds' fields, so most are null on any given row. Read `content_type` before reading anything else, and never assume `duration` or `starts_at` is meaningful without it.",
+      },
+    ],
+  },
+
+  "fear-greed": {
+    slug: "fear-greed",
+    title: "Fear & greed index",
+    blurb:
+      "The market sentiment index, scored 0-100 with a plain-language classification, for Bitcoin and Ethereum.",
+    heroFigure: {
+      big: "2 assets",
+      suffix: "BTC and ETH",
+      note:
+        "The whole dataset is two rows. It is an index, not a corpus — the value is that it is one call with no key, not that there is a lot of it.",
+    },
+    recordShape: [
+      "id", "asset", "value", "value_classification",
+      "timestamp", "time_until_update", "updated_at",
+    ],
+    samplePayload: `{
+  "id": 1,
+  "asset": "BTC",
+  "value": 71,
+  "value_classification": "Greed",
+  "timestamp": "2026-09-20T00:00:00Z",
+  "time_until_update": "84894",
+  "updated_at": "2026-09-20T00:25:13.263878Z"
+}`,
+    getIt: {
+      curl: `curl ${API_BASE}/market/fear-greed/`,
+      mcpTools: ["get_fear_greed_index"],
+    },
+    whatItsFor: [
+      "A one-call mood reading for a dashboard header, with `value_classification` already written as a word so nothing has to map 71 onto \"Greed\".",
+      "Framing a briefing: paired with the per-article sentiment on the news feed, it separates how the market feels from how the coverage reads — and the two disagree often enough to be interesting.",
+      "Knowing when to look again: `time_until_update` gives the seconds to the next refresh, so a poller can sleep precisely instead of guessing.",
+    ],
+    knownLimits: [
+      {
+        title: "Two assets, despite what \"per asset\" suggests.",
+        body:
+          "Only BTC and ETH are scored. There is no per-altcoin index here, and no parameter that adds one.",
+      },
+      {
+        title: "No history.",
+        body:
+          "Each asset has exactly one row, the current reading. There is no date parameter and no archive, so a fear-and-greed chart has to be accumulated by polling.",
+      },
+      {
+        title: "`time_until_update` is a string, and sometimes empty.",
+        body:
+          "BTC carries `\"84894\"` — seconds, quoted. ETH carries `\"\"`. Parse defensively and fall back to a fixed interval when it is blank.",
+      },
+    ],
+  },
 };
 
 /**

@@ -99,6 +99,13 @@ export const HEADLINE_CAPABILITIES = [
   "onchain-dexes",
   "tvl-fees",
   "tvl-stablecoins",
+  "dao",
+  "events",
+  "tags",
+  "news-summary",
+  "keywords",
+  "projects",
+  "fear-greed",
 ];
 
 /**
