@@ -56,7 +56,7 @@ export const CAPABILITY_COPY = {
   projects: "Search project-tagged content across the whole superfeed.",
   tags: "A 17,000+ tag taxonomy — projects, chains and categories, with parents and children.",
   "market-coins": "Prices, metadata, history and trending movers for the top coins.",
-  "coin-categories": "700+ token categories with their sector aggregates.",
+  "coin-categories": "700+ token categories; about half carry a market-cap aggregate.",
   "developer-activity": "3,000+ GitHub activity snapshots — commits and contributors per coin.",
   exchanges: "140+ centralized exchanges with trust scores and volume.",
   "onchain-dexes": "700+ DEXes with the chains and protocols behind them.",
@@ -93,6 +93,12 @@ export const HEADLINE_CAPABILITIES = [
   "blogs",
   "podcasts",
   "videos",
+  "market-coins",
+  "coin-categories",
+  "exchanges",
+  "onchain-dexes",
+  "tvl-fees",
+  "tvl-stablecoins",
 ];
 
 /**
