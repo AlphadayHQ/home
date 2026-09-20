@@ -683,6 +683,364 @@ export const CAPABILITY_PAGES = {
       },
     ],
   },
+
+  "market-coins": {
+    slug: "market-coins",
+    title: "Market coins",
+    blurb:
+      "Price, market cap, volume and all-time extremes for the ranked coin universe, with 24h / 7d / 30d change already computed.",
+    heroFigure: {
+      big: "1,300+",
+      suffix: "ranked coins",
+      note:
+        "`price` and `rank` are on every record; `market_cap` on 98% and `volume` on 99%. The percentage-change fields are precomputed across three windows, so a mover list needs no history calls.",
+    },
+    recordShape: [
+      "id", "name", "ticker", "slug", "icon", "rank", "price", "market_cap",
+      "volume", "price_percent_change_24h", "price_percent_change_7d",
+      "price_percent_change_30d", "high_24h", "low_24h", "ath", "atl", "updated_at",
+    ],
+    samplePayload: `{
+  "id": 1,
+  "name": "Bitcoin",
+  "ticker": "BTC",
+  "slug": "bitcoin",
+  "rank": 1,
+  "price": 80433.2310665514,
+  "market_cap": 1611653315762.6667,
+  "volume": 20546803091.92952,
+  "price_percent_change_24h": -1.1334662209728525,
+  "price_percent_change_7d": 2.853303977829609,
+  "price_percent_change_30d": 4.361915472905906,
+  "high_24h": 81937.95,
+  "low_24h": 80131.51333333332,
+  "ath": 126192.65666666666,
+  "atl": 67.81,
+  "updated_at": "2026-09-20T12:07:16Z"
+}`,
+    getIt: {
+      curl: `curl ${API_BASE}/market/coins/?limit=5`,
+      mcpTools: [
+        "get_market_coins", "get_market_coins_detail", "get_market_coins_history",
+        "get_market_trending", "get_market_trending_detail",
+      ],
+    },
+    whatItsFor: [
+      "A movers board with no arithmetic: `price_percent_change_24h`, `_7d` and `_30d` are already on the row, so ranking by momentum is a sort rather than a history walk.",
+      "Drawdown and recovery framing: `ath` and `atl` sit beside `price` on 86% of rows, so \"how far off the high\" is one subtraction and needs no separate endpoint.",
+      "Coin resolution for every other endpoint here: `slug` is the join key that `/kasandra/patterns/{coin}/` and the tag filters expect — `bitcoin`, never `BTC`.",
+    ],
+    knownLimits: [
+      {
+        title: "`updated_at` is per coin, and the spread is months.",
+        body:
+          "Walked all 1,321 rows on 20 Sep 2026: `updated_at` spans 2026-05-25 to 2026-09-20 across 69 distinct days. The top of the book is fresh; the long tail is not. Read `updated_at` before treating a row as current, and do not present the set as a single market snapshot.",
+      },
+      {
+        title: "`ath` and `atl` are missing on 14% of rows.",
+        body:
+          "1,138 of 1,321 carry `ath`, 1,134 carry `atl` — newer listings mostly. A drawdown view has to tolerate nulls rather than assuming the pair is always present.",
+      },
+    ],
+  },
+
+  "coin-categories": {
+    slug: "coin-categories",
+    title: "Coin categories",
+    blurb:
+      "The sector taxonomy — Smart Contract Platform, Layer 1, PoW and 700-odd more — each with a market-cap aggregate where one has been computed.",
+    heroFigure: {
+      big: "700+",
+      suffix: "categories",
+      note:
+        "Read the limits below before building on the aggregates: roughly half the categories carry one, and `coin_count` is never populated on any record.",
+    },
+    recordShape: [
+      "id", "slug", "name", "market_cap", "market_cap_change_24h",
+      "volume_24h", "coin_count", "updated_at",
+    ],
+    samplePayload: `{
+  "id": 1,
+  "slug": "smart-contract-platform",
+  "name": "Smart Contract Platform",
+  "market_cap": 2287322109640.296,
+  "market_cap_change_24h": 1.4610133478211142,
+  "volume_24h": 56636037295.46437,
+  "coin_count": 0,
+  "updated_at": "2026-09-01T00:00:14.657949Z"
+}`,
+    getIt: {
+      curl: `curl ${API_BASE}/coins/categories/?limit=5`,
+      mcpTools: ["get_coin_categories", "get_coin_categories_detail"],
+    },
+    whatItsFor: [
+      "Sector rotation at a glance: the largest categories by market cap are Smart Contract Platform ($2.29T), Layer 1 ($2.26T) and Proof of Work ($1.63T), each with `market_cap_change_24h` alongside.",
+      "A sector filter for the rest of the API: `slug` here is a tag slug elsewhere, so a category name resolves into news, governance and price queries without a mapping table.",
+      "Naming a narrative without inventing one: the taxonomy is the industry's own sector vocabulary rather than a set of labels this API made up.",
+    ],
+    knownLimits: [
+      {
+        title: "`coin_count` is 0 on every record.",
+        body:
+          "Walked all 750 categories on 20 Sep 2026: not one carries a non-zero `coin_count`. The field is present and always empty, so \"how many coins are in this sector\" cannot be answered here — count them from `/market/coins/` by tag instead.",
+      },
+      {
+        title: "Only about half carry an aggregate.",
+        body:
+          "368 of 750 have `market_cap`, 370 have `volume_24h`, 365 have `market_cap_change_24h`. A sector leaderboard built without a null check silently ranks the 49% that happen to be computed and drops the rest — which is not the same as those sectors being small.",
+      },
+      {
+        title: "`updated_at` can be weeks behind.",
+        body:
+          "The sample above was computed on 1 Sep and read on 20 Sep. These are periodic aggregates, not live figures; quote them with their date.",
+      },
+    ],
+  },
+
+  exchanges: {
+    slug: "exchanges",
+    title: "Exchanges",
+    blurb:
+      "Centralized exchanges with CoinGecko trust scores, 24h BTC-denominated volume, jurisdiction and year established.",
+    heroFigure: {
+      big: "150",
+      suffix: "exchanges",
+      note:
+        "`trust_score`, `trade_volume_24h_btc` and `url` are on every record; `year_established` on 97% and `country` on 93%. Small enough to walk in full — 150 rows is one page at `limit=200`.",
+    },
+    recordShape: [
+      "id", "exchange_id", "name", "year_established", "country", "description",
+      "url", "image", "has_trading_incentive", "trust_score", "trust_score_rank",
+      "trade_volume_24h_btc", "trade_volume_24h_btc_normalized", "tags",
+    ],
+    samplePayload: `{
+  "id": 214,
+  "exchange_id": "binance",
+  "name": "Binance",
+  "year_established": 2017,
+  "country": "Cayman Islands",
+  "url": "https://www.binance.com/",
+  "has_trading_incentive": false,
+  "trust_score": 10,
+  "trust_score_rank": 1,
+  "trade_volume_24h_btc": 167917.00941477102,
+  "trade_volume_24h_btc_normalized": null,
+  "tags": [
+    { "id": 302367, "name": "Binance", "slug": "binance" },
+    { "id": 302368, "name": "Cayman Islands", "slug": "cayman-islands" }
+  ]
+}`,
+    getIt: {
+      curl: `curl ${API_BASE}/exchanges/?min_trust_score=9`,
+      mcpTools: ["get_exchanges", "get_exchanges_detail"],
+    },
+    whatItsFor: [
+      "Counterparty screening that is one call, not a spreadsheet: `?min_trust_score=9` returns the 19 exchanges scoring 9 or 10, out of 150.",
+      "Jurisdiction mapping: `country` is a real field on 93% of rows and also arrives as a tag, so \"which venues are domiciled where\" needs no string matching.",
+      "Volume comparison in a single unit: `trade_volume_24h_btc` is BTC-denominated across every venue, so it compares directly without an FX step.",
+    ],
+    knownLimits: [
+      {
+        title: "`has_trading_incentive` is false on all 150.",
+        body:
+          "Walked the full set on 20 Sep 2026: not one exchange has it set. The filter works — `?has_trading_incentive=true` returns 0 and `false` returns 150 — but it partitions nothing useful. Do not build a facet on it.",
+      },
+      {
+        title: "`ordering` and `sort_by` are documented here but not live.",
+        body:
+          "`?ordering=trust_score` and `?ordering=-trust_score` return identical rows, so the parameter does nothing on the public API yet; `?sort_by=trust_score` returns 400. Sort the 150 rows client-side — `trust_score_rank` is already on each record.",
+      },
+      {
+        title: "`description` is missing on a third of rows.",
+        body:
+          "100 of 150 carry one. A venue card that requires `description` will render empty for a third of the set, including venues with a perfect trust score.",
+      },
+    ],
+  },
+
+  "onchain-dexes": {
+    slug: "onchain-dexes",
+    title: "Onchain DEXes",
+    blurb:
+      "Decentralized exchanges with TVL, volume across four windows, fees, market share and the chain and protocol behind each.",
+    heroFigure: {
+      big: "750+",
+      suffix: "DEXes",
+      note:
+        "`protocol` and `description` are on 97% of records, `volume_1d` and `market_share` on 95%, `tvl` and `chain` on 90%. Numeric fields arrive as strings — see the limits.",
+    },
+    recordShape: [
+      "id", "dex_id", "slug", "name", "description", "url", "image",
+      "volume_1d", "volume_1d_change", "volume_7d", "volume_30d",
+      "volume_all_time", "tvl", "fees_24h", "fees_7d", "fees_30d",
+      "chain", "protocol", "disabled", "rank", "market_share", "tags",
+    ],
+    samplePayload: `{
+  "id": 1431,
+  "dex_id": "0swap",
+  "slug": "0swap",
+  "name": "0Swap",
+  "url": "https://www.0swap.exchange",
+  "volume_1d": "11770.00",
+  "volume_1d_change": "-48.47",
+  "volume_7d": "194481.00",
+  "volume_30d": "563354.00",
+  "volume_all_time": "575124.00",
+  "tvl": "44146.19",
+  "fees_24h": "0.00",
+  "chain": "Robinhood Chain",
+  "protocol": "AMM",
+  "disabled": false,
+  "rank": 323,
+  "market_share": "0.0001"
+}`,
+    getIt: {
+      curl: `curl ${API_BASE}/onchain-dexes/?tags=ethereum`,
+      mcpTools: ["get_onchain_dexes", "get_onchain_dexes_detail"],
+    },
+    whatItsFor: [
+      "Venue discovery per chain: `?tags=ethereum` returns 85 of the 757. The chain distribution is wider than the usual shortlist — Binance 59, Ethereum 36, Base 32, Solana 31.",
+      "Protocol-shape analysis: `protocol` separates AMMs from order books and aggregators on 97% of rows, so \"how much volume runs through AMMs on this chain\" is a group-by.",
+      "Fee-to-volume comparison without a second source: `volume_1d/7d/30d` and `fees_24h/7d/30d` sit on the same record across matching windows.",
+    ],
+    knownLimits: [
+      {
+        title: "Every numeric field is a string.",
+        body:
+          "`tvl`, `volume_1d`, `fees_24h` and `market_share` come back quoted — `\"44146.19\"`, not `44146.19`. Sorting without casting gives you lexicographic order, where `\"9\"` beats `\"44146.19\"`. This is the single most likely thing to go wrong on this endpoint.",
+      },
+      {
+        title: "`chain` is null on 79 records.",
+        body:
+          "678 of 757 carry one. A chain facet drops 10% of the corpus silently, and the missing rows are not a random sample — multi-chain deployments are the common case among them.",
+      },
+      {
+        title: "`fees_24h` is thinner than volume.",
+        body:
+          "561 of 757 carry a fees figure against 722 for `volume_1d`. A fee-to-volume ratio is only computable on about three-quarters of the set; the rest will divide by null.",
+      },
+      {
+        title: "Three records are flagged `disabled`.",
+        body:
+          "`disabled: true` on 3 of 757. They are returned by default, so filter them out if the list is user-facing.",
+      },
+    ],
+  },
+
+  "tvl-fees": {
+    slug: "tvl-fees",
+    title: "Protocol fees & revenue",
+    blurb:
+      "What DeFi protocols actually earn — fees and revenue over 24h, 7d and 30d windows, per protocol, in USD.",
+    heroFigure: {
+      big: "2,200+",
+      suffix: "fee records",
+      note:
+        "The distinction the shape makes for you: `total_*` is fees paid by users, `revenue_*` is what the protocol keeps. For Tether they are identical; for most AMMs they are not.",
+    },
+    recordShape: [
+      "id", "project", "currency", "total_24h", "total_7d", "total_30d",
+      "revenue_24h", "revenue_7d", "revenue_30d", "date",
+    ],
+    samplePayload: `{
+  "id": 881,
+  "project": {
+    "name": "Tether",
+    "slug": "tether",
+    "project_type": "protocol",
+    "icon": "https://icons.llama.fi/tether.png",
+    "url": "https://defillama.com/protocol/tether"
+  },
+  "currency": "USD",
+  "total_24h": 17046499.0,
+  "total_7d": 117034021.0,
+  "total_30d": 485359152.0,
+  "revenue_24h": 17046499.0,
+  "revenue_7d": 117034021.0,
+  "revenue_30d": 485359152.0,
+  "date": "2026-06-11T07:18:49.381620Z"
+}`,
+    getIt: {
+      curl: `curl ${API_BASE}/tvl/fees/?tags=ethereum`,
+      mcpTools: ["get_tvl_fees", "get_tvl_fees_detail", "get_tvl_fees_top"],
+    },
+    whatItsFor: [
+      "The question TVL cannot answer: TVL says how much capital sits somewhere, fees say whether it earns anything. Both are on this API and they rank differently.",
+      "Fees versus revenue as a business-model signal: where `revenue_*` tracks `total_*` the protocol keeps the fee; where it is a fraction, the rest goes to liquidity providers.",
+      "Scoping by ecosystem: `?tags=ethereum` returns 168 of the 2,207 records, and `?project=<slug>` narrows to one protocol.",
+    ],
+    knownLimits: [
+      {
+        title: "`date` is per record and spans months.",
+        body:
+          "Walked 1,400 rows on 20 Sep 2026: 57 distinct `date` values from 2026-06-11 to 2026-09-17. The sample above is a June reading. These are snapshots at differing times, not a synchronized daily cut — never sum across rows without checking their dates agree.",
+      },
+      {
+        title: "`revenue_*` is thinner than `total_*`.",
+        body:
+          "Over the same walk: `total_24h` on 92% of rows, `revenue_24h` on 72%. A take-rate calculation is unavailable for roughly a quarter of the corpus.",
+      },
+      {
+        title: "`currency` is always USD.",
+        body:
+          "1,400 of 1,400 read `USD`. The field is a constant today rather than a dimension — do not build a currency selector on it.",
+      },
+    ],
+  },
+
+  "tvl-stablecoins": {
+    slug: "tvl-stablecoins",
+    title: "Stablecoins",
+    blurb:
+      "Every tracked stablecoin with what it pegs to, how the peg is held, its circulating supply and its current price.",
+    heroFigure: {
+      big: "420+",
+      suffix: "stablecoins",
+      note:
+        "`peg_type`, `peg_mechanism` and `symbol` are on 100% of records, `circulating_usd` on all but two. The peg fields are the reason to use this rather than a price feed.",
+    },
+    recordShape: [
+      "id", "stablecoin_id", "name", "symbol", "peg_type",
+      "peg_mechanism", "circulating_usd", "price", "date",
+    ],
+    samplePayload: `{
+  "id": 1,
+  "stablecoin_id": "1",
+  "name": "Tether",
+  "symbol": "USDT",
+  "peg_type": "peggedUSD",
+  "peg_mechanism": "fiat-backed",
+  "circulating_usd": 182097304516.19,
+  "price": 1.0,
+  "date": "2026-09-19T09:07:21.416687Z"
+}`,
+    getIt: {
+      curl: `curl ${API_BASE}/tvl/stablecoins/?peg_type=peggedUSD`,
+      mcpTools: ["get_tvl_stablecoins", "get_tvl_stablecoins_detail"],
+    },
+    whatItsFor: [
+      "Peg-risk screening as a filter rather than a research project: 253 of 428 are crypto-backed, 147 fiat-backed and 27 algorithmic — the mechanism that determines how a depeg behaves is a field, not a footnote.",
+      "Non-USD stablecoin discovery: `?peg_type=peggedUSD` returns 339, which leaves 89 pegged to EUR (26), a basket (10), BRL (5), JPY (5) and others. Most dashboards never show these.",
+      "Depeg monitoring: `price` beside `peg_type` makes deviation computable directly, with no separate oracle call.",
+    ],
+    knownLimits: [
+      {
+        title: "`peg_mechanism` contains a misspelled value.",
+        body:
+          "One record reads `crytpo-backed` rather than `crypto-backed`. An equality filter on the correct spelling silently drops it. Normalise before grouping, or match on both — the value set is otherwise `crypto-backed` (253), `fiat-backed` (147) and `algorithmic` (27).",
+      },
+      {
+        title: "`price` is missing on 28% of records.",
+        body:
+          "308 of 428 carry one. Depeg detection therefore covers roughly three-quarters of the corpus, and the gaps skew toward the smaller and more obscure coins — which are the ones most likely to depeg.",
+      },
+      {
+        title: "`date` is the record's own reading.",
+        body:
+          "Each row carries its own timestamp rather than sharing a snapshot time. Compare `circulating_usd` across coins only when their dates agree.",
+      },
+    ],
+  },
 };
 
 /**
