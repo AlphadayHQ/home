@@ -576,18 +576,18 @@ export const CAPABILITY_PAGES = {
     whatItsFor: [
       "A yield-aggregator front end that needs APY and TVL side by side across every chain — single shape, project and chain tags already attached.",
       "Risk triage by impermanent-loss class: `il_risk` is `yes`, `no`, or `unknown` and is present on every row, so a UI can filter without a per-pool allowlist.",
-      "Top-of-book discovery, with a caveat worth knowing: `/tvl/yields/top/` ranks by APY, not TVL, and returns a different envelope (`{ pools: { config, data } }`, attributed to DefiLlama). Its leaders are four- and five-figure APYs on tiny pools. For the largest pools by capital, sort `tvl_usd` yourself — the LSTs dominate: Lido stETH at $24B, Binance staked ETH, ether.fi.",
+      "Top-of-book discovery needs no parameters: the default order is `tvl_usd` descending, so `?limit=5` returns the largest pools by capital — Lido stETH at $25B, then Fluid DEX and Binance staked ETH. Note that `/tvl/yields/top/` is a different thing: it ranks by APY, returns a different envelope (`{ pools: { config, data } }`, attributed to DefiLlama), and its leaders are five-figure APYs on pools with almost no capital in them.",
     ],
     knownLimits: [
       {
         title: "The `date` field is the pool's last update, not today.",
         body:
-          "Each pool's `date` is independent. Walked 300 rows: 73 distinct `date` values, ranging from June through September. A TVL-sorted top ten is the top of the book today, but the rows in it may be weeks old individually. Do not call the result a market snapshot.",
+          "Each pool's `date` is independent. Walked 300 rows: 73 distinct `date` values, ranging from June through September. The default TVL ordering gives you the top of the book today, but the rows in it may be weeks old individually. Do not call the result a market snapshot.",
       },
       {
-        title: "`?ordering=` is accepted and ignored.",
+        title: "`?ordering=` is not live on the public API yet.",
         body:
-          "Not a documented parameter, and it does nothing: `?ordering=-tvl_usd` and `?ordering=banana` both return the unfiltered 33,618 in the default order. It is easy to believe it works here, because the largest pool by TVL — Lido stETH — is also first by `id`, so the top row does not move. Sort client-side.",
+          "The API defines four sort fields — `tvl_usd`, `apy`, `apy_base`, `apy_reward`, each ascending or descending with a `-` prefix. None of them take effect here yet: every value, including an invalid one, returns the default order. That default is `tvl_usd` descending, so the common case already works without the parameter. Sort client-side for anything else until it ships.",
       },
       {
         title: "`apy: 0.0` on a $16B pool is real.",
