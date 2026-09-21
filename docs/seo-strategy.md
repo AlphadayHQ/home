@@ -396,10 +396,11 @@ src/routes/
   index.tsx                        →  /
   api.index.tsx                    →  /api
   api.docs.tsx                     →  /api/docs
-  api.tools.$tool.tsx              →  /api/tools/{tool}
+  api.data.$capability.tsx         →  /api/data/{capability}
   mcp.index.tsx                    →  /mcp
   mcp.$client.tsx                  →  /mcp/{client}
-  recipes.$slug.tsx                →  /recipes/{slug}
+  cookbook.index.tsx               →  /cookbook
+  cookbook.$recipe.tsx             →  /cookbook/{recipe}
   dashboards.tsx                   →  /dashboards
   projects.$slug.index.tsx         →  /projects/{slug}
   projects.$slug.$topic.tsx        →  /projects/{slug}/{topic}
@@ -421,6 +422,23 @@ src/routes/
 
 Twenty-five files covering an unbounded corpus.
 
+> **Two prefixes changed when the content shipped, 14–21 Sep** — both are the content document's
+> calls, recorded here because this map is the routing contract:
+>
+> - **`api.tools.$tool.tsx` → `api.data.$capability.tsx`.** A page per *capability* (22), not per
+>   *tool* (57). Rationale in
+>   [the content document's §4](./seo-content-strategy.md#4-engine-a--proof-converts).
+> - **`recipes.$slug.tsx` → `cookbook.$recipe.tsx`**, plus a `cookbook.index.tsx` hub. `/recipes/` would
+>   have collided with the shipped AlphaRecipes product.
+>
+> **Twenty-six allocated, sixteen built.** `src/routes/` holds 19 files: those sixteen plus three this
+> map never listed — `$slug.tsx` (the 301 shim for the legacy root slugs, Appendix C), `b.$.tsx` (the
+> app redirect) and `dashboard.tsx`. Ten allocated routes are unbuilt: `security.exploits`,
+> `security.$incident`, `governance.$id`, `research.$slug`, `events.index`, `events.$id`, `media.$id`,
+> `news.$id`, `blog.$slug` and `compare.$slug` — `blog.index.tsx` does exist. **The map is an
+> allocation, not an inventory**, which is the point of §3.2: the prefix is reserved so the content
+> document can commission the page without renegotiating the URL.
+
 Two things in this map are load-bearing and easy to break:
 
 - **`security.exploits.tsx`, not `security.index.tsx`.** Dots are path separators; `.index` resolves
@@ -431,12 +449,18 @@ Two things in this map are load-bearing and easy to break:
   resolving, this is why. Cover it with a route test rather than trusting the convention.
 
 **Route ownership.** This document allocates the routing surface; it does not commission the pages.
-`/mcp`, `/mcp/{client}`, `/api/tools/{tool}`, `/recipes/{slug}`, `/compare/{slug}`,
+`/mcp`, `/mcp/{client}`, `/api/data/{capability}`, `/cookbook/{recipe}`, `/compare/{slug}`,
 `/security/exploits`, `/research/{slug}` and `/events` are all owned by
-[the content document](./seo-content-strategy.md#13-first-90-days). Its §13 currently marks `/mcp`
+[the content document](./seo-content-strategy.md#13-first-90-days). ~~Its §13 currently marks `/mcp`
 and the client pages as *"(companion doc)"* — that reference is now stale and points back here; it
 needs updating so `/mcp` has exactly one owner. **Given CLAUDE.md makes MCP the wedge for audience
-one, an unassigned `/mcp` is the most consequential gap in either plan.**
+one, an unassigned `/mcp` is the most consequential gap in either plan.**~~
+
+> **Closed 14–21 Sep.** The circular reference is gone: §13 now owns `/mcp` and the eight client
+> pages outright, and they are built. The ownership gap this paragraph called the most consequential
+> in either plan has been replaced by a different one — **nobody owns re-verifying the 38 shipped
+> pages**, every one of which carries a dated verification claim. Logged in
+> [the content document's §10](./seo-content-strategy.md#10-cadence-and-ownership).
 
 ---
 
@@ -1066,6 +1090,22 @@ it is not an AI opt-in control.
 
 ### Phase 2 · Weeks 4–12 — The rebuild
 
+> **Status 21 Sep: 10 of 13 items. The framework landed; the origin has not.** TanStack Start is
+> merged (`ac5ee60`, `#222`) and every application-layer item below is done — index state,
+> `X-Robots-Tag`, sitemap gating, canonical enforcement, real 404s and 301s, server-side fetching,
+> the credential retirement.
+>
+> **Two of the three open items need AWS access and nothing else** — the `t4g.micro` origin with the
+> CloudFront cutover, and deploying the verified 301 map. Routing and verification for both are done in
+> the repo (`$slug.tsx`, `scripts/verify-301-map.mjs`). The third, the blog migration, is a content task
+> and sits in [the content document's Weeks 7–12](./seo-content-strategy.md#weeks-712--engine-b-at-cadence).
+>
+> **The origin cutover is the programme gate.** Until it lands, SSR exists in the repo and not on the
+> internet — so the **38 Engine A pages now merged to `dev` are not crawlable by anything**, and the
+> content document's §13 cannot report a result on any of them. *"This phase gates the entire content
+> programme"* has stopped being a forecast and become the current state: **the content is built and
+> waiting on the infrastructure, not the other way round.**
+
 Runs in parallel with Phase 1. **This phase gates the entire content programme.**
 
 - [x] **Calibrate the §1.4 render cost** — `scripts/calibrate-render.js`. Result: **0.74 ms CPU per
@@ -1355,8 +1395,12 @@ real 301 before cutover — not a 200 with client-side navigation.
    Appendix A is now measured rather than modelled. Everything else in Appendix A is still modelled.
    Two numbers would make the rest exact: monthly pageviews from GA4 (`G-ZT80HRR0MD`) and average
    page weight.
-3. **`/tvl/*` returns `401`** with app credentials — a different auth tier. Any route that plans to
-   render yields, stablecoins or fees needs that resolved first.
+3. ~~**`/tvl/*` returns `401`** with app credentials — a different auth tier. Any route that plans to
+   render yields, stablecoins or fees needs that resolved first.~~ **Resolved 2026-09-18, and the
+   premise was wrong: `/tvl/*` returns `200` unauthenticated.** The 401 was caused by *sending* app
+   credentials to an endpoint that wants none. No auth tier blocks yields, stablecoins or fees, and
+   `/api/data/tvl-yields` renders against them today. Corrected in
+   [the content document's §14 item 7](./seo-content-strategy.md#14-corrections-to-the-companion-document).
 
 ---
 
