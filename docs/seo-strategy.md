@@ -60,6 +60,22 @@ Per [CLAUDE.md](../CLAUDE.md), audience one is AI agent builders — people who 
 model. Being unreadable to model crawlers is the most expensive possible failure mode for this
 business, and it is the current state of production.
 
+> **Measured 2026-09-22, and the case is stronger than this section states.** §1.1 argues from model
+> crawlers, which execute no JavaScript at all. Three months of Search Console data show the failure
+> reaching *classic* search as well, where Googlebot's queued second pass was supposed to cover for
+> the shell.
+>
+> The site ranks on page one for 47 URLs and converts them at 0.91%. Three of those — `/orbs`
+> (position 6.66), `/dfinity` (6.89) and `/aave` (9.73) — take **zero clicks from 3,192
+> impressions**. The homepage, the only route whose `<title>` and description are static in the
+> 3,452-byte shell every URL currently serves, converts at **2.15% from a worse position**.
+> `/avalanche` and `/solana` do get rendered — their board titles appear in Search Console — and
+> reach ~1%.
+>
+> **The second pass is not a safety net.** It runs sometimes, and which pages it reaches is not
+> predictable from anything the team controls. Full reading in
+> [the content document's §11](./seo-content-strategy.md#the-2026-09-22-baseline).
+
 ### 1.2 Why TanStack Start
 
 - **Route count stays constant.** The corpus lives behind dynamic segments (`$slug`), so there are
@@ -543,6 +559,20 @@ Crawl status comes from CloudFront access logs (§7) — a verified Googlebot fe
 signal available and costs nothing extra. Index status comes from the bulk export. A page that was
 never fetched is a **crawl-budget problem**, and the response is internal linking, not demotion.
 
+> **Measured 2026-09-22: impressions are not a health signal, and every rule here reads them as one.**
+>
+> The precondition above fixes the false negative — a page demoted for never having been crawled. The
+> data exposes the opposite case, which the rule cannot see: `/orbs` earns 1,559 impressions at
+> position 6.66 and **zero clicks**; `/dfinity` 1,069 at 6.89, zero; `/aave` 564 at 9.73, zero. All
+> three are crawled, indexed and accumulating impressions, so all three read as healthy under any
+> rule keyed on impressions — and all three are failing completely.
+>
+> The rule stays correct as a *demotion* gate: a page with a broken listing needs the listing fixed,
+> not `noindex`. What is missing is a second output. **Track click-through rate per tier as a
+> diagnostic** and alarm on an indexed page holding a page-one position while earning no clicks.
+> That signature is a rendering or metadata failure, and it is invisible to every metric in §7 as
+> written.
+
 Pruning is a standing automated job, not a periodic cleanup. **Stand it up before the corpus passes
 ~5,000 pages** — it is much harder to retrofit onto a corpus already too big to reason about.
 
@@ -575,6 +605,13 @@ shared head helper's type signature so that omitting it fails the build.
 The current site defaults a missing canonical to the homepage, which means `/api` — the primary
 conversion target for audience one — currently tells Google it is a duplicate of the homepage. Type
 enforcement is the fix that cannot regress.
+
+**Measured 2026-09-22, and it is a layer worse than written: the served HTML carries no canonical at
+all.** `curl` on `alphaday.com/base` and on `www.alphaday.com/base` returns the same 3,452-byte shell
+with no `<link rel="canonical">` anywhere in it. The tag is written by the client during render, so
+the homepage default described above is what *renderers* eventually see, and every non-rendering
+crawler — the §1.1 audience — sees no canonical whatsoever. That is also why `www` currently
+duplicates the entire site with nothing to resolve it (Appendix C).
 
 ### 5.2 Real HTTP status codes
 
@@ -661,6 +698,18 @@ next.
 
 If bot management is introduced later, the distinction is: block scrapers, keep this list allowed.
 
+> **Check `api.alphaday.com/robots.txt` against this policy.** It applies the same named-allow
+> pattern — GPTBot, ClaudeBot, PerplexityBot and six others explicitly `Allow: /` — above a closing
+> `User-agent: * / Disallow: /`. Googlebot is therefore excluded and the model crawlers are admitted
+> to the whole API host, **`/admin/` included**. Search Console shows
+> `api.alphaday.com/admin/login/` indexed URL-only, which is what happens when Google sees links to a
+> path it is not allowed to fetch.
+>
+> Probably an unintended consequence of copying the marketing site's file rather than a decision. The
+> allow-list is right for `/docs/`; it should not extend to an admin login. Worth a `Disallow:
+> /admin/` ahead of the named groups, since a group's rules are read in isolation and a later
+> wildcard `Disallow` does not reach a crawler matched by its own group.
+
 ### 6.2 llms.txt
 
 Publish `/llms.txt` and `/llms-full.txt` — what Alphaday is, what the API returns, the MCP endpoint,
@@ -691,8 +740,16 @@ about it, and it is the prerequisite for the API directory listings in the conte
 Technical health only. Per-engine content and authority metrics are in
 [the content document's §11](./seo-content-strategy.md#11-measurement-by-engine).
 
-- **Search Console on both properties.** `app.alphaday.com` is currently unmonitored and is where the
-  duplicate-content risk lives.
+- **Search Console on both properties** — **connected 2026-09-22** on a domain property covering
+  `*.alphaday.com`, so `app.`, `blog.`, `www.` and `api.` report alongside the marketing site. The
+  first export is the pre-cutover baseline:
+  [the content document's §11](./seo-content-strategy.md#the-2026-09-22-baseline). The duplicate-content
+  risk this bullet placed on `app.alphaday.com` is measurably small — **16 impressions, 0 clicks** in
+  three months. **`www.alphaday.com` is the live duplicate**, and it was not on this list; see the 301
+  map in [Appendix C](#appendix-c--migration-and-url-preservation).
+- **Click-through rate per tier**, not impressions alone. §4.3 explains why: an indexed page earning
+  impressions at a page-one position and no clicks is a rendering failure that every impression-keyed
+  metric reports as healthy.
 - **Indexed-over-submitted, per tier.** Segmented on the §3.1 path prefixes. Sitewide averages hide
   everything that matters — a collapsing item tier and a growing hub tier net out to "flat".
 - **CloudFront cache hit rate**, from the distribution's cache statistics and the `CacheHitRate`
@@ -1372,6 +1429,7 @@ Every current URL must resolve. Project pages move from root slugs to `/projects
 | `/blog` | `/blog` — now a real page, not a client-side redirect |
 | `/api`, `/api/docs`, `/mobile`, `/privacy` | unchanged |
 | `blog.alphaday.com/p/{slug}` | `alphaday.com/blog/{slug}` |
+| `www.alphaday.com/*` | `alphaday.com/*` — **added 22 Sep; this map did not cover it.** `www` currently serves the whole site at 200 with no redirect and no canonical (§5.1), so every URL exists twice, and Search Console has `www.alphaday.com/berachain` indexed with 28 impressions. The apex is canonical |
 
 Generate the map from the same data source the pages are built from. Verify every entry returns a
 real 301 before cutover — not a 200 with client-side navigation.
@@ -1394,12 +1452,36 @@ real 301 before cutover — not a 200 with client-side navigation.
 
 - [ ] Submit the new sitemap index in Search Console; keep the old sitemap live for ~30 days
 - [ ] Watch indexed-over-submitted daily for two weeks
-- [ ] Confirm the 66 migrated pages retain impressions; a 301 should hold essentially all equity, and
-      a drop means a redirect is wrong
+- [ ] Confirm the migrated pages retain impressions — **against the ten URLs below, not a sitewide
+      average.** They carry 86% of the domain's search impressions and most of the remaining 52 carry
+      single digits, so an average will absorb one broken redirect without showing it. A 301 should
+      hold essentially all equity; a drop on any of these means a redirect is wrong
+
+| URL | impressions | position |
+| --- | ---: | ---: |
+| `/` | 2,702 | 9.74 |
+| `/polygon` | 1,892 | 12.39 |
+| `/base` | 1,758 | 12.01 |
+| `/orbs` | 1,559 | 6.66 |
+| `/dfinity` | 1,069 | 6.89 |
+| `/arbitrum` | 861 | 12.34 |
+| `/aave` | 564 | 9.73 |
+| `/ethereum` | 483 | 15.92 |
+| `/solana` | 334 | 9.16 |
+| `/avalanche` | 328 | 8.50 |
+
+Baseline 2026-06-20 → 2026-09-19, Search Console, `alphaday.com` only. Note that four of these are
+already at zero clicks, so the check after cutover is **impressions retained and clicks gained** —
+holding impressions while CTR stays at zero means the redirect worked and the render did not.
 
 ### Still unverified
 
-1. **Current index coverage** — inferred from served HTML, not observed. Needs Search Console.
+1. ~~**Current index coverage** — inferred from served HTML, not observed. Needs Search Console.~~
+   **Resolved 2026-09-22.** Search Console is connected on a `*.alphaday.com` domain property and
+   three months are exported (2026-06-20 → 2026-09-19). Coverage is observed rather than inferred,
+   and what it showed changed two arguments in this document from principled to measured: the
+   rendering requirement (§1.1) and the demotion rule's blind spot (§4.3). Reading in
+   [the content document's §11](./seo-content-strategy.md#the-2026-09-22-baseline).
 2. **Real traffic and current AWS spend** — ~~DNS was unavailable during the audit~~. **Resolved
    2026-09-04**: Cost Explorer and the CloudFront API were reached, and the §7.1 logging line in
    Appendix A is now measured rather than modelled. Everything else in Appendix A is still modelled.
