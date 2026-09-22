@@ -44,4 +44,31 @@ describe("route precedence", () => {
   it("routes an unclaimed single segment to the legacy-redirect route", () => {
     expect(idFor("/ethereum")).toBe("/$slug");
   });
+
+  it("routes /{slug}/this-week to its own route, not under /$slug", () => {
+    /*
+     * The digest's canonical URL is `/projects/{slug}/this-week` (§3.2), but the
+     * content document's C3 and §13 both say `/{entity}/this-week`, and
+     * `/bitcoin` itself 301s — so the short form redirects rather than dead-ends.
+     *
+     * The file is `$slug_.this-week.tsx` with a trailing underscore, and this
+     * asserts why. Named `$slug.this-week.tsx` it nests under `$slug.tsx`, which
+     * promotes that leaf to a parent layout whose loader runs first: it redirects
+     * to `/projects/{slug}`, dropping the `this-week` segment, and its async
+     * redirect beats the child's synchronous `notFound()`. The observable symptom
+     * was `/ethereum/this-week` answering 301 to a landing page instead of 404.
+     *
+     * Dropping the underscore is a one-character edit that reintroduces all of
+     * that silently, which is exactly the class of regression this file exists for.
+     */
+    expect(idFor("/bitcoin/this-week")).toBe("/$slug_/this-week");
+    expect(idFor("/ethereum/this-week")).toBe("/$slug_/this-week");
+  });
+
+  it("keeps the prefixed digest URL on the digest route", () => {
+    // The redirect target must not itself be the redirect route.
+    expect(idFor("/projects/bitcoin/this-week")).toBe(
+      "/projects/$slug/this-week"
+    );
+  });
 });

@@ -405,6 +405,7 @@ src/routes/
   projects.$slug.index.tsx         →  /projects/{slug}
   projects.$slug.$topic.tsx        →  /projects/{slug}/{topic}
   projects.$slug.this-week.tsx     →  /projects/{slug}/this-week
+  $slug_.this-week.tsx             →  /{slug}/this-week  → 301
   security.exploits.tsx            →  /security/exploits
   security.$incident.tsx           →  /security/{protocol}-{date}
   governance.$id.tsx               →  /governance/{id}
@@ -431,9 +432,9 @@ Twenty-five files covering an unbounded corpus.
 > - **`recipes.$slug.tsx` → `cookbook.$recipe.tsx`**, plus a `cookbook.index.tsx` hub. `/recipes/` would
 >   have collided with the shipped AlphaRecipes product.
 >
-> **Twenty-six allocated, sixteen built.** `src/routes/` holds 19 files: those sixteen plus three this
-> map never listed — `$slug.tsx` (the 301 shim for the legacy root slugs, Appendix C), `b.$.tsx` (the
-> app redirect) and `dashboard.tsx`. Ten allocated routes are unbuilt: `security.exploits`,
+> **Twenty-seven allocated, seventeen built.** `src/routes/` holds 20 files: those seventeen plus three
+> this map never listed — `$slug.tsx` (the 301 shim for the legacy root slugs, Appendix C), `b.$.tsx`
+> (the app redirect) and `dashboard.tsx`. Ten allocated routes are unbuilt: `security.exploits`,
 > `security.$incident`, `governance.$id`, `research.$slug`, `events.index`, `events.$id`, `media.$id`,
 > `news.$id`, `blog.$slug` and `compare.$slug` — `blog.index.tsx` does exist. **The map is an
 > allocation, not an inventory**, which is the point of §3.2: the prefix is reserved so the content
@@ -447,6 +448,15 @@ Two things in this map are load-bearing and easy to break:
   `/projects/{slug}/this-week`.** It resolves correctly because TanStack Router ranks static segments
   above dynamic ones — but that precedence is doing real work here. If the digest route ever stops
   resolving, this is why. Cover it with a route test rather than trusting the convention.
+
+- **`$slug_.this-week.tsx` needs its trailing underscore**, and the reason is not cosmetic. Written
+  `$slug.this-week.tsx` the flat-route convention nests it under the existing `$slug.tsx`, which
+  promotes that leaf into a **parent layout whose loader runs first** — so it redirects
+  `/bitcoin/this-week` to `/projects/bitcoin`, dropping the segment, and its async redirect beats the
+  child's synchronous `notFound()`. The observed symptom was `/ethereum/this-week` answering `301` to
+  a landing page instead of `404`. The underscore opts out of the nesting. Asserted in
+  `src/__tests__/route-precedence.test.ts`, because deleting one character reintroduces all of it
+  silently.
 
 **Route ownership.** This document allocates the routing surface; it does not commission the pages.
 `/mcp`, `/mcp/{client}`, `/api/data/{capability}`, `/cookbook/{recipe}`, `/compare/{slug}`,

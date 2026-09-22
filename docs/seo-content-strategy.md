@@ -462,9 +462,28 @@ for the dashboard. The recap feeds the pitch instead of competing with it. It al
 
 #### The specification
 
+> **URL corrected 22 Sep 2026, on the first attempt to visit the page.** Every
+> `/{entity}/this-week` in this section — and *"ship `/bitcoin/this-week`"* in
+> [§13](#13-first-90-days) — was written while project pages still lived at
+> `alphaday.com/{slug}`. The companion document then put every content type behind
+> a path prefix and mapped this route to
+> [`/projects/{slug}/this-week`](./seo-strategy.md#32-route-map). **That document
+> is the authority on how a URL is served, so the prefixed form is canonical** and
+> the shipped page is there.
+>
+> The unprefixed form still resolves: `/bitcoin/this-week` **301s** to it, because
+> `/bitcoin` already 301s to `/projects/bitcoin` and a child that dead-ends while
+> its parent redirects is just a hole — and because this document is what tells a
+> reader which URL to visit. An entity with no digest 404s instead of redirecting,
+> since a 301 to a 404 spends crawl budget to arrive nowhere.
+>
+> The rest of the section reads `/{entity}/this-week` as shorthand for the shape of
+> the URL, which is the part the argument turns on: a **child of the entity**
+> rather than a panel on it, and no date in the path.
+
 | Decision | Call |
 | --- | --- |
-| **URL** | One per entity: `/{entity}/this-week`. Dateless, permanent. |
+| **URL** | One per entity: ~~`/{entity}/this-week`~~ **`/projects/{entity}/this-week`**. Dateless, permanent. |
 | **Window** | **Rolling seven days**, not calendar week. A calendar week is near-empty on Monday and stale by Sunday; a rolling window always holds a full seven days, and it removes the week boundary that would otherwise invite an archive. |
 | **Other windows** | 24h / 7d / 30d as an **in-page control that does not change the URL**. Views, not pages — three URLs per entity would be the dated-archive problem at smaller scale. |
 | **Archive** | **None.** No `/{entity}/2026-w35`. The evergreen URL accumulates authority; a dated graveyard sheds it. |
@@ -786,12 +805,19 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
       `/api/data/{capability}`**, `#229`/`#230`/`#232`/`#233`. Re-scoped, not descoped: 57 tools map to
       22 capabilities, and the page set is asserted equal to `HEADLINE_CAPABILITIES` in both
       directions by `src/__tests__/capability-pages.test.ts` so the two cannot drift
-- [ ] **Ship `/bitcoin/this-week`** as a SERP probe — rolling seven-day evidence panel, dateless URL,
+- [x] **Ship `/bitcoin/this-week`** as a SERP probe — rolling seven-day evidence panel, dateless URL,
       server-rendered, window shown rather than a render timestamp. One page, not a tier. Measure for
       a month before building the rest (C3) — **not started.** Route and precedence test exist;
       [projects.$slug.this-week.tsx](../src/routes/projects.$slug.this-week.tsx) deliberately throws
       `notFound()` until the content exists, per §4.1's *prefer no URL over a `noindex` URL*. Only the
-      content is missing, which makes this the cheapest unblocked build on the list
+      content is missing, which makes this the cheapest unblocked build on the list.
+      **Shipped 22 Sep** at **`/projects/bitcoin/this-week`** (`/bitcoin/this-week` 301s to it — see
+      the URL note in [C3](#the-specification)). Server-rendered; **424 trailing items measured 22
+      Sep** — 326 news, 40 blog posts, 27 podcasts, 21 videos, 5 forum posts and 5 security
+      incidents — against a floor of 20, plus 5 events scheduled in the following week. Events are
+      counted forward and are never part of the trailing figure the density gate reads. **The only
+      page in the build that is promoted on purpose**: a `noindex` probe measures nothing. The month
+      of measurement starts when the SSR origin cuts over, not now
 - [ ] Registry, `public-apis` and awesome-list submissions — **not started, and the only item here
       that is not gated by the SSR cutover**, since the MCP registries point at the server endpoint
       rather than the marketing site. It is also the only Engine A item that directly earns links
