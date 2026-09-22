@@ -807,17 +807,74 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
       directions by `src/__tests__/capability-pages.test.ts` so the two cannot drift
 - [x] **Ship `/bitcoin/this-week`** as a SERP probe — rolling seven-day evidence panel, dateless URL,
       server-rendered, window shown rather than a render timestamp. One page, not a tier. Measure for
-      a month before building the rest (C3) — **not started.** Route and precedence test exist;
-      [projects.$slug.this-week.tsx](../src/routes/projects.$slug.this-week.tsx) deliberately throws
-      `notFound()` until the content exists, per §4.1's *prefer no URL over a `noindex` URL*. Only the
-      content is missing, which makes this the cheapest unblocked build on the list.
-      **Shipped 22 Sep** at **`/projects/bitcoin/this-week`** (`/bitcoin/this-week` 301s to it — see
-      the URL note in [C3](#the-specification)). Server-rendered; **424 trailing items measured 22
-      Sep** — 326 news, 40 blog posts, 27 podcasts, 21 videos, 5 forum posts and 5 security
-      incidents — against a floor of 20, plus 5 events scheduled in the following week. Events are
-      counted forward and are never part of the trailing figure the density gate reads. **The only
-      page in the build that is promoted on purpose**: a `noindex` probe measures nothing. The month
-      of measurement starts when the SSR origin cuts over, not now
+      a month before building the rest (C3). **Shipped 22 Sep** at
+      **`/projects/bitcoin/this-week`** (`/bitcoin/this-week` 301s to it — see the URL note in
+      [C3](#the-specification)). Server-rendered; 424 trailing items measured 22 Sep against a floor
+      of 20; promoted on purpose, since a `noindex` probe measures nothing
+- [x] **Extended to 16 entities on 22 Sep — a deliberate departure from "one page, not a tier."**
+      The probe's measurement month had not started (SSR is not live), so the confounding argument for
+      holding at one page did not apply yet; shipping the tier now means it is in place *when* the
+      origin cuts over. The trade accepted: there is no single-page baseline to compare the tier
+      against, so the probe measures the format and the tier together rather than separately.
+      Recorded here because C3 argued the other way and the reasoning should not be reconstructed from
+      a commit message
+
+      Density measured across all 64 boards (every published board except `beginner` and `kasandra`,
+      which are not entities), at a **selection bar of 30 items/week**. News ingestion has been dead
+      since 17 Sep, so a live seven-day count reads ~0 for everything; news was measured over 30 days
+      and scaled by the 25.1 days that window holds data for, which puts Bitcoin at 814 news/week
+      against the 785/week measured independently on 31 Aug. Events and exploits are excluded — one is
+      forward-looking, the other is not tag-filtered and would add a constant to every entity.
+
+      | Entity | /wk | | Entity | /wk |
+      | --- | --- | --- | --- | --- |
+      | `bitcoin` | 907 | | `base` | 70 |
+      | `ai` *(sector)* | 750 | | `japan` *(region)* | 44 |
+      | `trading` *(sector)* | 350 | | `arbitrum` | 32 |
+      | `ethereum` | 296 | | `aave` | 30 |
+      | `xrpl` | 188 | | `uniswap` | 30 |
+      | `solana` | 176 | | `avalanche` ⚠ | 29 |
+      | `zcash` | 111 | | `optimism` ⚠ | 27 |
+      | `risechain` | 81 | | `dfinity` ⚠ | 25 |
+
+      ⚠ below the 30/wk bar, included by explicit decision. All 16 clear the **runtime** floor of 20,
+      which is a different number doing a different job: the bar is editorial and asks "is there
+      reliably enough to say", the floor is mechanical and asks "does this window have anything in it".
+
+      **Two boards look eligible and are not.** `reserve` measured 102/week and is fuzzy-match noise —
+      `?tags=` matches a keyword bag and "reserve" is an ordinary word, so it collected *"Federal
+      Reserve rate increase"*, *"proof of reserves"* and *"US Bitcoin Reserve Bill"*. Reserve
+      Protocol's own tag has **19 news items all-time** and 6/week. `polygon` sits at 16/week even
+      with its tag pair resolved. Both are excluded by a test, so neither can be re-added from the
+      headline number without re-measuring.
+
+      **These pages resolve the tag taxonomy themselves and are not waiting on
+      [tag-taxonomy-fix.md](./tag-taxonomy-fix.md).** `?tags=a,b` unions and de-duplicates, so
+      `avalanche`, `risechain`, `ai` and `dfinity` carry their resolved sets directly. `dfinity` is in
+      fact a pairing that fix *cannot* reach — the tag is named "internet computer", matching neither
+      the board slug nor its name — making it a fourth manual row alongside `kyber`, `sia` and
+      `impossible`, and worth adding there.
+
+      **The gate counts entity-specific trailing coverage only** — not forward-looking events, and
+      not the shared exploit feed. Both were counted at first and both were wrong in the same way:
+      8 events scheduled for *next* week pushed `japan`'s 16-row window past a floor of 20, so a page
+      that prints "16 indexed items from the last 7 days" shipped indexable from the gate written to
+      prevent it; and because the untagged exploit endpoint puts the same ~43 incidents on all 16
+      pages, `thin` could never be reached, which made the `noindex` half of C3's
+      "widen itself and say so, or fall back to `noindex`" dead code — including in the feed-outage
+      case it was written for. The gate is now a pure, tested function, which is what was missing.
+
+      **The shared exploit feed is kept but demoted.** "Any exploit" was reasoned for Bitcoin, where
+      5 incidents against 424 rows read as noise; on a low-density entity the same feed was 43 of 148
+      rows and the second-largest block on the page, none of it about the entity — and 16 pages each
+      carrying an identical 43-row block is a near-duplicate-content problem on top of an editorial
+      one. It is now pinned last regardless of volume, capped at 3 rows, and titled "Security
+      incidents across all protocols" so a bare heading cannot read as the entity's own.
+
+      **Caveat on what ships today:** with news stalled, live seven-day counts run 3–8× below the
+      measured rate (`base` 8 news against 64, `japan` 9 against 42), so `japan`, `optimism` and
+      `uniswap` all render the widened 30-day view. That is the runtime fallback behaving correctly,
+      but it means several pages launch degraded and recover only when the pipeline is fixed
 - [ ] Registry, `public-apis` and awesome-list submissions — **not started, and the only item here
       that is not gated by the SSR cutover**, since the MCP registries point at the server endpoint
       rather than the marketing site. It is also the only Engine A item that directly earns links

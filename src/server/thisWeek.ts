@@ -1,9 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { API_BASE, fetchJsonSoft } from "./apiFetch";
 import {
-  DENSITY_FLOOR,
   WINDOWS,
   WINDOW_DAYS,
+  assessDensity,
   inWindow,
   soonestUpcoming,
 } from "../data/digestWindow";
@@ -141,6 +141,16 @@ interface FeedSpec {
    * rows.
    */
   upcoming: boolean;
+  /**
+   * Whether these rows are about the entity at all.
+   *
+   * `false` only for exploits, whose endpoint takes no `tags` — so the identical
+   * ~43 incidents appear on all 16 pages. That matters in three places: the
+   * density gate must not count them (a constant contribution makes a floor
+   * unreachable), the volume ranking must not let them outrank the entity's own
+   * coverage, and the prose must not describe them as the entity's.
+   */
+  entitySpecific: boolean;
 }
 
 /**
@@ -154,26 +164,33 @@ interface FeedSpec {
  * classification on these values rather than on this file's formatting.
  */
 export const FEEDS: FeedSpec[] = [
-  { kind: "news", label: "News", path: "items/news", noun: ["article", "articles"], continuous: true, counts: "api", upcoming: false },
-  { kind: "blogs", label: "Project blogs", path: "items/blogs", noun: ["post", "posts"], continuous: true, counts: "api", upcoming: false },
-  { kind: "podcasts", label: "Podcasts", path: "items/podcasts", noun: ["episode", "episodes"], continuous: true, counts: "api", upcoming: false },
-  { kind: "videos", label: "Video", path: "items/videos", noun: ["video", "videos"], continuous: true, counts: "api", upcoming: false },
-  { kind: "forum", label: "Governance forum", path: "items/forum", noun: ["post", "posts"], continuous: true, counts: "api", upcoming: false },
-  { kind: "dao", label: "DAO proposals", path: "items/dao", noun: ["proposal", "proposals"], continuous: false, counts: "api", upcoming: false },
+  { kind: "news", label: "News", path: "items/news", noun: ["article", "articles"], continuous: true, counts: "api", upcoming: false, entitySpecific: true },
+  { kind: "blogs", label: "Project blogs", path: "items/blogs", noun: ["post", "posts"], continuous: true, counts: "api", upcoming: false, entitySpecific: true },
+  { kind: "podcasts", label: "Podcasts", path: "items/podcasts", noun: ["episode", "episodes"], continuous: true, counts: "api", upcoming: false, entitySpecific: true },
+  { kind: "videos", label: "Video", path: "items/videos", noun: ["video", "videos"], continuous: true, counts: "api", upcoming: false, entitySpecific: true },
+  { kind: "forum", label: "Governance forum", path: "items/forum", noun: ["post", "posts"], continuous: true, counts: "api", upcoming: false, entitySpecific: true },
+  { kind: "dao", label: "DAO proposals", path: "items/dao", noun: ["proposal", "proposals"], continuous: false, counts: "api", upcoming: false, entitySpecific: true },
   // Forward-looking and oldest-first — the exception documented in the header.
-  { kind: "events", label: "Upcoming events", path: "items/events", noun: ["event", "events"], continuous: false, counts: "local", upcoming: true },
+  { kind: "events", label: "Upcoming events", path: "items/events", noun: ["event", "events"], continuous: false, counts: "local", upcoming: true, entitySpecific: true },
 ];
 
 /** Not in `FEEDS`: a different base path, and neither `tags` nor `period`. */
 const EXPLOITS: FeedSpec = {
   kind: "exploits",
-  label: "Security incidents",
+  /*
+   * "across all protocols" is load-bearing, not padding. The rows are identical
+   * on all 16 pages, so a bare "Security incidents" heading on `/optimism/this-week`
+   * reads as Optimism incidents. The label is the only thing that stops it.
+   */
+  label: "Security incidents across all protocols",
   path: "security/exploits",
   noun: ["incident", "incidents"],
   // An exploit-free week is the best possible week, never a stale feed.
   continuous: false,
   counts: "local",
   upcoming: false,
+  // The endpoint takes no `tags`, so these rows are the same on every page.
+  entitySpecific: false,
 };
 
 export interface DigestItem {
@@ -208,6 +225,8 @@ export interface DigestSection {
   unavailable: boolean;
   continuous: boolean;
   upcoming: boolean;
+  /** See `FeedSpec.entitySpecific`. Only exploits are `false`. */
+  entitySpecific: boolean;
   /**
    * The fetch behind a locally-counted feed did not complete, so this section's
    * counts are a floor rather than a total. Rendered as a `+` on the count.
@@ -376,6 +395,7 @@ async function loadApiCounted(spec: FeedSpec, tag: string): Promise<DigestSectio
     unavailable: wide === null,
     continuous: spec.continuous,
     upcoming: false,
+    entitySpecific: spec.entitySpecific,
     // Never partial: an API-counted section's totals come from the API, not from
     // how many rows the item fetch happened to return.
     partial: false,
@@ -439,6 +459,7 @@ async function loadUpcoming(spec: FeedSpec, tag: string, asOf: Date): Promise<Di
     unavailable: failed,
     continuous: spec.continuous,
     upcoming: true,
+    entitySpecific: spec.entitySpecific,
     partial,
   };
 }
@@ -515,6 +536,7 @@ async function loadExploits(asOf: Date): Promise<DigestSection> {
     unavailable: failed,
     continuous: EXPLOITS.continuous,
     upcoming: false,
+    entitySpecific: EXPLOITS.entitySpecific,
     partial,
   };
 }
@@ -566,9 +588,24 @@ export const getDigest = createServerFn({ method: "GET" })
       .filter((at): at is string => at !== null)
       .sort();
 
-    const widened = totals["7d"] < DENSITY_FLOOR && totals["30d"] >= DENSITY_FLOOR;
-    const thin = totals["30d"] < DENSITY_FLOOR;
+    /*
+     * The gate reads entity-specific trailing coverage only, via `assessDensity`.
+     *
+     * It used to read `totals`, which sums every section — so 8 events scheduled
+     * next week pushed `japan`'s 16-row window past a floor of 20, and the page
+     * shipped indexable while printing "16 indexed items from the last 7 days".
+     * Exploits made it worse: ~43 identical incidents on every page meant
+     * `thin` could never be true however dead an entity's own feeds were, which
+     * killed the `noindex` fallback in exactly the outage case it was written for.
+     */
+    const { defaultWindow, widened, thin } = assessDensity(sections);
 
+    /*
+     * Feeds whose newest row lags the window end — reported, not hidden. Only
+     * continuously-published feeds qualify: "no conference started in four days"
+     * is a calendar and "no exploit since Friday" is good news, and a notice that
+     * fires on normal quiet is one nobody reads when it is real.
+     */
     const cutoff = asOf.getTime() - STALE_AFTER_HOURS * 3_600_000;
     const stale = sections
       .filter(
@@ -585,18 +622,24 @@ export const getDigest = createServerFn({ method: "GET" })
         newestAt: s.newestAt as string,
       }));
 
-    const rank = widened ? "30d" : "7d";
-
     return {
       tag,
       asOf: asOf.toISOString(),
       freshestAt: dated.at(-1) ?? null,
-      // C3: grouped by type and ranked by volume, on the window the page opens on.
-      sections: [...sections].sort(
-        (a, b) => (b.counts[rank] ?? 0) - (a.counts[rank] ?? 0)
-      ),
+      /*
+       * C3: grouped by type and ranked by volume, on the window the page opens on
+       * — but a section that is not about this entity is pinned last regardless of
+       * how large it is. On a low-density entity the shared exploit feed was 43 of
+       * 148 rows and the second-biggest block on the page, none of it about the
+       * entity. Volume is the right ordering among the entity's own feeds and the
+       * wrong one across that boundary.
+       */
+      sections: [...sections].sort((a, b) => {
+        if (a.entitySpecific !== b.entitySpecific) return a.entitySpecific ? -1 : 1;
+        return (b.counts[defaultWindow] ?? 0) - (a.counts[defaultWindow] ?? 0);
+      }),
       totals,
-      defaultWindow: widened ? "30d" : "7d",
+      defaultWindow,
       widened,
       thin,
       stale,

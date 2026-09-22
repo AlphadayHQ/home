@@ -77,6 +77,20 @@ them; a hand-written map would not have.
 
 ---
 
+> **A fourth manual row, found 22 Sep 2026 while sizing the digest tier.**
+>
+> | Board | Tag | Why the rule misses it |
+> | --- | --- | --- |
+> | `dfinity` | `internet-computer` | The tag is named "internet computer" — it matches neither the board slug nor, after normalisation, the board name |
+>
+> Measured: `?tags=dfinity` returns **20** news items all-time; `?tags=internet-computer` returns
+> **367**. Same shape as `kyber`/`sia`/`impossible` — a board using the short name where the taxonomy
+> uses the full one — so it belongs in `MANUAL` in
+> [audit-tag-resolution.mjs](../scripts/audit-tag-resolution.mjs) and in the deployed rule.
+>
+> It does not change the "18 improved" figure above, which was measured before this was found, and it
+> does not block the digest tier: `src/data/digestEntities.js` carries the resolved set itself.
+
 ## The three manual rows
 
 The rule cannot reach a board whose short name differs from the tag's full name. Nothing matches, so
