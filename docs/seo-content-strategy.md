@@ -561,6 +561,37 @@ page is guaranteed to have something to say — and measure it for a month befor
 It is the cheapest decision-grade experiment available, and the head of this query class is genuinely
 more open than the tail, which is the reverse of the earlier assumption.
 
+> **Measured 22 Sep 2026: the probe cannot report until the SSR cutover lands.**
+>
+> Every entity in the shipped tier already has a board ranking in Google, and every one of them
+> converts at approximately zero:
+>
+> | slug | impressions | clicks | position |
+> | --- | ---: | ---: | ---: |
+> | `base` | 1,758 | 2 | 12.01 |
+> | `dfinity` | 1,069 | 0 | 6.89 |
+> | `arbitrum` | 861 | 2 | 12.34 |
+> | `aave` | 564 | 0 | 9.73 |
+> | `ethereum` | 483 | 1 | 15.92 |
+> | `solana` | 334 | 4 | 9.16 |
+> | `avalanche` | 328 | 3 | 8.50 |
+> | `zcash`, `risechain`, `xrpl`, `ai`, `trading` | 205 | 1 | — |
+> | **total** | **5,602** | **13** | **0.23%** |
+>
+> `bitcoin`, `uniswap`, `optimism` and `japan` draw no board impressions at all over three months —
+> worth knowing before the probe is asked to measure `bitcoin` specifically.
+>
+> **The constraint.** `/projects/{slug}/this-week` is served by the same 3,452-byte shell as those
+> boards and enters the same render lottery ([§11](#the-2026-09-22-baseline)). A recap page that
+> ranks and takes zero clicks tells you nothing about whether the recap framing carries search
+> demand — it tells you the listing is broken, which is already known. **Measuring before the
+> cutover produces an uninterpretable result and risks reading it as a verdict on C3.**
+>
+> Two consequences for sequencing. The probe's measurement month starts when the cutover lands, not
+> when the page merged. And the tier should not be submitted for indexing before then: a duplicate
+> or titleless verdict cached against the 16 URLs the tier most wants to rank is more expensive to
+> undo than a slow first crawl.
+
 ### C4 · Where the corpus should sit in the queue
 
 After Engine B has been running for a quarter. Not because the pages are wrong, but because the
@@ -591,6 +622,20 @@ dead end under the current audience priority:
 recipes tier. The blog's future output should be engineering and data writing — the governance
 report, exploit post-mortems, "how we index 118 podcast feeds" — which reaches audiences one and two
 and reinforces the infrastructure positioning the homepage is built on.
+
+> **Measured 22 Sep 2026, and it is worse than "dead end" implied.** Over three months
+> `blog.alphaday.com` drew **22,994 impressions and 3 clicks** — 63% of every impression the domain
+> earns, converting at **0.01%**. It ranks at positions 45–80: deep enough that the impressions are
+> an artefact of long-tail breadth rather than a signal of anything.
+>
+> Two consequences. First, **every headline figure for this site is inflated by it** — strip the blog
+> and the real picture is 13,472 impressions and 82 clicks on `alphaday.com`, which is the number
+> [§11](#the-2026-09-22-baseline) treats as the baseline. Second, it makes the migration more urgent
+> rather than less: those posts hold the domain's only footing on `best crypto X` queries, and they
+> hold it on a platform where titles, descriptions and internal links cannot be changed.
+>
+> The recommendation is unchanged — migrate, 301, stop writing them. The data adds only that the
+> migration is not housekeeping.
 
 ---
 
@@ -702,6 +747,72 @@ different ways and a shared dashboard hides that.
 **Referring domains is the number that is missing from the current plan entirely, and it is the
 number that determines whether Engine C works.** Track it monthly, on the domain, with a target.
 
+### The 2026-09-22 baseline
+
+Search Console was connected on 22 Sep and Ahrefs Webmaster Tools verified through it, which closes
+both access gaps this document has carried since it was written (see
+[Still unverified](#still-unverified)). Three months of Performance data — 2026-06-20 → 2026-09-19,
+Web, all properties under `*.alphaday.com/*` — are the pre-cutover reading.
+
+**Record it now or not at all.** The SSR cutover changes the URL of every page on the site, so a
+baseline taken afterwards has nothing to be compared against.
+
+| Metric | Value | Source |
+| --- | --- | --- |
+| Clicks, 3 months | 86 | GSC |
+| Impressions, 3 months | 35,303 | GSC |
+| CTR | 0.24% | GSC |
+| **Non-brand CTR** | **0.027%** — 5 clicks from 18,795 impressions | GSC |
+| Brand CTR | 3.1% — 39 clicks from 1,241 impressions | GSC |
+| URLs ranking position < 11 | 47, earning 73 clicks from 7,990 impressions | GSC |
+| Average position | 40.7 desktop / 36.1 mobile | GSC |
+| Referring domains, `*.alphaday.com/*` | ~1,000, **+247 in 30 days** | Ahrefs |
+| Referring domains, `app.alphaday.com` | 52 | Ahrefs |
+| Domain Rating | 29 | Ahrefs |
+
+**Ahrefs' organic-keyword and organic-traffic figures are deliberately absent from that table.** It
+reports 2 keywords and 0.62 visits/month against Search Console's 35,303 impressions, because its
+crawler does not render JavaScript the way Googlebot does and therefore sees only the shell described
+below. Referring domains is the one Ahrefs number this site can trust today; every ranking figure
+here comes from GSC. Do not reconcile the two — one of them is measuring the wrong thing.
+
+Two notes on reading the export itself, because its dimensions do not agree and the difference is not
+rounding. **Site totals come from the daily chart** (86 clicks, 35,303 impressions), which matches the
+device breakdown; the page dimension sums slightly higher (87 / 36,564) and the query dimension far
+lower, because **the query export is capped at 1,000 rows** and covers only 44 of the 86 clicks. The
+brand and non-brand figures above are therefore shares *of those top 1,000 queries*, not of the site.
+The conclusion is unaffected — the missing tail is long-tail queries, which convert worse, not
+better — but a future comparison must be drawn against the same dimension or it will measure the
+export's shape instead of the site's.
+
+The **+247 referring domains in 30 days** (663 → ~1,000, a 37% jump) has not been explained and should
+be, before it is treated as authority. Sort referring domains by first-seen and check whether it is
+press or a network; a later correction to a baseline nobody audited is worse than a slow audit now.
+
+#### What the baseline actually says
+
+Not that the site fails to rank. It ranks on page one for 47 URLs, and converts those rankings at
+approximately zero. The data separates the cause without needing an argument:
+
+| Page | Position | Impressions | Clicks | CTR |
+| --- | ---: | ---: | ---: | ---: |
+| `alphaday.com/` | 9.74 | 2,702 | 58 | **2.15%** |
+| `alphaday.com/orbs` | **6.66** | 1,559 | **0** | **0%** |
+| `alphaday.com/dfinity` | **6.89** | 1,069 | **0** | **0%** |
+| `alphaday.com/aave` | 9.73 | 564 | **0** | **0%** |
+| `alphaday.com/solana` | 9.16 | 334 | 4 | 1.2% |
+| `alphaday.com/avalanche` | 8.50 | 328 | 3 | 0.91% |
+
+Three pages ranking *better* than the homepage take **zero clicks from 3,192 impressions**. Position
+6–7 returns 3–8% on an ordinary listing, so zero is not a demand signal and not a ranking problem —
+it is a search result nobody can click.
+
+The homepage is the only URL whose `<title>` and description are static in the 3,452-byte shell that
+every route currently serves; every other page depends on Googlebot finishing a render. `/avalanche`
+and `/solana` render — their board titles appear in GSC — and reach ~1%. `/orbs`, `/dfinity` and
+`/aave` reach 0%. **That gradient is the render lottery, measured**, and it is what
+[seo-strategy.md §8](./seo-strategy.md#8-build-sequence)'s cutover removes.
+
 ### A cheap model-citation tracker
 
 There is no rank tracker for language models, so build the minimum viable one. Fix a list of twenty
@@ -770,6 +881,27 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
 > nothing until it lands) and **the Ahrefs export** (one number, and B5 starts). Both are owner
 > actions, not engineering ones.
 
+> **Measured 22 Sep 2026.** Both owner actions above are now done or dissolved, and the paragraph
+> they sit in was arguing from principle about something that turned out to be measurable.
+>
+> **The SSR cutover is not a growth project. It is a conversion fix on rankings already held.** 47
+> URLs rank on page one of Google today and earn 73 clicks from 7,990 impressions — 0.91%. Three of
+> them sit at position 6–9 and take zero clicks from 3,192 impressions. At an ordinary 4% those same
+> positions are worth roughly 320 clicks a quarter instead of 73. Nothing in Engine A, B or C returns
+> comparably, because nothing else starts from rankings that already exist. Full reading in
+> [§11](#the-2026-09-22-baseline).
+>
+> **It also gates C3's probe outright.** The 16 digest entities' existing boards already draw 5,602
+> impressions and convert 13 clicks; `/projects/{slug}/this-week` is served by the same shell and
+> enters the same lottery, so the probe cannot measure whether the recap framing carries search
+> demand until the cutover lands. A sequencing constraint, not a preference — and the reason the
+> probe should not be indexed early.
+>
+> **The Ahrefs export was never the blocker it is recorded as.** The affiliate-thin half of B5's
+> question closed on 31 Aug; what remained was volume and difficulty for four keywords, which the
+> free tier does not cover and free lookups do. Corrected in the item below. **38 pages still sit
+> behind the cutover** — that half of the paragraph above holds.
+
 ### Weeks 1–2 · Unblock
 
 - [x] Fix the `curl` commands on `/api` so they resolve — gates every developer page and every model
@@ -778,10 +910,17 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
       from `CONFIG.featuredBoards` ([config.js:60](../src/config.js#L60)). **Resolved by unlinking,
       not by creating the board** — the homepage no longer links to a 404, but `/berachain` is still
       absent from both sets, so this is closed as a bug and open as a content decision
-- [ ] Set the referring-domains baseline and run the first model-citation check
-- [ ] **Pull the Ahrefs export for the media-discovery cluster** — the one number B5 turns on.
-      **Still the highest-leverage unpulled item in this document**; it has blocked the front of the
-      queue for three weeks
+- [x] **Set the referring-domains baseline** — ~1,000 on `*.alphaday.com/*` (+247 in 30 days), 52 on
+      `app.`, DR 29. Recorded with the full pre-cutover search reading in
+      [§11](#the-2026-09-22-baseline). Search Console is connected and exported in the same pass, so
+      the index-coverage gap closes with it
+- [ ] Run the first model-citation check — the half of this item that is still undone
+- [ ] ~~**Pull the Ahrefs export for the media-discovery cluster**~~ → **four keyword lookups.**
+      Reframed 22 Sep. This was recorded as an export blocking the front of the queue for three
+      weeks, and it is neither an export nor a blocker: the affiliate-thin half closed on 31 Aug,
+      leaving volume and difficulty for `best crypto podcasts` and three siblings. Ahrefs Webmaster
+      Tools does not cover them — Keywords Explorer is a paid tier, which "one export away" did not
+      account for — but the free keyword generator does. **Half an hour, no dependency, no seat**
 - [x] **Audit the news tag slugs.** `polygon`, `avalanche`, `celestia` and `injective` return zero
       tagged news despite obvious coverage. This blocks C3, and it silently degrades every tagged
       surface in the product, not only SEO — audited, re-diagnosed and specified in
@@ -793,8 +932,11 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
 ### Weeks 3–6 · Engine A + the first Engine B asset
 
 - [ ] **Ship media discovery (B5) first** — the podcast, YouTube-channel and news-outlet rankings,
-      data-ranked and dated. Lowest risk, weakest incumbents, fastest to rank — **not started; blocked
-      on the Ahrefs export above.** Shipped fourth in intent and zeroth in fact
+      data-ranked and dated. Lowest risk, weakest incumbents, fastest to rank — **not started, and
+      no longer blocked** (see the reframed item above). Shipped fourth in intent and zeroth in fact.
+      The 3-month export strengthens it: `best crypto wallet`, `best crypto tax software` and
+      `nft newsletter` already draw impressions to this domain, from Substack posts at positions
+      56–81 where nothing can be controlled (§7)
 - [x] `/mcp` and **eight** client pages — `331ebbf`, `#225`. Scoped as four; shipped eight because the
       six JSON clients disagree about config shape (`mcpServers` vs `servers` vs `mcp`, `url` vs
       `serverUrl`, `streamableHttp` vs `streamable-http`) and **one config block cannot be written for
@@ -975,13 +1117,25 @@ quoted in a deck.
 
 ### Still unverified
 
-Unchanged from the companion document: current index coverage (no Search Console access), and
-keyword volumes (no keyword tool from here — Ahrefs is verified on the domain, so this is one export
-away). No volume figures appear in this document for that reason, with one exception noted in §12.
+**Closed on 22 Sep.** Both access gaps this section carried are resolved. Search Console is connected
+and exported (three months, 2026-06-20 → 2026-09-19); Ahrefs Webmaster Tools is verified through it on
+`*.alphaday.com/*`, which covers `app.` and `blog.` in one scope. The readings are in
+[§11](#the-2026-09-22-baseline), and they did not merely fill a blank — they replaced §13's sequencing
+argument with a measured one.
 
-The single most useful export to pull first is **the media-discovery cluster** — whether
-`best crypto podcasts` and its siblings are as affiliate-thin and as high-volume as the SERP suggests.
-B5's position at the front of the queue turns on that one number.
+One correction the connection produced. "Ahrefs is verified on the domain, so this is one export
+away" was right about the verification — `public/ahrefs_419449f4…` has been in the repo since
+`33b7c64`, Sep 2022 — and wrong about what that buys. The free tier covers backlinks and Site Audit;
+volume for terms the site does not already rank for is a paid tier. That is why B5's remaining
+question is answered with free lookups rather than an export, and why this document waited three
+weeks on something that was never going to arrive.
+
+**Keyword volumes for the B5 cluster remain unmeasured**, and no volume figures appear in this
+document for that reason, with one exception noted in §12. What the export did establish is that the
+pattern has demand and this domain already touches it — `best crypto wallet` (472 impressions,
+position 81), `best crypto tax software` (228, position 56), `nft newsletter` (104, position 26) —
+every one of them ranking from a Substack post on `blog.alphaday.com`. That strengthens
+[B5](#b5--media-discovery--the-best-shaped-opportunity-found-in-the-research) and sharpens §7.
 
 **Closed on 31 Aug** by SERP research: the competitive picture for exploits (B2), events (B4) and
 media discovery (B5) was checked against live results rather than assumed. That research produced one
