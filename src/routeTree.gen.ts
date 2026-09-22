@@ -15,6 +15,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardsRouteImport } from './routes/dashboards'
 import { Route as MobileRouteImport } from './routes/mobile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SlugThisWeekRouteImport } from './routes/$slug_.this-week'
 import { Route as ApiIndexRouteImport } from './routes/api.index'
 import { Route as ApiDocsRouteImport } from './routes/api.docs'
 import { Route as BSplatRouteImport } from './routes/b.$'
@@ -56,6 +57,11 @@ const MobileRoute = MobileRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SlugThisWeekRoute = SlugThisWeekRouteImport.update({
+  id: '/$slug_/this-week',
+  path: '/$slug/this-week',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiIndexRoute = ApiIndexRouteImport.update({
@@ -126,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/dashboards': typeof DashboardsRoute
   '/mobile': typeof MobileRoute
   '/privacy': typeof PrivacyRoute
+  '/$slug/this-week': typeof SlugThisWeekRoute
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
@@ -146,6 +153,7 @@ export interface FileRoutesByTo {
   '/dashboards': typeof DashboardsRoute
   '/mobile': typeof MobileRoute
   '/privacy': typeof PrivacyRoute
+  '/$slug/this-week': typeof SlugThisWeekRoute
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
@@ -167,6 +175,7 @@ export interface FileRoutesById {
   '/dashboards': typeof DashboardsRoute
   '/mobile': typeof MobileRoute
   '/privacy': typeof PrivacyRoute
+  '/$slug_/this-week': typeof SlugThisWeekRoute
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
@@ -189,6 +198,7 @@ export interface FileRouteTypes {
     | '/dashboards'
     | '/mobile'
     | '/privacy'
+    | '/$slug/this-week'
     | '/api/docs'
     | '/b/$'
     | '/cookbook/$recipe'
@@ -209,6 +219,7 @@ export interface FileRouteTypes {
     | '/dashboards'
     | '/mobile'
     | '/privacy'
+    | '/$slug/this-week'
     | '/api/docs'
     | '/b/$'
     | '/cookbook/$recipe'
@@ -229,6 +240,7 @@ export interface FileRouteTypes {
     | '/dashboards'
     | '/mobile'
     | '/privacy'
+    | '/$slug_/this-week'
     | '/api/docs'
     | '/b/$'
     | '/cookbook/$recipe'
@@ -250,6 +262,7 @@ export interface RootRouteChildren {
   DashboardsRoute: typeof DashboardsRoute
   MobileRoute: typeof MobileRoute
   PrivacyRoute: typeof PrivacyRoute
+  SlugThisWeekRoute: typeof SlugThisWeekRoute
   ApiDocsRoute: typeof ApiDocsRoute
   BSplatRoute: typeof BSplatRoute
   CookbookRecipeRoute: typeof CookbookRecipeRoute
@@ -306,6 +319,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$slug_/this-week': {
+      id: '/$slug_/this-week'
+      path: '/$slug/this-week'
+      fullPath: '/$slug/this-week'
+      preLoaderRoute: typeof SlugThisWeekRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/': {
@@ -402,6 +422,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardsRoute: DashboardsRoute,
   MobileRoute: MobileRoute,
   PrivacyRoute: PrivacyRoute,
+  SlugThisWeekRoute: SlugThisWeekRoute,
   ApiDocsRoute: ApiDocsRoute,
   BSplatRoute: BSplatRoute,
   CookbookRecipeRoute: CookbookRecipeRoute,

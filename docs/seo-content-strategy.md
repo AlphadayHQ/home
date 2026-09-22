@@ -48,10 +48,27 @@ are counts, not estimates.
 | On-chain DEXes | `/onchain-dexes/` | **725** | No |
 | Exchanges | `/exchanges/` | **150** | No |
 | **Security exploits** | `/security/exploits/` | **164** | **No — and nobody has noticed it** |
-| TVL / yields / stablecoins / fees | `/tvl/*` | — | No (returns `401` with app credentials — different auth tier) |
+| TVL / yields / stablecoins / fees | `/tvl/*` | — | ~~No (returns `401` with app credentials — different auth tier)~~ **Yes — see below** |
 
 Seven content types sum to **582,188 items**, so the homepage's "500k+ indexed items" is accurate and
 conservative. It could honestly say 580k+.
+
+> **Re-measured 18 Sep 2026, corpus-wide rather than from the first page of each feed.** The seven
+> types now sum to **596,079**: news 444,175 + forum 62,402 + videos 34,569 + podcasts 22,772 +
+> blogs 19,016 + dao 6,603 + events 6,542. The table above is the 31 Aug snapshot, kept for the
+> trend. `500k+` understated the corpus by ~19%; the homepage now reads **`590k+`**, under the same
+> round-down-and-bump convention the rest of the stat band uses
+> ([apiSurface.js](../src/data/apiSurface.js)).
+>
+> **The `/tvl/*` 401 was wrong.** It returns **`200` unauthenticated** — the row above, §14 item 7
+> and [seo-strategy.md Appendix C](./seo-strategy.md#still-unverified) all asserted a different
+> auth tier that does not exist. A stale comment in `mcpTools.js` repeating the same claim was
+> removed in `b073de9`. **This unblocks yields, stablecoins and fees for content**, and
+> [`/api/data/tvl-yields`](../src/data/capabilityPages.js) now ships against them.
+>
+> The correction came from probing rather than re-reading: the original measurement used app
+> credentials, and sending credentials to an endpoint that wants none is what produced the 401. Worth
+> remembering the next time an access claim looks settled.
 
 **The finding that matters:** `/security/exploits/` is a fully structured incident database —
 protocol, date, attack type, source URL, and a written 150-word description per record — and it
@@ -106,6 +123,25 @@ compounding domain authority.
 The companion document scopes `/mcp`, the client setup pages, twelve tool pages and the comparison
 pages. Those are right and this section does not restate them. Two additions.
 
+> **Shipped 14–21 Sep, at a different granularity than either document scoped.** Engine A is built
+> except the comparison pages: **38 pages** across `/mcp` (+ 8 client pages), `/cookbook` (+ 6
+> recipes) and `/api/data/{capability}` (22). Two scoping decisions changed during the build and are
+> corrected in place below:
+>
+> - **"Twelve tool pages" became 22 capability pages at `/api/data/{slug}`**, not `/api/tools/{tool}`.
+>   The live MCP server exposes **57 tools** against **22 capabilities**; a page per tool would have
+>   split one dataset across several near-duplicate URLs competing with each other, which is the
+>   cannibalisation §12 puts on the kill list. Capability is the granularity a reader searches at —
+>   "crypto news API", not "`get_news_items`". `get_exploits` therefore has no page of its own; the
+>   dataset does, at `/api/data/security-exploits` (see [A2](#a2--the-exploits-api-is-a-product-page-you-do-not-have)).
+> - **`/recipes/{slug}` became `/cookbook/{recipe}`** — see A1.
+>
+> **All 38 carry `noindex` and none are in the sitemap**, which still holds 8 static URLs. That is
+> correct-by-default under [seo-strategy.md §4.2](./seo-strategy.md#42-implementation), not an
+> oversight, and it does not change until the SSR origin cutover lands. **Until then this tier earns
+> nothing.** The cutover is the one unticked gate in
+> [Phase 2](./seo-strategy.md#phase-2--weeks-412--the-rebuild).
+
 ### A1 · The recipes tier — the biggest gap in the current plan
 
 One page per use case, each with working code and a real, pasted output. Not tutorials in the
@@ -113,12 +149,16 @@ marketing sense — the smallest complete thing that does something.
 
 | Page | The query it answers |
 | --- | --- |
-| `/recipes/claude-crypto-news` | "give claude live crypto news" |
-| `/recipes/dao-proposal-alerts` | "alert me on new DAO proposals" |
-| `/recipes/crypto-research-agent` | "build a crypto research agent" |
-| `/recipes/discord-bot-crypto-data` | "crypto data for a discord bot" |
-| `/recipes/weekly-ecosystem-digest` | "automate a crypto newsletter" |
-| `/recipes/sentiment-from-podcasts` | "analyse crypto podcasts programmatically" |
+| `/cookbook/claude-crypto-news` | "give claude live crypto news" |
+| `/cookbook/dao-proposal-alerts` | "alert me on new DAO proposals" |
+| `/cookbook/crypto-research-agent` | "build a crypto research agent" |
+| `/cookbook/discord-bot-crypto-data` | "crypto data for a discord bot" |
+| `/cookbook/weekly-ecosystem-digest` | "automate a crypto newsletter" |
+| `/cookbook/sentiment-from-podcasts` | "analyse crypto podcasts programmatically" |
+
+> **Path changed to `/cookbook/` before the build, 19 Sep.** All six slugs are unchanged; only the
+> prefix moved. Shipped as [cookbook.$recipe.tsx](../src/routes/cookbook.$recipe.tsx) with a
+> `/cookbook` hub, verified `2026-09-19`.
 
 Why this format specifically:
 
@@ -127,9 +167,15 @@ Why this format specifically:
 - It is **the format language models quote most often**, because it is a complete answer with
   runnable code rather than a claim about a product.
 - It targets long-tail intent that no keyword tool will show you and no competitor is writing.
-- **The name already exists in the product.** "Recipes" is one of the five products on the homepage
+- ~~**The name already exists in the product.** "Recipes" is one of the five products on the homepage
   ([productsData.jsx](../src/components/home/productsData.jsx)). Marketing content and product
-  vocabulary reinforcing each other is free brand equity.
+  vocabulary reinforcing each other is free brand equity.~~ **This bullet had it backwards, and the
+  build caught it.** "Recipes" is not a vocabulary the marketing site is free to borrow — it is a
+  shipped Alphaday product (AlphaRecipes). `/recipes/discord-bot-crypto-data` reads as a page *of*
+  that product, so the two would compete for the same query while meaning different things, and any
+  later product URL under `/recipes/` would collide outright. **A shared name between content and
+  product is a collision, not equity, whenever the product is real.** Hence `/cookbook/` — adjacent
+  vocabulary, no namespace contest.
 
 Six pages. Two days of engineering-quality writing. Highest revenue per hour on the whole list.
 
@@ -139,6 +185,19 @@ Six pages. Two days of engineering-quality writing. Highest revenue per hour on 
 security-incident endpoint is genuinely differentiated — no incumbent crypto data API exposes one —
 and it is the sort of tool an agent builder immediately understands the use for. Ship it as a
 thirteenth tool with its own `/api/tools/get-exploits` page.
+
+> **Shipped 21 Sep as [`/api/data/security-exploits`](../src/data/capabilityPages.js)**, per the
+> capability-not-tool decision in [§4](#4-engine-a--proof-converts). The "twelve tools" premise was
+> itself wrong: the live server exposes 57, and `apiSurface.js` was hardcoding 12 while the MCP
+> `tools/list` call returned the real number. Both counts are now derived from the live server
+> (`2454fab`), so this paragraph's framing cannot go stale again.
+>
+> **The differentiation claim holds; the page is thinner than this section assumes.** Structured
+> incidents are real and unmatched, but `amount_usd` and `chain` are still largely unpopulated, so
+> the page documents the shape and says so rather than implying a queryable loss-and-chain dataset.
+> That gap is [B2](#b2--the-crypto-exploit-tracker--securityexploits--a-page-per-incident-continuous)'s
+> blocker, not this page's — a capability page can honestly describe a sparse field, whereas 164
+> incident pages cannot be built from 3 complete records.
 
 ---
 
@@ -403,9 +462,28 @@ for the dashboard. The recap feeds the pitch instead of competing with it. It al
 
 #### The specification
 
+> **URL corrected 22 Sep 2026, on the first attempt to visit the page.** Every
+> `/{entity}/this-week` in this section — and *"ship `/bitcoin/this-week`"* in
+> [§13](#13-first-90-days) — was written while project pages still lived at
+> `alphaday.com/{slug}`. The companion document then put every content type behind
+> a path prefix and mapped this route to
+> [`/projects/{slug}/this-week`](./seo-strategy.md#32-route-map). **That document
+> is the authority on how a URL is served, so the prefixed form is canonical** and
+> the shipped page is there.
+>
+> The unprefixed form still resolves: `/bitcoin/this-week` **301s** to it, because
+> `/bitcoin` already 301s to `/projects/bitcoin` and a child that dead-ends while
+> its parent redirects is just a hole — and because this document is what tells a
+> reader which URL to visit. An entity with no digest 404s instead of redirecting,
+> since a 301 to a 404 spends crawl budget to arrive nowhere.
+>
+> The rest of the section reads `/{entity}/this-week` as shorthand for the shape of
+> the URL, which is the part the argument turns on: a **child of the entity**
+> rather than a panel on it, and no date in the path.
+
 | Decision | Call |
 | --- | --- |
-| **URL** | One per entity: `/{entity}/this-week`. Dateless, permanent. |
+| **URL** | One per entity: ~~`/{entity}/this-week`~~ **`/projects/{entity}/this-week`**. Dateless, permanent. |
 | **Window** | **Rolling seven days**, not calendar week. A calendar week is near-empty on Monday and stale by Sunday; a rolling window always holds a full seven days, and it removes the week boundary that would otherwise invite an archive. |
 | **Other windows** | 24h / 7d / 30d as an **in-page control that does not change the URL**. Views, not pages — three URLs per entity would be the dated-archive problem at smaller scale. |
 | **Archive** | **None.** No `/{entity}/2026-w35`. The evergreen URL accumulates authority; a dated graveyard sheds it. |
@@ -573,11 +651,31 @@ sustainable at this headcount.
 | --- | --- | --- |
 | Continuous | Exploit tracker updates on new incident | Automated, human review before publish |
 | Weekly | Narrative Index | Automated + 200 words of interpretation |
-| Weekly | One recipe or one tool page | Engineering, rotating |
+| Weekly | One cookbook recipe or one capability page | Engineering, rotating |
 | Monthly | Governance Report | Automated + 800 words of interpretation |
 | Monthly | Media-discovery rankings refresh (B5) — re-rank on the last 90 days of publishing | Automated, dated on the page |
 | Monthly | Prune: `noindex` anything with zero impressions at 90 days | Automated job, reviewed |
 | Quarterly | Refresh comparison pages; re-run the model-citation check in §11 | Marketing |
+| **Quarterly** | **Re-verify the 38 Engine A pages against the live API** — every one carries a dated `verifiedOn` and quoted payloads | **Unassigned — see below** |
+
+> **Added 21 Sep. This row has no owner, and it is the maintenance debt the Engine A build created.**
+> All 38 pages state a verification date and quote real request/response pairs, which is what makes
+> them credible to audience one and quotable by a model. It is also what makes them decay: a config
+> block, an enum or a field-coverage figure that was true on 18 Sep becomes a wrong answer on a page
+> that still claims to have been checked.
+>
+> The build already turned up three cases in one week — the SSE fallback answers **406**, not the 405
+> originally written; `period` takes an integer enum (`0`–`3`) and 400s on `?period=1d`; and
+> `?ordering=` works on dev while the public API is behind, so
+> [`/api/data/tvl-yields`](../src/data/capabilityPages.js),
+> `/api/data/security-exploits` and `/cookbook/dao-proposal-alerts` are each written to be true of
+> prod today and go stale, not wrong, when dev promotes.
+>
+> **The dates are the mechanism, so somebody has to answer to them.** `verifiedOn` is derived from
+> the *oldest* check in each set rather than the newest ([mcpClients.js](../src/data/mcpClients.js)),
+> so the pages cannot silently vouch for themselves — but nothing currently schedules the re-check.
+> Cheapest fix: extend the `scripts/audit-*.mjs` pattern to assert the quoted payloads still hold, and
+> fail the build when a page's `verifiedOn` passes 90 days.
 
 **One-time build:** the Engine B pipeline — query, chart, page, publish. Estimate one engineering
 week. Everything after that is interpretation, and interpretation is where the human writing budget
@@ -658,30 +756,71 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
 > Media discovery moves ahead of the exploit tracker: lower risk, weaker incumbents, and no
 > dependency on a data backfill.
 
+> **Progress marked 21 Sep 2026.** Weeks 1–2 are complete but for the two data dependencies; Weeks
+> 3–6 shipped the Engine A pages and skipped the two items that were supposed to come *first*.
+>
+> **The resequencing above did not survive contact.** B5 was put at the front of the queue precisely
+> because it had no data dependency — and it is the one Weeks 3–6 item still untouched, because it
+> turned out to have a dependency after all: the Ahrefs export, which is a Weeks 1–2 unblock item
+> nobody has pulled. Engine A got built instead because it was actionable without waiting on anyone.
+> That is a reasonable way to spend blocked time and a bad way to sequence a quarter: **38 pages now
+> sit behind a closed door, while the item chosen for its speed to rank has not started.**
+>
+> Two things would change more than another page would — **the SSR origin cutover** (Engine A earns
+> nothing until it lands) and **the Ahrefs export** (one number, and B5 starts). Both are owner
+> actions, not engineering ones.
+
 ### Weeks 1–2 · Unblock
 
-- [ ] Fix the `curl` commands on `/api` so they resolve — gates every developer page and every model
-      citation
-- [ ] Fix `/berachain`: it is featured on the homepage and has no landing-page record (§14)
+- [x] Fix the `curl` commands on `/api` so they resolve — gates every developer page and every model
+      citation — `3a62241`, finding 22
+- [x] Fix `/berachain`: it is featured on the homepage and has no landing-page record (§14) — removed
+      from `CONFIG.featuredBoards` ([config.js:60](../src/config.js#L60)). **Resolved by unlinking,
+      not by creating the board** — the homepage no longer links to a 404, but `/berachain` is still
+      absent from both sets, so this is closed as a bug and open as a content decision
 - [ ] Set the referring-domains baseline and run the first model-citation check
-- [ ] Pull the Ahrefs export for the media-discovery cluster — the one number B5 turns on
-- [ ] **Audit the news tag slugs.** `polygon`, `avalanche`, `celestia` and `injective` return zero
+- [ ] **Pull the Ahrefs export for the media-discovery cluster** — the one number B5 turns on.
+      **Still the highest-leverage unpulled item in this document**; it has blocked the front of the
+      queue for three weeks
+- [x] **Audit the news tag slugs.** `polygon`, `avalanche`, `celestia` and `injective` return zero
       tagged news despite obvious coverage. This blocks C3, and it silently degrades every tagged
-      surface in the product, not only SEO
+      surface in the product, not only SEO — audited, re-diagnosed and specified in
+      [tag-taxonomy-fix.md](./tag-taxonomy-fix.md) (`2235e7e`). **Diagnosis and fix specified; the
+      backend change is not deployed**, so C3 remains blocked
 - [ ] Start the `amount_usd` / `chain` backfill on the 164 exploit records. It no longer gates the
-      first shipped asset, but it still gates B2
+      first shipped asset, but it still gates B2 — **not started, and diverging** (§14)
 
 ### Weeks 3–6 · Engine A + the first Engine B asset
 
 - [ ] **Ship media discovery (B5) first** — the podcast, YouTube-channel and news-outlet rankings,
-      data-ranked and dated. Lowest risk, weakest incumbents, fastest to rank
-- [ ] `/mcp` and the four client pages *(companion doc)*
-- [ ] Six recipe pages
-- [ ] Twelve tool pages, plus `get_exploits` as the thirteenth
-- [ ] **Ship `/bitcoin/this-week`** as a SERP probe — rolling seven-day evidence panel, dateless URL,
+      data-ranked and dated. Lowest risk, weakest incumbents, fastest to rank — **not started; blocked
+      on the Ahrefs export above.** Shipped fourth in intent and zeroth in fact
+- [x] `/mcp` and **eight** client pages — `331ebbf`, `#225`. Scoped as four; shipped eight because the
+      six JSON clients disagree about config shape (`mcpServers` vs `servers` vs `mcp`, `url` vs
+      `serverUrl`, `streamableHttp` vs `streamable-http`) and **one config block cannot be written for
+      that** — see [mcpClients.js](../src/data/mcpClients.js). Four are featured on `/api` and the hub;
+      all eight have a page
+- [x] Six recipe pages — `#226`, shipped at `/cookbook/{recipe}` ([A1](#a1--the-recipes-tier--the-biggest-gap-in-the-current-plan))
+- [x] ~~Twelve tool pages, plus `get_exploits` as the thirteenth~~ → **22 capability pages at
+      `/api/data/{capability}`**, `#229`/`#230`/`#232`/`#233`. Re-scoped, not descoped: 57 tools map to
+      22 capabilities, and the page set is asserted equal to `HEADLINE_CAPABILITIES` in both
+      directions by `src/__tests__/capability-pages.test.ts` so the two cannot drift
+- [x] **Ship `/bitcoin/this-week`** as a SERP probe — rolling seven-day evidence panel, dateless URL,
       server-rendered, window shown rather than a render timestamp. One page, not a tier. Measure for
-      a month before building the rest (C3)
-- [ ] Registry, `public-apis` and awesome-list submissions
+      a month before building the rest (C3) — **not started.** Route and precedence test exist;
+      [projects.$slug.this-week.tsx](../src/routes/projects.$slug.this-week.tsx) deliberately throws
+      `notFound()` until the content exists, per §4.1's *prefer no URL over a `noindex` URL*. Only the
+      content is missing, which makes this the cheapest unblocked build on the list.
+      **Shipped 22 Sep** at **`/projects/bitcoin/this-week`** (`/bitcoin/this-week` 301s to it — see
+      the URL note in [C3](#the-specification)). Server-rendered; **424 trailing items measured 22
+      Sep** — 326 news, 40 blog posts, 27 podcasts, 21 videos, 5 forum posts and 5 security
+      incidents — against a floor of 20, plus 5 events scheduled in the following week. Events are
+      counted forward and are never part of the trailing figure the density gate reads. **The only
+      page in the build that is promoted on purpose**: a `noindex` probe measures nothing. The month
+      of measurement starts when the SSR origin cuts over, not now
+- [ ] Registry, `public-apis` and awesome-list submissions — **not started, and the only item here
+      that is not gated by the SSR cutover**, since the MCP registries point at the server endpoint
+      rather than the marketing site. It is also the only Engine A item that directly earns links
 
 ### Weeks 7–12 · Engine B at cadence
 
@@ -739,6 +878,17 @@ quoted in a deck.
 > field: **3 of 175 records (1.7%) have both**, so the 164-page tracker currently has three publishable
 > pages. The week-4 gate asks whether this is visibly converging; measured, it is moving the other
 > way. Track it with `scripts/audit-exploit-backfill.mjs`.
+>
+> **Re-measured 21 Sep: still not started, still diverging.** `amount_usd` is **14.2%** (down from
+> 15.4%, and from 15.2% before that — three consecutive measurements falling) and `chain` is
+> **unchanged at 4 records** while the corpus grew to **201**. The absolute count of chain-tagged
+> incidents has not moved once across three checks; only the denominator has.
+>
+> **The week-4 gate has now been asked and answered: it fails.** B2 was scoped as a hub plus 164
+> incident pages, and the intersection that decides it has not improved in three weeks of new
+> incidents arriving unpopulated. **This is a backend data commitment, not an SEO task** — no amount of
+> content work moves it, and B2 should stay unscheduled rather than be re-promised each cycle.
+> Re-measure with `scripts/audit-exploit-backfill.mjs` before it is planned again.
 
 1. **There are 66 published landing pages, not 70.** `/ui/landing-pages/` returns 66, all published.
    `/ui/views/` returns 67. The sitemap claims 70. The drift flagged as #9 is real and now
@@ -752,14 +902,19 @@ quoted in a deck.
 4. **`boards.js` requests the wrong URL shape.** `/ui/landing-pages/{slug}` without a trailing slash
    returns a `301`; the API wants `/ui/landing-pages/{slug}/`
    ([boards.js:26](../src/api/boards.js#L26)). Every landing page pays an extra round trip.
-5. **"500k+ indexed items" is conservative.** The seven content types sum to 582,188.
+5. **"500k+ indexed items" is conservative.** The seven content types sum to 582,188. **Re-measured
+   corpus-wide on 18 Sep: 596,079** — the 582,188 figure came from sampling the first page of each
+   feed, which undercounted. The homepage now reads `590k+` (§1).
 6. **The 66 landing pages are not redirects.** `alphaday.com/ethereum` returns 200 with zero
    redirects and renders the full marketing page; it is `/b/{slug}` that redirects to the app
    ([App.jsx:50](../src/App.jsx#L50)). Easy to conflate, and it matters — their job is to *sell the
    dashboard*, which is why [C3](#c3--weekly-recap-pages--entitythis-week) puts the recap on a child
    URL rather than on them.
-7. **`/tvl/*` returns `401` with app credentials.** Yields, stablecoins and fees sit behind a
-   different auth tier, so any content plan that assumes access to them needs that resolved first.
+7. ~~**`/tvl/*` returns `401` with app credentials.** Yields, stablecoins and fees sit behind a
+   different auth tier, so any content plan that assumes access to them needs that resolved first.~~
+   **False — corrected 18 Sep. `/tvl/*` returns `200` unauthenticated**, and sending app credentials
+   is what produced the 401. There is no separate auth tier. Yields, stablecoins and fees were never
+   blocked; `/api/data/tvl-yields` ships against them. See the callout in §1.
 
 ### Still unverified
 

@@ -44,6 +44,21 @@ const STATIC_STATES: Record<string, IndexState> = {
   "/dashboards": "promoted",
   "/mobile": "promoted",
   "/privacy": "promoted",
+  /*
+   * The one page shipped so far that is promoted on purpose (content doc C3).
+   *
+   * Everything else added in this phase — 8 MCP client pages, 6 cookbook
+   * recipes, 22 capability pages — sits at the default-deny below, because none
+   * of them needs indexing to do its job. This page is different in kind: it is
+   * a SERP probe, built to find out whether the recap format ranks at all before
+   * the other 15–30 dense entities are built. A `noindex` probe measures
+   * nothing, so promotion is the feature.
+   *
+   * Exactly one entity, deliberately. C3: "One page, not a tier. Measure for a
+   * month before building the rest." Any other slug 404s, so there is nothing
+   * else here to promote.
+   */
+  "/projects/bitcoin/this-week": "promoted",
 };
 
 /**

@@ -9,6 +9,7 @@ import LongFormSection from "./LongFormSection";
 import FAQ from "./FAQ";
 import SiblingDashboards from "./SiblingDashboards";
 import { Footer, Navbar } from "../index";
+import { digestEntityFor } from "../../data/digestEntities";
 
 function slugToName(slug) {
   if (!slug) return null;
@@ -155,6 +156,35 @@ export function ErrorState() {
 }
 
 /**
+ * A link to the rolling digest, for the entities that have one.
+ *
+ * A **link**, emphatically not a recap panel. C3 rules out putting the digest on
+ * this page: it would answer the question the click-through to the dashboard was
+ * supposed to answer, so a panel here cannibalises this page's own CTA. A single
+ * line does the opposite — it sends the reader who wants "what happened" to the
+ * page built for that, and keeps this page selling the dashboard.
+ *
+ * It also exists for §5.8. The digest is in the sitemap, but a URL with no
+ * inbound internal link is an orphan, and an orphan is a page Google finds slowly
+ * and ranks worse. This is the only internal path to it.
+ */
+function DigestLink({ slug, name }) {
+  if (!digestEntityFor(slug)) return null;
+
+  return (
+    <div className="mx-auto w-11/12 max-w-5xl pb-2">
+      <a
+        href={`/projects/${slug}/this-week`}
+        className="inline-flex items-center gap-2 text-[15px] text-primary hover:underline font-semibold"
+      >
+        What&rsquo;s been happening with {name} this week
+        <span aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+  );
+}
+
+/**
  * The rendered page, given data. Split out from the container so the tree can
  * be rendered without a fetch — that is what the Phase 2 SSR calibration
  * harness measures (`scripts/calibrate-render.js`), and it is the shape the
@@ -175,6 +205,7 @@ export function ProjectLandingPage({ data }) {
         projectName={data.name}
       />
       {data.intro_paragraph && <LongFormSection body={data.intro_paragraph} />}
+      <DigestLink slug={data.slug} name={data.name} />
       <CategoryGrid name={data.name} cards={data.category_cards} />
       <DashboardScreenshot
         projectName={data.name}
