@@ -11,6 +11,15 @@
  * to emit `noindex`; the sitemap asks whether the URL may be listed. They cannot
  * disagree, because there is only one answer.
  */
+/*
+ * The `.js` extension is required, and this is the one module in the codebase
+ * where that is true. Every other import here is extensionless because Vite
+ * resolves them — but `scripts/build-sitemap.mjs` imports *this* file directly
+ * under node's TypeScript stripping, and node's ESM resolver does not guess
+ * extensions. Without it the sitemap build dies with ERR_MODULE_NOT_FOUND.
+ */
+import { digestPaths } from "../data/digestEntities.js";
+
 
 /** §4.1's three layers. */
 export type IndexState =
@@ -44,21 +53,26 @@ const STATIC_STATES: Record<string, IndexState> = {
   "/dashboards": "promoted",
   "/mobile": "promoted",
   "/privacy": "promoted",
+
   /*
-   * The one page shipped so far that is promoted on purpose (content doc C3).
+   * The digest tier (content doc C3) — the only pages in the build promoted on
+   * purpose.
    *
    * Everything else added in this phase — 8 MCP client pages, 6 cookbook
    * recipes, 22 capability pages — sits at the default-deny below, because none
-   * of them needs indexing to do its job. This page is different in kind: it is
-   * a SERP probe, built to find out whether the recap format ranks at all before
-   * the other 15–30 dense entities are built. A `noindex` probe measures
-   * nothing, so promotion is the feature.
+   * of them needs indexing to do its job. These are different in kind: they
+   * exist to be found in search, and a `noindex` recap measures nothing.
    *
-   * Exactly one entity, deliberately. C3: "One page, not a tier. Measure for a
-   * month before building the rest." Any other slug 404s, so there is nothing
-   * else here to promote.
+   * **Derived from `DIGEST_ENTITIES`, not listed here.** Two hand-maintained
+   * lists of the same set is the drift this whole module exists to prevent, and
+   * with 16 entities the odds of them disagreeing stop being hypothetical: an
+   * entity promoted but not built is a sitemap URL that 404s, and one built but
+   * not promoted is a page no crawler can reach. One source, so neither is
+   * possible.
    */
-  "/projects/bitcoin/this-week": "promoted",
+  ...Object.fromEntries(
+    digestPaths().map((path) => [path, "promoted" as IndexState])
+  ),
 };
 
 /**

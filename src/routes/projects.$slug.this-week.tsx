@@ -152,7 +152,14 @@ function buildJsonLd({
    * explicit because a `ListItem` without a `url` is not useful to anything
    * consuming this.
    */
-  const trailing = digest.sections.filter((section) => !section.upcoming);
+  /*
+   * Entity-specific trailing rows only. Events carry no URL and exploits are not
+   * about this entity, so neither belongs in a list a machine reads as "what this
+   * page covers".
+   */
+  const trailing = digest.sections.filter(
+    (section) => !section.upcoming && section.entitySpecific
+  );
 
   const listed = trailing
     .flatMap((section) => section.items.slice(0, 3))
@@ -162,11 +169,12 @@ function buildJsonLd({
   /*
    * Counted over the same population the list samples from, not the page total.
    *
-   * The page total includes upcoming events, which are not in `itemListElement`
-   * and are not "items in this list" in any sense a consumer would expect. This
-   * is the same count-and-rows-from-one-source rule the digest module enforces,
-   * applied to the structured data — the whole point of `numberOfItems` is that a
-   * machine trusts it without seeing the rows.
+   * `coverage` excludes both upcoming events and the shared exploit feed, which
+   * is exactly what `itemListElement` above excludes. The page total includes
+   * both and would not be "items in this list" in any sense a consumer expects.
+   * Same count-and-rows-from-one-source rule the digest module enforces, applied
+   * to the structured data — the whole point of `numberOfItems` is that a machine
+   * trusts it without seeing the rows.
    */
   const { coverage: numberOfItems } = countsByDirection(digest.sections, window);
 

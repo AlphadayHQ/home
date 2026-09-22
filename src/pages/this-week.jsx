@@ -7,6 +7,7 @@ import {
   WINDOW_LABEL,
   UPCOMING_LABEL,
   DENSITY_FLOOR,
+  countsByDirection,
   itemsWithin,
 } from "../data/digestWindow";
 
@@ -48,6 +49,22 @@ import {
 
 const MAX_ROWS = 6;
 
+/**
+ * Fewer rows for a section that is not about this entity.
+ *
+ * The "any exploit" call was reasoned for Bitcoin, where 5 incidents sit against
+ * 424 rows of coverage and read as noise. On a low-density entity the same feed
+ * was 43 of 148 rows — 29% of the page, the second-largest block, none of it
+ * about the entity. Keeping the section is right (a reader on a crypto recap
+ * wants to know whether anything was exploited this week) but it cannot be a
+ * third of the page, and 16 pages each carrying an identical 43-row block is a
+ * near-duplicate-content problem on top of an editorial one.
+ *
+ * So: pinned last by the server, relabelled to say whose incidents these are,
+ * and capped here.
+ */
+const MAX_SHARED_ROWS = 3;
+
 const fmt = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
   month: "short",
@@ -86,7 +103,18 @@ const lagInDays = (from, to) =>
 const ThisWeekPage = ({ digest, entity }) => {
   const [window, setWindow] = React.useState(digest.defaultWindow);
 
-  const total = digest.totals[window];
+  /*
+   * Three buckets, named separately in the copy below.
+   *
+   * The intro used to state `digest.totals` under "everything Alphaday indexed
+   * about {entity}", which counted forward-looking events and the shared exploit
+   * feed as the entity's own coverage. Each clause now reports the bucket it
+   * actually names.
+   */
+  const { coverage, upcoming, shared } = countsByDirection(
+    digest.sections,
+    window
+  );
   const landingPage = `/projects/${entity.slug}`;
 
   return (
@@ -108,13 +136,19 @@ const ThisWeekPage = ({ digest, entity }) => {
           </h1>
 
           <p className="text-text-muted text-[18px] max-w-160 mt-5">
-            Everything Alphaday indexed about {entity.name} in the last{" "}
-            {WINDOW_LABEL[window]} — news, project blogs, podcasts, video and
-            governance — plus what is scheduled for the{" "}
-            {UPCOMING_LABEL[window]}.{" "}
             <span className="text-text font-semibold">
-              {plural(total, ["item", "items"])}.
-            </span>
+              {plural(coverage, ["item", "items"])}
+            </span>{" "}
+            about {entity.name} from the last {WINDOW_LABEL[window]} — news,
+            project blogs, podcasts, video and governance.
+            {upcoming > 0 && (
+              <> Plus {plural(upcoming, ["event", "events"])} scheduled in the{" "}
+              {UPCOMING_LABEL[window]}.</>
+            )}
+            {shared > 0 && (
+              <> And {plural(shared, ["security incident", "security incidents"])}{" "}
+              across all protocols.</>
+            )}
           </p>
 
           {/*
@@ -301,7 +335,8 @@ const StaleNotice = ({ stale, asOf }) => (
 );
 
 const FeedCard = ({ section, window, asOf }) => {
-  const rows = itemsWithin(section, asOf, window).slice(0, MAX_ROWS);
+  const cap = section.entitySpecific === false ? MAX_SHARED_ROWS : MAX_ROWS;
+  const rows = itemsWithin(section, asOf, window).slice(0, cap);
   const count = section.counts[window];
 
   /*

@@ -9,8 +9,15 @@ import {
   itemsWithin,
   countsByDirection,
   soonestUpcoming,
+  assessDensity,
 } from "../data/digestWindow";
-import { DIGEST_ENTITIES, digestEntityFor, digestPaths } from "../data/digestEntities";
+import {
+  DIGEST_ENTITIES,
+  DIGEST_VERIFIED_ON,
+  SELECTION_FLOOR,
+  digestEntityFor,
+  digestPaths,
+} from "../data/digestEntities";
 import { FEEDS, fetchAllPages } from "../server/thisWeek";
 import { fetchJsonSoft } from "../server/apiFetch";
 import { indexStateFor, staticPaths } from "../seo/indexState";
@@ -243,6 +250,21 @@ describe("feed classification", () => {
     }
   });
 
+  it("marks every tag-filtered feed as entity-specific", () => {
+    /*
+     * Exploits are the only section that is not, and it is not in FEEDS — its
+     * endpoint takes no `tags`, so the same ~43 incidents land on all 16 pages.
+     * Anything added to FEEDS is tag-filtered by construction, so a `false` here
+     * would mean a feed was misclassified rather than a new exception.
+     */
+    for (const feed of FEEDS) {
+      expect(
+        feed.entitySpecific,
+        `${feed.kind} is tag-filtered and must count toward its entity`
+      ).toBe(true);
+    }
+  });
+
   it("pairs a local count source with a forward window only where intended", () => {
     /*
      * The invariant behind bug #2: a locally-counted feed must be fetched
@@ -254,37 +276,150 @@ describe("feed classification", () => {
   });
 });
 
-describe("counts by direction", () => {
+describe("count buckets", () => {
   /*
-   * The page total legitimately sums both directions — the picker and the intro
-   * copy name both. Everywhere the label names only one, the number has to match
-   * it: the meta description read "N indexed items from the last 7 days" while N
-   * included events scheduled for the following week, in the one piece of copy a
-   * SERP prints.
+   * Every number the page prints comes from one of these three buckets, and
+   * saying which is the whole job. A count summed across buckets and printed
+   * under a label naming one of them is the defect this helper exists to stop —
+   * it has caused two shipped bugs now, in the meta description and then in the
+   * density gate.
    */
-  const sections = [
-    { counts: { "24h": 10, "7d": 100, "30d": 1000 }, upcoming: false },
-    { counts: { "24h": 1, "7d": 5, "30d": 20 }, upcoming: true },
-    { counts: { "24h": null, "7d": null, "30d": null }, upcoming: false },
-  ];
-
-  it("separates trailing coverage from scheduled events", () => {
-    const { coverage, upcoming, total } = countsByDirection(sections, "7d");
-    expect(coverage).toBe(100);
-    expect(upcoming).toBe(5);
-    expect(total).toBe(105);
-  });
-
-  it("treats an unknown count as zero rather than throwing", () => {
-    // A null count means "not established". It must not poison the sum.
-    expect(countsByDirection(sections, "24h").coverage).toBe(10);
+  it("keeps coverage, upcoming and shared separate", () => {
+    const { coverage, upcoming, shared, total } = countsByDirection(
+      [
+        { counts: { "7d": 11 } },
+        { counts: { "7d": 8 }, upcoming: true },
+        { counts: { "7d": 5 }, entitySpecific: false },
+      ],
+      "7d"
+    );
+    expect({ coverage, upcoming, shared, total }).toEqual({
+      coverage: 11,
+      upcoming: 8,
+      shared: 5,
+      total: 24,
+    });
   });
 
   it("keeps coverage and total distinct, so a label cannot silently mean both", () => {
-    const { coverage, total } = countsByDirection(sections, "30d");
-    expect(coverage).toBe(1000);
-    expect(total).toBe(1020);
+    const sections = [
+      { counts: { "7d": 11 } },
+      { counts: { "7d": 8 }, upcoming: true },
+      { counts: { "7d": 5 }, entitySpecific: false },
+    ];
+    const { coverage, total } = countsByDirection(sections, "7d");
     expect(coverage).not.toBe(total);
+  });
+
+  it("classifies a shared section as shared even though it is trailing", () => {
+    /*
+     * Exploits are trailing *and* not entity-specific, so the two flags disagree.
+     * Ownership wins: the question the buckets answer is "whose rows are these",
+     * and the untagged endpoint puts the same ~43 incidents on all 16 pages.
+     */
+    const { coverage, shared, upcoming } = countsByDirection(
+      [{ counts: { "7d": 43 }, upcoming: false, entitySpecific: false }],
+      "7d"
+    );
+    expect({ coverage, shared, upcoming }).toEqual({
+      coverage: 0,
+      shared: 43,
+      upcoming: 0,
+    });
+  });
+
+  it("treats an unknown count as zero rather than poisoning the sum", () => {
+    // `null` means "not established" — a failed request, not a quiet window.
+    expect(
+      countsByDirection(
+        [{ counts: { "7d": null } }, { counts: { "7d": 4 } }],
+        "7d"
+      ).coverage
+    ).toBe(4);
+  });
+});
+
+describe("the density gate", () => {
+  /*
+   * These are the tests whose absence let the `japan` defect ship: `widened` and
+   * `thin` were computed inline inside a server function that cannot run without
+   * the network, so nothing checked them. `assessDensity` was extracted to make
+   * them possible.
+   */
+  const coverage = (week: number, month = week * 4) => ({
+    counts: { "24h": 0, "7d": week, "30d": month },
+  });
+  const events = (n: number) => ({
+    counts: { "24h": 0, "7d": n, "30d": n },
+    upcoming: true,
+  });
+  const exploits = (week: number, month: number) => ({
+    counts: { "24h": 0, "7d": week, "30d": month },
+    entitySpecific: false,
+  });
+
+  it("widens japan — the case that shipped indexable", () => {
+    /*
+     * The real numbers from the live render. 11 trailing rows against a floor of
+     * 20, with 8 events dated *next* week and 5 untagged exploits. The old gate
+     * summed all three to 24, cleared the floor, and published a page that then
+     * printed "16 indexed items from the last 7 days" in the one line a SERP
+     * shows.
+     */
+    const { widened, thin, defaultWindow, coverage7, coverage30 } =
+      assessDensity([coverage(11, 166), events(8), exploits(5, 43)]);
+
+    expect(coverage7, "events and exploits must not count as coverage").toBe(11);
+    expect(coverage30).toBe(166);
+    expect(defaultWindow).toBe("30d");
+    expect(widened).toBe(true);
+    expect(thin).toBe(false);
+  });
+
+  it("leaves a dense entity on the seven-day window", () => {
+    const { widened, thin, defaultWindow } = assessDensity([coverage(406, 3000)]);
+    expect(defaultWindow).toBe("7d");
+    expect(widened).toBe(false);
+    expect(thin).toBe(false);
+  });
+
+  it("can still reach thin, with a fat shared section present", () => {
+    /*
+     * The fallback was dead code. While the gate summed every section, the ~43
+     * constant from the untagged exploit endpoint meant no entity could ever fall
+     * under 20 however dead its own feeds were — so C3's "fall back to `noindex`"
+     * could not fire, including in the feed-outage case it was written for.
+     */
+    const { thin, widened } = assessDensity([
+      coverage(0, 0),
+      events(30),
+      exploits(5, 43),
+    ]);
+    expect(thin, "an entity with no coverage of its own must go noindex").toBe(
+      true
+    );
+    expect(widened).toBe(false);
+  });
+
+  it("is never both widened and thin", () => {
+    for (const week of [0, 1, 4, 19, 20, 21, 100]) {
+      const { widened, thin } = assessDensity([coverage(week)]);
+      expect(widened && thin, `both at coverage ${week}/wk`).toBe(false);
+    }
+  });
+
+  it("treats the floor as inclusive", () => {
+    expect(assessDensity([coverage(DENSITY_FLOOR)]).widened).toBe(false);
+    expect(assessDensity([coverage(DENSITY_FLOOR - 1)]).widened).toBe(true);
+  });
+
+  it("ignores a section whose count could not be established", () => {
+    // A failed fetch must not be read as evidence that the window is empty.
+    const { coverage7 } = assessDensity([
+      { counts: { "24h": null, "7d": null, "30d": null } },
+      coverage(50),
+    ]);
+    expect(coverage7).toBe(50);
   });
 });
 
@@ -371,37 +506,119 @@ describe("local-count completeness", () => {
 });
 
 describe("digest entities", () => {
-  it("ships exactly one entity — C3 commissions a probe, not a tier", () => {
-    /*
-     * Not a style rule. The page exists to answer whether the recap format
-     * ranks; a tier shipped alongside it would confound that measurement with
-     * its own thin pages, and §4.4 names crawl budget as the binding constraint.
-     * When the month of data is in, this number changes deliberately — and this
-     * assertion is the prompt to re-read C3 first.
-     */
-    expect(DIGEST_ENTITIES).toHaveLength(1);
-    expect(DIGEST_ENTITIES[0].slug).toBe("bitcoin");
-  });
+  it("has a unique slug, tag, name and measurement per entity", () => {
+    const slugs = DIGEST_ENTITIES.map((e) => e.slug);
+    expect(new Set(slugs).size, "duplicate slug").toBe(slugs.length);
 
-  it("gives every entity a tag and a verification date", () => {
     for (const entity of DIGEST_ENTITIES) {
-      // `?tags=` matches a keyword bag, not a slug, and the two diverge often
-      // enough to be finding 23. An entity without an explicit tag would be a
-      // silently empty page.
+      /*
+       * `?tags=` matches a keyword bag, not a slug, and the two diverge often
+       * enough to be finding 23. An entity without an explicit tag would be a
+       * silently empty page.
+       */
       expect(entity.tag, `${entity.slug} has no tag`).toBeTruthy();
       expect(entity.name, `${entity.slug} has no name`).toBeTruthy();
       expect(
-        entity.verifiedOn,
-        `${entity.slug} has no verifiedOn — density must be measured, not assumed`
-      ).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+        entity.measuredWeekly,
+        `${entity.slug} has no measured density — the bar is measured, not guessed`
+      ).toBeGreaterThan(0);
     }
+  });
+
+  it("dates the whole set at once", () => {
+    // One constant rather than per-entity, so a partial re-check cannot leave the
+    // set claiming a freshness it does not have.
+    expect(DIGEST_VERIFIED_ON).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  });
+
+  it("keeps every entity above the runtime floor", () => {
+    /*
+     * The runtime floor is the point at which a window has nothing in it. An
+     * entity whose *average* week is below it should not have a page at all — the
+     * widen-or-noindex fallback exists for a quiet week, not as a steady state.
+     */
+    for (const entity of DIGEST_ENTITIES) {
+      expect(
+        entity.measuredWeekly,
+        `${entity.slug} averages below the runtime floor and would live in the widened view`
+      ).toBeGreaterThanOrEqual(DENSITY_FLOOR);
+    }
+  });
+
+  it("marks every entity that sits below the selection bar", () => {
+    /*
+     * Two different floors doing two different jobs — see the module header. An
+     * entity under the editorial bar is allowed, but only as an explicit call,
+     * never by drifting in unnoticed.
+     */
+    for (const entity of DIGEST_ENTITIES) {
+      if (entity.measuredWeekly < SELECTION_FLOOR) {
+        expect(
+          entity.belowBar,
+          `${entity.slug} is under the ${SELECTION_FLOOR}/wk bar and must be flagged belowBar`
+        ).toBe(true);
+      } else {
+        expect(
+          entity.belowBar,
+          `${entity.slug} clears the bar, so belowBar is misleading`
+        ).toBeUndefined();
+      }
+    }
+  });
+
+  it("separates the two floors", () => {
+    // Collapsing them would be wrong in both directions: a page averaging 22
+    // should not exist, and a page averaging 40 still has quiet weeks.
+    expect(SELECTION_FLOOR).toBeGreaterThan(DENSITY_FLOOR);
+  });
+
+  it("excludes the two boards that were measured and rejected", () => {
+    /*
+     * A regression guard, not bookkeeping. Both look eligible from a distance:
+     *
+     *  - `reserve` measured 102/week, of which essentially all was fuzzy-match
+     *    noise — "Federal Reserve rate increase", "proof of reserves", "US Bitcoin
+     *    Reserve Bill". Its real tag, `reserve-protocol`, has 19 items all-time
+     *    and 6/week. Anyone re-adding it from the headline number rebuilds a page
+     *    made of unrelated articles.
+     *  - `polygon` sits at 16/week even with its tag pair resolved; the 1,933
+     *    articles behind `matic-network` are historical.
+     */
+    const slugs = DIGEST_ENTITIES.map((e) => e.slug);
+    expect(slugs, "reserve is fuzzy-match noise — re-measure before re-adding").not.toContain("reserve");
+    expect(slugs, "polygon measured 16/wk with its tags resolved").not.toContain("polygon");
   });
 
   it("resolves a known slug and rejects an unknown one", () => {
     expect(digestEntityFor("bitcoin")?.tag).toBe("bitcoin");
-    // The route turns this into a real 404 rather than a thin page (§4.1).
-    expect(digestEntityFor("ethereum")).toBeUndefined();
+    expect(digestEntityFor("dfinity")?.name).toBe("Internet Computer");
+    // The route turns these into real 404s rather than thin pages (§4.1).
+    expect(digestEntityFor("polygon")).toBeUndefined();
+    expect(digestEntityFor("celo")).toBeUndefined();
     expect(digestEntityFor("../etc/passwd")).toBeUndefined();
+  });
+
+  it("resolves a tag union wherever the slug is not the tag", () => {
+    /*
+     * These pages do their own taxonomy resolution and are **not** waiting on the
+     * backend fix in docs/tag-taxonomy-fix.md: `?tags=a,b` unions and
+     * de-duplicates. Four entities depend on it, and `dfinity` is a pairing the
+     * documented fix cannot reach at all, because the tag is named "internet
+     * computer" and matches neither the board slug nor its name.
+     */
+    const unions = DIGEST_ENTITIES.filter((e) => e.tag.includes(","));
+    expect(unions.map((e) => e.slug).sort()).toEqual([
+      "ai",
+      "avalanche",
+      "dfinity",
+      "risechain",
+    ]);
+    for (const entity of unions) {
+      expect(
+        entity.tag.split(",").every((t) => t.length > 0),
+        `${entity.slug} has an empty tag in its union`
+      ).toBe(true);
+    }
   });
 });
 
@@ -429,8 +646,11 @@ describe("digest promotion", () => {
     expect(promoted.sort()).toEqual(declared.sort());
   });
 
-  it("leaves every other entity at default-deny", () => {
-    expect(indexStateFor("/projects/ethereum/this-week")).toBe("substrate");
+  it("leaves every non-entity at default-deny", () => {
+    // A published board with no digest, and a slug that is not a board at all.
+    expect(indexStateFor("/projects/polygon/this-week")).toBe("substrate");
+    expect(indexStateFor("/projects/celo/this-week")).toBe("substrate");
+    expect(indexStateFor("/projects/nonesuch/this-week")).toBe("substrate");
   });
 });
 

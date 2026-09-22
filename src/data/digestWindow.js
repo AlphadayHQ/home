@@ -112,34 +112,82 @@ export const soonestUpcoming = (items, asOf) =>
   null;
 
 /**
- * Split a window's item count by direction: coverage behind, events ahead.
+ * Split a window's item count into the three things it actually contains.
  *
- * The page total sums both, which is right for the picker and the intro copy
- * because that copy names both directions. It is wrong anywhere the label says
- * only one of them — the meta description read "N indexed items from the last 7
- * days" while N included events scheduled for the following week, on a page whose
- * whole argument is that it does not overclaim.
+ * Every number the page states is one of these, and saying which is the whole
+ * point — a count summed across buckets and printed under a label that names one
+ * of them is the defect this helper exists to stop:
  *
- * One helper so the route's `<meta name="description">`, the JSON-LD's
- * `numberOfItems` and anything added later cannot each arrive at their own
- * arithmetic. That is the same one-source rule the digest module applies to
- * counts versus rows.
+ *  - **`coverage`** — trailing rows about *this entity*: news, project blogs,
+ *    podcasts, video, forum, DAO proposals. The only bucket that answers "is
+ *    there enough here", so it is what the density gate reads.
+ *  - **`upcoming`** — events, which are ahead of the window rather than behind
+ *    it. Legitimately about the entity, but not coverage of what happened.
+ *  - **`shared`** — rows that are not entity-specific at all. Exploits: the
+ *    endpoint takes no `tags`, so the identical ~43 incidents land on all 16
+ *    pages. Counting them as the entity's own both flatters a thin page and,
+ *    because the contribution is a constant, makes a floor unreachable.
  *
- * @param {Array<{ counts: Record<string, number | null>, upcoming?: boolean }>} sections
+ * The bug this replaces: `japan` had 16 trailing rows, 8 events and a floor of
+ * 20. The gate summed everything, saw 24, and let the page render — printing "16
+ * indexed items from the last 7 days" in the one line a SERP shows, from the gate
+ * written to prevent exactly that page. The description and the JSON-LD already
+ * read this helper; the gate was the third caller that should have.
+ *
+ * @param {Array<{ counts: Record<string, number | null>, upcoming?: boolean, entitySpecific?: boolean }>} sections
  * @param {"24h" | "7d" | "30d"} window
- * @returns {{ coverage: number, upcoming: number, total: number }}
+ * @returns {{ coverage: number, upcoming: number, shared: number, total: number }}
  */
 export const countsByDirection = (sections, window) => {
   let coverage = 0;
   let upcoming = 0;
+  let shared = 0;
 
   for (const section of sections) {
     const n = section.counts[window] ?? 0;
-    if (section.upcoming === true) upcoming += n;
+    if (section.entitySpecific === false) shared += n;
+    else if (section.upcoming === true) upcoming += n;
     else coverage += n;
   }
 
-  return { coverage, upcoming, total: coverage + upcoming };
+  return { coverage, upcoming, shared, total: coverage + upcoming + shared };
+};
+
+/**
+ * The density gate: does this entity have enough of its own coverage to publish?
+ *
+ * Pure and exported because it had no test, and that is why the `japan` defect
+ * shipped — the gate's two outputs were computed inline inside a server function
+ * that cannot run without the network.
+ *
+ * Reads `coverage` only, which makes the runtime gate and the editorial
+ * `measuredWeekly` figure count the same population. `digestEntities.js` already
+ * excluded exploits from that measurement because they "would add the same ~5 to
+ * every entity, flattering the thin ones" — the same reasoning, applied here.
+ *
+ * `thin` is reachable again as a result. While the gate summed every section,
+ * exploits alone contributed ~43 to the 30-day total, so no entity could ever
+ * fall under 20 however dead its own feeds were — C3 asks the page to "widen
+ * itself and say so, or fall back to `noindex`", and the second half was dead
+ * code, including in the feed-outage case it was written for.
+ *
+ * @param {Array<{ counts: Record<string, number | null>, upcoming?: boolean, entitySpecific?: boolean }>} sections
+ * @returns {{ defaultWindow: "7d" | "30d", widened: boolean, thin: boolean, coverage7: number, coverage30: number }}
+ */
+export const assessDensity = (sections) => {
+  const coverage7 = countsByDirection(sections, "7d").coverage;
+  const coverage30 = countsByDirection(sections, "30d").coverage;
+
+  const widened = coverage7 < DENSITY_FLOOR && coverage30 >= DENSITY_FLOOR;
+  const thin = coverage30 < DENSITY_FLOOR;
+
+  return {
+    defaultWindow: widened ? "30d" : "7d",
+    widened,
+    thin,
+    coverage7,
+    coverage30,
+  };
 };
 
 /**
