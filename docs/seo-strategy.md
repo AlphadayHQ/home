@@ -776,6 +776,26 @@ on the highest-stated-priority work in the plan.
 It pays for itself twice: verified Googlebot fetches are also the crawl-status signal the pruning job
 in §4.3 depends on.
 
+**What the logs do not measure — and a cheap way to close it.** Access logs record that a model
+crawler fetched a URL and what status it got. They say nothing about *what the response contained*,
+which for a shell-serving SPA is the entire question: a 200 that returns 3,452 bytes of empty
+document is indistinguishable in a log from a 200 that returns a rendered page. §1.1's premise is
+about content, and the only instrument pointed at it counts requests.
+
+**Run Ahrefs Site Audit with JavaScript rendering disabled** and read what it reports for `<title>`
+across the URL set. Its crawler fetches HTML the way GPTBot, ClaudeBot and CCBot do, so what it
+extracts is the closest free proxy available for what those crawlers receive:
+
+- If it reports the same title on every URL, that is a direct read on audience one — currently
+  asserted in §1.1 and measured nowhere — and it should be re-run after cutover as the pass/fail.
+- If it reports per-page titles, then Ahrefs is rendering after all, and the unexplained 2-keyword
+  reading in [the content document's §11](./seo-content-strategy.md#the-2026-09-22-baseline) needs a
+  different explanation than any yet offered.
+
+Either outcome is worth the run, which is why it is here rather than in a backlog. Free tier, one
+crawl. **Do not read the rest of that audit as a task list before cutover** — against the current
+build it will report one root cause seventy times.
+
 **Live since 2026-09-04** on `alphaday.com` (`E1QZ56RJ904M5R`), queryable as
 `cf_logs.cf_logs_alphaday`. Configuration, corrections and cost: [Appendix D](#appendix-d--cloudfront-access-logs).
 Reproducible as [`templates/cloudfront/access_logs.yaml`](https://github.com/AlphadayHQ/infrastructure/blob/main/templates/cloudfront/access_logs.yaml).
@@ -1447,6 +1467,15 @@ real 301 before cutover — not a 200 with client-side navigation.
       sitemap — asserted end to end: every sampled sitemap URL is fetched and checked for `index`
 - [ ] CloudFront `CacheHitRate` meets the §1.4 assumption under load
 - [ ] `stale-if-error` verified end to end: stop Node, confirm cached pages still serve 200
+- [ ] **Pull Ahrefs' "Redirects to implement" and reconcile it against the 301 map above.** The map
+      was generated from the sitemap — the pages *this project* knows about. That report lists the
+      URLs *other sites link to*, which is a different set, and it is the one carrying the ~1,000
+      referring domains in the baseline. Two things it will surface: inbound links pointing at URLs
+      that already 404 (`/oceanprotocol` and `/berachain` are deliberate 404s, and
+      `www.alphaday.com/berachain` is indexed with 28 impressions), and linked URLs the map does not
+      cover. **Before cutover, not after** — every URL on the site changes, and a link target nobody
+      knew about is indistinguishable afterwards from a redirect that was written wrong. Free in
+      Webmaster Tools
 
 ### After cutover
 
