@@ -741,11 +741,27 @@ different ways and a shared dashboard hides that.
 | Engine | Primary metric | Leading indicator |
 | --- | --- | --- |
 | **A · Proof** | First API call, MCP installs | Page → `curl`-copy rate |
-| **B · Authority** | **Referring root domains, net new per month** | Unlinked brand mentions; press pickups per report |
+| **B · Authority** | **Referring root domains, net new per month** | New referring domains by first-seen; press pickups per report |
 | **C · Corpus** | Indexed / submitted, per tier | Impressions by publish cohort |
 
 **Referring domains is the number that is missing from the current plan entirely, and it is the
 number that determines whether Engine C works.** Track it monthly, on the domain, with a target.
+
+> **Corrected 23 Sep 2026: the original leading indicator could not be measured.** This row read
+> *"unlinked brand mentions"*, which is an Ahrefs **Content Explorer** report — a paid tier, not part
+> of the free Webmaster Tools the referring-domain figure comes from. A measurement plan whose
+> leading indicator requires a seat nobody has bought is the same failure as the Ahrefs export
+> above: an item that looks actionable and quietly is not.
+>
+> **New referring domains by first-seen** replaces it, is free in Webmaster Tools, and is strictly
+> better for the purpose — it is the same population as the primary metric, one month's slice of it,
+> so the leading indicator and the outcome cannot drift apart. It is also already needed for the
+> +247 audit below.
+>
+> Unlinked mentions remain the *right* indicator in principle; they are recorded here as a reason to
+> buy a seat rather than as something the plan currently does. The free substitute in the meantime
+> is the model-citation tracker below, which asks a sharper version of the same question — not
+> whether Alphaday is mentioned, but how it is described.
 
 ### The 2026-09-22 baseline
 
@@ -771,10 +787,23 @@ baseline taken afterwards has nothing to be compared against.
 | Domain Rating | 29 | Ahrefs |
 
 **Ahrefs' organic-keyword and organic-traffic figures are deliberately absent from that table.** It
-reports 2 keywords and 0.62 visits/month against Search Console's 35,303 impressions, because its
-crawler does not render JavaScript the way Googlebot does and therefore sees only the shell described
-below. Referring domains is the one Ahrefs number this site can trust today; every ranking figure
-here comes from GSC. Do not reconcile the two — one of them is measuring the wrong thing.
+reports 2 keywords and 0.62 visits/month against Search Console's 35,303 impressions. Referring
+domains is the one Ahrefs number this site can trust today; every ranking figure here comes from GSC.
+
+**Why the two disagree is not established, and an earlier version of this paragraph claimed it was.**
+It asserted that Ahrefs' crawler does not render JavaScript and therefore sees only the shell. That
+is the wrong mechanism: Ahrefs does not discover a domain's organic keywords by crawling the site. It
+scrapes SERPs for keywords already in its own database and matches the URLs it finds, so whether it
+renders this site's JavaScript has little bearing on whether it notices a ranking.
+
+The duller explanation fits better — most of what this site ranks for is too obscure for any keyword
+database (`dfinity chain key cryptography single public key internet computer docs` is a real query
+from the export), and the free tier limits the report besides. But it does not fit completely:
+`daily orbs` draws 1,005 impressions at position 6.55, which is ordinary enough that Ahrefs should
+have it. **So the discrepancy is unexplained.** The practical rule stands either way — GSC for
+rankings, Ahrefs for links, and do not try to reconcile them — but it stands as a working rule, not
+as a diagnosis. [seo-strategy.md §7.1](./seo-strategy.md#71-model-crawler-access--the-thesis-metric)
+carries a cheap test that would settle it.
 
 Two notes on reading the export itself, because its dimensions do not agree and the difference is not
 rounding. **Site totals come from the daily chart** (86 clicks, 35,303 impressions), which matches the
