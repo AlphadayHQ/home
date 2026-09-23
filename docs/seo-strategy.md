@@ -1467,15 +1467,20 @@ real 301 before cutover — not a 200 with client-side navigation.
       sitemap — asserted end to end: every sampled sitemap URL is fetched and checked for `index`
 - [ ] CloudFront `CacheHitRate` meets the §1.4 assumption under load
 - [ ] `stale-if-error` verified end to end: stop Node, confirm cached pages still serve 200
-- [ ] **Pull Ahrefs' "Redirects to implement" and reconcile it against the 301 map above.** The map
-      was generated from the sitemap — the pages *this project* knows about. That report lists the
-      URLs *other sites link to*, which is a different set, and it is the one carrying the ~1,000
-      referring domains in the baseline. Two things it will surface: inbound links pointing at URLs
-      that already 404 (`/oceanprotocol` and `/berachain` are deliberate 404s, and
-      `www.alphaday.com/berachain` is indexed with 28 impressions), and linked URLs the map does not
-      cover. **Before cutover, not after** — every URL on the site changes, and a link target nobody
-      knew about is indistinguishable afterwards from a redirect that was written wrong. Free in
-      Webmaster Tools
+- [x] **Ahrefs' linked-URL set reconciled against the 301 map — 23 Sep 2026, and it is clean.** The
+      map is generated from the sitemap, i.e. the pages *this project* knows about; Ahrefs lists the
+      URLs *other sites link to*, which is a different set and the one carrying the referring domains.
+      Both risk buckets came back empty: **"Redirects to implement" (Best by links, HTTP 404) returns
+      0 pages**, so nothing linked is broken, and of 49 linked URLs only seven are on the apex —
+      the homepage (771 referring domains), its `http://`, `www.` and three `?ref=` variants, and
+      `/mobile` (1). **Nothing links to any `/{slug}` project page**, so the 66-page migration, which
+      is the bulk of this map, carries no link equity at all.
+
+      This also closes a blind spot worth naming. `$slug.tsx` resolves the old URL by asking the API
+      for a landing-page record and throws `notFound()` when there is none — so a linked slug the API
+      has since dropped would 404 after cutover, and `verify-301-map.mjs` could not detect it, because
+      it sources its URL list from that same API. The failure mode is real; there is simply nothing in
+      it. Re-check if the link profile changes materially before cutover
 
 ### After cutover
 

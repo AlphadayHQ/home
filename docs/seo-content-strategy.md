@@ -814,9 +814,31 @@ The conclusion is unaffected — the missing tail is long-tail queries, which co
 better — but a future comparison must be drawn against the same dimension or it will measure the
 export's shape instead of the site's.
 
-The **+247 referring domains in 30 days** (663 → ~1,000, a 37% jump) has not been explained and should
-be, before it is treated as authority. Sort referring domains by first-seen and check whether it is
-press or a network; a later correction to a baseline nobody audited is worse than a slow audit now.
+**Do not read ~1,000 as a thousand endorsements.** Ahrefs' *Best by links* was pulled on 23 Sep and
+the profile decomposes into three very unequal parts:
+
+| | referring domains | |
+| --- | ---: | --- |
+| `alphaday.com/` — the homepage alone | **771** | 77% of the profile |
+| `blog.alphaday.com/p/how-to-transfer-from-coinbase-to` | **199** | **0 dofollow, 199 nofollow, top DR 2.1** |
+| Everything else, across 47 URLs | ~50 | mostly 1–2 domains each |
+
+The middle row is a scraper network, not press: the *highest*-authority domain among those 199 is
+DR 2.1, and none of them passes link equity. It is 20% of the number recorded above. It is **not** the
++247 spike — first seen Oct 2025, last seen Jun 2026 — so that jump is still unexplained and still
+worth sorting by first-seen. But it is the same species, and it sets the prior: this profile accretes
+junk, and the headline figure needs decomposing before it is quoted.
+
+**The finding that matters more is the first row.** 77% of every link this domain has ever earned
+points at the homepage, and the deepest URL with real links is the app root at 19. In four years no
+page, post or asset here has earned links of its own.
+
+That is not a criticism of the content — it is precisely the condition
+[Engine B](#5-engine-b--authority-earns-the-links) exists to change, now measured instead of assumed.
+It also sharpens the metric two tables up: "referring root domains, net new per month" is satisfied by
+200 more homepage links, which would leave Engine C's deep pages exactly where they are. **Count net
+new domains to non-homepage URLs**, or the number will rise while the thing it is a proxy for does
+not.
 
 #### What the baseline actually says
 
