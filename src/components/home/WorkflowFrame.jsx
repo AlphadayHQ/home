@@ -1,8 +1,8 @@
 import React from "react";
-import { Section, Div, Title } from "../../shared";
+import { Section, Div, Title, Card, CardText, CardTitle } from "../../shared";
 import Childoneworkflow from "./Childoneworkflow";
 import Track from "./Track";
-import Stats from "../home/Stats";
+import Stats from "./Stats";
 import Gasandoptions from "./Gasandoptions";
 import Triplet from "./Triplet";
 import Searchandfilter from "./Searchandfilter";
