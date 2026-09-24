@@ -1,15 +1,15 @@
-import ventures from "../../images/backers/image50.png";
-import dfg from "../../images/backers/image52.png";
-import jsquare from "../../images/backers/image53.png";
-import kyber from "../../images/backers/image51.png";
-import signum from "../../images/backers/image54.png";
-import trader from "../../images/backers/image60.png";
+import ventures from "../../images/backers/image50.webp";
+import dfg from "../../images/backers/image52.webp";
+import jsquare from "../../images/backers/image53.webp";
+import kyber from "../../images/backers/image51.webp";
+import signum from "../../images/backers/image54.webp";
+import trader from "../../images/backers/image60.webp";
 
-import jordi from "../../images/contributors/jordi.svg";
-import anthony from "../../images/contributors/anthony.svg";
-import mariano from "../../images/contributors/mariano.svg";
-import pierre from "../../images/contributors/pierre.svg";
-import hashkey from "../../images/backers/hashkey.png";
+import jordi from "../../images/contributors/jordi.webp";
+import anthony from "../../images/contributors/anthony.webp";
+import mariano from "../../images/contributors/mariano.webp";
+import pierre from "../../images/contributors/pierre.webp";
+import hashkey from "../../images/backers/hashkey.webp";
 
 const backers = [
   {

@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 import { Nav } from "../../shared";
-import alphaday from "../../images/logo.png";
+import alphaday from "../../images/logo.webp";
 import LaunchAppButton from "../home/LaunchAppButton";
 import discordLogo from "../../images/socials/discord.svg";
 import twitterLogo from "../../images/socials/twitter.svg";

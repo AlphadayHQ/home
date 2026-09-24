@@ -1,5 +1,90 @@
 # https://www.robotstxt.org/robotstxt.html
-User-agent: *
-Disallow:
+#
+# Alphaday is a crypto data layer whose primary audience finds tools by asking
+# a model. The named groups below are therefore not decoration: they are the
+# distribution channel. If bot management is ever introduced, the rule is
+# "block scrapers, keep this list allowed" — see docs/seo-strategy.md §6.1.
+#
+# Note on precedence: a crawler obeys the single most specific group matching
+# its token and ignores the wildcard group entirely. Each model crawler is
+# therefore listed with its own explicit Allow, so a future Disallow added to
+# the wildcard group cannot silently cut off audience one.
 
-sitemap: https://alphaday.com/sitemap.xml
+# --- Model / answer-engine crawlers (explicitly allowed) ---
+
+# OpenAI — training corpus
+User-agent: GPTBot
+Allow: /
+
+# OpenAI — ChatGPT search results
+User-agent: OAI-SearchBot
+Allow: /
+
+# OpenAI — user-initiated browsing
+User-agent: ChatGPT-User
+Allow: /
+
+# Anthropic
+User-agent: ClaudeBot
+Allow: /
+
+# Anthropic — user-initiated browsing
+User-agent: Claude-User
+Allow: /
+
+# Perplexity
+User-agent: PerplexityBot
+Allow: /
+
+# Common Crawl — the corpus many models are trained from
+User-agent: CCBot
+Allow: /
+
+# Google — controls Gemini / AI Overviews use, separate from Googlebot
+User-agent: Google-Extended
+Allow: /
+
+# Apple Intelligence / Siri summaries
+User-agent: Applebot-Extended
+Allow: /
+
+# Meta AI — crawler and on-demand fetcher
+User-agent: meta-externalagent
+Allow: /
+
+User-agent: Meta-ExternalFetcher
+Allow: /
+
+# Amazon (Alexa / Rufus / Nova)
+User-agent: Amazonbot
+Allow: /
+
+# ByteDance / Doubao
+User-agent: Bytespider
+Allow: /
+
+# Cohere
+User-agent: cohere-ai
+Allow: /
+
+# Diffbot — structured-data extraction, feeds several model pipelines
+User-agent: Diffbot
+Allow: /
+
+# You.com
+User-agent: YouBot
+Allow: /
+
+# Microsoft search index. Listed for completeness, not as an AI control:
+# bingbot is the search crawler, and Copilot grounds on the Bing index without
+# a separate token — so unlike Google-Extended, allowing this does not opt in
+# or out of AI use specifically.
+User-agent: bingbot
+Allow: /
+
+# --- Everyone else ---
+
+User-agent: *
+Allow: /
+
+Sitemap: https://alphaday.com/sitemap.xml

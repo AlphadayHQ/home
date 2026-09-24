@@ -23,9 +23,8 @@ import {
   ArrowLeft,
   ExternalLink,
 } from "lucide-react";
-import Seo from "../components/seo";
 import CONFIG from "../config";
-import alphaday from "../images/logo-notext.png";
+import alphaday from "../images/logo-notext.webp";
 import { API_DOCS } from "../api/docs-spec.generated";
 
 const SWAGGER_URL = "https://api.alphaday.com/docs/";
@@ -342,11 +341,6 @@ export default function ApiDocsPage() {
 
   return (
     <div className="min-h-screen bg-background text-text font-sans w-full">
-      <Seo
-        title="Alphaday API — Full Reference"
-        description="Browseable reference of every endpoint in the Alphaday REST API: parameters, response shapes and copy-ready cURL commands."
-        canonical="https://alphaday.com/api/docs"
-      />
 
       {/* slim sub-nav */}
       <nav className="sticky top-0 z-40 border-b border-surface-border bg-surface/80 backdrop-blur-xl">

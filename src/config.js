@@ -1,5 +1,8 @@
 const ALPHADAY_ROOT_URL = "https://alphaday.com/";
-const coverImg = "/assets/seo1200x627-black.png";
+// Absolute on purpose: several OG crawlers cannot resolve relative paths.
+// There is no longer a static fallback to keep in sync — index.html is gone and
+// every page server-renders its own head, so this is the single source.
+const coverImg = `${ALPHADAY_ROOT_URL}assets/seo1200x627-black.png`;
 
 const CONFIG = {
   privacyPolicy: "/privacy",
@@ -8,8 +11,14 @@ const CONFIG = {
     link: "https://www.youtube.com/embed/ThCd_W3rK_8",
   },
   mobile: "/mobile",
+  dashboards: "/dashboards",
+  dashboard: "/dashboard",
+  pulse: "https://getpulse.xyz/",
+  recipes: "https://recipes.alphaday.com/",
   api: "/api",
   apiDocs: "/api/docs",
+  mcp: "/mcp",
+  cookbook: "/cookbook",
   appStore: {
     apple: "https://apps.apple.com/us/app/alphaday/id1581443943",
     google: "https://play.google.com/store/apps/details?id=com.alphaday",
@@ -31,13 +40,15 @@ const CONFIG = {
     defaultTitle: "Alphaday",
     defaultDescription: "Everything Crypto, All in one place.",
     socialLinks: {
-      twitter: "https://twitter.com/AlphadayHQ",
+      // twitter:site expects the @handle, not a profile URL. Use CONFIG.twitter
+      // above for anything that needs a clickable link.
+      twitter: "@AlphadayHQ",
     },
     cover: coverImg,
   },
   CLARITY_ID: import.meta.env.VITE_CLARITY_PROJECT_ID ?? "",
   // Curated board landing pages featured on the home page (internal-linking / SEO).
-  // Each slug must map to a published page served at alphaday.com/{slug}.
+  // Each slug must map to a published page served at alphaday.com/projects/{slug}.
   featuredBoards: [
     { slug: "ethereum", name: "Ethereum" },
     { slug: "solana", name: "Solana" },
@@ -46,7 +57,11 @@ const CONFIG = {
     { slug: "optimism", name: "Optimism" },
     { slug: "polygon", name: "Polygon" },
     { slug: "avalanche", name: "Avalanche" },
-    { slug: "berachain", name: "Berachain" },
+    // berachain removed: it is a board in /ui/views/ but has no record in
+    // /ui/landing-pages/, so /berachain rendered a 404 from the home page.
+    // Re-add only once the landing page exists — the sitemap now builds from
+    // the landing-pages endpoint, so it will never publish a slug this list
+    // gets wrong again, but this list is hand-maintained and still can.
   ],
   blogLinks: {
     learn: [

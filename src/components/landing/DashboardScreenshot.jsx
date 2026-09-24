@@ -1,6 +1,6 @@
 import React from "react";
 import { Section, Div } from "../../shared";
-import dashboardImg from "../../images/home/hero.png";
+import dashboardImg from "../../images/home/hero.webp";
 
 function DashboardScreenshot({ projectName, dashboardImage }) {
   return (
