@@ -3,7 +3,6 @@ import Seo from "./components/seo";
 import CookieDisclaimer from "./components/CookieDisclaimer";
 import CONFIG from "./config";
 import HomeContainer from "./containers/HomeContainer";
-import DashboardsContainer from "./containers/DashboardsContainer";
 import ProjectLandingContainer from "./containers/ProjectLandingContainer";
 import { CookieProvider } from "./utils/CookieContext";
 import PrivacyPolicyPage from "./pages/privacy-policy";
@@ -21,8 +20,6 @@ function removeTrailingBackSlash(site) {
 const otherPages = {
   [CONFIG.privacyPolicy]: <PrivacyPolicyPage />,
   [CONFIG.mobile]: <MobilePage />,
-  [CONFIG.dashboards]: <DashboardsContainer />,
-  [CONFIG.dashboard]: <DashboardsContainer />,
   [CONFIG.api]: <ApiPage />,
   [CONFIG.apiDocs]: <ApiDocsPage />,
 };

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import {
+  Card,
   CardText,
   CardTitle,
   FlipCard,
