@@ -44,6 +44,7 @@ nice-to-have.
 - [Appendix B — Regression guard](#appendix-b--regression-guard)
 - [Appendix C — Migration and URL preservation](#appendix-c--migration-and-url-preservation)
 - [Appendix D — CloudFront access logs](#appendix-d--cloudfront-access-logs)
+- [Appendix E — The `www` redirect](#appendix-e--the-www-redirect)
 
 ---
 
@@ -620,12 +621,19 @@ The current site defaults a missing canonical to the homepage, which means `/api
 conversion target for audience one — currently tells Google it is a duplicate of the homepage. Type
 enforcement is the fix that cannot regress.
 
-**Measured 2026-09-22, and it is a layer worse than written: the served HTML carries no canonical at
-all.** `curl` on `alphaday.com/base` and on `www.alphaday.com/base` returns the same 3,452-byte shell
-with no `<link rel="canonical">` anywhere in it. The tag is written by the client during render, so
-the homepage default described above is what *renderers* eventually see, and every non-rendering
-crawler — the §1.1 audience — sees no canonical whatsoever. That is also why `www` currently
-duplicates the entire site with nothing to resolve it (Appendix C).
+**Measured 2026-09-22, and it was a layer worse than written: the served HTML carried no canonical
+at all.** `curl` on `alphaday.com/base` and on `www.alphaday.com/base` returned the same 3,452-byte
+shell with no `<link rel="canonical">` anywhere in it. The tag was written by the client during
+render, so the homepage default described above was what *renderers* eventually saw, and every
+non-rendering crawler — the §1.1 audience — saw no canonical whatsoever.
+
+**Resolved 2026-09-28.** The canonical is served in the HTML source, and it is host-absolute: both
+`alphaday.com/projects/base` and `www.alphaday.com/projects/base` emit
+`<link rel="canonical" href="https://alphaday.com/projects/base"/>`, because
+[`src/config.js`](../src/config.js) hardcodes the apex rather than deriving a host from the request.
+Note what this means for the sentence this paragraph used to end on: the `www` duplication was never
+*only* a canonical failure. The host served 200 in its own right, and a canonical is a hint rather
+than a directive, so that needed a separate fix at the edge — [Appendix E](#appendix-e--the-www-redirect).
 
 ### 5.2 Real HTTP status codes
 
@@ -759,8 +767,9 @@ Technical health only. Per-engine content and authority metrics are in
   first export is the pre-cutover baseline:
   [the content document's §11](./seo-content-strategy.md#the-2026-09-22-baseline). The duplicate-content
   risk this bullet placed on `app.alphaday.com` is measurably small — **16 impressions, 0 clicks** in
-  three months. **`www.alphaday.com` is the live duplicate**, and it was not on this list; see the 301
-  map in [Appendix C](#appendix-c--migration-and-url-preservation).
+  three months. **`www.alphaday.com` was the live duplicate**, and it was not on this list; it has
+  301'd to the apex since 2026-09-28 — see [Appendix E](#appendix-e--the-www-redirect) and the 301 map
+  in [Appendix C](#appendix-c--migration-and-url-preservation).
 - **Click-through rate per tier**, not impressions alone. §4.3 explains why: an indexed page earning
   impressions at a page-one position and no clicks is a rendering failure that every impression-keyed
   metric reports as healthy.
@@ -1484,7 +1493,7 @@ Every current URL must resolve. Project pages move from root slugs to `/projects
 | `/blog` | `/blog` — now a real page, not a client-side redirect |
 | `/api`, `/api/docs`, `/mobile`, `/privacy` | unchanged |
 | `blog.alphaday.com/p/{slug}` | `alphaday.com/blog/{slug}` |
-| `www.alphaday.com/*` | `alphaday.com/*` — **added 22 Sep; this map did not cover it.** `www` currently serves the whole site at 200 with no redirect and no canonical (§5.1), so every URL exists twice, and Search Console has `www.alphaday.com/berachain` indexed with 28 impressions. The apex is canonical. **Still unfixed — re-measured 28 Sep, `www.alphaday.com/` returns 200 with no redirect.** The fix is written and sitting uncommitted: `infra/cloudfront/www-redirect.js` plus `scripts/apply-www-redirect.mjs`, which read-modify-writes the live distribution config under `--if-match` and needs MFA-backed CloudFront credentials to `--apply` |
+| `www.alphaday.com/*` | `alphaday.com/*` — **added 22 Sep; this map did not cover it. Live 2026-09-28.** `www` served the whole site at 200, so every URL existed twice, and Search Console has `www.alphaday.com/berachain` indexed with 28 impressions. Now a 301 to the apex, issued at the edge — [Appendix E](#appendix-e--the-www-redirect) |
 
 Generate the map from the same data source the pages are built from. Verify every entry returns a
 real 301 before cutover — not a 200 with client-side navigation.
@@ -1797,3 +1806,125 @@ growth.
 
 Delivery to S3 is free. The CloudWatch Logs destination is metered beyond 750 bytes per request, and
 Parquet output carries vended-log charges — neither is used.
+
+---
+
+# Appendix E — The `www` redirect
+
+**Status: live since 2026-09-28.** `www.alphaday.com/*` returns a 301 to `alphaday.com/*`, path and
+query preserved.
+
+### Route 53 was never the change
+
+`www.alphaday.com` is not a separate distribution and not a separate DNS target. It is a second
+alternate domain name on `E1QZ56RJ904M5R` — the distribution that serves the apex:
+
+```
+www.alphaday.com.  CNAME  alphaday.com.
+alphaday.com.      A      108.157.78.45   → E1QZ56RJ904M5R
+```
+
+So **Route 53 needs no change, and the record must stay.** It is what lets a 301 be served at all.
+Deleting it returns NXDOMAIN, which discards the referring domains Ahrefs lists against the `www.`
+homepage variant ([Appendix C](#appendix-c--migration-and-url-preservation)) instead of passing them
+to the apex. Removing the alias from the distribution is worse still — CloudFront would answer a host
+it does not recognise with a 403.
+
+### Why the edge, and not `server.mjs`
+
+The tempting fix is [`server.mjs`](../server.mjs), which already parses `req.headers.host`. It cannot
+work here, for two independent measured reasons:
+
+1. **The origin never sees the real host.** The cache policy `alphaday-landing-ssr` sets
+   `HeaderBehavior: none`, so no `Host` header is forwarded and the origin receives the origin's own
+   domain (`ip-10-0-20-170.eu-west-1.compute.internal`). `req.headers.host` cannot tell `www` from the
+   apex — the information is not there.
+2. **A 301 minted at the origin would be cached host-agnostically.** With `Host` absent from the cache
+   key, one entry serves both hostnames, so a redirect generated for `www` gets handed to apex
+   visitors: a redirect loop on the canonical host. Adding `Host` to the cache key fixes that but
+   splits the cache per hostname, degrading the hit rate that §1.4's capacity model and §7's alarm both
+   rest on. Neither branch is acceptable.
+
+A viewer-request CloudFront Function runs *before* the cache lookup, so the 301 never enters the cache
+and never costs an origin fetch. Measured compute utilization 6–7% of the limit; $0.10 per million
+invocations.
+
+### What changed
+
+A function was **already** associated on viewer-request on both cache behaviors (default and
+`/assets/*`): `alphaday-landing-redirects`, a vanity-link table. CloudFront permits only one function
+per event type per behavior, so this is an edit to that function rather than a new one. **The
+distribution itself was not modified** — publishing the function was the entire deploy, which is also
+why it needed no distribution read-modify-write and no propagation wait beyond the function itself.
+
+**The function is generated, not hand-written, and that is where the change had to land.**
+`scripts/rollout_static_site.sh` in [`AlphadayHQ/infrastructure`](https://github.com/AlphadayHQ/infrastructure)
+builds it by substituting the `redirect_rules` from `apps/alphaday/landing.yaml` into
+`scripts/redirect_function_template.js`, then calls `update-function` and `publish-function`. Editing
+the live function in isolation therefore survives only until the next rollout, which would silently
+reintroduce the duplicate. The change is three files in that repo:
+
+| File | Change |
+| --- | --- |
+| `scripts/redirect_function_template.js` | The host check, gated on a new `__CANONICAL_HOST__` placeholder — empty means no check, so sites that have not opted in are byte-for-byte unaffected |
+| `scripts/rollout_static_site.sh` | Reads `canonical_host` from the config, substitutes it, and no longer skips the function when a site has a `canonical_host` but no `redirect_rules` |
+| `apps/alphaday/landing.yaml` | `canonical_host: alphaday.com` |
+
+Driving it from `canonical_host` rather than hardcoding `www.` generalizes to the other distributions
+with the same defect — `gammaday.com` carries a `www.` alias too — while keeping each site's adoption
+an explicit, reviewable line rather than a behavior change that arrives with the next unrelated
+rollout.
+
+Two details are deliberate:
+
+- **Compared against the configured canonical host** (`!== canonicalHost`) rather than pattern-matching
+  `www.`, so it cannot be fooled by a hostname that merely looks canonical. The consequence worth
+  knowing is that this also 301s the distribution's own `d11spf65a1es01.cloudfront.net`, which is
+  desirable — it keeps that domain out of the index — but means health checks must target the
+  canonical host. `rollout_landing_ssr.sh` already curls `https://$domain`, so it is unaffected, and
+  nothing in either repo references the `cloudfront.net` name.
+- **The host check runs after the vanity rules.** Those return absolute apex or third-party targets and
+  so already leave `www` in one hop; testing the host first would cost every `www` vanity link a second
+  hop for nothing.
+
+### Verified live
+
+| Request | Result |
+| --- | --- |
+| `https://www.alphaday.com/projects/base` | 1 hop → apex, 200 |
+| `https://www.alphaday.com/` | 1 hop → apex, 200 |
+| `https://www.alphaday.com/base` | 2 hops — `www`→apex, then the legacy `/base`→`/projects/base` 301 |
+| `http://www.alphaday.com/mobile` | 2 hops — CloudFront's HTTPS upgrade is host-preserving, so it fires first |
+| `https://www.alphaday.com/api?ref=x&utm_source=tw` | 1 hop, query preserved |
+| `https://www.alphaday.com/discord` | 1 hop → Discord, unchanged |
+| `https://alphaday.com/*` | **0 hops — unmodified pass-through**, the case worth asserting |
+
+Two hops is within tolerance; Google follows up to five. The apex pass-through was tested on the
+unpublished `DEVELOPMENT` stage with `aws cloudfront test-function` before publishing, because it is
+the case that takes the site down if the host comparison is ever written backwards. That battery is
+now `scripts/test_redirect_function.sh <config>` in the infrastructure repo: it generates the function
+from a site config exactly as the rollout does, asserts against the DEVELOPMENT stage, and publishes
+nothing. Run it before any `redirect_rules` or `canonical_host` edit.
+
+The published function was afterwards regenerated from the committed template and republished, so the
+live code is byte-identical to what the next rollout produces — verified with `get-function`. A hand-
+edit left in place would have been overwritten without warning.
+
+### Follow-up
+
+- The Search Console property is a `*.alphaday.com` domain property, so `www` URLs leave the index as
+  the 301s are crawled — no removal request needed. The confirmation signal is
+  `www.alphaday.com/berachain`'s 28 impressions going to zero.
+- **`alphaday-landing` is not in the rollout workflow's site list.** `.github/workflows/rollout-static-sites.yaml`
+  offers `alphaday-dashboard`, `-docs` and `-cdn` but not `-landing`, so this config change has no CI
+  deploy path and must be applied by running `rollout_static_site.sh apps/alphaday/landing.yaml`
+  directly. Whether that omission is deliberate caution — the landing distribution is the one with the
+  SSR origin — or an oversight is a call for whoever owns the workflow.
+- **Neither the distribution nor the function is CloudFormation-managed**, and the repo contains no
+  `AWS::CloudFront::Distribution` or `::Function` at all; both are applied by the rollout scripts, as
+  `apps/alphaday/landing.yaml` says in its first line. That is a deliberate divergence from
+  [Appendix D](#appendix-d--cloudfront-access-logs)'s CloudFormation templates, not a gap to close by
+  importing.
+- **Unrelated pre-existing bug, found while verifying this:** `alphaday.com/thanks` 301s to `/ty`,
+  which is a **404**. The rule predates this change and there is no `ty` route in `src/routes/`. It
+  needs a decision on where `/thanks` should point, not a redirect fix.
