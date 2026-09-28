@@ -1481,6 +1481,15 @@ real 301 before cutover — not a 200 with client-side navigation.
       sitemap — asserted end to end: every sampled sitemap URL is fetched and checked for `index`
 - [ ] CloudFront `CacheHitRate` meets the §1.4 assumption under load
 - [ ] `stale-if-error` verified end to end: stop Node, confirm cached pages still serve 200
+- [x] **Every URL Google has actually indexed resolves on the new build** —
+      `scripts/verify-indexed-urls.mjs`, which reads a Search Console Pages export and checks each
+      indexed path against a running server. It exists because `verify-301-map.mjs` cannot answer
+      this: that script sources its URLs from the API, so it proves every URL *this project knows
+      about* resolves and is silent on any the project has forgotten. **Run 2026-09-23 against the
+      3-month export: 57 of 58 resolve, 1 to review holding 3 impressions** — `/oceanprotocol`, the
+      deliberate 404 above. 13,469 of 13,472 indexed impressions have somewhere to land. **Re-run
+      after cutover, and again when the old sitemap is retired** — at which point the script itself
+      should be deleted or folded into the §4.2 job, per its own header
 - [x] **Ahrefs' linked-URL set reconciled against the 301 map — 23 Sep 2026, and it is clean.** The
       map is generated from the sitemap, i.e. the pages *this project* knows about; Ahrefs lists the
       URLs *other sites link to*, which is a different set and the one carrying the referring domains.
