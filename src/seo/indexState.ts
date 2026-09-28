@@ -19,6 +19,9 @@
  * extensions. Without it the sitemap build dies with ERR_MODULE_NOT_FOUND.
  */
 import { digestPaths } from "../data/digestEntities.js";
+import { capabilityPaths } from "../data/capabilityPages.js";
+import { recipePaths } from "../data/cookbook.js";
+import { mcpClientPaths } from "../data/mcpClients.js";
 
 
 /** §4.1's three layers. */
@@ -44,6 +47,9 @@ export const belongsInSitemap = (state: IndexState): boolean =>
  * Static routes whose state is known at build time. Anything absent is
  * `substrate` by default — see `indexStateFor`.
  */
+const promote = (paths: string[]): Record<string, IndexState> =>
+  Object.fromEntries(paths.map((path) => [path, "promoted" as IndexState]));
+
 const STATIC_STATES: Record<string, IndexState> = {
   "/": "promoted",
   "/api": "promoted",
@@ -55,24 +61,42 @@ const STATIC_STATES: Record<string, IndexState> = {
   "/privacy": "promoted",
 
   /*
-   * The digest tier (content doc C3) — the only pages in the build promoted on
-   * purpose.
+   * The content tiers, all derived rather than listed.
    *
-   * Everything else added in this phase — 8 MCP client pages, 6 cookbook
-   * recipes, 22 capability pages — sits at the default-deny below, because none
-   * of them needs indexing to do its job. These are different in kind: they
-   * exist to be found in search, and a `noindex` recap measures nothing.
+   * **Every one of these is a set, and none of them is written out here.** Two
+   * hand-maintained lists of the same set is the drift this whole module exists
+   * to prevent: an entry promoted but not built is a sitemap URL that 404s, and
+   * one built but not promoted is a page no crawler can reach. Deriving each
+   * tier from the data that builds it makes both impossible rather than
+   * unlikely.
    *
-   * **Derived from `DIGEST_ENTITIES`, not listed here.** Two hand-maintained
-   * lists of the same set is the drift this whole module exists to prevent, and
-   * with 16 entities the odds of them disagreeing stop being hypothetical: an
-   * entity promoted but not built is a sitemap URL that 404s, and one built but
-   * not promoted is a page no crawler can reach. One source, so neither is
-   * possible.
+   * The digest tier (content doc C3) was promoted first and alone. The other
+   * three shipped 14–21 Sep behind `noindex` — correct at the time, because the
+   * SSR origin had not cut over and an indexable client-rendered shell is worse
+   * than an unindexed one. **That hold was written to expire at the cutover, the
+   * cutover landed on or before 24 Sep, and nothing expired it**, so 36 live
+   * server-rendered pages sat invisible for four days. Promoted 28 Sep.
+   *
+   * **Promoted per tier on measured uniqueness, not by assumption.** The worry
+   * on record was that 22 capability pages over one dataset would cannibalise
+   * each other. Measured against production, they do not: median pairwise
+   * 5-gram similarity 0.23, and 63% of each page is text no sibling shares.
+   * Recipes are cleaner still at 0.14 and 82% unique.
+   *
+   * **The client pages are the ones to watch, which is the opposite of the
+   * prediction.** They are the longest of the three tiers (~1,300 words) and the
+   * least distinct: 0.51 median similarity, only 34% of each page unique. That
+   * is inherent to what they are — eight explanations of one server differing
+   * mainly in the shape of a config block — and it is why they are promoted to
+   * be measured rather than assumed safe. The signal that this was wrong is
+   * `Duplicate without user-selected canonical` or `Crawled - currently not
+   * indexed` landing on `/mcp/*` in Search Console; the response is to trim the
+   * shared explainer to a link rather than to demote the tier.
    */
-  ...Object.fromEntries(
-    digestPaths().map((path) => [path, "promoted" as IndexState])
-  ),
+  ...promote(digestPaths()),
+  ...promote(capabilityPaths()),
+  ...promote(recipePaths()),
+  ...promote(mcpClientPaths()),
 };
 
 /**

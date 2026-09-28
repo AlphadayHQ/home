@@ -1425,3 +1425,7 @@ export const CAPABILITY_PAGES = {
  * hand-written slug in either place fails the build.
  */
 export const pageBySlug = (slug) => CAPABILITY_PAGES[slug];
+
+/** The paths `src/seo/indexState.ts` promotes. One per capability, not per tool. */
+export const capabilityPaths = () =>
+  Object.keys(CAPABILITY_PAGES).map((slug) => `/api/data/${slug}`);
