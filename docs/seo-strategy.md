@@ -913,6 +913,23 @@ deploy onward: **this is the last clean read of it.**
 | Origin p95 TTFB | above 800 ms | Throttling, or upstream latency above the §1.4 assumption |
 | Origin 5xx rate | above 0.5% over 1 h | `stale-if-error` is carrying the site; investigate now |
 
+> **Two of these thresholds were set without knowing what the traffic is — measured 28 Sep from the
+> Appendix D logs, 22–28 Sep.** `CacheHitRate` is not collected at all, for which see
+> [Appendix C](#verification-before-cutover). The error rates are collected, and they are dominated by
+> traffic that has nothing to do with the site: **38,887 of 63,714 requests (61%) carry
+> `result_type = Error`**, of which 17,917 are 403s and 5,804 are 404s from vulnerability scanners
+> hitting the distribution's own `*.cloudfront.net` domain — `/wp/`, `/wordpress/`, `/.env`, `/admin`,
+> `/index.php`, `/login`. That is ordinary background radiation, but it means `4xxErrorRate` and
+> `TotalErrorRate` mostly report scanner volume rather than anything a user or crawler experienced.
+>
+> **It also means these two metrics will step down sharply on 28 Sep for a reason unrelated to
+> health.** The host canonicalisation in [Appendix E](#appendix-e--the-www-redirect) 301s any
+> non-canonical host, the `*.cloudfront.net` domain included, so from that date the scanner traffic is
+> logged as `Redirect` or `FunctionGeneratedResponse` rather than `Error`. Anyone reading alarm
+> history across the boundary will see a large improvement that is a change of classification, not of
+> behaviour. Set the thresholds from post-28-Sep data, and filter on `host_header` when querying the
+> logs — `host` is `cs(Host)`, the distribution domain, and is the same value on every row.
+
 The first two firing together is the signal to move to Design B (§2.7) or a larger instance. Either
 alone usually means a cache-configuration problem, not a capacity problem.
 
@@ -1501,7 +1518,9 @@ real 301 before cutover — not a 200 with client-side navigation.
 ### Verification before cutover
 
 - [x] Every URL in the current sitemap resolves to a 200 or a 301 to a 200 —
-      `scripts/verify-301-map.mjs`, **76 URLs, 0 problems**
+      `scripts/verify-301-map.mjs`, **76 URLs, 0 problems**. **Re-run against production on 28 Sep
+      (`--base https://alphaday.com`): 76 URLs, 0 problems**, so this is no longer a local-only
+      result. The single note is `/oceanprotocol` → 404, which the script flags as intended
 - [x] `curl` with JS disabled returns complete content for a project page, `/api` and `/mcp` —
       **all three verified on production, 28 Sep.** `/projects/ethereum` 1,377 words, `/api` 751,
       `/mcp` 570, each present in the HTML before any script runs. (The 1,377 and the 1,420 above are
@@ -1513,8 +1532,56 @@ real 301 before cutover — not a 200 with client-side navigation.
 - [x] Every indexable route has a unique title, description and canonical
 - [x] Substrate-layer pages emit `noindex` in both the meta tag and the header, and appear in no
       sitemap — asserted end to end: every sampled sitemap URL is fetched and checked for `index`
-- [ ] CloudFront `CacheHitRate` meets the §1.4 assumption under load
-- [ ] `stale-if-error` verified end to end: stop Node, confirm cached pages still serve 200
+- [x] ~~CloudFront `CacheHitRate` meets the §1.4 assumption under load~~ → **measured 28 Sep. It does
+      not, the metric it names is not being collected, and the 80% target is unreachable at this
+      traffic volume.** Three findings, in descending order of how much they matter.
+
+      **The metric does not exist for this distribution.** `list-metrics` on `E1QZ56RJ904M5R` returns
+      only the free default set — `Requests`, `BytesDownloaded`, `BytesUploaded`, `4xxErrorRate`,
+      `5xxErrorRate`, `TotalErrorRate`, `FunctionInvocations`, `FunctionComputeUtilization`.
+      `CacheHitRate` is part of CloudFront's *additional* metrics, which are opt-in and billed per
+      metric per month. So **§7's `CacheHitRate` below 80% alarm cannot fire**, and §1.4's capacity
+      model has no instrument behind it. `get-metric-statistics` returns zero datapoints, which is
+      the same shape as a healthy quiet period and is why this went unnoticed.
+
+      **Computed from the v2 access logs instead** (Appendix D), 22–28 Sep, cacheable requests only
+      (`Hit`/`Miss`/`RefreshHit` — the same basis CloudFront uses), viewer host `alphaday.com` or
+      `www.alphaday.com`:
+
+      | tier | cacheable requests | served from cache |
+      | --- | ---: | ---: |
+      | pages | 9,118 | **55.3%** |
+      | `/assets/*` | 7,936 | **81.0%** |
+      | combined | 17,054 | **67.3%** |
+
+      **But 80% is arithmetically out of reach here, and the shortfall is not a fault.** The page tier
+      spreads 1,303 cacheable requests a day across **394 distinct URIs** — **0.138 requests per URI
+      per hour** against `s-maxage=3600`. The average page is requested once every 7.2 hours, roughly
+      six hours after its cached copy expired, so it *must* miss. The reason the figure is 55.3% rather
+      than near-zero is the hot head of the distribution — the homepage and a handful of project
+      pages — carrying it. **This number measures traffic density, not configuration health**, which
+      makes it the wrong thing to alarm on at this size.
+
+      **And the exposure it is a proxy for is negligible.** §1.4's render cost measured 0.74 ms of CPU,
+      so a 45% page-miss rate is ~590 renders a day — on the order of half a second of CPU daily.
+
+      **"Under load" never happened**: 4,433–24,918 requests a day across the window. Nothing here is
+      evidence about behaviour under load, and this item cannot become that evidence without one.
+
+      **So change the target rather than chase it.** Either raise `s-maxage` on the genuinely static
+      tiers — *not* the digest tier, whose whole value is recency — or retire the 80% row in favour of
+      the origin 5xx rate and p95 TTFB rows already in that table, which measure the thing the hit
+      rate stands in for. An alarm that fires permanently is worse than no alarm, because it teaches
+      people to close it
+- [ ] `stale-if-error` verified end to end: stop Node, confirm cached pages still serve 200 —
+      **still open, and deliberately not attempted.** The test as written requires stopping the
+      production origin, and there is no staging distribution to do it on. What is confirmed is only
+      that the directive is served: `stale-if-error=604800` is present on `/api` (28 Sep), which
+      proves CloudFront is *told* to serve stale on error and nothing about whether it does. Ticking
+      this on the header alone would be the Appendix D mistake again — recording a check that was
+      never run. A safe test needs either a second distribution over a throwaway origin, or a spare
+      cache behaviour on a path nobody uses whose origin can be broken on purpose. **§7's "origin 5xx
+      rate above 0.5%" row assumes this works**, so the assumption is load-bearing and unverified
 - [x] **Every URL Google has actually indexed resolves on the new build** —
       `scripts/verify-indexed-urls.mjs`, which reads a Search Console Pages export and checks each
       indexed path against a running server. It exists because `verify-301-map.mjs` cannot answer
@@ -1523,7 +1590,10 @@ real 301 before cutover — not a 200 with client-side navigation.
       3-month export: 57 of 58 resolve, 1 to review holding 3 impressions** — `/oceanprotocol`, the
       deliberate 404 above. 13,469 of 13,472 indexed impressions have somewhere to land. **Re-run
       after cutover, and again when the old sitemap is retired** — at which point the script itself
-      should be deleted or folded into the §4.2 job, per its own header
+      should be deleted or folded into the §4.2 job, per its own header. **Re-run against production on
+      28 Sep: 57 of 58 resolve, with the same single review item** — `/oceanprotocol`, 3 impressions.
+      The "re-run after cutover" half of that instruction is discharged; the second half waits on the
+      old sitemap being retired
 - [x] **Ahrefs' linked-URL set reconciled against the 301 map — 23 Sep 2026, and it is clean.** The
       map is generated from the sitemap, i.e. the pages *this project* knows about; Ahrefs lists the
       URLs *other sites link to*, which is a different set and the one carrying the referring domains.
