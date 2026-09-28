@@ -400,6 +400,20 @@ Two reasons, both structural:
 Sixty-six 301s is a trivial, well-understood operation. Blocking clean segmentation permanently to
 avoid it is not a good trade. See [Appendix C](#appendix-c--migration-and-url-preservation).
 
+> **Adding a prefix is a two-file change, and forgetting the second file fails silently.** A later
+> plan proposed `/hacks/`, `/podcasts/`, `/forums/`, `/dev-activity/` and `/integrations/` — five new
+> top-level prefixes, none of them in the set above.
+>
+> Route files alone are not enough. `indexStateFor` in `src/seo/indexState.ts` is **default-deny**, so
+> any path not declared there is `substrate`: it renders, emits `noindex` in both the meta tag and the
+> header, and never enters a sitemap. Pages built against an undeclared prefix publish and are never
+> indexed, and nothing fails — which is precisely the failure mode §4.2 exists to prevent, arriving
+> through the door it left open.
+>
+> So: declare the prefix in `STATIC_STATES` (or derive it, as the digest tier does) in the same change
+> that adds the route. §5.7's test asserts the reverse direction — a promoted path with no route file
+> — but nothing can assert the existence of a page nobody has written yet.
+
 ### 3.2 Route map
 
 Prefixes are allocated per content type so each is separately measurable and separately

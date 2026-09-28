@@ -353,7 +353,38 @@ not just a better-optimised one.
 - It is the most natural possible proof that Alphaday indexes the whole media layer, which is the
   hardest part of the positioning to demonstrate.
 
-**Lowest risk and probably fastest to rank of anything in Engine B.** It should ship first.
+~~**Lowest risk and probably fastest to rank of anything in Engine B.** It should ship first.~~
+
+> **Measured 26 Sep 2026, and the ranking half of that claim does not survive.**
+>
+> | Keyword | Difficulty | Volume |
+> | --- | --- | ---: |
+> | `best crypto podcasts` | **Hard** | >100 |
+> | `best crypto youtube channels` | **Hard** | **<100** |
+> | `best crypto newsletters` | **Hard** | **<100** |
+>
+> Every variant — `2025`, `2026`, `for beginners`, `on spotify` — is under 100 searches a month. Hard
+> difficulty on a low-volume term usually means the SERP is held by high-authority domains, which is
+> exactly the incumbent list above.
+>
+> Search Console agrees rather than contradicting. All four targets drew **zero impressions in three
+> months**, while `best crypto wallet` drew 472 at position 80.8 — so this domain does surface for
+> listicle queries it ranks badly for, and zero means no top-100 ranking at all.
+>
+> **What dies is the queue position, not the asset.** "Lowest risk, fastest to rank, ship first" is
+> not supported by a Hard SERP at sub-100 volume. The two arguments above that never depended on
+> volume still hold: every listed show and outlet is a party with a reason to link to a page ranking
+> them, and it is the cheapest proof that Alphaday indexes the media layer. With 771 of ~1,000
+> referring domains pointing at the homepage and no page on this site having ever earned a link of
+> its own, an asset built to earn deep links is worth building. **B5 is a mid-tier Engine B link
+> asset, not the front of the queue.**
+>
+> **Two terms this section does not name are better first shots.** The 3-month export has the domain
+> at position **14.7 for `nft newsletters`** and 53.6 for `crypto youtubers`, both from Substack posts
+> with no data behind them. Moving 15 → 5 beats moving nothing → something. More broadly, 93
+> listicle-shaped queries already reach this domain for **2,023 impressions and zero clicks** at an
+> average position of 63, almost all landing on the blog — which is an argument for
+> [§7's](#7-the-blog-decision) migration, not for this page set.
 
 ### What Engine B is really buying
 
@@ -560,6 +591,21 @@ Still one page first. **Ship `/bitcoin/this-week`** — the entity with 785 item
 page is guaranteed to have something to say — and measure it for a month before building the tier.
 It is the cheapest decision-grade experiment available, and the head of this query class is genuinely
 more open than the tail, which is the reverse of the earlier assumption.
+
+> **Two changes to this tier were proposed on 28 Sep. Recorded here so neither is re-litigated from
+> scratch, and neither is adopted by default.**
+>
+> **Expanding `this-week` from 16 to 66.** The 16 were not a sample — they are what survived measuring
+> content density across all 66 boards against a floor of 30 items a week, and two rejections were
+> specific: `reserve` is fuzzy-match noise with 19 items all-time, `polygon` clears 16 a week.
+> Expanding to 66 ships 50 pages this work established are too thin to land on. **Not adopted
+> without re-measuring.**
+>
+> **Giving each period a dated, archived URL.** The dateless URL was chosen deliberately above — a
+> rolling window that accumulates no stale pages. The counter-argument is real: a rolling window with
+> no archive never produces a citable artifact, which matters for the model-citation case in §11 more
+> than for search. **Open, and worth deciding properly** rather than by whichever document was written
+> last.
 
 > **Measured 22 Sep 2026: the probe cannot report until the SSR cutover lands.**
 >
@@ -966,12 +1012,15 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
       [§11](#the-2026-09-22-baseline). Search Console is connected and exported in the same pass, so
       the index-coverage gap closes with it
 - [ ] Run the first model-citation check — the half of this item that is still undone
-- [ ] ~~**Pull the Ahrefs export for the media-discovery cluster**~~ → **four keyword lookups.**
-      Reframed 22 Sep. This was recorded as an export blocking the front of the queue for three
-      weeks, and it is neither an export nor a blocker: the affiliate-thin half closed on 31 Aug,
-      leaving volume and difficulty for `best crypto podcasts` and three siblings. Ahrefs Webmaster
-      Tools does not cover them — Keywords Explorer is a paid tier, which "one export away" did not
-      account for — but the free keyword generator does. **Half an hour, no dependency, no seat**
+- [x] ~~**Pull the Ahrefs export for the media-discovery cluster**~~ → **four keyword lookups, done
+      26 Sep.** Reframed 22 Sep: this was recorded as an export blocking the front of the queue for
+      three weeks, and it was neither an export nor a blocker. The affiliate-thin half closed on
+      31 Aug, leaving volume and difficulty for `best crypto podcasts` and three siblings — which
+      Ahrefs Webmaster Tools does not cover, Keywords Explorer being a paid tier that "one export
+      away" did not account for, and which the free keyword generator answers in half an hour.
+      **The result demoted B5**: all three pulled terms come back KD **Hard**, two under 100 searches
+      a month. Verdict and what survives in
+      [B5](#b5--media-discovery--the-best-shaped-opportunity-found-in-the-research)
 - [x] **Audit the news tag slugs.** `polygon`, `avalanche`, `celestia` and `injective` return zero
       tagged news despite obvious coverage. This blocks C3, and it silently degrades every tagged
       surface in the product, not only SEO — audited, re-diagnosed and specified in
@@ -982,12 +1031,13 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
 
 ### Weeks 3–6 · Engine A + the first Engine B asset
 
-- [ ] **Ship media discovery (B5) first** — the podcast, YouTube-channel and news-outlet rankings,
-      data-ranked and dated. Lowest risk, weakest incumbents, fastest to rank — **not started, and
-      no longer blocked** (see the reframed item above). Shipped fourth in intent and zeroth in fact.
-      The 3-month export strengthens it: `best crypto wallet`, `best crypto tax software` and
-      `nft newsletter` already draw impressions to this domain, from Substack posts at positions
-      56–81 where nothing can be controlled (§7)
+- [ ] ~~**Ship media discovery (B5) first**~~ → **ship it mid-queue.** The podcast, YouTube-channel
+      and news-outlet rankings, data-ranked and dated — still worth building, no longer first.
+      Re-sequenced 28 Sep on the measured keyword data: Hard difficulty at sub-100 volume kills the
+      "fastest to rank" premise, and the link-earning and positioning arguments that survive do not
+      by themselves justify the front of the queue. Shipped fourth in intent and zeroth in fact, and
+      now deliberately fourth. **The registry, `public-apis` and awesome-list submissions below take
+      its place** — the one Engine A item that earns links and waits on nobody
 - [x] `/mcp` and **eight** client pages — `331ebbf`, `#225`. Scoped as four; shipped eight because the
       six JSON clients disagree about config shape (`mcpServers` vs `servers` vs `mcp`, `url` vs
       `serverUrl`, `streamableHttp` vs `streamable-http`) and **one config block cannot be written for
