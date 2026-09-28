@@ -11,7 +11,7 @@ programmatic surfaces below; the product is the shop window, the layer is
 the thing.
 
 This file is generated at build time from the live API spec and a live MCP
-tools/list call. Generated: 2026-09-20
+tools/list call. Generated: 2026-09-28
 
 ## Start here
 
@@ -215,7 +215,7 @@ Fetch one news article by its ID, with full detail.
 **Upcoming crypto events**
 Browse the crypto events calendar — conferences, community calls, token unlocks and more. Filter by event type, date range (period_after / period_before), active-only, or project (tags).
 
-- Parameters: active (boolean), ends_at (string), ends_at__gt (string), ends_at__gte (string), ends_at__lt (string), ends_at__lte (string), item_type (string), limit (integer), page (integer), period_after (string), period_before (string), sort_by (array), sources (string), starts_at (string), starts_at__gt (string), starts_at__gte (string), starts_at__lt (string), starts_at__lte (string), tags (string)
+- Parameters: active (boolean), ends_at (string), ends_at__gt (string), ends_at__gte (string), ends_at__lt (string), ends_at__lte (string), item_type (string), limit (integer), page (integer), period (string), period_after (string), period_before (string), sort_by (array), sources (string), starts_at (string), starts_at__gt (string), starts_at__gte (string), starts_at__lt (string), starts_at__lte (string), tags (string)
 - Returns: paginated of `EventMini`
 - Fields: id, hash, title, item_type, starts_at, ends_at, location, is_subscribed
 - `curl https://api.alphaday.com/items/events/`
@@ -431,7 +431,7 @@ Data for one stablecoin by its ID.
 **Yield pools (APY)**
 DeFi yield pools with APY (base and reward), TVL and impermanent-loss risk. Filter by chain, project or pool symbol.
 
-- Parameters: chain (string), limit (integer), page (integer), project (string), symbol (string)
+- Parameters: chain (string), limit (integer), ordering (string), page (integer), project (string), symbol (string)
 - Returns: paginated of `YieldPoolRead`
 - Fields: id, pool_id, project, chain, symbol, apy, apy_base, apy_reward, tvl_usd, il_risk, date
 - `curl https://api.alphaday.com/tvl/yields/`
@@ -547,7 +547,7 @@ Fetch one blog post by its ID, with full detail.
 **DAO governance proposals**
 Browse live governance proposals and votes across DAOs, with start and end dates. Filter by project (tags), active-only, or start/end date.
 
-- Parameters: active (boolean), ends_at (string), limit (integer), page (integer), sources (string), starts_at (string), tags (string)
+- Parameters: active (boolean), ends_at (string), limit (integer), page (integer), period (string), sources (string), starts_at (string), tags (string)
 - Returns: paginated of `DaoReadOnly`
 - Fields: id, hash, title, url, starts_at, ends_at, image, source
 - `curl https://api.alphaday.com/items/dao/`

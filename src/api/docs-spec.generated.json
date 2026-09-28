@@ -1,6 +1,6 @@
 {
   "source": "https://api.alphaday.com/openapi.json",
-  "generatedAt": "2026-09-18T08:46:38.202Z",
+  "generatedAt": "2026-09-28T06:07:06.987Z",
   "baseUrl": "https://api.alphaday.com",
   "openapiVersion": "3.0.3",
   "title": "Alphaday API",
@@ -315,18 +315,25 @@
               "description": "A page number within the paginated result set."
             },
             {
+              "name": "period",
+              "type": "string",
+              "in": "query",
+              "required": false,
+              "description": "Time window — preset range (see accepted values)\n\n* `0` - LAST_24\n* `1` - LAST_WEEK\n* `2` - LAST_MONTH\n* `3` - LAST_QUARTER"
+            },
+            {
               "name": "period_after",
               "type": "string",
               "in": "query",
               "required": false,
-              "description": "Period eg. ?period_after=2022-04-19&period_before=2022-04-19"
+              "description": "Event starts on or after."
             },
             {
               "name": "period_before",
               "type": "string",
               "in": "query",
               "required": false,
-              "description": "Period eg. ?period_after=2022-04-19&period_before=2022-04-19"
+              "description": "Event starts on or before."
             },
             {
               "name": "sort_by",
@@ -1252,6 +1259,13 @@
               "description": "Number of results to return per page."
             },
             {
+              "name": "ordering",
+              "type": "string",
+              "in": "query",
+              "required": false,
+              "description": "Which field to use when ordering the results."
+            },
+            {
               "name": "page",
               "type": "integer",
               "in": "query",
@@ -1745,6 +1759,13 @@
               "in": "query",
               "required": false,
               "description": "A page number within the paginated result set."
+            },
+            {
+              "name": "period",
+              "type": "string",
+              "in": "query",
+              "required": false,
+              "description": "Time window — preset range (see accepted values)\n\n* `0` - LAST_24\n* `1` - LAST_WEEK\n* `2` - LAST_MONTH\n* `3` - LAST_QUARTER"
             },
             {
               "name": "sources",
