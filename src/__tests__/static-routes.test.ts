@@ -7,6 +7,9 @@ import {
   staticPaths,
 } from "../seo/indexState";
 import { digestPaths } from "../data/digestEntities.js";
+import { capabilityPaths } from "../data/capabilityPages.js";
+import { recipePaths } from "../data/cookbook.js";
+import { mcpClientPaths } from "../data/mcpClients.js";
 
 /**
  * Static routes are declared in exactly one place, and this asserts it stays
@@ -163,5 +166,61 @@ describe("the digest tier's lastmod", () => {
       "rollingLastmod must truncate to the UTC day, not stamp the build instant"
     ).toBe(true);
     expect(rolling?.[0]).toMatch(/T00:00:00/);
+  });
+});
+
+/**
+ * The Engine A tiers.
+ *
+ * These shipped behind `noindex` on purpose, waiting on the SSR cutover, and
+ * then stayed there for four days after it landed because the hold was a
+ * comment rather than anything executable. That is the regression worth a test:
+ * not "are they promoted today" — one edit did that — but "is each tier still
+ * derived from the data that builds it", so a page added to any of the three
+ * cannot ship invisible the way all 36 just did.
+ */
+describe("the Engine A tiers", () => {
+  const tiers = [
+    ["capability", capabilityPaths, "/api/data/", 22],
+    ["cookbook", recipePaths, "/cookbook/", 6],
+    ["mcp client", mcpClientPaths, "/mcp/", 8],
+  ] as const;
+
+  it.each(tiers)("promotes every %s page", (_label, paths, prefix, count) => {
+    const declared = new Set(staticPaths());
+    const tierPaths = paths();
+
+    // A count assertion looks redundant next to the loop below, but it is the
+    // half that catches an empty derivation: `paths()` returning [] would make
+    // every other assertion here pass vacuously.
+    expect(tierPaths).toHaveLength(count);
+
+    for (const path of tierPaths) {
+      expect(path.startsWith(prefix), `${path} is not under ${prefix}`).toBe(true);
+      expect(declared.has(path), `${path} is missing from staticPaths()`).toBe(true);
+      expect(
+        belongsInSitemap(indexStateFor(path)),
+        `${path} is not promoted, so it would be noindex and in no sitemap`
+      ).toBe(true);
+    }
+  });
+
+  /*
+   * The hub pages are promoted by hand in STATIC_STATES while their children are
+   * derived. Promoting a child set and forgetting its hub would leave the tier
+   * reachable only from the sitemap, so assert the pair.
+   */
+  it.each([["/api"], ["/cookbook"], ["/mcp"]])("keeps %s promoted as the hub", (hub) => {
+    expect(belongsInSitemap(indexStateFor(hub))).toBe(true);
+  });
+
+  it("derives all three from their data modules rather than a second list", () => {
+    const source = readFileSync(
+      join(__dirname, "..", "seo", "indexState.ts"),
+      "utf8"
+    );
+    for (const fn of ["capabilityPaths", "recipePaths", "mcpClientPaths"]) {
+      expect(source.includes(`${fn}()`), `indexState.ts must call ${fn}()`).toBe(true);
+    }
   });
 });

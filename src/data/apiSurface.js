@@ -22,7 +22,7 @@
  * OpenAPI spec, so the test allowlists them rather than treating them as typos.
  */
 
-import { CAPABILITY_COUNT, MCP_TOOL_COUNT } from "./mcpTools";
+import { CAPABILITY_COUNT, MCP_TOOL_COUNT } from "./mcpTools.js";
 
 /*
  * Re-exported because this file calls itself the single source of truth for the
