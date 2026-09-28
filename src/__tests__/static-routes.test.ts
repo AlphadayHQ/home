@@ -6,6 +6,7 @@ import {
   indexStateFor,
   staticPaths,
 } from "../seo/indexState";
+import { digestPaths } from "../data/digestEntities.js";
 
 /**
  * Static routes are declared in exactly one place, and this asserts it stays
@@ -106,5 +107,61 @@ describe("static route declaration", () => {
         `${path} is promoted but no route file serves it`
       ).toBe(true);
     }
+  });
+});
+
+/**
+ * The digest tier's recrawl signal.
+ *
+ * `/projects/{slug}/this-week` shipped with no `lastmod` at all — the one tier
+ * on the site whose entire value is recency, giving Google nothing to schedule
+ * a recrawl from. These assert the two halves of the fix, because both are easy
+ * to undo by accident.
+ */
+describe("the digest tier's lastmod", () => {
+  const sitemap = readFileSync(
+    join(__dirname, "..", "..", "scripts", "build-sitemap.mjs"),
+    "utf8"
+  );
+
+  /*
+   * A digest path absent from `staticPaths()` would be listed nowhere and
+   * stamped with nothing, silently. `indexState.ts` derives them from
+   * `DIGEST_ENTITIES` precisely so that cannot happen — this is the assertion
+   * that the derivation is still wired up.
+   */
+  it("covers every digest path, and all of them are promoted", () => {
+    const paths = new Set(staticPaths());
+    for (const path of digestPaths()) {
+      expect(paths.has(path), `${path} is missing from staticPaths()`).toBe(true);
+      expect(
+        belongsInSitemap(indexStateFor(path)),
+        `${path} is not promoted, so it would never be listed`
+      ).toBe(true);
+    }
+  });
+
+  it("stamps them from digestPaths rather than a second list", () => {
+    expect(
+      sitemap.includes("digestPaths"),
+      "build-sitemap.mjs must derive the rolling set from digestPaths()"
+    ).toBe(true);
+  });
+
+  /*
+   * The regression that would cost more than the bug did. `urlsetXml`'s own
+   * comment records why: a `lastmod` that moves on every build trains Google to
+   * ignore the field, so a well-meaning change to `new Date().toISOString()`
+   * would not just fail to help, it would disarm the signal for the whole tier.
+   * Truncating to the UTC day is what makes two builds on one day agree.
+   */
+  it("truncates to the day so rebuilding does not churn the value", () => {
+    const rolling = sitemap.match(/const rollingLastmod = [^;]+;/);
+    expect(rolling, "rollingLastmod() is gone").not.toBeNull();
+    expect(
+      rolling?.[0].includes("slice(0, 10)"),
+      "rollingLastmod must truncate to the UTC day, not stamp the build instant"
+    ).toBe(true);
+    expect(rolling?.[0]).toMatch(/T00:00:00/);
   });
 });
