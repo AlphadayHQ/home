@@ -28,6 +28,7 @@ import {
   projectIndexState,
   staticPaths,
 } from "../src/seo/indexState.ts";
+import { digestPaths } from "../src/data/digestEntities.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const distPath = resolve(here, "../dist/client");
@@ -116,12 +117,45 @@ async function fetchLandingPages() {
 /**
  * Read the record's own `updated_at`. If it is missing or unparseable, emit no
  * `lastmod` at all — an absent signal beats a false one.
+ *
+ * These come back clustered around 2026-06-08, which looks stale and is not.
+ * A project page's *unique indexable text* — the About copy, the benefits, the
+ * FAQ — lives on that record and genuinely has not changed since June. The live
+ * feeds beside it are embedded data on a template every project shares, so
+ * stamping the page as modified daily would claim a change Google would find
+ * nothing behind, and spend crawl budget §4.4 already calls the binding
+ * constraint. Leave it reporting what actually changed.
  */
 function lastmodOf(record) {
   if (!record.updated_at) return undefined;
   const date = new Date(record.updated_at);
   return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
 }
+
+/**
+ * The digest pages are the one tier where the reasoning above inverts, and they
+ * were shipping with no `lastmod` at all.
+ *
+ * `/projects/{slug}/this-week` *is* its rolling window — there is no stable copy
+ * underneath it, so the page genuinely differs from yesterday's. It is also the
+ * tier whose entire value is recency, which makes an absent recrawl signal the
+ * most expensive place on the site to have one.
+ *
+ * **Day granularity, not the build instant.** A timestamp that moves on every
+ * build is the failure this file was written to avoid (see `urlsetXml`): it
+ * trains Google to ignore the field, which would cost the tier the very signal
+ * this is meant to give it. Truncating to the UTC day means two builds on the
+ * same day emit an identical value, and the date advances only when the window
+ * actually has.
+ *
+ * **Known bound.** This is stamped at build time on a statically served file, so
+ * a week without a deploy leaves it a week behind while the pages keep rolling.
+ * That under-reports freshness, which costs a slower recrawl — the safe
+ * direction, and strictly better than the nothing it replaces. Serving the
+ * sitemap from `server.mjs` would close it properly; that is a larger change
+ * than this defect justifies.
+ */
+const rollingLastmod = () => `${new Date().toISOString().slice(0, 10)}T00:00:00.000Z`;
 
 async function main() {
   if (!existsSync(distPath)) mkdirSync(distPath, { recursive: true });
@@ -131,9 +165,17 @@ async function main() {
   // editing two files and forgetting the second one silently dropped the page
   // from the sitemap. Each path is still filtered through the same gate, so a
   // route that is not `promoted` cannot be listed either way.
+  const rolling = new Set(digestPaths());
   const staticLinks = staticPaths()
     .filter((path) => belongsInSitemap(indexStateFor(path)))
-    .map((path) => ({ loc: path === "/" ? `${baseUrl}/` : `${baseUrl}${path}` }));
+    .map((path) => ({
+      loc: path === "/" ? `${baseUrl}/` : `${baseUrl}${path}`,
+      // Everything else in this tier is a genuinely static marketing or docs
+      // page. No `lastmod` for those, for the same reason as above: this file
+      // has no honest source for when they last changed, and inventing one is
+      // worse than omitting it.
+      lastmod: rolling.has(path) ? rollingLastmod() : undefined,
+    }));
 
   const pages = await fetchLandingPages();
   const projectLinks = pages
@@ -159,6 +201,7 @@ async function main() {
   console.log(
     `build-sitemap: ${staticLinks.length} static + ${projectLinks.length} project ` +
       `URLs across 2 tiers` +
+      `, ${rolling.size} rolling lastmod` +
       (excluded ? `, ${excluded} excluded by index state` : "")
   );
 }
