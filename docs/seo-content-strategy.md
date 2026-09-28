@@ -141,6 +141,26 @@ pages. Those are right and this section does not restate them. Two additions.
 > oversight, and it does not change until the SSR origin cutover lands. **Until then this tier earns
 > nothing.** The cutover is the one unticked gate in
 > [Phase 2](./seo-strategy.md#phase-2--weeks-412--the-rebuild).
+>
+> **The gate opened and the hold did not lift with it — measured 28 Sep.** The cutover has landed, and
+> the sentence above made the `noindex` conditional on precisely that, so the condition is met. What
+> the build does today: `/mcp` and `/cookbook` are promoted, and the static tier is now **24** URLs
+> rather than 8 — the digest tier having joined it, not these pages. The **36 child pages are still
+> `noindex, follow` and still in no sitemap**, verified on production, where
+> `/cookbook/claude-crypto-news`, `/cookbook/dao-proposal-alerts` and `/mcp/cursor` all return 200
+> with their content server-rendered and a `noindex` header on top of it.
+>
+> So the tier is built, live, crawlable and deliberately uncrawled. **This is the highest-value
+> unblocked action on either document**: 36 pages of the content type this section argues converts
+> best, one `STATIC_STATES` edit from being submittable. It survives because it needs a decision
+> rather than a build — see the item at the front of
+> [Weeks 3–6](#weeks-36--engine-a--the-first-engine-b-asset).
+>
+> One caveat belongs with that decision rather than after it. The comment in
+> [indexState.ts](../src/seo/indexState.ts) justifying the default-deny says these pages do not need
+> indexing "to do its job" — the opposite of what this section argues for them, and it sits two lines
+> from a sentence making the case for the digest tier on exactly those grounds. Whichever way the
+> decision goes, that comment should be made to agree with it.
 
 ### A1 · The recipes tier — the biggest gap in the current plan
 
@@ -609,6 +629,13 @@ more open than the tail, which is the reverse of the earlier assumption.
 
 > **Measured 22 Sep 2026: the probe cannot report until the SSR cutover lands.**
 >
+> **The clock started — cutover verified live 28 Sep**, with all 16 digest pages returning 200 and
+> their content server-rendered. The month this callout was waiting for begins now, and the table
+> below is the pre-cutover baseline to measure against. One caveat on the input: the tier is
+> currently submitted with **no `lastmod`** (see
+> [seo-strategy.md, After cutover](./seo-strategy.md#after-cutover)), so a slow first recrawl is
+> expected and is not evidence about the format.
+>
 > Every entity in the shipped tier already has a board ranking in Google, and every one of them
 > converts at approximately zero:
 >
@@ -1031,6 +1058,16 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
 
 ### Weeks 3–6 · Engine A + the first Engine B asset
 
+- [ ] **Promote the 36 Engine A child pages** — 8 MCP client, 6 cookbook, 22 capability. Added 28 Sep,
+      and at the front of this queue rather than filed as housekeeping: they are live and
+      server-rendered on production, and every one still emits `noindex, follow` and appears in no
+      sitemap, because the hold in [§4](#4-engine-a--proof-converts) was written to expire at the SSR
+      cutover and nothing expired it. Mechanically it is one edit to `STATIC_STATES` in
+      [indexState.ts](../src/seo/indexState.ts) — `staticPaths()` and the sitemap both follow from it,
+      and `src/__tests__/static-routes.test.ts` already asserts every promoted path has a route to
+      serve it. **Decide per tier rather than promoting wholesale**: 22 capability pages drawn from
+      one dataset is the cannibalisation risk §12 lists, and that question was never settled on the
+      merits, because the cutover made it moot before anyone had to answer it
 - [ ] ~~**Ship media discovery (B5) first**~~ → **ship it mid-queue.** The podcast, YouTube-channel
       and news-outlet rankings, data-ranked and dated — still worth building, no longer first.
       Re-sequenced 28 Sep on the measured keyword data: Hard difficulty at sub-100 volume kills the
@@ -1118,9 +1155,12 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
       measured rate (`base` 8 news against 64, `japan` 9 against 42), so `japan`, `optimism` and
       `uniswap` all render the widened 30-day view. That is the runtime fallback behaving correctly,
       but it means several pages launch degraded and recover only when the pipeline is fixed
-- [ ] Registry, `public-apis` and awesome-list submissions — **not started, and the only item here
-      that is not gated by the SSR cutover**, since the MCP registries point at the server endpoint
-      rather than the marketing site. It is also the only Engine A item that directly earns links
+- [ ] Registry, `public-apis` and awesome-list submissions — **not started.** The clause that ran
+      here, *"the only item here that is not gated by the SSR cutover"*, expired on 28 Sep when the
+      cutover landed: nothing on this list is gated by it any more, so that is no longer what
+      distinguishes this item. What survives is the half that never depended on the gate — it is the
+      only Engine A item that directly earns links, and the MCP registries point at the server
+      endpoint rather than the marketing site, so it was never waiting on rendering to begin with
 
 ### Weeks 7–12 · Engine B at cadence
 

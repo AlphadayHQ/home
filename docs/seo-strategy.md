@@ -1191,23 +1191,35 @@ it is not an AI opt-in control.
 
 ### Phase 2 · Weeks 4–12 — The rebuild
 
-> **Status 21 Sep: 10 of 13 items. The framework landed; the origin has not.** TanStack Start is
-> merged (`ac5ee60`, `#222`) and every application-layer item below is done — index state,
-> `X-Robots-Tag`, sitemap gating, canonical enforcement, real 404s and 301s, server-side fetching,
-> the credential retirement.
+> **Status 21 Sep — superseded, see below: 10 of 13 items. The framework landed; the origin has
+> not.** TanStack Start is merged (`ac5ee60`, `#222`) and every application-layer item below is done
+> — index state, `X-Robots-Tag`, sitemap gating, canonical enforcement, real 404s and 301s,
+> server-side fetching, the credential retirement.
 >
-> **Two of the three open items need AWS access and nothing else** — the `t4g.micro` origin with the
-> CloudFront cutover, and deploying the verified 301 map. Routing and verification for both are done in
-> the repo (`$slug.tsx`, `scripts/verify-301-map.mjs`). The third, the blog migration, is a content task
-> and sits in [the content document's Weeks 7–12](./seo-content-strategy.md#weeks-712--engine-b-at-cadence).
+> **Superseded 28 Sep — the cutover landed. 12 of 13 items.** Verified against production:
+> `/projects/ethereum` returns **1,377 server-rendered words**, `Cache-Control` matches §2.3 exactly,
+> `X-Robots-Tag` is emitting, and the 301 map is live — `/ethereum`, `/polygon`, `/base`, `/orbs`,
+> `/dfinity` and `/bitcoin/this-week` each 301 to their `/projects/` destination. The deploy that
+> carried it went out on or before 24 Sep. **Only the blog migration is still open**, and it is a
+> content task sitting in
+> [the content document's Weeks 7–12](./seo-content-strategy.md#weeks-712--engine-b-at-cadence).
 >
-> **The origin cutover is the programme gate.** Until it lands, SSR exists in the repo and not on the
-> internet — so the **38 Engine A pages now merged to `dev` are not crawlable by anything**, and the
-> content document's §13 cannot report a result on any of them. *"This phase gates the entire content
-> programme"* has stopped being a forecast and become the current state: **the content is built and
-> waiting on the infrastructure, not the other way round.**
+> **What the gate was holding — and why opening it changed less than it should have.** The paragraph
+> this replaces read *"the 38 Engine A pages now merged to `dev` are not crawlable by anything"*. That
+> is no longer the constraint, but the consequence was never automatic: those pages were put behind
+> `noindex` **explicitly until the cutover landed** (content doc §4), so the condition on that hold is
+> now met and **36 of them are still `noindex` and still in no sitemap** — live, server-rendered, and
+> deliberately uncrawled. Promoting them is the highest-value unblocked action on either document, and
+> it is tracked at the front of
+> [the content document's Weeks 3–6](./seo-content-strategy.md#weeks-36--engine-a--the-first-engine-b-asset).
+>
+> **The measurement clock has started**, which is the other thing the gate was deferring. The content
+> document's §13 can now report, and Appendix C's *After cutover* block is live and unstarted. The
+> two-week indexed-over-submitted watch is the only item on either document with a closing window.
 
-Runs in parallel with Phase 1. **This phase gates the entire content programme.**
+Runs in parallel with Phase 1. **This phase gated the entire content programme, and as of 28 Sep it
+no longer does.** What stands between the built content and search results is now a promotion decision
+and a measurement window, not infrastructure.
 
 - [x] **Calibrate the §1.4 render cost** — `scripts/calibrate-render.js`. Result: **0.74 ms CPU per
       render**, not the asserted 100 ms. §1.4 and §2.3 updated. The instance sizing survives on
@@ -1217,14 +1229,23 @@ Runs in parallel with Phase 1. **This phase gates the entire content programme.*
 - [x] TanStack Start scaffold, route map per §3.2, CI build pipeline
 - [x] Route test asserting `/projects/{slug}/this-week` resolves to the digest route, not `$topic` —
       `src/__tests__/route-precedence.test.ts`
-- [ ] `t4g.micro` provisioned in an ASG (min=max=1); CloudFront origin timeouts tuned per §2.5;
-      origin cut over. **Cache-Control per §2.3 is done** (`server.mjs`); the rest needs AWS access
+- [x] `t4g.micro` provisioned in an ASG (min=max=1); CloudFront origin timeouts tuned per §2.5;
+      origin cut over. **Cut over, verified from outside on 28 Sep** — CloudFront is serving
+      server-rendered HTML from the Node origin and `Cache-Control` matches §2.3 to the character
+      (`max-age=0, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=604800`). Ticked on
+      observable behaviour. **The ASG shape and the origin timeout values are not externally
+      checkable** and have not been confirmed against the console; if either differs from what this
+      line specifies, the difference stays invisible until load — which is what the two open load
+      checks in [Appendix C](#verification-before-cutover) are for
 - [x] Shared head helper with **compile-time-required canonical** (§5.1) — `src/seo/head.ts`
 - [x] Real 404s and 301s verified end to end (§5.2) — asserted in `scripts/verify-ssr.mjs`
 - [x] Index state field, `X-Robots-Tag` emission, and sitemap gating (§4.2) — `src/seo/indexState.ts`
 - [x] Sitemap index infrastructure, split by tier, honest `lastmod` (§4.4) — `scripts/build-sitemap.mjs`
-- [ ] Migrate the 66 project pages; 301 map deployed and verified (Appendix C). **Routing is done** —
-      `/{slug}` 301s to `/projects/{slug}` generically; deployment and verification need the cutover
+- [x] Migrate the 66 project pages; 301 map deployed and verified (Appendix C). **Deployed and
+      spot-verified against production on 28 Sep** — six URLs checked by hand, five of them from the
+      ten-URL equity list, and all six 301 to their `/projects/` destination. Spot-verified is not
+      verified: `verify-301-map.mjs` takes `--base`, so the full 76-URL sweep should be re-run against
+      `https://alphaday.com` rather than a local server before this is treated as closed
 - [x] `/dashboards` hub and server-rendered internal linking (§5.8) — all 66 pages linked, server-rendered
 - [ ] Blog migrated to `/blog` with 301s from Substack
 - [x] Server-side data fetching; `VITE_X_APP_SECRET` retired (§5.10) — `src/server/landingPages.ts`
@@ -1463,7 +1484,7 @@ Every current URL must resolve. Project pages move from root slugs to `/projects
 | `/blog` | `/blog` — now a real page, not a client-side redirect |
 | `/api`, `/api/docs`, `/mobile`, `/privacy` | unchanged |
 | `blog.alphaday.com/p/{slug}` | `alphaday.com/blog/{slug}` |
-| `www.alphaday.com/*` | `alphaday.com/*` — **added 22 Sep; this map did not cover it.** `www` currently serves the whole site at 200 with no redirect and no canonical (§5.1), so every URL exists twice, and Search Console has `www.alphaday.com/berachain` indexed with 28 impressions. The apex is canonical |
+| `www.alphaday.com/*` | `alphaday.com/*` — **added 22 Sep; this map did not cover it.** `www` currently serves the whole site at 200 with no redirect and no canonical (§5.1), so every URL exists twice, and Search Console has `www.alphaday.com/berachain` indexed with 28 impressions. The apex is canonical. **Still unfixed — re-measured 28 Sep, `www.alphaday.com/` returns 200 with no redirect.** The fix is written and sitting uncommitted: `infra/cloudfront/www-redirect.js` plus `scripts/apply-www-redirect.mjs`, which read-modify-writes the live distribution config under `--if-match` and needs MFA-backed CloudFront credentials to `--apply` |
 
 Generate the map from the same data source the pages are built from. Verify every entry returns a
 real 301 before cutover — not a 200 with client-side navigation.
@@ -1472,9 +1493,13 @@ real 301 before cutover — not a 200 with client-side navigation.
 
 - [x] Every URL in the current sitemap resolves to a 200 or a 301 to a 200 —
       `scripts/verify-301-map.mjs`, **76 URLs, 0 problems**
-- [ ] `curl` with JS disabled returns complete content for a project page, `/api` and `/mcp` —
-      **project pages and `/api` verified** (1,420 words server-rendered on `/projects/ethereum`).
-      `/mcp` does not exist yet; it is owned by the content document and is still unassigned
+- [x] `curl` with JS disabled returns complete content for a project page, `/api` and `/mcp` —
+      **all three verified on production, 28 Sep.** `/projects/ethereum` 1,377 words, `/api` 751,
+      `/mcp` 570, each present in the HTML before any script runs. (The 1,377 and the 1,420 above are
+      the same result counted two ways, not a regression — this pass stripped `<script>` blocks and
+      counted alphabetic tokens.) `/mcp` shipped with the Engine A tier and carries a real title.
+      **`/api` still returns the generic "Alphaday API"** — a §5.4 title problem rather than a
+      rendering one, first noted in the 22 Sep baseline and still open
 - [x] Unmatched paths return a genuine 404
 - [x] Every indexable route has a unique title, description and canonical
 - [x] Substrate-layer pages emit `noindex` in both the meta tag and the header, and appear in no
@@ -1497,6 +1522,17 @@ real 301 before cutover — not a 200 with client-side navigation.
       it. Re-check if the link profile changes materially before cutover
 
 ### After cutover
+
+> **Live and unstarted as of 28 Sep.** The cutover has landed (see Phase 2), so all three items below
+> are running rather than pending, and none has been begun. The middle one is the only item on either
+> document with a closing window: a wrong 301 is cheapest to find in the first fortnight, because
+> after that the baseline it would be compared against already contains the loss.
+>
+> **One input is missing before the watch starts.** The deployed `pages.xml` carries **24 URLs and
+> zero `lastmod`** — the digest-tier fix merged in `#243` but has not shipped, so the 16 pages whose
+> entire value is recency are being submitted with no recrawl signal at all. Deploy first, then
+> submit; doing it the other way round spends the first crawl of the tier on a sitemap that is known
+> to be missing the one field it needs.
 
 - [ ] Submit the new sitemap index in Search Console; keep the old sitemap live for ~30 days
 - [ ] Watch indexed-over-submitted daily for two weeks
