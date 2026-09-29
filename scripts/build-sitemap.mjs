@@ -29,6 +29,14 @@ import {
   staticPaths,
 } from "../src/seo/indexState.ts";
 import { digestPaths } from "../src/data/digestEntities.js";
+import { shapeRows } from "../src/data/eventRows.ts";
+import {
+  monthBounds,
+  monthIndexState,
+  monthOf,
+  monthSlug,
+  shiftMonth,
+} from "../src/data/eventMonths.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const distPath = resolve(here, "../dist/client");
@@ -157,6 +165,94 @@ function lastmodOf(record) {
  */
 const rollingLastmod = () => `${new Date().toISOString().slice(0, 10)}T00:00:00.000Z`;
 
+/**
+ * The promoted month pages of the events calendar (content doc B4).
+ *
+ * These cannot come from `staticPaths()`: which months exist, and which carry
+ * enough events to be worth submitting, are both facts about the API on the day
+ * of the build. They are API-driven pages like the project dashboards, and they
+ * go through the same gate — `monthIndexState` decides, and this file only ever
+ * lists what it promotes.
+ *
+ * The walk runs forward from the current month and stops after three
+ * consecutive empty months rather than at the first, because the corpus has
+ * real gaps: July 2027 holds two events and August 2027 holds one, with
+ * populated months on either side. Stopping at the first gap would silently
+ * drop everything beyond it. `HORIZON_MONTHS` bounds the walk in case the
+ * corpus ever runs long.
+ */
+const HORIZON_MONTHS = 24;
+const EMPTY_RUN_LIMIT = 3;
+const EVENT_PAGE_SIZE = 500;
+const EVENT_MAX_PAGES = 6;
+
+/**
+ * A month's count as the *page* will report it, not as the API reports it.
+ *
+ * This used to read `?limit=1` and take the API's `total`, which is the raw row
+ * count — before placeholders are dropped and before the duplicates the corpus
+ * carries are collapsed. The route decides on the shaped count. A month holding
+ * 21 raw rows and 19 real ones was therefore submitted in the sitemap and
+ * served `noindex`: a borderline case, and exactly the kind of drift between
+ * "what we publish" and "what we serve" that `indexState.ts` exists to stop.
+ *
+ * So it reads the rows and shapes them through `shapeRows`, the same function
+ * `buildMonth` calls. Costlier — one request per month instead of one tiny one
+ * — and it happens once per build.
+ */
+async function shapedCount(month) {
+  const { from, to } = monthBounds(month);
+  const rows = [];
+
+  for (let page = 1; page <= EVENT_MAX_PAGES; page += 1) {
+    const url =
+      `${API_BASE}/items/events/?limit=${EVENT_PAGE_SIZE}&page=${page}` +
+      `&starts_at__gte=${from}&starts_at__lte=${to}`;
+
+    const response = await fetch(url, { headers: authHeaders });
+    if (!response.ok) {
+      throw new Error(
+        `build-sitemap: ${url} returned ${response.status}. Refusing to build ` +
+          "a partial sitemap."
+      );
+    }
+
+    const body = await response.json();
+    const results = body.results ?? [];
+    rows.push(...results);
+    if (results.length < EVENT_PAGE_SIZE || !body.links?.next) break;
+  }
+
+  return shapeRows(rows).length;
+}
+
+async function fetchEventMonths() {
+  const current = monthOf(new Date());
+  const promoted = [];
+  let emptyRun = 0;
+
+  for (let i = 0; i < HORIZON_MONTHS && emptyRun < EMPTY_RUN_LIMIT; i += 1) {
+    const month = shiftMonth(current, i);
+    const count = await shapedCount(month);
+
+    if (count === 0) {
+      emptyRun += 1;
+      continue;
+    }
+    emptyRun = 0;
+
+    // The current month lives at /events and is listed through STATIC_STATES;
+    // listing it twice would submit the same content under two URLs, which is
+    // what `canonicalForMonth` exists to prevent on the page itself.
+    if (month === current) continue;
+    if (monthIndexState(month, count, current) === "promoted") {
+      promoted.push(`/events/${monthSlug(month)}`);
+    }
+  }
+
+  return promoted;
+}
+
 async function main() {
   if (!existsSync(distPath)) mkdirSync(distPath, { recursive: true });
 
@@ -176,6 +272,14 @@ async function main() {
       // worse than omitting it.
       lastmod: rolling.has(path) ? rollingLastmod() : undefined,
     }));
+
+  const monthPaths = await fetchEventMonths();
+  for (const path of monthPaths) {
+    // No `lastmod`: a month page changes when the API gains an event, and this
+    // build has no honest source for when that last happened. An absent signal
+    // beats a false one (§4.4).
+    staticLinks.push({ loc: `${baseUrl}${path}`, lastmod: undefined });
+  }
 
   const pages = await fetchLandingPages();
   const projectLinks = pages
@@ -199,8 +303,8 @@ async function main() {
 
   const excluded = pages.length - projectLinks.length;
   console.log(
-    `build-sitemap: ${staticLinks.length} static + ${projectLinks.length} project ` +
-      `URLs across 2 tiers` +
+    `build-sitemap: ${staticLinks.length} static (${monthPaths.length} event ` +
+      `months) + ${projectLinks.length} project URLs across 2 tiers` +
       `, ${rolling.size} rolling lastmod` +
       (excluded ? `, ${excluded} excluded by index state` : "")
   );

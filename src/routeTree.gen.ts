@@ -22,6 +22,8 @@ import { Route as BSplatRouteImport } from './routes/b.$'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as CookbookIndexRouteImport } from './routes/cookbook.index'
 import { Route as CookbookRecipeRouteImport } from './routes/cookbook.$recipe'
+import { Route as EventsIndexRouteImport } from './routes/events.index'
+import { Route as EventsMonthRouteImport } from './routes/events.$month'
 import { Route as McpIndexRouteImport } from './routes/mcp.index'
 import { Route as McpClientRouteImport } from './routes/mcp.$client'
 import { Route as ApiDataCapabilityRouteImport } from './routes/api.data.$capability'
@@ -94,6 +96,16 @@ const CookbookRecipeRoute = CookbookRecipeRouteImport.update({
   path: '/cookbook/$recipe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsIndexRoute = EventsIndexRouteImport.update({
+  id: '/events/',
+  path: '/events/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsMonthRoute = EventsMonthRouteImport.update({
+  id: '/events/$month',
+  path: '/events/$month',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const McpIndexRoute = McpIndexRouteImport.update({
   id: '/mcp/',
   path: '/mcp/',
@@ -136,10 +148,12 @@ export interface FileRoutesByFullPath {
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
+  '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/cookbook/': typeof CookbookIndexRoute
+  '/events/': typeof EventsIndexRoute
   '/mcp/': typeof McpIndexRoute
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
@@ -157,10 +171,12 @@ export interface FileRoutesByTo {
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
+  '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
   '/api': typeof ApiIndexRoute
   '/blog': typeof BlogIndexRoute
   '/cookbook': typeof CookbookIndexRoute
+  '/events': typeof EventsIndexRoute
   '/mcp': typeof McpIndexRoute
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
@@ -179,10 +195,12 @@ export interface FileRoutesById {
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
+  '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/cookbook/': typeof CookbookIndexRoute
+  '/events/': typeof EventsIndexRoute
   '/mcp/': typeof McpIndexRoute
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
@@ -202,10 +220,12 @@ export interface FileRouteTypes {
     | '/api/docs'
     | '/b/$'
     | '/cookbook/$recipe'
+    | '/events/$month'
     | '/mcp/$client'
     | '/api/'
     | '/blog/'
     | '/cookbook/'
+    | '/events/'
     | '/mcp/'
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
@@ -223,10 +243,12 @@ export interface FileRouteTypes {
     | '/api/docs'
     | '/b/$'
     | '/cookbook/$recipe'
+    | '/events/$month'
     | '/mcp/$client'
     | '/api'
     | '/blog'
     | '/cookbook'
+    | '/events'
     | '/mcp'
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
@@ -244,10 +266,12 @@ export interface FileRouteTypes {
     | '/api/docs'
     | '/b/$'
     | '/cookbook/$recipe'
+    | '/events/$month'
     | '/mcp/$client'
     | '/api/'
     | '/blog/'
     | '/cookbook/'
+    | '/events/'
     | '/mcp/'
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
@@ -266,10 +290,12 @@ export interface RootRouteChildren {
   ApiDocsRoute: typeof ApiDocsRoute
   BSplatRoute: typeof BSplatRoute
   CookbookRecipeRoute: typeof CookbookRecipeRoute
+  EventsMonthRoute: typeof EventsMonthRoute
   McpClientRoute: typeof McpClientRoute
   ApiIndexRoute: typeof ApiIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
   CookbookIndexRoute: typeof CookbookIndexRoute
+  EventsIndexRoute: typeof EventsIndexRoute
   McpIndexRoute: typeof McpIndexRoute
   ApiDataCapabilityRoute: typeof ApiDataCapabilityRoute
   ProjectsSlugTopicRoute: typeof ProjectsSlugTopicRoute
@@ -370,6 +396,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CookbookRecipeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events/': {
+      id: '/events/'
+      path: '/events'
+      fullPath: '/events/'
+      preLoaderRoute: typeof EventsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events/$month': {
+      id: '/events/$month'
+      path: '/events/$month'
+      fullPath: '/events/$month'
+      preLoaderRoute: typeof EventsMonthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mcp/': {
       id: '/mcp/'
       path: '/mcp'
@@ -426,10 +466,12 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDocsRoute: ApiDocsRoute,
   BSplatRoute: BSplatRoute,
   CookbookRecipeRoute: CookbookRecipeRoute,
+  EventsMonthRoute: EventsMonthRoute,
   McpClientRoute: McpClientRoute,
   ApiIndexRoute: ApiIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
   CookbookIndexRoute: CookbookIndexRoute,
+  EventsIndexRoute: EventsIndexRoute,
   McpIndexRoute: McpIndexRoute,
   ApiDataCapabilityRoute: ApiDataCapabilityRoute,
   ProjectsSlugTopicRoute: ProjectsSlugTopicRoute,
