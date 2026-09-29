@@ -61,8 +61,13 @@ const STATIC_STATES: Record<string, IndexState> = {
    * B4's events calendar. Promoted on the same reasoning as the digest tier —
    * it exists to be found in search, and the listicle SERP it attacks is the
    * whole point of building it — with the same escape hatch: the route demotes
-   * itself to `substrate` when the upcoming set falls under `UPCOMING_FLOOR`,
+   * itself to `substrate` when the current month comes back completely empty,
    * so a feed outage cannot leave an indexed page claiming nothing is happening.
+   *
+   * Only *empty*, not *thin*. The hub shows the current month and leads with
+   * what is still to come, so in the last days of a month it legitimately has
+   * few upcoming rows and a full month of finished ones. Demoting on that would
+   * take the calendar out of the index for a few days every month.
    */
   "/events": "promoted",
   "/mobile": "promoted",

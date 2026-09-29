@@ -13,7 +13,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardsRouteImport } from './routes/dashboards'
-import { Route as EventsRouteImport } from './routes/events'
 import { Route as MobileRouteImport } from './routes/mobile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SlugThisWeekRouteImport } from './routes/$slug_.this-week'
@@ -23,6 +22,8 @@ import { Route as BSplatRouteImport } from './routes/b.$'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as CookbookIndexRouteImport } from './routes/cookbook.index'
 import { Route as CookbookRecipeRouteImport } from './routes/cookbook.$recipe'
+import { Route as EventsIndexRouteImport } from './routes/events.index'
+import { Route as EventsMonthRouteImport } from './routes/events.$month'
 import { Route as McpIndexRouteImport } from './routes/mcp.index'
 import { Route as McpClientRouteImport } from './routes/mcp.$client'
 import { Route as ApiDataCapabilityRouteImport } from './routes/api.data.$capability'
@@ -48,11 +49,6 @@ const DashboardRoute = DashboardRouteImport.update({
 const DashboardsRoute = DashboardsRouteImport.update({
   id: '/dashboards',
   path: '/dashboards',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EventsRoute = EventsRouteImport.update({
-  id: '/events',
-  path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MobileRoute = MobileRouteImport.update({
@@ -100,6 +96,16 @@ const CookbookRecipeRoute = CookbookRecipeRouteImport.update({
   path: '/cookbook/$recipe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsIndexRoute = EventsIndexRouteImport.update({
+  id: '/events/',
+  path: '/events/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsMonthRoute = EventsMonthRouteImport.update({
+  id: '/events/$month',
+  path: '/events/$month',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const McpIndexRoute = McpIndexRouteImport.update({
   id: '/mcp/',
   path: '/mcp/',
@@ -136,17 +142,18 @@ export interface FileRoutesByFullPath {
   '/$slug': typeof SlugRoute
   '/dashboard': typeof DashboardRoute
   '/dashboards': typeof DashboardsRoute
-  '/events': typeof EventsRoute
   '/mobile': typeof MobileRoute
   '/privacy': typeof PrivacyRoute
   '/$slug/this-week': typeof SlugThisWeekRoute
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
+  '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/cookbook/': typeof CookbookIndexRoute
+  '/events/': typeof EventsIndexRoute
   '/mcp/': typeof McpIndexRoute
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
@@ -158,17 +165,18 @@ export interface FileRoutesByTo {
   '/$slug': typeof SlugRoute
   '/dashboard': typeof DashboardRoute
   '/dashboards': typeof DashboardsRoute
-  '/events': typeof EventsRoute
   '/mobile': typeof MobileRoute
   '/privacy': typeof PrivacyRoute
   '/$slug/this-week': typeof SlugThisWeekRoute
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
+  '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
   '/api': typeof ApiIndexRoute
   '/blog': typeof BlogIndexRoute
   '/cookbook': typeof CookbookIndexRoute
+  '/events': typeof EventsIndexRoute
   '/mcp': typeof McpIndexRoute
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
@@ -181,17 +189,18 @@ export interface FileRoutesById {
   '/$slug': typeof SlugRoute
   '/dashboard': typeof DashboardRoute
   '/dashboards': typeof DashboardsRoute
-  '/events': typeof EventsRoute
   '/mobile': typeof MobileRoute
   '/privacy': typeof PrivacyRoute
   '/$slug_/this-week': typeof SlugThisWeekRoute
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
+  '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/cookbook/': typeof CookbookIndexRoute
+  '/events/': typeof EventsIndexRoute
   '/mcp/': typeof McpIndexRoute
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
@@ -205,17 +214,18 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/dashboard'
     | '/dashboards'
-    | '/events'
     | '/mobile'
     | '/privacy'
     | '/$slug/this-week'
     | '/api/docs'
     | '/b/$'
     | '/cookbook/$recipe'
+    | '/events/$month'
     | '/mcp/$client'
     | '/api/'
     | '/blog/'
     | '/cookbook/'
+    | '/events/'
     | '/mcp/'
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
@@ -227,17 +237,18 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/dashboard'
     | '/dashboards'
-    | '/events'
     | '/mobile'
     | '/privacy'
     | '/$slug/this-week'
     | '/api/docs'
     | '/b/$'
     | '/cookbook/$recipe'
+    | '/events/$month'
     | '/mcp/$client'
     | '/api'
     | '/blog'
     | '/cookbook'
+    | '/events'
     | '/mcp'
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
@@ -249,17 +260,18 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/dashboard'
     | '/dashboards'
-    | '/events'
     | '/mobile'
     | '/privacy'
     | '/$slug_/this-week'
     | '/api/docs'
     | '/b/$'
     | '/cookbook/$recipe'
+    | '/events/$month'
     | '/mcp/$client'
     | '/api/'
     | '/blog/'
     | '/cookbook/'
+    | '/events/'
     | '/mcp/'
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
@@ -272,17 +284,18 @@ export interface RootRouteChildren {
   SlugRoute: typeof SlugRoute
   DashboardRoute: typeof DashboardRoute
   DashboardsRoute: typeof DashboardsRoute
-  EventsRoute: typeof EventsRoute
   MobileRoute: typeof MobileRoute
   PrivacyRoute: typeof PrivacyRoute
   SlugThisWeekRoute: typeof SlugThisWeekRoute
   ApiDocsRoute: typeof ApiDocsRoute
   BSplatRoute: typeof BSplatRoute
   CookbookRecipeRoute: typeof CookbookRecipeRoute
+  EventsMonthRoute: typeof EventsMonthRoute
   McpClientRoute: typeof McpClientRoute
   ApiIndexRoute: typeof ApiIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
   CookbookIndexRoute: typeof CookbookIndexRoute
+  EventsIndexRoute: typeof EventsIndexRoute
   McpIndexRoute: typeof McpIndexRoute
   ApiDataCapabilityRoute: typeof ApiDataCapabilityRoute
   ProjectsSlugTopicRoute: typeof ProjectsSlugTopicRoute
@@ -318,13 +331,6 @@ declare module '@tanstack/react-router' {
       path: '/dashboards'
       fullPath: '/dashboards'
       preLoaderRoute: typeof DashboardsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/events': {
-      id: '/events'
-      path: '/events'
-      fullPath: '/events'
-      preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mobile': {
@@ -390,6 +396,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CookbookRecipeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events/': {
+      id: '/events/'
+      path: '/events'
+      fullPath: '/events/'
+      preLoaderRoute: typeof EventsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events/$month': {
+      id: '/events/$month'
+      path: '/events/$month'
+      fullPath: '/events/$month'
+      preLoaderRoute: typeof EventsMonthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mcp/': {
       id: '/mcp/'
       path: '/mcp'
@@ -440,17 +460,18 @@ const rootRouteChildren: RootRouteChildren = {
   SlugRoute: SlugRoute,
   DashboardRoute: DashboardRoute,
   DashboardsRoute: DashboardsRoute,
-  EventsRoute: EventsRoute,
   MobileRoute: MobileRoute,
   PrivacyRoute: PrivacyRoute,
   SlugThisWeekRoute: SlugThisWeekRoute,
   ApiDocsRoute: ApiDocsRoute,
   BSplatRoute: BSplatRoute,
   CookbookRecipeRoute: CookbookRecipeRoute,
+  EventsMonthRoute: EventsMonthRoute,
   McpClientRoute: McpClientRoute,
   ApiIndexRoute: ApiIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
   CookbookIndexRoute: CookbookIndexRoute,
+  EventsIndexRoute: EventsIndexRoute,
   McpIndexRoute: McpIndexRoute,
   ApiDataCapabilityRoute: ApiDataCapabilityRoute,
   ProjectsSlugTopicRoute: ProjectsSlugTopicRoute,

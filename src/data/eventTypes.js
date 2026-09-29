@@ -68,78 +68,20 @@ export const isListableType = (code) =>
   typeof code === "string" && code.length > 0 && code !== PLACEHOLDER_TYPE;
 
 /**
- * Below this many upcoming events the page stops claiming to be a calendar and
- * goes `noindex`, the same shape as the digest tier's density gate. Measured
- * 29 Sep: 1,029 upcoming, so this is a feed-outage guard rather than a live
- * constraint.
- */
-export const UPCOMING_FLOOR = 20;
-
-/**
  * How many events carry `Event` structured data.
  *
- * The page renders the whole upcoming set — capping it made "calendar" a lie,
- * since the 150 soonest events span about a day in conference season. The graph
- * is capped instead, because it is the expensive half (~260 bytes per event
- * against ~90 in the row markup) and the cheap half is the one with the value:
- * a rich result for an event 18 months out is not a thing Google shows, whereas
- * an organiser finding their November listing is exactly B4's argument.
+ * The page renders every row of the month; only the graph is capped, because it
+ * is the expensive half (~260 bytes per event against ~90 in the row markup)
+ * and the cheap half is the one with the value: a rich result for an event 18
+ * months out is not a thing Google shows, whereas an organiser finding their
+ * November listing is exactly B4's argument.
+ *
+ * It is a cap, not a size: a dense month runs well past it — October holds
+ * about 700 upcoming events — and the graph describes the soonest 150 and
+ * stops. Those are the right 150, being the rows a reader is about to act on
+ * and the only ones an event rich result is plausibly shown for. What the
+ * number does guarantee is the other end: a month that only just clears
+ * `MONTH_INDEX_FLOOR` is described in full, so nothing is ever submitted with
+ * a partial graph *because it is thin*.
  */
 export const JSONLD_LIMIT = 150;
-
-/**
- * A month has to carry this many events before the hero will claim coverage
- * through it.
- */
-export const DENSE_MONTH_FLOOR = 10;
-
-/**
- * How far the calendar can honestly claim to cover, given each month's volume.
- *
- * Takes `[{ key: "2026-10", count: 645 }, …]` in chronological order and returns
- * the last month of the **leading dense run**, plus the final month on the
- * calendar so the caller can describe the tail.
- *
- * WHY LEADING SPARSE MONTHS ARE SKIPPED RATHER THAN COUNTED
- *
- * The first group is usually last month's leftovers — multi-day events that
- * started inside the 7-day grace window and are still running — so for roughly
- * the first week of every month it holds single digits. Counting the run from
- * index 0 therefore ended it immediately and named *the previous month* as the
- * coverage horizon: on 3 October the page would have read "through September
- * 2026" directly above 645 October events, server-rendered, in the sentence
- * crawlers index.
- *
- * WHY THE RUN IS CONTIGUOUS AND NOT "EVERY MONTH OVER THE FLOOR"
- *
- * Volume is not monotonic. May 2027 holds 12 events while January through April
- * hold six to nine, so taking the last qualifying month claims coverage through
- * a month the four before it do not support.
- *
- * `through` is null when no month clears the floor at all — a thin calendar
- * should make no claim rather than a small one.
- */
-export function coveredThrough(monthCounts) {
-  if (!monthCounts || monthCounts.length === 0) return null;
-
-  let start = 0;
-  while (
-    start < monthCounts.length &&
-    monthCounts[start].count < DENSE_MONTH_FLOOR
-  ) {
-    start += 1;
-  }
-
-  let end = start;
-  while (
-    end < monthCounts.length &&
-    monthCounts[end].count >= DENSE_MONTH_FLOOR
-  ) {
-    end += 1;
-  }
-
-  return {
-    through: start < monthCounts.length ? monthCounts[end - 1].key : null,
-    last: monthCounts[monthCounts.length - 1].key,
-  };
-}

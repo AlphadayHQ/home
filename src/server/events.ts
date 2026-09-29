@@ -1,320 +1,172 @@
 import { createServerFn } from "@tanstack/react-start";
 import { API_BASE, fetchJsonSoft } from "./apiFetch";
-import { UPCOMING_FLOOR, isListableType } from "../data/eventTypes.js";
+import type { CalendarEvent, RawEvent } from "../data/eventRows";
+import { shapeRows, splitByTime } from "../data/eventRows";
+import { isMonthKey, monthBounds, monthOf, shiftMonth } from "../data/eventMonths.js";
 
 /**
- * The upcoming-events calendar behind `/events` (content doc B4).
+ * One month of the events calendar (content doc B4).
  *
- * WHY THIS READS THE CORPUS BACKWARDS
+ * WHAT THIS REPLACED, AND WHY IT IS WORTH SAYING
  *
- * This is the whole difficulty of B4 and it is not obvious from the endpoint.
- * `/items/events/` returns **oldest-first**, and the corpus starts in 2022, so
- * the events a calendar exists to show are the *last* rows, not the first.
- * Three parameters that would normally fix that do not:
+ * The first version of this file walked `?page=` backwards from the end of a
+ * 6,900-row corpus, because `/items/events/` returns oldest-first and
+ * `?ordering=`, `?offset=` and `?period=` are all silently ignored. That walk
+ * was correct and elaborate, and it was unnecessary: the endpoint also accepts
+ * **`starts_at__gte` and `starts_at__lte`**, which filter precisely and page
+ * normally. Verified 29 Sep — October returns 734 rows, all of them October,
+ * across two pages.
  *
- *  - `?ordering=-starts_at` — silently ignored. Returns the same first page.
- *  - `?offset=6900` — silently ignored. Returns the same first page.
- *  - `?period=` — filters on `published_at`, which events do not carry; it
- *    selects recently *listed* events, including ones in 2028. `thisWeek.ts`
- *    documents the same trap for the digest's events section.
- *
- * None of them errors. A reasonable implementation that trusted any of the
- * three would render a calendar of 2022 conferences and look like it worked,
- * which is why this walks `?page=` from the end instead. `?active=true` is not
- * a shortcut either: it is documented as non-partitioning, and on 29 Sep it
- * returned 28 rows, every one of them already in progress.
- *
- * The walk stops on the *raw* dates — once a page's newest `starts_at` is older
- * than the grace horizon, no earlier page can hold anything current, so this is
- * a complete answer rather than a sampled one. Stopping on what survived
- * filtering instead is the version that looks equivalent and is not; the three
- * ways it fails are written out at the check itself. `MAX_PAGES` bounds a
- * pathological corpus rather than trimming a normal one.
- *
- * Measured 29 Sep: ~1,060 upcoming events across the last three pages, read in
- * five requests — one for the count, then pages 14, 13, 12 and 11, where 11 is
- * the page whose newest start falls behind the horizon and ends the walk.
+ * The lesson is narrower than "read the docs". The parameters that failed are
+ * *documented*, and one of them is documented wrongly: `period_after` reads as
+ * "Event starts on or after" and actually matches any event whose range
+ * overlaps the window, so `period_after=2026-10-01` returns events starting in
+ * September. The working pair is undocumented in prose and discoverable only in
+ * the parameter list. Nothing here is safe to assume from a description; the
+ * probe that produced these numbers is what the code rests on.
  */
 
-export const PAGE_SIZE = 500;
+const PAGE_SIZE = 500;
 
 /**
- * Six pages total — three of headroom over the three the upcoming set currently
- * occupies. Past this the count under-reports rather than the page breaking, and
- * `truncated` is surfaced in the copy as a "+" on the count, so the number never
- * quietly goes wrong.
+ * Pages per month. October — the densest month in the corpus by a wide margin,
+ * at 734 rows — needs two. Six is room for a month four times that size, after
+ * which `partial` reports the shortfall rather than the count quietly going
+ * wrong.
  */
 const MAX_PAGES = 6;
 
-const DAY_MS = 86_400_000;
+export type { CalendarEvent, RawEvent };
 
-export interface CalendarEvent {
-  id: string;
-  title: string;
-  /** ISO 8601, from `starts_at`. */
-  startsAt: string;
-  /** ISO 8601, from `ends_at`. Always present on the measured corpus. */
-  endsAt: string | null;
-  /** Free text: "Lisbon, Portugal 🇵🇹". Absent on ~1% of rows. */
-  location: string | null;
-  /** Raw `item_type` code; label it through `eventTypeLabel`. */
-  type: string;
+export interface MonthNeighbour {
+  month: string;
+  count: number;
 }
 
-export interface EventsCalendar {
-  events: CalendarEvent[];
-  /** Upcoming events after de-duplication. Every one of them renders. */
-  upcomingTotal: number;
-  /** Every row the API reports, upcoming or not. Context, never a claim. */
-  corpusTotal: number;
-  /** The walk hit `MAX_PAGES` with rows still to read. */
-  truncated: boolean;
+export interface MonthCalendar {
+  /** `2026-10`. */
+  month: string;
   /**
-   * At least one page failed to fetch and was walked past.
+   * Still to come or running, in date order. Everything on a future month.
    *
-   * Separate from `truncated` because the causes differ, and reported for the
-   * same reason `thisWeek.ts` distinguishes an empty result from a failed
-   * request: a dropped page silently subtracts up to 500 events, and without
-   * this the page would print "564 upcoming" as though it were exact, stay
-   * indexed, and give no sign anything was missing.
+   * Split from `past` because the current month is the one page where both
+   * exist, and it is the page most people land on. Rendering the month in flat
+   * date order put four weeks of finished events above anything current, which
+   * on the 29th of a month is most of the page.
+   */
+  upcoming: CalendarEvent[];
+  /** Already finished, in date order. Empty on a future month. */
+  past: CalendarEvent[];
+  /** Events this month, after de-duplication: `upcoming + past`. */
+  total: number;
+  /** Adjacent months that actually hold events; null when there is nothing there. */
+  prev: MonthNeighbour | null;
+  next: MonthNeighbour | null;
+  /**
+   * A page of *this month's* rows failed to fetch, so `total` is a floor.
+   *
+   * Deliberately not set by a failed neighbour count. The two are different
+   * failures with different remedies: a dropped page of rows means the number
+   * beside the month is short and has to be printed as "734+", whereas a failed
+   * neighbour count costs nothing but a navigation link, which simply does not
+   * render. Folding them together made a page whose own rows were complete
+   * print an approximation.
    */
   partial: boolean;
-  /** Below `UPCOMING_FLOOR`: the page must not claim to be a calendar. */
-  thin: boolean;
+  /** The month is in the past relative to the request. */
+  isPast: boolean;
   asOf: string;
 }
 
-export interface RawEvent {
-  id?: unknown;
-  title?: unknown;
-  item_type?: unknown;
-  starts_at?: unknown;
-  ends_at?: unknown;
-  location?: unknown;
-}
-
-const asString = (value: unknown): string | null =>
-  typeof value === "string" && value.trim() ? value.trim() : null;
-
-/**
- * How long after its start an event still counts as current.
- *
- * "Has not finished" on its own is not the right rule, because a handful of rows
- * carry implausible ranges — measured 29 Sep, 9 of 1,057 upcoming events run
- * longer than 14 days and the worst is 125. Those sort to the top of the
- * calendar under a month that has already passed, so the first thing a reader
- * sees is a stale row. The grace period is what stops that.
- *
- * Deliberately generous relative to the problem: the median event lasts 0 days
- * and p90 is 2, so a week of slack drops exactly the **2** rows that started
- * more than a week ago while keeping all 26 genuinely in-progress multi-day
- * conferences — the single most useful kind of row on a calendar, and the one a
- * naive `starts_at > now` filter removes.
- */
-export const STARTED_GRACE_DAYS = 7;
-
-/**
- * **Every date on this endpoint is midnight UTC** — verified across 2,427 dated
- * rows on 29 Sep, 100% of them `T00:00:00Z`, with 1,845 carrying `ends_at`
- * identical to `starts_at`.
- *
- * That makes the obvious comparison wrong in a way that is invisible in code and
- * glaring on the page. `ends_at >= now` drops a one-day event at 00:00 UTC *on
- * the morning it happens*, and takes the final day of every multi-day conference
- * with it. Measured at 07:34 UTC: 72 of the 93 events happening that day were
- * already gone, "Ethereum Korea One: Genesis" among them, during KBW week.
- *
- * A date with no time means the whole day, so the event ends when that day does.
- */
-const endOfDay = (iso: string): number => {
-  const at = new Date(iso).getTime();
-  return Number.isFinite(at) ? at + DAY_MS : Number.NaN;
+const monthQuery = (month: string) => {
+  const { from, to } = monthBounds(month);
+  return `starts_at__gte=${from}&starts_at__lte=${to}`;
 };
 
-/**
- * Upcoming means "running or still to come", not "has not started".
- *
- * Two conditions, both load-bearing: it must not have ended — counting the whole
- * of its final day, see `endOfDay` — and it must not have started longer ago
- * than `STARTED_GRACE_DAYS`, which carries the reasoning for that bound.
- */
-export function isUpcoming(row: RawEvent, now: number): boolean {
-  const starts = asString(row.starts_at);
-  if (!starts) return false;
-
-  const startedAt = new Date(starts).getTime();
-  if (!Number.isFinite(startedAt)) return false;
-  if (now - startedAt > STARTED_GRACE_DAYS * DAY_MS) return false;
-
-  const endsAt = endOfDay(asString(row.ends_at) ?? starts);
-  return Number.isFinite(endsAt) && endsAt >= now;
+/** One row, fetched only for its `total`. */
+async function countOf(query: string): Promise<number | null> {
+  const body = await fetchJsonSoft<{ total?: number; count?: number }>(
+    `${API_BASE}/items/events/?limit=1&${query}`
+  );
+  if (body === null) return null;
+  return Number(body.total ?? body.count ?? 0);
 }
 
-export function shape(row: RawEvent): CalendarEvent | null {
-  const title = asString(row.title);
-  const startsAt = asString(row.starts_at);
-  const ends = asString(row.ends_at);
-  const type = asString(row.item_type);
-  if (!title || !startsAt || !type || !isListableType(type)) return null;
-  if (!Number.isFinite(new Date(startsAt).getTime())) return null;
-
-  return {
-    id: String(row.id ?? `${startsAt}-${title.slice(0, 24)}`),
-    title,
-    startsAt,
-    /*
-     * Dropped when it repeats the start, which it does on 1,845 of 2,427 dated
-     * rows. The whole loader payload is serialised into the page for hydration,
-     * so a field that says nothing on two-thirds of a thousand-row calendar is
-     * worth its own line of code to omit. Everything downstream already treats a
-     * missing end as "the same day": `dateLabel` prints one date and the graph
-     * omits `endDate`.
-     */
-    endsAt: ends && ends !== startsAt ? ends : null,
-    location: asString(row.location),
-    type,
-  };
-}
-
-const page = (n: number) =>
-  `${API_BASE}/items/events/?limit=${PAGE_SIZE}&page=${n}`;
-
-/**
- * The calendar itself, as a plain function.
- *
- * Split from the server-function wrapper below so it can be tested. A
- * `createServerFn` handler cannot be called directly — it looks for the Start
- * runtime's AsyncLocalStorage and throws outside it — so leaving the logic
- * inside the wrapper would make the pagination walk, the one part of this module
- * that is genuinely easy to get wrong, the one part no test could reach.
- * `thisWeek.ts` is tested the same way.
- */
-export async function buildCalendar(): Promise<EventsCalendar> {
+export async function buildMonth(month: string): Promise<MonthCalendar> {
   const asOf = new Date();
-  const now = asOf.getTime();
+  const currentMonth = monthOf(asOf);
+  const query = monthQuery(month);
 
-  /*
-   * One cheap call for the row count, so the walk knows where the end is.
-   * `page` is expressed in units of `limit`, so the count request and the
-   * page requests have to agree on nothing except the total itself.
-   */
-  const head = await fetchJsonSoft<{ total?: number; count?: number }>(
-    `${API_BASE}/items/events/?limit=1`
-  );
-  const corpusTotal = Number(head?.total ?? head?.count ?? 0);
-  if (!corpusTotal) {
-    return {
-      events: [],
-      upcomingTotal: 0,
-      corpusTotal: 0,
-      truncated: false,
-      partial: head === null,
-      thin: true,
-      asOf: asOf.toISOString(),
-    };
-  }
-
-  const lastPage = Math.max(1, Math.ceil(corpusTotal / PAGE_SIZE));
-  const horizon = now - STARTED_GRACE_DAYS * DAY_MS;
-  const collected: CalendarEvent[] = [];
-  let walked = 0;
-  let exhausted = false;
+  const rows: RawEvent[] = [];
   let partial = false;
-  let stoppedAt = lastPage;
 
-  for (let n = lastPage; n >= 1 && walked < MAX_PAGES; n -= 1, walked += 1) {
-    stoppedAt = n;
-    const body = await fetchJsonSoft<{ results?: RawEvent[] }>(page(n));
-    // `fetchJsonSoft` degrades a failed request to null after its retries. The
-    // walk continues — a gap is better than a truncated calendar — but the
-    // count it produces is a floor from here on, not a total.
-    if (body === null) partial = true;
-    const rows = body?.results ?? [];
-
-    for (const row of rows) {
-      if (!isUpcoming(row, now)) continue;
-      const event = shape(row);
-      if (event) collected.push(event);
+  for (let page = 1; page <= MAX_PAGES; page += 1) {
+    const body = await fetchJsonSoft<{ results?: RawEvent[]; links?: { next?: string } }>(
+      `${API_BASE}/items/events/?limit=${PAGE_SIZE}&page=${page}&${query}`
+    );
+    // A failed page leaves a gap rather than truncating the month; the count is
+    // then a floor, and `partial` is what stops the page printing it as exact.
+    if (body === null) {
+      partial = true;
+      continue;
     }
 
-    /*
-     * **Stop on the raw dates, never on what survived filtering.**
-     *
-     * The rows are ascending by `starts_at`, so once a page's newest start is
-     * behind the grace horizon, no earlier page can hold anything current and
-     * the walk is complete. Deriving that from the *shaped* result instead —
-     * "this page produced no events, so stop" — is the version that looks
-     * equivalent and is not, in three measured ways:
-     *
-     *  - **Dense weeks.** A page can hold 500 rows spanning seven days. If all
-     *    of them started inside the grace window and have already ended, the
-     *    page yields nothing while multi-day events on the page *before* it are
-     *    still running. Sorted by start, not by end, so the tail is not sorted.
-     *  - **Undated rows.** 7 rows carry no `starts_at` and sort last. A page of
-     *    those would stop the walk on its first request and mark the calendar
-     *    thin, taking the page `noindex`.
-     *  - **Filtered rows.** 44 rows are `***` placeholders. A page of those
-     *    survives `isUpcoming` and dies in `shape`, which the old check read as
-     *    "nothing upcoming".
-     *
-     * A page with no parseable dates at all yields no maximum, and the walk
-     * continues rather than stopping — the undated tail cannot end it.
-     */
-    let newestStart = Number.NEGATIVE_INFINITY;
-    for (const row of rows) {
-      const starts = asString(row.starts_at);
-      if (!starts) continue;
-      const at = new Date(starts).getTime();
-      if (Number.isFinite(at) && at > newestStart) newestStart = at;
-    }
+    const page_rows = body.results ?? [];
+    rows.push(...page_rows);
 
-    if (Number.isFinite(newestStart) && newestStart < horizon) {
-      exhausted = true;
-      break;
-    }
+    if (page_rows.length < PAGE_SIZE || !body.links?.next) break;
+    if (page === MAX_PAGES) partial = true;
   }
 
-  collected.sort((a, b) =>
-    a.startsAt < b.startsAt ? -1 : a.startsAt > b.startsAt ? 1 : 0
-  );
+  const events = shapeRows(rows);
+  const { upcoming, past } = splitByTime(events, asOf.getTime());
 
   /*
-   * The upstream corpus repeats events: 58 upcoming title-and-start pairs
-   * appear twice under different ids, measured 29 Sep, and some pairs disagree
-   * about `item_type` (the same Miami event filed once as `Co` and once as
-   * `PY`). Left alone they render twice, count twice, and appear twice in the
-   * structured data — where duplicate `Event` entries in one `ItemList` are a
-   * quality problem, not just a cosmetic one.
-   *
-   * Keyed on title + start + location rather than id, because the id is exactly
-   * what differs. The surviving copy is simply whichever the API returned first
-   * — not "the earliest-starting" one, since the start date is part of the key
-   * and every copy therefore shares it.
+   * Neighbours are fetched for their counts alone, so a month with nothing in
+   * it is never linked. Paging into an empty month is the most obvious way for
+   * this navigation to feel broken, and the corpus has real gaps — July 2027
+   * holds two events and August holds one.
    */
-  const seen = new Set<string>();
-  const events = collected.filter((event) => {
-    const key = `${event.title}|${event.startsAt}|${event.location ?? ""}`;
-    if (seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  });
+  const [prevCount, nextCount] = await Promise.all([
+    countOf(monthQuery(shiftMonth(month, -1))),
+    countOf(monthQuery(shiftMonth(month, 1))),
+  ]);
+
+  const neighbour = (delta: number, count: number | null): MonthNeighbour | null =>
+    count && count > 0 ? { month: shiftMonth(month, delta), count } : null;
 
   return {
-    events,
-    upcomingTotal: events.length,
-    corpusTotal,
-    /*
-     * Only true when the cap stopped a walk that had more to read. Reaching
-     * page 1 is a complete answer even at `MAX_PAGES`, which the previous
-     * condition reported as truncated.
-     */
-    truncated: !exhausted && stoppedAt > 1,
+    month,
+    upcoming,
+    past,
+    total: events.length,
+    prev: neighbour(-1, prevCount),
+    next: neighbour(1, nextCount),
     partial,
-    thin: events.length < UPCOMING_FLOOR,
+    isPast: month < currentMonth,
     asOf: asOf.toISOString(),
   };
 }
 
-export const getEventsCalendar = createServerFn({ method: "GET" }).handler(
-  buildCalendar
+/**
+ * The validator is a boundary, not a formality.
+ *
+ * A server function is a public RPC endpoint — anything on the internet can
+ * call it with anything. The route already refuses a bad slug through
+ * `parseMonthSlug`, but that check guards the *route*, and this is reachable
+ * without it. An unchecked string went straight into five upstream requests
+ * with junk dates in them.
+ */
+export const getMonthCalendar = createServerFn({ method: "GET" })
+  .validator((month: string) => {
+    if (!isMonthKey(month)) {
+      throw new Error(`getMonthCalendar: ${String(month)} is not a YYYY-MM month`);
+    }
+    return month;
+  })
+  .handler(async ({ data: month }) => buildMonth(month));
+
+/** The month `/events` shows. */
+export const getCurrentMonth = createServerFn({ method: "GET" }).handler(
+  async () => buildMonth(monthOf(new Date()))
 );

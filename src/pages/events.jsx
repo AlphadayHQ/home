@@ -1,42 +1,34 @@
 import React from "react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Layout, Section } from "../shared";
-import { coveredThrough, eventTypeLabel } from "../data/eventTypes";
+import CONFIG from "../config";
+import { eventTypeLabel } from "../data/eventTypes";
+import { headline, monthLabel, monthSlug } from "../data/eventMonths";
 
 /**
- * `/events` — the upcoming crypto calendar (content doc B4).
+ * A month of the events calendar (content doc B4).
  *
- * WHY NOTHING HERE IS A LINK
+ * WHY NOTHING IN A ROW IS A LINK
  *
- * The records carry no `url`: verified across every upcoming row, zero have one.
- * So this page can say what is happening, when, where and what kind of thing it
- * is, and it cannot send anyone to a registration page.
+ * The records carry no `url` — verified across every upcoming row, zero have
+ * one. So this page can say what is happening, when, where and what kind of
+ * thing it is, and it cannot send anyone to a registration page.
  *
  * The temptation is to link the title somewhere anyway — a search URL, a tag
  * page — and that is worse than no link. A title that looks clickable and lands
- * on a search results page is the affordance lying about what it does, and on a
- * calendar it lands the reader further from the event than where they started.
- * Rows are plain text until the field exists upstream.
+ * on search results is the affordance lying about what it does, and on a
+ * calendar it leaves the reader further from the event than where they started.
+ * Rows stay plain text until the field exists upstream.
  *
- * WHY THE WHOLE SET RENDERS
+ * WHY THE PAGE IS ONE MONTH
  *
- * This shipped capped at the 150 soonest events, which in conference season is
- * **about one day** — 696 of the 1,063 upcoming events fall in a single month.
- * A page headed "every crypto event worth the flight" that stops at tomorrow is
- * not a calendar, and B4's entire argument is an organiser finding their event
- * listed and linking back. So every upcoming event renders.
- *
- * That makes per-row weight the constraint rather than an afterthought, which
- * is why the row styling lives on the `<ul>` as child selectors instead of
- * repeating ~300 bytes of classes a thousand times, and why there is no icon:
- * an inline SVG per row is the single most expensive element on the page and
- * the location text says the same thing.
+ * It used to render every upcoming event: 1,064 rows, 421 KB, and a month index
+ * was the only way to find anything. One month is the unit people plan in, it
+ * is the unit the queries are phrased in ("crypto conferences october 2026"),
+ * and it makes each page separately measurable in Search Console — which §4.4
+ * asks for and a single endless page cannot give.
  */
 
-const MONTH = new Intl.DateTimeFormat("en-GB", {
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-});
 const DAY = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
   month: "short",
@@ -49,11 +41,13 @@ const DAY_ONLY = new Intl.DateTimeFormat("en-GB", {
 });
 
 /**
- * "3 Oct" for a single day, "3 – 5 Oct" for a range.
+ * "3 Oct" for a single day, "29 – 30 Sept" within one month, "26 Sept – 3 Oct"
+ * across two.
  *
- * Every date upstream is midnight UTC and 1,845 rows carry an `ends_at`
- * identical to `starts_at`, so printing both unconditionally would put
- * "3 Oct – 3 Oct" on the majority of the calendar.
+ * Every date upstream is midnight UTC and most rows carry an `ends_at` equal to
+ * `starts_at`, so printing both unconditionally would put "3 Oct – 3 Oct" on the
+ * majority of the calendar. Naming the month twice inside one month wrapped the
+ * date column onto a second line and said nothing the heading had not.
  */
 function dateLabel(startsAt, endsAt) {
   const from = new Date(startsAt);
@@ -64,12 +58,6 @@ function dateLabel(startsAt, endsAt) {
   const end = DAY.format(to);
   if (start === end) return start;
 
-  /*
-   * Within one month, name the month once: "29 – 30 Sept", not
-   * "29 Sept – 30 Sept". The long form wrapped the date column onto a second
-   * line often enough to visibly break the rhythm of the list, and the repeat
-   * carried no information — the month heading above already states it.
-   */
   if (
     from.getUTCFullYear() === to.getUTCFullYear() &&
     from.getUTCMonth() === to.getUTCMonth()
@@ -82,29 +70,36 @@ function dateLabel(startsAt, endsAt) {
 /**
  * Location and type, joined only when both exist.
  *
- * Most rows now have no type at all — `Co` covers 73% of the calendar and says
- * nothing, so it is unlabelled — which makes a hardcoded "·" separator a dangling
- * character on the majority of rows.
+ * Most rows carry no type — `Co` covers 73% of the corpus and says nothing, so
+ * it is unlabelled — which makes a hardcoded separator a dangling character on
+ * the majority of rows.
  */
 function metaLine(event) {
   const label = eventTypeLabel(event.type);
   return [event.location, label].filter(Boolean).join(" · ");
 }
 
-function groupByMonth(events) {
-  const groups = new Map();
-  for (const event of events) {
-    const key = event.startsAt.slice(0, 7);
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(event);
-  }
-  return [...groups.entries()];
-}
+/**
+ * Below this many rows still to come, the hub says where to go next in its own
+ * copy instead of leaving it to an arrow in the month nav.
+ *
+ * The front door shows the current month, so in the last days of one it can
+ * legitimately hold three events while the next holds seven hundred. Rolling
+ * the hub forward into that month was the other option and it is worse: those
+ * rows already have a URL that should rank for them, and putting them here too
+ * undercuts it. A sentence pointing forward costs nothing and duplicates
+ * nothing.
+ */
+const THIN_TAIL = 20;
+
+/** `/events` for the current month, `/events/october-2026` for any other. */
+export const monthHref = (month, currentMonth) =>
+  month === currentMonth ? "/events" : `/events/${monthSlug(month)}`;
 
 /*
  * Row styling as child selectors, applied once. `<time>`, `<p>` and `<span>`
- * carry the structure so the selectors stay legible and each row's markup is
- * about sixty bytes rather than three hundred.
+ * carry the structure so each row's markup is about sixty bytes rather than
+ * three hundred — which matters at several hundred rows a month.
  */
 const ROW_STYLES = [
   "border-t border-surface-border",
@@ -119,30 +114,139 @@ const ROW_STYLES = [
 ].join(" ");
 
 /**
- * The hero's coverage sentence.
+ * Where a reader goes after the calendar.
  *
- * The rule itself lives in `eventTypes.js` so it can be tested — its edge case
- * is a date-dependent one that never shows up in a casual look at the page.
+ * Placed at the end, not scattered through the list. Someone who has read a
+ * month of rows has shown more intent than anyone who saw a mid-page banner,
+ * and interrupting a reference table with product cards is the over-designed
+ * marketing the brief rejects outright.
+ *
+ * **None of these is orange.** Principle 3 spends the accent on actions, and
+ * spending it three more times would make the one real conversion target — the
+ * endpoint link in the hero — worth a quarter of what it is now.
  */
-function coverage(months) {
-  const span = coveredThrough(
-    months.map(([key, rows]) => ({ key, count: rows.length }))
+const NEXT_STEPS = [
+  {
+    href: `${CONFIG.api}/data/events`,
+    name: "Events API",
+    why: "The endpoint this page is built from — filter by type, city or window.",
+  },
+  {
+    href: CONFIG.dashboards,
+    name: "Dashboards",
+    why: "The projects you will meet at these events, tracked live.",
+  },
+  {
+    href: CONFIG.recipes,
+    name: "Recipes",
+    why: "Wire the calendar into a bot, a newsletter or your own agent.",
+    external: true,
+  },
+];
+
+/**
+ * Month-to-month navigation.
+ *
+ * **No counts beside the month names, deliberately.** The neighbour figures are
+ * the API's raw totals, while the page each link leads to shows the count after
+ * placeholders are dropped and duplicates collapsed — 771 against 734 for
+ * September. `thisWeek.ts` states the invariant this would break: a headline
+ * count and the rows under it must come from the same data. Making the numbers
+ * agree means fetching each neighbour in full to display a figure nobody needs
+ * to navigate, so the number goes instead.
+ *
+ * The counts are still fetched, because they decide whether a month is linked
+ * at all. Paging into an empty month is the most obvious way for this to feel
+ * broken, and the corpus has real gaps — July 2027 holds two events, August
+ * holds one.
+ */
+const MonthNav = ({ calendar, currentMonth, className = "" }) => {
+  const { prev, next } = calendar;
+  if (!prev && !next) return null;
+
+  return (
+    <nav
+      aria-label="Calendar months"
+      className={`flex flex-wrap items-center justify-between gap-4 ${className}`}
+    >
+      {prev ? (
+        <a
+          href={monthHref(prev.month, currentMonth)}
+          rel="prev"
+          className="inline-flex items-center gap-2 text-[15px] font-semibold text-text transition-colors hover:text-primary"
+        >
+          <ArrowLeft className="h-4 w-4 shrink-0" aria-hidden="true" />
+          {monthLabel(prev.month)}
+        </a>
+      ) : (
+        <span />
+      )}
+
+      {next && (
+        <a
+          href={monthHref(next.month, currentMonth)}
+          rel="next"
+          className="inline-flex items-center gap-2 text-[15px] font-semibold text-text transition-colors hover:text-primary"
+        >
+          {monthLabel(next.month)}
+          <ArrowRight className="h-4 w-4 shrink-0" aria-hidden="true" />
+        </a>
+      )}
+    </nav>
   );
-  if (!span || !span.through) return null;
+};
 
-  const label = (key) => MONTH.format(new Date(`${key}-01T00:00:00Z`));
-  return {
-    through: label(span.through),
-    tail: span.through === span.last ? null : label(span.last),
-  };
-}
+const SectionHead = ({ children, className = "" }) => (
+  <h2
+    className={`mb-4 font-display text-[22px] font-bold tracking-tight text-text ${className}`}
+  >
+    {children}
+  </h2>
+);
 
-const EventsPage = ({ calendar }) => {
-  const { events, upcomingTotal, truncated, partial, asOf } = calendar;
-  const months = groupByMonth(events);
-  const span = coverage(months);
-  // A dropped page subtracts up to 500 events, so the count is a floor.
-  const count = `${upcomingTotal.toLocaleString("en-GB")}${truncated || partial ? "+" : ""}`;
+/**
+ * One chronological list of rows.
+ *
+ * Extracted because the current month renders two of them — what is still to
+ * come, then what has already happened — and the markup is identical.
+ */
+const EventList = ({ events, className = "" }) => (
+  <ul className={`${ROW_STYLES} ${className}`}>
+    {events.map((event) => (
+      <li key={event.id}>
+        <time dateTime={event.startsAt}>
+          {dateLabel(event.startsAt, event.endsAt)}
+        </time>
+        <p>{event.title}</p>
+        <span>{metaLine(event)}</span>
+      </li>
+    ))}
+  </ul>
+);
+
+const EventsPage = ({ calendar, currentMonth, isHub }) => {
+  const { month, upcoming, past, total, next, partial, isPast, asOf } = calendar;
+  const label = monthLabel(month);
+  const { count, noun } = headline(calendar);
+  const headlineCount = `${count.toLocaleString("en-GB")}${partial ? "+" : ""}`;
+
+  /*
+   * Only the current month holds both halves, and it is the page most people
+   * land on. Rendering the month in flat date order put four weeks of finished
+   * events above anything current — on the 29th, most of the page. Headings
+   * appear only when there is something to separate: a past month and a future
+   * month are each one list, and labelling a single list is noise.
+   */
+  const running = upcoming.filter((event) => event.running);
+  const ahead = upcoming.filter((event) => !event.running);
+
+  /*
+   * Headings appear only where there is something to separate. A future month
+   * is one list of things that have not started and a past month is one list of
+   * things that have finished; labelling a single list is noise.
+   */
+  const groups = [running.length, ahead.length, past.length].filter(Boolean);
+  const labelled = groups.length > 1;
 
   return (
     <Layout>
@@ -151,29 +255,46 @@ const EventsPage = ({ calendar }) => {
           <p className="mb-3.5 text-[13px] font-bold uppercase tracking-[0.14em] text-text-muted">
             Events
           </p>
-          <h1 className="max-w-[18ch] font-display text-[clamp(34px,6vw,62px)] font-extrabold leading-[1.02] tracking-tight text-text">
-            Every crypto event worth the flight.
-          </h1>
-          <p className="mt-5 max-w-160 text-[18px] text-text-muted">
-            <span className="font-semibold text-text">{count} upcoming</span>{" "}
-            conferences, hackathons, meetups and side events
-            {span ? ` through ${span.through}` : ""}
-            {span?.tail ? `, thinning into ${span.tail}` : ""}. Indexed
-            continuously, not hand-maintained.
-          </p>
+
           {/*
-            Orange marks actions, and on this page there is exactly one: the
-            endpoint behind the calendar. The audience that converts here is
-            reading to find out whether they can query this themselves.
+            The hub keeps the brand line; a month page leads with the month,
+            because that is the phrase its queries are built from and the first
+            thing a reader arriving on it needs confirmed.
           */}
+          <h1 className="max-w-[18ch] font-display text-[clamp(34px,6vw,62px)] font-extrabold leading-[1.02] tracking-tight text-text">
+            {isHub ? "Every crypto event worth the flight." : `Crypto events in ${label}.`}
+          </h1>
+
+          <p className="mt-5 max-w-160 text-[18px] text-text-muted">
+            <span className="font-semibold text-text">
+              {headlineCount} {noun} in {label}
+            </span>{" "}
+            — conferences, hackathons, meetups and side events. Indexed
+            continuously, not hand-maintained.
+            {!isPast && next && upcoming.length < THIN_TAIL && (
+              <>
+                {upcoming.length === 0 && ` ${label} is over.`} Next:{" "}
+                <a
+                  href={monthHref(next.month, currentMonth)}
+                  rel="next"
+                  className="font-semibold text-text underline decoration-surface-border underline-offset-4 transition-colors hover:decoration-text"
+                >
+                  {monthLabel(next.month)}
+                </a>
+                .
+              </>
+            )}
+          </p>
+
           <p className="mt-5 text-[16px]">
             <a
-              href="/api/data/events"
+              href={`${CONFIG.api}/data/events`}
               className="font-semibold text-primary underline decoration-primary/40 underline-offset-4 transition-colors hover:text-primary-hover"
             >
               Query this yourself — free, no signup
             </a>
           </p>
+
           <p className="mt-6 text-[13px] text-text-muted">
             Updated {DAY.format(new Date(asOf))}. Dates are UTC. Listings carry
             no organiser link, because the source records do not have one.
@@ -181,29 +302,104 @@ const EventsPage = ({ calendar }) => {
         </div>
       </Section>
 
+      {/*
+        `pt-6` here rather than a margin on the list, and that is a bug fix
+        rather than a preference. A margin on the first child collapsed out of
+        this section — the parent has no padding to contain it — leaving a 24px
+        band that painted no background. `Layout` positions page content
+        absolutely over the footer, so what showed through the band was the
+        footer's own border and copyright rule, read as a stray divider.
+      */}
       <Section className="bg-background">
-        <div className="mx-auto w-11/12 max-w-5xl pb-24">
-          {months.map(([key, rows]) => (
-            <section key={key} className="mt-12 first:mt-6">
-              <h2 className="mb-1 font-display text-[26px] font-bold tracking-tight text-text">
-                {MONTH.format(new Date(`${key}-01T00:00:00Z`))}
-              </h2>
-              <p className="mb-2 text-[13px] text-text-muted">
-                {rows.length} event{rows.length === 1 ? "" : "s"}
-              </p>
-              <ul className={ROW_STYLES}>
-                {rows.map((event) => (
-                  <li key={event.id}>
-                    <time dateTime={event.startsAt}>
-                      {dateLabel(event.startsAt, event.endsAt)}
-                    </time>
-                    <p>{event.title}</p>
-                    <span>{metaLine(event)}</span>
-                  </li>
+        <div className="mx-auto w-11/12 max-w-5xl pt-6 pb-16">
+          <MonthNav
+            calendar={calendar}
+            currentMonth={currentMonth}
+            className="mb-8"
+          />
+
+          {total === 0 ? (
+            <p className="py-10 text-[17px] text-text-muted">
+              Nothing indexed for {label} yet.
+            </p>
+          ) : (
+            <>
+              {/*
+                Running events are their own group, not the top of "Still to
+                come". The upcoming half sorts by start date, so a conference
+                running since the 1st sits above today's rows carrying a date
+                three weeks old — under that heading every one of those rows
+                contradicted it. A marker on each row was the first attempt and
+                it was the wrong fix: nine rows in a row saying "Now" under
+                "Still to come" is an argument with itself. The heading is what
+                should have been accurate.
+              */}
+              {running.length > 0 && (
+                <>
+                  {labelled && <SectionHead>Happening now</SectionHead>}
+                  <EventList events={running} />
+                </>
+              )}
+
+              {ahead.length > 0 && (
+                <>
+                  {labelled && (
+                    <SectionHead className={running.length > 0 ? "mt-12" : ""}>
+                      Still to come
+                    </SectionHead>
+                  )}
+                  <EventList events={ahead} />
+                </>
+              )}
+
+              {/*
+                Collapsed, not dropped. The month's finished events are what
+                makes this page a record of the month rather than a snapshot,
+                and they stay in the HTML either way — but on the 29th they are
+                four weeks of rows standing between the reader and the three
+                that matter.
+              */}
+              {past.length > 0 &&
+                (labelled ? (
+                  <details className="mt-12">
+                    <summary className="cursor-pointer text-[15px] font-semibold text-text-muted transition-colors hover:text-text">
+                      Earlier in {label} ({past.length.toLocaleString("en-GB")})
+                    </summary>
+                    <EventList events={past} className="mt-5 opacity-70" />
+                  </details>
+                ) : (
+                  <EventList events={past} />
                 ))}
-              </ul>
-            </section>
-          ))}
+            </>
+          )}
+
+          <MonthNav
+            calendar={calendar}
+            currentMonth={currentMonth}
+            className="mt-10"
+          />
+        </div>
+      </Section>
+
+      <Section className="bg-background">
+        <div className="mx-auto w-11/12 max-w-5xl border-t border-surface-border pt-10 pb-24">
+          <h2 className="font-display text-[26px] font-bold tracking-tight text-text">
+            Same data, other shapes
+          </h2>
+          <ul className="mt-5 flex flex-col gap-4">
+            {NEXT_STEPS.map((step) => (
+              <li key={step.href} className="max-w-160">
+                <a
+                  href={step.href}
+                  {...(step.external ? { target: "_blank", rel: "noreferrer" } : {})}
+                  className="text-[17px] font-semibold text-text underline decoration-surface-border underline-offset-4 transition-colors hover:decoration-text"
+                >
+                  {step.name}
+                </a>
+                <p className="mt-1 text-[15px] text-text-muted">{step.why}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       </Section>
     </Layout>
