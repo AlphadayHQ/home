@@ -57,6 +57,14 @@ const STATIC_STATES: Record<string, IndexState> = {
   "/mcp": "promoted",
   "/cookbook": "promoted",
   "/dashboards": "promoted",
+  /*
+   * B4's events calendar. Promoted on the same reasoning as the digest tier —
+   * it exists to be found in search, and the listicle SERP it attacks is the
+   * whole point of building it — with the same escape hatch: the route demotes
+   * itself to `substrate` when the upcoming set falls under `UPCOMING_FLOOR`,
+   * so a feed outage cannot leave an indexed page claiming nothing is happening.
+   */
+  "/events": "promoted",
   "/mobile": "promoted",
   "/privacy": "promoted",
 

@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SlugRouteImport } from './routes/$slug'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as DashboardsRouteImport } from './routes/dashboards'
+import { Route as EventsRouteImport } from './routes/events'
 import { Route as MobileRouteImport } from './routes/mobile'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SlugThisWeekRouteImport } from './routes/$slug_.this-week'
@@ -47,6 +48,11 @@ const DashboardRoute = DashboardRouteImport.update({
 const DashboardsRoute = DashboardsRouteImport.update({
   id: '/dashboards',
   path: '/dashboards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsRoute = EventsRouteImport.update({
+  id: '/events',
+  path: '/events',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MobileRoute = MobileRouteImport.update({
@@ -130,6 +136,7 @@ export interface FileRoutesByFullPath {
   '/$slug': typeof SlugRoute
   '/dashboard': typeof DashboardRoute
   '/dashboards': typeof DashboardsRoute
+  '/events': typeof EventsRoute
   '/mobile': typeof MobileRoute
   '/privacy': typeof PrivacyRoute
   '/$slug/this-week': typeof SlugThisWeekRoute
@@ -151,6 +158,7 @@ export interface FileRoutesByTo {
   '/$slug': typeof SlugRoute
   '/dashboard': typeof DashboardRoute
   '/dashboards': typeof DashboardsRoute
+  '/events': typeof EventsRoute
   '/mobile': typeof MobileRoute
   '/privacy': typeof PrivacyRoute
   '/$slug/this-week': typeof SlugThisWeekRoute
@@ -173,6 +181,7 @@ export interface FileRoutesById {
   '/$slug': typeof SlugRoute
   '/dashboard': typeof DashboardRoute
   '/dashboards': typeof DashboardsRoute
+  '/events': typeof EventsRoute
   '/mobile': typeof MobileRoute
   '/privacy': typeof PrivacyRoute
   '/$slug_/this-week': typeof SlugThisWeekRoute
@@ -196,6 +205,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/dashboard'
     | '/dashboards'
+    | '/events'
     | '/mobile'
     | '/privacy'
     | '/$slug/this-week'
@@ -217,6 +227,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/dashboard'
     | '/dashboards'
+    | '/events'
     | '/mobile'
     | '/privacy'
     | '/$slug/this-week'
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/$slug'
     | '/dashboard'
     | '/dashboards'
+    | '/events'
     | '/mobile'
     | '/privacy'
     | '/$slug_/this-week'
@@ -260,6 +272,7 @@ export interface RootRouteChildren {
   SlugRoute: typeof SlugRoute
   DashboardRoute: typeof DashboardRoute
   DashboardsRoute: typeof DashboardsRoute
+  EventsRoute: typeof EventsRoute
   MobileRoute: typeof MobileRoute
   PrivacyRoute: typeof PrivacyRoute
   SlugThisWeekRoute: typeof SlugThisWeekRoute
@@ -305,6 +318,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboards'
       fullPath: '/dashboards'
       preLoaderRoute: typeof DashboardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events': {
+      id: '/events'
+      path: '/events'
+      fullPath: '/events'
+      preLoaderRoute: typeof EventsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mobile': {
@@ -420,6 +440,7 @@ const rootRouteChildren: RootRouteChildren = {
   SlugRoute: SlugRoute,
   DashboardRoute: DashboardRoute,
   DashboardsRoute: DashboardsRoute,
+  EventsRoute: EventsRoute,
   MobileRoute: MobileRoute,
   PrivacyRoute: PrivacyRoute,
   SlugThisWeekRoute: SlugThisWeekRoute,
