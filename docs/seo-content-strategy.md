@@ -388,6 +388,94 @@ earlier draft billed it as, and it should not automatically ship first.** See
 **Third-order benefit, unchanged:** it is proof of the layer thesis. Security incidents are exactly
 the kind of data type a "crypto data layer" should have and a price API should not.
 
+> **Shipped 2 Oct 2026 at [`/security/exploits`](../src/pages/exploits.jsx) plus 33 incident pages —
+> and the blocker this section names turned out to be the wrong one.**
+>
+> **The amount backfill was declined as impossible, and that is half right — the half that matters
+> is wrong.** The data owner's position is that the figures are not available from the API's own
+> source. For the 48 press records it is partly true: 33 carry an amount, and of the 15 that do
+> not, **9 are thefts and exploits** — Taiko's bridge, the second Aztec Connect hack, Tectonic on
+> Cronos, Rain, KiiChain, Meter, Harmony, Ravencoin, The Kiss NFTs — whose loss simply was never
+> totalled in the report we ingest. Only 6 are collapses and depegs where nothing was taken. Those
+> 9 have press coverage that probably carries a figure, so they belong in the backfill too.
+>
+> **For the other 163 it is not true, and this document said it was.** Those come from DeFiHackLabs,
+> and its README states a loss for **134 of its 136 entries this year** — "Lost: 59,914.12 USDT net
+> to the attacker", "Lost: 4.025 ETH (full Genesis Alpha treasury)". The figures exist and are
+> public. What they are not is storable as `amount_usd` without work: they are prose in mixed units
+> (USDT, ETH, BNB, USDC, WHYPE), several state the attacker's net gain *beside* the protocol's gross
+> loss, and some are per-cycle or partial reproductions. Pricing them in dollars also needs a rate
+> at the time of the incident, which is a second dependency.
+>
+> So this is **an extraction and normalisation ticket, of the same kind as the `protocol` fix —
+> not an impossibility**, and it should not have been closed as one. What it needs decided before
+> anyone starts: which number counts when the source gives two, and whether a non-USD figure is
+> converted or stored in its own unit. **Reopened below.**
+>
+> **The field that actually blocked the tier is `protocol`, and nobody had looked at it.** On every
+> one of the 48 records that carries money it is the **first word of the headline** — 48 of 48,
+> verified. The $320M Liquid Network theft is filed under protocol `"4,000"`, MAYAChain under
+> `"$1.76"`, Flare under `"Two"`, Magic Eden under `"Magic"`, Rain under `"Exploit"`. So
+> `{protocol} exploit` — the URL scheme this whole section is built around — would have published
+> `/security/exploits/4000`. **No record anywhere has both a loss figure and a trustworthy protocol
+> name.** That is a parsing bug on one ingest rather than missing data, and it is a far cheaper ask
+> than the one that was declined. It is the ticket to raise.
+>
+> Two fallbacks die with it. `attack_type` is **148 distinct values across 163 records**, each a
+> restatement of that one bug, so there is no category tier in it; `chain` is 5 of 211.
+>
+> **What shipped instead.** A hub, plus a page for each of the 33 incidents that carry a figure,
+> keyed on a slug built from the headline — the only field that is both correct and identifying.
+> The other 174 are listed on the hub as what they are rather than given pages, because a page each
+> would be 174 reprints of someone else's write-up under URLs nobody queries, which is the
+> thin-affiliate shape [§12](#12-kill-list) rejects.
+>
+> **"Unpriced" is not the same question as "which dataset".** The hub first grouped on whether
+> `amount_usd` was set, which filed **15 press records** — "Poolin bitcoin mining pool operator
+> files for bankruptcy", "POAP shuts down", "msUSD loses its dollar peg" — under a *published
+> proof-of-concept* heading. They have no figure because no theft happened, which is a different
+> fact from a reproduction having none. The hub now splits on the source and runs three sections:
+> 33 reported with a figure, 15 reported without, 163 catalogued by reproduction.
+>
+> **The summaries open with the wrong date, and the clause is removed rather than rewritten.** All
+> 33 begin "On {Month d, yyyy}," and in all 33 that is the logged date — wrong about the incident
+> for 28 of them. The page labelled every date "Logged" and explained that logged dates run behind,
+> and then asserted the wrong one as fact in its first sentence. `stripOpeningDate` removes the
+> clause before rendering; it goes back when the feed carries a real date.
+>
+> **The press join is the positioning, and it measures well.** 27 of the 33 incidents match coverage
+> in the news index, up to five headlines each — via `/items/news/?search=`, a full-text parameter
+> this document never mentions. It is the one thing no incumbent does: DefiLlama has a complete
+> table and Rekt has the narrative, and neither connects the incident to what the press published.
+> On the Bitget page the matched headlines report **$352M and $170M against the $388M at the top of
+> the page**, which is a better argument for the "as reported, not verified" caveat than any wording
+> of it. **The six incidents with no match are served `noindex` and left out of the sitemap**: strip
+> the join and the page is a summary of someone else's report under a figure DefiLlama also has,
+> which is the thin shape this tier is otherwise arguing against.
+>
+> **Two fields mean something other than their names, and both were caught in review rather than by
+> probing.**
+>
+> `date` is **not the incident date**. Checked against the source pages for all 33 priced records:
+> five match, the rest run 1–17 days late, median 2, and five share 2026-06-15 because that is when
+> ingestion started rather than because five incidents did. It had been printed as "Date", put in
+> the meta description and published as an `Event`'s `startDate` — on the Bitget page dating the
+> event two days *after* Coindesk reported it. It is now named `loggedAt` in code, labelled "Logged"
+> on the page, and no event date is derived from it. It also skewed the coverage window, which is
+> why that window now looks three weeks back and one forward instead of ten days either side: 24 of
+> 33 matched symmetric, 27 lopsided.
+>
+> `description` is **not the source's write-up**. It does not appear on the source page, restates the
+> logged date in its first sentence and pads with "specific details … have not been disclosed" — it
+> is roughly a thousand *characters*, written upstream. Presenting it beside a source link, a
+> footer crediting the figure to that site and `isBasedOn` in the markup attributed machine-written
+> prose to someone else's publication. web3isgoinggreat is CC BY 3.0 so quoting and linking are
+> both fine; passing off a paraphrase is not. It is now labelled as a summary written here.
+>
+> **Competing on completeness is conceded explicitly.** 33 priced rows against DefiLlama's whole
+> history is a comparison this tier loses, the method section says so and links to them, and the
+> title says 2026 rather than implying an archive.
+
 ### B3 · The Narrative Index — `/research/narratives`, weekly
 
 **Source:** `/keywords/trending/` joined across 49 news outlets, 118 podcast feeds and 121 YouTube
@@ -1131,8 +1219,23 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
       surface in the product, not only SEO — audited, re-diagnosed and specified in
       [tag-taxonomy-fix.md](./tag-taxonomy-fix.md) (`2235e7e`). **Diagnosis and fix specified; the
       backend change is not deployed**, so C3 remains blocked
-- [ ] Start the `amount_usd` / `chain` backfill on the 164 exploit records. It no longer gates the
-      first shipped asset, but it still gates B2 — **not started, and diverging** (§14)
+- [ ] ~~Start the `amount_usd` / `chain` backfill on the 164 exploit records~~ → **reopened 2 Oct,
+      narrowed.** It was closed as impossible on the basis that the records carry no published
+      figure. That holds for only **6** of the 15 press records with no amount, the collapses and
+      depegs where nothing was taken; the other **9 are thefts and exploits** whose loss was never
+      totalled in the ingested report but is likely in the coverage. And it is **false for the 163
+      reproduced ones**, whose source states a loss for 134 of its 136 entries this year. They are prose in mixed units and sometimes give the attacker's
+      gain rather than the protocol's loss, so this is extraction and normalisation rather than a
+      lookup, and it needs two decisions first: which number counts when the source gives two, and
+      whether non-USD figures are converted at the incident-date rate or stored in their own unit.
+      Worth scoping before it is declined again
+- [ ] **Fix `protocol` and `date` on the web3isgoinggreat exploit ingest**, which is the ask that
+      should have been made instead of the amount backfill. `protocol` is `title.split(" ")[0]` on
+      48 of 48 records, so the $320M Liquid Network theft is filed under `"4,000"`; `date` is the
+      day the record was logged, not the day of the incident, running 1–17 days late with five
+      records sharing the day ingestion started. Both are parsing-and-storage fixes on one ingest.
+      `protocol` unlocks per-incident URLs keyed on the protocol rather than the headline; `date`
+      lets the pages state an incident date at all, and tightens the coverage match
 - [ ] **Diagnose per-source DAO ingestion.** Added 30 Sep, and it is the same class of item as the
       line above: a data dependency that gates the most quotable half of an Engine B asset. 36 of
       51 Snapshot spaces have produced nothing in a quarter, and the index contradicts itself about
@@ -1256,8 +1359,14 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
       (see [B1](#b1--the-alphaday-governance-report--researchgovernance-monthly)). Outreach should
       wait for the second monthly reading, so the pitch carries a trend rather than a snapshot
 - [ ] Events calendar with `Event` schema — the second listicle SERP on the list
-- [ ] **Ship the exploit tracker** once the amounts are backfilled — hub plus 164 incident pages,
-      aimed at `{protocol} exploit` and the news join, not at out-ranking DefiLlama's table
+- [x] ~~**Ship the exploit tracker** once the amounts are backfilled — hub plus 164 incident pages,
+      aimed at `{protocol} exploit` and the news join~~ → **shipped 2 Oct as a hub plus 33 incident
+      pages, and the amounts are not coming.** Both halves of the premise were wrong: the backfill
+      is impossible for 163 records that never had a figure, and `{protocol} exploit` is unbuildable
+      because `protocol` is the first word of the headline on every record that has money. The news
+      join — the part this line listed last — is what the tier actually rests on, and it is the half
+      that measured well (22 of 33).
+      [B2](#b2--the-crypto-exploit-tracker--securityexploits--a-page-per-incident-continuous)
 - [ ] Narrative Index weekly from week 8
 - [ ] Blog migration and 301s; no new explainer content
 - [ ] Comparison pages

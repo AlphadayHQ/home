@@ -31,6 +31,14 @@ import {
 import { digestPaths } from "../src/data/digestEntities.js";
 import { shapeRows } from "../src/data/eventRows.ts";
 import {
+  COVERAGE_FETCH,
+  coverageQuery,
+  hasAmount,
+  incidentPath,
+  rankCoverage,
+  shapeAll,
+} from "../src/data/exploits.ts";
+import {
   monthBounds,
   monthIndexState,
   monthOf,
@@ -226,6 +234,71 @@ async function shapedCount(month) {
   return shapeRows(rows).length;
 }
 
+/**
+ * The incident URLs the exploit tier submits.
+ *
+ * Shaped through `shapeAll` — the same function the route calls — for the same
+ * reason `shapedCount` exists: the slug is derived from the headline, so a
+ * sitemap that built its own would publish URLs the router does not serve the
+ * moment the two derivations drifted by a stopword.
+ *
+ * **It also has to run the coverage join**, because the route demotes an
+ * incident it found no press coverage for. Listing those would submit URLs the
+ * page serves `noindex` — the precise drift `indexState.ts` exists to prevent,
+ * arrived at from the sitemap's side. One request per priced incident, once per
+ * build.
+ */
+/**
+ * One `fetch`, retried, because this build makes 33 of them in a row.
+ *
+ * A single flaky response used to abort the whole sitemap. The run is long
+ * enough that one transient 502 is likely, and the cost of giving up is a build
+ * failure rather than a wrong sitemap — so it is worth three attempts before
+ * refusing. Still refuses in the end: a sitemap that cannot tell a covered
+ * incident from an uncovered one would submit pages the route serves `noindex`.
+ */
+async function retrying(url, attempts = 3) {
+  let last;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch(url, { headers: authHeaders });
+      if (response.ok) return response;
+      last = new Error(`${url} returned ${response.status}`);
+    } catch (error) {
+      last = error;
+    }
+    if (attempt < attempts) {
+      await new Promise((resolve) => setTimeout(resolve, 400 * 2 ** (attempt - 1)));
+    }
+  }
+  throw new Error(`build-sitemap: ${last?.message ?? url}. Refusing to build a partial sitemap.`);
+}
+
+async function fetchIncidents() {
+  const response = await retrying(`${API_BASE}/security/exploits/?limit=500`);
+  const body = await response.json();
+  const priced = shapeAll(body.results ?? []).filter(hasAmount);
+  const listed = [];
+
+  for (const exploit of priced) {
+    const query = coverageQuery(exploit);
+    if (!query) continue;
+
+    // `COVERAGE_FETCH` is shared with the route: a different page size here
+    // would change which incidents come back covered, and the sitemap would
+    // submit URLs the page serves `noindex`.
+    const newsUrl =
+      `${API_BASE}/items/news/?limit=${COVERAGE_FETCH}` +
+      `&search=${encodeURIComponent(query)}`;
+    const news = await retrying(newsUrl);
+
+    const matched = rankCoverage((await news.json()).results ?? [], exploit);
+    if (matched.length > 0) listed.push(incidentPath(exploit));
+  }
+
+  return listed;
+}
+
 async function fetchEventMonths() {
   const current = monthOf(new Date());
   const promoted = [];
@@ -272,6 +345,13 @@ async function main() {
       // worse than omitting it.
       lastmod: rolling.has(path) ? rollingLastmod() : undefined,
     }));
+
+  const coveredIncidents = await fetchIncidents();
+  for (const path of coveredIncidents) {
+    // No `lastmod`: an incident record is written once and this build has no
+    // honest source for when it last changed (§4.4).
+    staticLinks.push({ loc: `${baseUrl}${path}`, lastmod: undefined });
+  }
 
   const monthPaths = await fetchEventMonths();
   for (const path of monthPaths) {
