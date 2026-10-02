@@ -265,6 +265,84 @@ and there is no standard source. A recurring primary source becomes the citation
 **Secondary effect:** delegates discuss the report in the same governance forums Alphaday indexes.
 The content loop closes on itself.
 
+> **Shipped 30 Sep 2026 at [`/research/governance`](../src/pages/governance.jsx), with one of the
+> four metrics deliberately not built.** The headline holds and is stronger than this section
+> assumed; the metric this section calls "the headline" would have published a falsehood.
+>
+> **What shipped**, read on 30 Sep 2026 — the page recomputes on every request, so treat these as a
+> dated sample rather than standing figures. 291 proposals in the twelve complete months to
+> August 2026 across the 15
+> Snapshot spaces still being ingested, against 855 in the best twelve months on record — **down
+> 66%**, measured over a fixed cohort so that a source dropping out cannot be read as governance
+> slowing. Monthly series back to 2021, a per-space table, the last 25 votes linked to Snapshot, a
+> `Dataset` node, and the method on the page in plain language.
+>
+> **The dead-DAO index is not shipped, and this is a data blocker of the same order as
+> [B2](#b2--the-crypto-exploit-tracker--securityexploits--a-page-per-incident-continuous)'s missing
+> `amount_usd`.** 36 of the 51 indexed Snapshot spaces have no proposal in the last quarter and 28
+> none in a year, and the reason is coverage rather than death. The proof is internal to Alphaday's
+> own index and needs nobody's word for it: **`aave_dao` stops on 2 Apr 2025 while `aave_forum`
+> carried five `[ARFC]` threads — the stage that goes to a Snapshot vote — in the week to 28 Sep
+> 2026.** `dydx_dao` (943 days silent, forum active 4 days ago) and `metisdao_dao` (155 days, forum
+> 22 days) are the same shape; `yearn_dao` points at `ybaby.eth` and `thegraph_dao` at a space last
+> seen in 2021, so some are stale space ids rather than stopped fetches. Publishing that list as
+> "treasuries with no proposal in 90 days" would name Aave, Curve and Yearn as dead DAOs, to the
+> exact audience — delegates and governance researchers — most able to spot it in ten seconds. It
+> ships as a coverage figure with a last-indexed date instead, and the page says why.
+>
+> **The forum join is deferred, and the premise needs revising.** "The only place that has the
+> proposals *and* the forum discussion in one queryable set" is true of the two endpoints and does
+> not survive contact with the overlap: the DAO sources are DeFi Snapshot spaces and the forum
+> sources are mostly L1/L2 Discourse forums, only ~17 protocols carry both, and for six of those the
+> DAO half is stale. So *share of proposals with prior forum discussion* and *median time from
+> thread to vote* are unmeasurable today — and they would also need a per-proposal key neither feed
+> carries. The forum figure on the page is a quarter total for contrast, labelled as context rather
+> than a measured relationship.
+>
+> **Monthly report, one URL.** The cohort produces 13–30 proposals a month, so a page per month
+> would hold two dozen rows and clear no sensible index floor, and nobody searches "dao proposals
+> august 2026". The cadence stays monthly; the URL does not move, and the trend accumulates on it.
+>
+> **Endpoint facts, probed 30 Sep.** `/items/dao/` is newest-first, caps `limit` at 500, and accepts
+> `sources`, `tags`, `period=0..3` and `starts_at`/`ends_at` as *exact days*. **`starts_at__gte` and
+> `starts_at__lte` — the pair the events calendar is built on — are accepted and silently ignored**,
+> so no month range can be requested and the report walks the corpus. `active=true` returns 0 rows
+> against 6,612 live ones. **18.6% of the feed is duplicate**: 773 repeated URLs, and beyond those,
+> the same vote posted under two or three different Snapshot hashes — every one of Balancer's nine
+> most recent BIPs. Before that second rule existed the page opened "Latest proposals" with the same
+> BIP three times and counted 13 Balancer votes where it held 10.
+>
+> **An incomplete read fails the request rather than publishing a reduced page.** The report walks
+> fourteen pages, and a dropped page leaves a hole in the archive the comparison is measured
+> *against* — losing page 9 publishes "down 58%" where the truth is 66%. Rendering that as a
+> `noindex` 200 was the first fix and it was the wrong one: `server.mjs` stamps every 200 with
+> `s-maxage=3600, stale-while-revalidate=86400`, so the edge replaces the good copy with a `noindex`
+> one and may serve it for a day — and a URL dropped from the index can take weeks to return. The
+> loader now throws. A 5xx carries no `Cache-Control`, `stale-if-error` keeps the last good copy,
+> and Google reads a 5xx as temporary.
+>
+> **One thing that would have silently defeated this is checked and clear.** A CloudFront
+> `CustomErrorResponses` entry for 500 replaces the origin error with a page of its own and never
+> reaches the stale copy — and `rollout_landing_ssr.sh` in the infrastructure repo sets
+> `.CustomErrorResponses = {Quantity: 0}` on the SSR distribution, selected by alias on the live
+> domain. The `ErrorCachingMinTTL` block elsewhere in that repo is in `rollout_static_site.sh`, a
+> different distribution. Whether CloudFront honours `stale-if-error` at all is no longer the live
+> question it was recorded as — it has since 2023 — but even if it did not, a dropped page costs one
+> errored request rather than a day of cached `noindex`.
+>
+> **A backfill is a growth event this page has to survive.** The walk fetches `ceil(total / 500)`
+> pages up to a ceiling, and that ceiling used to be twenty — 10,000 rows against a corpus of 6,612.
+> Reaching it set the same flag a dropped page sets, which now throws, so a corpus of 10,001 rows
+> would have failed on every request from then on and started serving readers 500s a week later. If
+> the ~25 broken spaces below are repaired and backfill their archives, several thousand rows arrive
+> at once. The ceiling is sixty, requests are issued sixteen at a time, and reaching it is now its
+> own named error whose message says it will not clear by itself.
+>
+> **Still open, and it is a backend item:** why per-source DAO ingestion is failing while the forum
+> feed beside it is healthy. Until it is fixed the report measures 15 spaces where it should measure
+> closer to 40, and the dead-DAO index — the one metric here that journalists would actually run —
+> stays unbuildable.
+
 ### B2 · The Crypto Exploit Tracker — `/security/exploits` + a page per incident, continuous
 
 **Source:** `/security/exploits/` — 164 records, each with protocol, date, attack type, source URL
@@ -1055,6 +1133,13 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
       backend change is not deployed**, so C3 remains blocked
 - [ ] Start the `amount_usd` / `chain` backfill on the 164 exploit records. It no longer gates the
       first shipped asset, but it still gates B2 — **not started, and diverging** (§14)
+- [ ] **Diagnose per-source DAO ingestion.** Added 30 Sep, and it is the same class of item as the
+      line above: a data dependency that gates the most quotable half of an Engine B asset. 36 of
+      51 Snapshot spaces have produced nothing in a quarter, and the index contradicts itself about
+      why — `aave_dao` last ingested 2 Apr 2025, `aave_forum` carrying `[ARFC]` threads the week of
+      28 Sep 2026. Two distinguishable causes, both worth separating: fetches that have stopped, and
+      space ids that have moved (`yearn_dao` → `ybaby.eth`). The report ships without it and says so
+      on the page; the dead-DAO index cannot ([B1](#b1--the-alphaday-governance-report--researchgovernance-monthly))
 
 ### Weeks 3–6 · Engine A + the first Engine B asset
 
@@ -1164,7 +1249,12 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
 
 ### Weeks 7–12 · Engine B at cadence
 
-- [ ] Governance Report #1, with press outreach
+- [x] ~~Governance Report #1, with press outreach~~ → **page shipped 30 Sep at
+      `/research/governance`; outreach not started, and the pitch has changed.** The line to take to
+      DL News is the cohort-controlled one — proposal volume down 66% across a fixed set of live
+      Snapshot spaces — not the dead-DAO index this document led with, which the data cannot support
+      (see [B1](#b1--the-alphaday-governance-report--researchgovernance-monthly)). Outreach should
+      wait for the second monthly reading, so the pitch carries a trend rather than a snapshot
 - [ ] Events calendar with `Event` schema — the second listicle SERP on the list
 - [ ] **Ship the exploit tracker** once the amounts are backfilled — hub plus 164 incident pages,
       aimed at `{protocol} exploit` and the news join, not at out-ranking DefiLlama's table

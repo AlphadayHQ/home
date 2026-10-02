@@ -1074,6 +1074,16 @@ export const CAPABILITY_PAGES = {
       curl: `curl ${API_BASE}/items/dao/?sources=arbitrum_dao`,
       mcpTools: ["get_dao", "get_dao_detail", "get_trending_dao"],
     },
+    /*
+     * B1's governance report is built on this endpoint, and nothing else on the
+     * site linked to it. A research page that can only be reached through the
+     * sitemap is a page nobody cites.
+     */
+    related: {
+      href: "/research/governance",
+      name: "The DAO governance report",
+      why: "What this endpoint says when you read all of it: proposal volume across the Snapshot spaces still being indexed, month by month, with the method and the coverage gaps stated.",
+    },
     whatItsFor: [
       "Deadline alerting, which is the whole point: a proposal closing in six hours cannot be acted on retroactively, and `ends_at` makes \"closing soon\" a computation rather than a subscription.",
       "Scoping to one DAO: `?sources=arbitrum_dao` returns that DAO's own proposals, where `?tags=arbitrum` returns the wider Ethereum-ecosystem set.",
