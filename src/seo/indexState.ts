@@ -70,6 +70,24 @@ const STATIC_STATES: Record<string, IndexState> = {
    * take the calendar out of the index for a few days every month.
    */
   "/events": "promoted",
+
+  /*
+   * B1's governance report. Promoted from the start, unlike the Engine A tiers
+   * that shipped `noindex` — a research page exists to be cited, and a `noindex`
+   * primary source is a contradiction in terms: it cannot be found, quoted or
+   * linked, so holding it back measures nothing and costs the only thing the
+   * asset is for.
+   *
+   * The escape hatch is `reportIsIndexable` rather than a raw count. The page
+   * demotes itself when the measured cohort falls below `COHORT_FLOOR` or when
+   * there are not two full years to compare — both of which mean the proposal
+   * feed has broken rather than that governance has gone quiet. A quiet quarter
+   * is a finding and keeps the page indexed; a collapsed cohort is a pipeline
+   * failure and takes it out, because the decline it would print did not happen
+   * in the DAOs.
+   */
+  "/research/governance": "promoted",
+
   "/mobile": "promoted",
   "/privacy": "promoted",
 

@@ -224,6 +224,30 @@ const CapabilityPage = ({ page }) => {
             .
           </div>
 
+          {/*
+            A published analysis built on this capability, where one exists.
+
+            Optional and per-capability rather than a row in the shared footer:
+            most capabilities have no such page, and a link that is present on
+            every page and true of one is worse than no link. It also closes the
+            loop on `/research/governance`, which nothing on the site linked to
+            — a page whose entire purpose is to be cited, reachable only through
+            the sitemap.
+          */}
+          {page.related && (
+            <div className="mt-7 border-l border-surface-border pl-4">
+              <a
+                href={page.related.href}
+                className="text-[15px] font-semibold text-text underline decoration-surface-border underline-offset-4 transition-colors hover:decoration-text"
+              >
+                {page.related.name}
+              </a>
+              <p className="mt-1 text-[14px] text-text-muted">
+                <Rich>{page.related.why}</Rich>
+              </p>
+            </div>
+          )}
+
           <div className="flex flex-wrap gap-3.5 mt-7">
             <a
               className="group inline-flex items-center gap-2 border border-surface-border text-text font-bold text-[14.5px] rounded-lg px-5 py-3 hover:border-primary/50 transition-colors"

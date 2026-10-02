@@ -26,6 +26,7 @@ import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as EventsMonthRouteImport } from './routes/events.$month'
 import { Route as McpIndexRouteImport } from './routes/mcp.index'
 import { Route as McpClientRouteImport } from './routes/mcp.$client'
+import { Route as ResearchGovernanceRouteImport } from './routes/research.governance'
 import { Route as ApiDataCapabilityRouteImport } from './routes/api.data.$capability'
 import { Route as ProjectsSlugIndexRouteImport } from './routes/projects.$slug.index'
 import { Route as ProjectsSlugTopicRouteImport } from './routes/projects.$slug.$topic'
@@ -116,6 +117,11 @@ const McpClientRoute = McpClientRouteImport.update({
   path: '/mcp/$client',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResearchGovernanceRoute = ResearchGovernanceRouteImport.update({
+  id: '/research/governance',
+  path: '/research/governance',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiDataCapabilityRoute = ApiDataCapabilityRouteImport.update({
   id: '/api/data/$capability',
   path: '/api/data/$capability',
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/cookbook/$recipe': typeof CookbookRecipeRoute
   '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
+  '/research/governance': typeof ResearchGovernanceRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/cookbook/': typeof CookbookIndexRoute
@@ -173,6 +180,7 @@ export interface FileRoutesByTo {
   '/cookbook/$recipe': typeof CookbookRecipeRoute
   '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
+  '/research/governance': typeof ResearchGovernanceRoute
   '/api': typeof ApiIndexRoute
   '/blog': typeof BlogIndexRoute
   '/cookbook': typeof CookbookIndexRoute
@@ -197,6 +205,7 @@ export interface FileRoutesById {
   '/cookbook/$recipe': typeof CookbookRecipeRoute
   '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
+  '/research/governance': typeof ResearchGovernanceRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/cookbook/': typeof CookbookIndexRoute
@@ -222,6 +231,7 @@ export interface FileRouteTypes {
     | '/cookbook/$recipe'
     | '/events/$month'
     | '/mcp/$client'
+    | '/research/governance'
     | '/api/'
     | '/blog/'
     | '/cookbook/'
@@ -245,6 +255,7 @@ export interface FileRouteTypes {
     | '/cookbook/$recipe'
     | '/events/$month'
     | '/mcp/$client'
+    | '/research/governance'
     | '/api'
     | '/blog'
     | '/cookbook'
@@ -268,6 +279,7 @@ export interface FileRouteTypes {
     | '/cookbook/$recipe'
     | '/events/$month'
     | '/mcp/$client'
+    | '/research/governance'
     | '/api/'
     | '/blog/'
     | '/cookbook/'
@@ -292,6 +304,7 @@ export interface RootRouteChildren {
   CookbookRecipeRoute: typeof CookbookRecipeRoute
   EventsMonthRoute: typeof EventsMonthRoute
   McpClientRoute: typeof McpClientRoute
+  ResearchGovernanceRoute: typeof ResearchGovernanceRoute
   ApiIndexRoute: typeof ApiIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
   CookbookIndexRoute: typeof CookbookIndexRoute
@@ -424,6 +437,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpClientRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/research/governance': {
+      id: '/research/governance'
+      path: '/research/governance'
+      fullPath: '/research/governance'
+      preLoaderRoute: typeof ResearchGovernanceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/data/$capability': {
       id: '/api/data/$capability'
       path: '/api/data/$capability'
@@ -468,6 +488,7 @@ const rootRouteChildren: RootRouteChildren = {
   CookbookRecipeRoute: CookbookRecipeRoute,
   EventsMonthRoute: EventsMonthRoute,
   McpClientRoute: McpClientRoute,
+  ResearchGovernanceRoute: ResearchGovernanceRoute,
   ApiIndexRoute: ApiIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
   CookbookIndexRoute: CookbookIndexRoute,
