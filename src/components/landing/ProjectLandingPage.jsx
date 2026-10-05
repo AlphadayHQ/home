@@ -139,22 +139,6 @@ export function LoadingState({ slug }) {
   );
 }
 
-export function ErrorState() {
-  return (
-    <>
-      <div className="min-h-screen bg-eerie flex flex-col items-center justify-center px-6 text-center">
-        <h1 className="text-platinum text-2xl mb-3">Something went wrong</h1>
-        <p className="text-aluminium mb-6">
-          We couldn't load this dashboard right now. Please try again later.
-        </p>
-        <a href="/" className="text-california underline">
-          Back to Alphaday
-        </a>
-      </div>
-    </>
-  );
-}
-
 /**
  * A link to the rolling digest, for the entities that have one.
  *

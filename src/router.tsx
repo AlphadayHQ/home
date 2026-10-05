@@ -1,5 +1,6 @@
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
+import ErrorState from "./components/ErrorState";
 
 export function getRouter() {
   return createTanStackRouter({
@@ -8,6 +9,9 @@ export function getRouter() {
     // The status is asserted in the route tests.
     defaultPreload: "intent",
     scrollRestoration: true,
+    // Every route, not just the project pages: a loader that throws gets the
+    // branded body instead of TanStack's built-in "Hide Error" box.
+    defaultErrorComponent: ErrorState,
   });
 }
 
