@@ -90,10 +90,11 @@ const STATIC_STATES: Record<string, IndexState> = {
 
   /*
    * B2's exploit tier. The hub, and through `indexStateFor("/security/exploits")`
-   * the 33 incident pages under it, which are not listed here because they are
+   * the incident pages under it, which are not listed here because they are
    * derived from the feed — the sitemap builds them with `fetchIncidents()` from
    * the same `shapeAll` the route uses, so the two cannot disagree about which
-   * incidents exist.
+   * incidents exist. Every record has a page; `isIndexableIncident` decides
+   * which inherit this state and which are served `substrate`.
    *
    * The route demotes the hub when the priced-incident count falls under
    * `HUB_INDEX_FLOOR`, which means the press half of the feed has stopped

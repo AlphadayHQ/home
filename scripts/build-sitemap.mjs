@@ -32,9 +32,11 @@ import { digestPaths } from "../src/data/digestEntities.js";
 import { shapeRows } from "../src/data/eventRows.ts";
 import {
   COVERAGE_FETCH,
-  coverageQuery,
-  hasAmount,
+  coverageQueries,
   incidentPath,
+  isIndexableIncident,
+  isReproduction,
+  mergeNews,
   rankCoverage,
   shapeAll,
 } from "../src/data/exploits.ts";
@@ -245,11 +247,12 @@ async function shapedCount(month) {
  * **It also has to run the coverage join**, because the route demotes an
  * incident it found no press coverage for. Listing those would submit URLs the
  * page serves `noindex` — the precise drift `indexState.ts` exists to prevent,
- * arrived at from the sitemap's side. One request per priced incident, once per
- * build.
+ * arrived at from the sitemap's side. The rule itself is `isIndexableIncident`,
+ * which the route also calls. Three searches per reported incident (48 on 2 Oct),
+ * once per build; reproductions are never indexed, so they are not queried.
  */
 /**
- * One `fetch`, retried, because this build makes 33 of them in a row.
+ * One `fetch`, retried, because this build makes ~144 of them.
  *
  * A single flaky response used to abort the whole sitemap. The run is long
  * enough that one transient 502 is likely, and the cost of giving up is a build
@@ -277,23 +280,34 @@ async function retrying(url, attempts = 3) {
 async function fetchIncidents() {
   const response = await retrying(`${API_BASE}/security/exploits/?limit=500`);
   const body = await response.json();
-  const priced = shapeAll(body.results ?? []).filter(hasAmount);
+  const reported = shapeAll(body.results ?? []).filter(
+    (exploit) => !isReproduction(exploit)
+  );
   const listed = [];
 
-  for (const exploit of priced) {
-    const query = coverageQuery(exploit);
-    if (!query) continue;
+  for (const exploit of reported) {
+    const queries = coverageQueries(exploit);
+    if (!queries.length) continue;
 
-    // `COVERAGE_FETCH` is shared with the route: a different page size here
-    // would change which incidents come back covered, and the sitemap would
-    // submit URLs the page serves `noindex`.
-    const newsUrl =
-      `${API_BASE}/items/news/?limit=${COVERAGE_FETCH}` +
-      `&search=${encodeURIComponent(query)}`;
-    const news = await retrying(newsUrl);
+    // `COVERAGE_FETCH` and the queries are shared with the route: a different
+    // page size or search here would change which incidents come back covered,
+    // and the sitemap would submit URLs the page serves `noindex`. The three
+    // run together, as the route runs them, so ~144 requests take ~48 waits.
+    const results = await Promise.all(
+      queries.map(async (query) => {
+        const news = await retrying(
+          `${API_BASE}/items/news/?limit=${COVERAGE_FETCH}` +
+            `&search=${encodeURIComponent(query)}`
+        );
+        return (await news.json()).results ?? [];
+      })
+    );
 
-    const matched = rankCoverage((await news.json()).results ?? [], exploit);
-    if (matched.length > 0) listed.push(incidentPath(exploit));
+    const matched = rankCoverage(mergeNews(results), exploit, reported);
+    // `ok` is true: `retrying` throws rather than return a failed lookup.
+    if (isIndexableIncident(exploit, matched.length, true)) {
+      listed.push(incidentPath(exploit));
+    }
   }
 
   return listed;

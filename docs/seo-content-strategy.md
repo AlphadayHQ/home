@@ -391,6 +391,11 @@ the kind of data type a "crypto data layer" should have and a price API should n
 > **Shipped 2 Oct 2026 at [`/security/exploits`](../src/pages/exploits.jsx) plus 33 incident pages —
 > and the blocker this section names turned out to be the wrong one.**
 >
+> **Widened 5 Oct 2026: every record now has a page** (207, from 211 rows after de-duplication), so a hub row lands on the facts rather
+> than a 404. Indexing is narrower and decided in one place, `isIndexableIncident`: reported
+> incidents (priced or not) that the press join matched are indexed, and the 159 reproductions are
+> served `noindex` and left out of the sitemap.
+>
 > **The amount backfill was declined as impossible, and that is half right — the half that matters
 > is wrong.** The data owner's position is that the figures are not available from the API's own
 > source. For the 48 press records it is partly true: 33 carry an amount, and of the 15 that do
@@ -428,14 +433,15 @@ the kind of data type a "crypto data layer" should have and a price API should n
 > keyed on a slug built from the headline — the only field that is both correct and identifying.
 > The other 174 are listed on the hub as what they are rather than given pages, because a page each
 > would be 174 reprints of someone else's write-up under URLs nobody queries, which is the
-> thin-affiliate shape [§12](#12-kill-list) rejects.
+> thin-affiliate shape [§12](#12-kill-list) rejects. *(Superseded 5 Oct — every record now has a
+> page, and the ones this paragraph worried about are served `noindex`. See the note above.)*
 >
 > **"Unpriced" is not the same question as "which dataset".** The hub first grouped on whether
 > `amount_usd` was set, which filed **15 press records** — "Poolin bitcoin mining pool operator
 > files for bankruptcy", "POAP shuts down", "msUSD loses its dollar peg" — under a *published
 > proof-of-concept* heading. They have no figure because no theft happened, which is a different
 > fact from a reproduction having none. The hub now splits on the source and runs three sections:
-> 33 reported with a figure, 15 reported without, 163 catalogued by reproduction.
+> 33 reported with a figure, 15 reported without, 159 catalogued by reproduction.
 >
 > **The summaries open with the wrong date, and the clause is removed rather than rewritten.** All
 > 33 begin "On {Month d, yyyy}," and in all 33 that is the logged date — wrong about the incident
