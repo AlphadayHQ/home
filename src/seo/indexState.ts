@@ -97,7 +97,8 @@ const STATIC_STATES: Record<string, IndexState> = {
    * which inherit this state and which are served `substrate`.
    *
    * The route demotes the hub when the priced-incident count falls under
-   * `HUB_INDEX_FLOOR`, which means the press half of the feed has stopped
+   * its floor, which means nothing has been written up recently and the press
+   * half of the feed may have stopped
    * arriving. Thirty-three rows is already the thin side of a comparison with
    * DefiLlama's complete table; a handful is not a list at all.
    */

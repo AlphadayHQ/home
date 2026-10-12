@@ -28,6 +28,7 @@ import {
   projectIndexState,
   staticPaths,
 } from "../src/seo/indexState.ts";
+import { byIncident, isAbout } from "../src/data/analysis.ts";
 import { digestPaths } from "../src/data/digestEntities.js";
 import { shapeRows } from "../src/data/eventRows.ts";
 import {
@@ -283,11 +284,44 @@ async function fetchIncidents() {
   const reported = shapeAll(body.results ?? []).filter(
     (exploit) => !isReproduction(exploit)
   );
+
+  // A published analysis makes a page indexable on its own, so the sitemap has
+  // to read the same store the route reads. Two requests deep, because the list
+  // endpoint omits `content` and the provenance block inside it is the only
+  // thing tying a post to an incident — see `src/server/analysis.ts`. Reading
+  // the list alone matched nothing and quietly dropped Meter and the ASI
+  // Alliance, whose only claim to the index is their analysis.
+  //
+  // `/posts/` is the whole blog, so the list is walked to its end: stopping at
+  // one page would drop the oldest analyses once the blog passed 100 posts.
+  const rows = [];
+  for (let url = `${API_BASE}/posts/?limit=100`; url; ) {
+    const page = await (await retrying(url)).json();
+    rows.push(...(page.results ?? []));
+    url = page.links?.next ?? null;
+  }
+  const slugs = rows
+    .filter((row) => row.status === "published" && row.slug)
+    .map((row) => row.slug);
+  const details = await Promise.all(
+    slugs.map(async (slug) =>
+      (await retrying(`${API_BASE}/posts/${encodeURIComponent(slug)}/`)).json()
+    )
+  );
+  const analyses = byIncident(details);
+
   const listed = [];
 
   for (const exploit of reported) {
+    // The same title cross-check the route applies, so the sitemap never
+    // submits a page on the strength of an analysis the page does not show.
+    const analysis = analyses.get(Number(exploit.id));
+    const hasAnalysis = !!analysis && isAbout(analysis, exploit.title);
     const queries = coverageQueries(exploit);
-    if (!queries.length) continue;
+    if (!queries.length) {
+      if (hasAnalysis) listed.push(incidentPath(exploit));
+      continue;
+    }
 
     // `COVERAGE_FETCH` and the queries are shared with the route: a different
     // page size or search here would change which incidents come back covered,
@@ -304,8 +338,16 @@ async function fetchIncidents() {
     );
 
     const matched = rankCoverage(mergeNews(results), exploit, reported);
-    // `ok` is true: `retrying` throws rather than return a failed lookup.
-    if (isIndexableIncident(exploit, matched.length, true)) {
+    // Both `ok` flags are true: `retrying` throws rather than return a failure.
+    if (
+      isIndexableIncident({
+        exploit,
+        coverageCount: matched.length,
+        coverageOk: true,
+        hasAnalysis,
+        analysisOk: true,
+      })
+    ) {
       listed.push(incidentPath(exploit));
     }
   }
