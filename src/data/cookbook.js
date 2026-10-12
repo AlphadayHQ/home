@@ -38,7 +38,7 @@
  * pages: a sample whose output no longer matches reality is worse than no
  * sample, because it is the first thing a reader and a model will trust.
  */
-import { API_COMMANDS } from "./apiSurface";
+import { API_COMMANDS } from "./apiSurface.js";
 
 const MCP_URL = API_COMMANDS.mcpUrl;
 const VERIFIED = "2026-09-15";
@@ -585,6 +585,9 @@ print(Counter(n["sentiment"] for n in news))`,
 
 /** Lookup by slug, for the `/cookbook/$recipe` route. */
 export const recipeBySlug = (slug) => RECIPES.find((r) => r.slug === slug);
+
+/** The paths `src/seo/indexState.ts` promotes. */
+export const recipePaths = () => RECIPES.map((r) => `/cookbook/${r.slug}`);
 
 /** The caveats a recipe selects, in a stable order across pages. */
 export const caveatsFor = (recipe) =>

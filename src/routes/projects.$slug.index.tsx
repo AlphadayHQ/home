@@ -2,7 +2,6 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import {
   ProjectLandingPage,
   LoadingState,
-  ErrorState,
 } from "../components/landing/ProjectLandingPage";
 import { getLandingPage } from "../server/landingPages";
 import { canonicalFor, seoHead } from "../seo/head";
@@ -61,7 +60,6 @@ export const Route = createFileRoute("/projects/$slug/")({
   // gap to fill; on the first (server-rendered) request there is not, which is
   // the point of moving the fetch server-side.
   pendingComponent: () => <LoadingState />,
-  errorComponent: ErrorState,
 });
 
 function ProjectPage() {

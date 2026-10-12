@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-09-18T08:46:42.079Z",
+  "fetchedAt": "2026-10-12T07:18:31.529Z",
   "serverInfo": {
     "name": "alphaday",
     "version": "1.30.0"
@@ -2046,6 +2046,95 @@
           "pk"
         ],
         "title": "get_trending_keywords_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_posts",
+      "description": "Authored posts\n\nBrowse published posts. Editors with change permission can also browse drafts\nand archived posts. Filter by tag, author, status, date, or title.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_postsArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_posts_detail",
+      "description": "Read an authored post\n\nFetch the full Markdown body by slug. Unpublished posts require the\nposts.change_post permission.",
+      "inputSchema": {
+        "properties": {
+          "slug": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "URL-friendly identifier (slug) of the resource.",
+            "title": "Slug"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "slug"
+        ],
+        "title": "get_posts_detailArguments",
         "type": "object"
       }
     },

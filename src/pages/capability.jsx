@@ -20,7 +20,7 @@ import { CAPABILITY_PAGES_VERIFIED_ON } from "../data/capabilityPages";
  *
  * WHY THESE EXIST AT ALL
  *
- * Four of the 22 data capabilities are not on any incumbent crypto API: a
+ * Four of the data capabilities are not on any incumbent crypto API: a
  * structured incident database, per-coin developer activity, AI-detected chart
  * patterns and one-call-per-pool DeFi yields. Most readers who land on `/api`
  * never realise the server has them, because the page is a stat band and a
@@ -223,6 +223,30 @@ const CapabilityPage = ({ page }) => {
             </a>
             .
           </div>
+
+          {/*
+            A published analysis built on this capability, where one exists.
+
+            Optional and per-capability rather than a row in the shared footer:
+            most capabilities have no such page, and a link that is present on
+            every page and true of one is worse than no link. It also closes the
+            loop on `/research/governance`, which nothing on the site linked to
+            — a page whose entire purpose is to be cited, reachable only through
+            the sitemap.
+          */}
+          {page.related && (
+            <div className="mt-7 border-l border-surface-border pl-4">
+              <a
+                href={page.related.href}
+                className="text-[15px] font-semibold text-text underline decoration-surface-border underline-offset-4 transition-colors hover:decoration-text"
+              >
+                {page.related.name}
+              </a>
+              <p className="mt-1 text-[14px] text-text-muted">
+                <Rich>{page.related.why}</Rich>
+              </p>
+            </div>
+          )}
 
           <div className="flex flex-wrap gap-3.5 mt-7">
             <a

@@ -4,7 +4,7 @@
  * WHY THIS IS SEPARATE FROM mcpTools.js
  *
  * `mcpTools.js` is reachable from the home page, which needs exactly one thing
- * from it: `CAPABILITY_COUNT`. Hanging 22 descriptions off the same object would
+ * from it: `CAPABILITY_COUNT`. Hanging every description off the same object would
  * ship all of them to `/` to render a single integer, since the map cannot be
  * tree-shaken while the count reads its keys. Only `/mcp` imports this file.
  *
@@ -61,6 +61,7 @@ export const CAPABILITY_COPY = {
   exchanges: "140+ centralized exchanges with trust scores and volume.",
   "onchain-dexes": "700+ DEXes with the chains and protocols behind them.",
   "security-exploits": "180+ on-chain exploits and hacks, each with a written incident record.",
+  posts: "Alphaday's own research in Markdown, starting with analyses of crypto security incidents.",
   "tvl-fees": "2,000+ protocol fee and revenue records across DeFi.",
   "tvl-stablecoins": "400+ stablecoins — peg type, mechanism and circulating supply.",
   "tvl-yields": "32,000+ DeFi yield pools with base and reward APY, TVL and IL risk.",
@@ -117,7 +118,7 @@ export const HEADLINE_CAPABILITIES = [
  * solely because the parent is a flex container, which blockifies its children.
  * Change that parent and fourteen labels silently render lowercase.
  *
- * Writing all 22 out costs nothing and removes the dependency. The keys are
+ * Writing them all out costs nothing and removes the dependency. The keys are
  * CI-checked against TOOL_DOMAINS, so a new capability fails the build rather
  * than rendering untitled.
  */
@@ -139,6 +140,7 @@ export const CAPABILITY_LABELS = {
   exchanges: "Exchanges",
   "onchain-dexes": "On-chain DEXes",
   "security-exploits": "Security exploits",
+  posts: "Posts",
   "tvl-fees": "TVL fees",
   "tvl-stablecoins": "TVL stablecoins",
   "tvl-yields": "TVL yields",

@@ -46,7 +46,7 @@
  * schedule, and a stale config block is worse than no page: it is the first
  * thing both a prospect and a model will try.
  */
-import { API_COMMANDS } from "./apiSurface";
+import { API_COMMANDS } from "./apiSurface.js";
 
 const URL = API_COMMANDS.mcpUrl;
 
@@ -222,6 +222,9 @@ export const clientBySlug = (slug) =>
  * still linked from the hub; only these four get a config block there.
  */
 export const FEATURED_CLIENT_SLUGS = ["claude", "cursor", "vscode", "codex"];
+
+/** The paths `src/seo/indexState.ts` promotes — all eight, not just the featured four. */
+export const mcpClientPaths = () => MCP_CLIENTS.map((c) => `/mcp/${c.slug}`);
 
 /**
  * The oldest `verifiedOn` in the set.

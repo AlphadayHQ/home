@@ -6,6 +6,10 @@ import {
   indexStateFor,
   staticPaths,
 } from "../seo/indexState";
+import { digestPaths } from "../data/digestEntities.js";
+import { capabilityPaths } from "../data/capabilityPages.js";
+import { recipePaths } from "../data/cookbook.js";
+import { mcpClientPaths } from "../data/mcpClients.js";
 
 /**
  * Static routes are declared in exactly one place, and this asserts it stays
@@ -105,6 +109,118 @@ describe("static route declaration", () => {
         patterns.some(({ test }) => test(path)),
         `${path} is promoted but no route file serves it`
       ).toBe(true);
+    }
+  });
+});
+
+/**
+ * The digest tier's recrawl signal.
+ *
+ * `/projects/{slug}/this-week` shipped with no `lastmod` at all — the one tier
+ * on the site whose entire value is recency, giving Google nothing to schedule
+ * a recrawl from. These assert the two halves of the fix, because both are easy
+ * to undo by accident.
+ */
+describe("the digest tier's lastmod", () => {
+  const sitemap = readFileSync(
+    join(__dirname, "..", "..", "scripts", "build-sitemap.mjs"),
+    "utf8"
+  );
+
+  /*
+   * A digest path absent from `staticPaths()` would be listed nowhere and
+   * stamped with nothing, silently. `indexState.ts` derives them from
+   * `DIGEST_ENTITIES` precisely so that cannot happen — this is the assertion
+   * that the derivation is still wired up.
+   */
+  it("covers every digest path, and all of them are promoted", () => {
+    const paths = new Set(staticPaths());
+    for (const path of digestPaths()) {
+      expect(paths.has(path), `${path} is missing from staticPaths()`).toBe(true);
+      expect(
+        belongsInSitemap(indexStateFor(path)),
+        `${path} is not promoted, so it would never be listed`
+      ).toBe(true);
+    }
+  });
+
+  it("stamps them from digestPaths rather than a second list", () => {
+    expect(
+      sitemap.includes("digestPaths"),
+      "build-sitemap.mjs must derive the rolling set from digestPaths()"
+    ).toBe(true);
+  });
+
+  /*
+   * The regression that would cost more than the bug did. `urlsetXml`'s own
+   * comment records why: a `lastmod` that moves on every build trains Google to
+   * ignore the field, so a well-meaning change to `new Date().toISOString()`
+   * would not just fail to help, it would disarm the signal for the whole tier.
+   * Truncating to the UTC day is what makes two builds on one day agree.
+   */
+  it("truncates to the day so rebuilding does not churn the value", () => {
+    const rolling = sitemap.match(/const rollingLastmod = [^;]+;/);
+    expect(rolling, "rollingLastmod() is gone").not.toBeNull();
+    expect(
+      rolling?.[0].includes("slice(0, 10)"),
+      "rollingLastmod must truncate to the UTC day, not stamp the build instant"
+    ).toBe(true);
+    expect(rolling?.[0]).toMatch(/T00:00:00/);
+  });
+});
+
+/**
+ * The Engine A tiers.
+ *
+ * These shipped behind `noindex` on purpose, waiting on the SSR cutover, and
+ * then stayed there for four days after it landed because the hold was a
+ * comment rather than anything executable. That is the regression worth a test:
+ * not "are they promoted today" — one edit did that — but "is each tier still
+ * derived from the data that builds it", so a page added to any of the three
+ * cannot ship invisible the way all 36 just did.
+ */
+describe("the Engine A tiers", () => {
+  const tiers = [
+    ["capability", capabilityPaths, "/api/data/", 22],
+    ["cookbook", recipePaths, "/cookbook/", 6],
+    ["mcp client", mcpClientPaths, "/mcp/", 8],
+  ] as const;
+
+  it.each(tiers)("promotes every %s page", (_label, paths, prefix, count) => {
+    const declared = new Set(staticPaths());
+    const tierPaths = paths();
+
+    // A count assertion looks redundant next to the loop below, but it is the
+    // half that catches an empty derivation: `paths()` returning [] would make
+    // every other assertion here pass vacuously.
+    expect(tierPaths).toHaveLength(count);
+
+    for (const path of tierPaths) {
+      expect(path.startsWith(prefix), `${path} is not under ${prefix}`).toBe(true);
+      expect(declared.has(path), `${path} is missing from staticPaths()`).toBe(true);
+      expect(
+        belongsInSitemap(indexStateFor(path)),
+        `${path} is not promoted, so it would be noindex and in no sitemap`
+      ).toBe(true);
+    }
+  });
+
+  /*
+   * The hub pages are promoted by hand in STATIC_STATES while their children are
+   * derived. Promoting a child set and forgetting its hub would leave the tier
+   * reachable only from the sitemap, so assert the pair.
+   */
+  it.each([["/api"], ["/cookbook"], ["/mcp"]])("keeps %s promoted as the hub", (hub) => {
+    expect(belongsInSitemap(indexStateFor(hub))).toBe(true);
+  });
+
+  it("derives all three from their data modules rather than a second list", () => {
+    const source = readFileSync(
+      join(__dirname, "..", "seo", "indexState.ts"),
+      "utf8"
+    );
+    for (const fn of ["capabilityPaths", "recipePaths", "mcpClientPaths"]) {
+      expect(source.includes(`${fn}()`), `indexState.ts must call ${fn}()`).toBe(true);
     }
   });
 });

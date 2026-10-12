@@ -22,12 +22,17 @@ import { Route as BSplatRouteImport } from './routes/b.$'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as CookbookIndexRouteImport } from './routes/cookbook.index'
 import { Route as CookbookRecipeRouteImport } from './routes/cookbook.$recipe'
+import { Route as EventsIndexRouteImport } from './routes/events.index'
+import { Route as EventsMonthRouteImport } from './routes/events.$month'
 import { Route as McpIndexRouteImport } from './routes/mcp.index'
 import { Route as McpClientRouteImport } from './routes/mcp.$client'
+import { Route as ResearchGovernanceRouteImport } from './routes/research.governance'
 import { Route as ApiDataCapabilityRouteImport } from './routes/api.data.$capability'
 import { Route as ProjectsSlugIndexRouteImport } from './routes/projects.$slug.index'
 import { Route as ProjectsSlugTopicRouteImport } from './routes/projects.$slug.$topic'
 import { Route as ProjectsSlugThisWeekRouteImport } from './routes/projects.$slug.this-week'
+import { Route as SecurityExploitsIndexRouteImport } from './routes/security.exploits.index'
+import { Route as SecurityExploitsIncidentRouteImport } from './routes/security.exploits.$incident'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -94,6 +99,16 @@ const CookbookRecipeRoute = CookbookRecipeRouteImport.update({
   path: '/cookbook/$recipe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsIndexRoute = EventsIndexRouteImport.update({
+  id: '/events/',
+  path: '/events/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EventsMonthRoute = EventsMonthRouteImport.update({
+  id: '/events/$month',
+  path: '/events/$month',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const McpIndexRoute = McpIndexRouteImport.update({
   id: '/mcp/',
   path: '/mcp/',
@@ -102,6 +117,11 @@ const McpIndexRoute = McpIndexRouteImport.update({
 const McpClientRoute = McpClientRouteImport.update({
   id: '/mcp/$client',
   path: '/mcp/$client',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchGovernanceRoute = ResearchGovernanceRouteImport.update({
+  id: '/research/governance',
+  path: '/research/governance',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiDataCapabilityRoute = ApiDataCapabilityRouteImport.update({
@@ -124,6 +144,17 @@ const ProjectsSlugThisWeekRoute = ProjectsSlugThisWeekRouteImport.update({
   path: '/projects/$slug/this-week',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SecurityExploitsIndexRoute = SecurityExploitsIndexRouteImport.update({
+  id: '/security/exploits/',
+  path: '/security/exploits/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SecurityExploitsIncidentRoute =
+  SecurityExploitsIncidentRouteImport.update({
+    id: '/security/exploits/$incident',
+    path: '/security/exploits/$incident',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -136,15 +167,20 @@ export interface FileRoutesByFullPath {
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
+  '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
+  '/research/governance': typeof ResearchGovernanceRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/cookbook/': typeof CookbookIndexRoute
+  '/events/': typeof EventsIndexRoute
   '/mcp/': typeof McpIndexRoute
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
+  '/security/exploits/$incident': typeof SecurityExploitsIncidentRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
+  '/security/exploits/': typeof SecurityExploitsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -157,15 +193,20 @@ export interface FileRoutesByTo {
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
+  '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
+  '/research/governance': typeof ResearchGovernanceRoute
   '/api': typeof ApiIndexRoute
   '/blog': typeof BlogIndexRoute
   '/cookbook': typeof CookbookIndexRoute
+  '/events': typeof EventsIndexRoute
   '/mcp': typeof McpIndexRoute
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
+  '/security/exploits/$incident': typeof SecurityExploitsIncidentRoute
   '/projects/$slug': typeof ProjectsSlugIndexRoute
+  '/security/exploits': typeof SecurityExploitsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -179,15 +220,20 @@ export interface FileRoutesById {
   '/api/docs': typeof ApiDocsRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
+  '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
+  '/research/governance': typeof ResearchGovernanceRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/cookbook/': typeof CookbookIndexRoute
+  '/events/': typeof EventsIndexRoute
   '/mcp/': typeof McpIndexRoute
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
+  '/security/exploits/$incident': typeof SecurityExploitsIncidentRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
+  '/security/exploits/': typeof SecurityExploitsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -202,15 +248,20 @@ export interface FileRouteTypes {
     | '/api/docs'
     | '/b/$'
     | '/cookbook/$recipe'
+    | '/events/$month'
     | '/mcp/$client'
+    | '/research/governance'
     | '/api/'
     | '/blog/'
     | '/cookbook/'
+    | '/events/'
     | '/mcp/'
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
+    | '/security/exploits/$incident'
     | '/projects/$slug/'
+    | '/security/exploits/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -223,15 +274,20 @@ export interface FileRouteTypes {
     | '/api/docs'
     | '/b/$'
     | '/cookbook/$recipe'
+    | '/events/$month'
     | '/mcp/$client'
+    | '/research/governance'
     | '/api'
     | '/blog'
     | '/cookbook'
+    | '/events'
     | '/mcp'
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
+    | '/security/exploits/$incident'
     | '/projects/$slug'
+    | '/security/exploits'
   id:
     | '__root__'
     | '/'
@@ -244,15 +300,20 @@ export interface FileRouteTypes {
     | '/api/docs'
     | '/b/$'
     | '/cookbook/$recipe'
+    | '/events/$month'
     | '/mcp/$client'
+    | '/research/governance'
     | '/api/'
     | '/blog/'
     | '/cookbook/'
+    | '/events/'
     | '/mcp/'
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
+    | '/security/exploits/$incident'
     | '/projects/$slug/'
+    | '/security/exploits/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -266,15 +327,20 @@ export interface RootRouteChildren {
   ApiDocsRoute: typeof ApiDocsRoute
   BSplatRoute: typeof BSplatRoute
   CookbookRecipeRoute: typeof CookbookRecipeRoute
+  EventsMonthRoute: typeof EventsMonthRoute
   McpClientRoute: typeof McpClientRoute
+  ResearchGovernanceRoute: typeof ResearchGovernanceRoute
   ApiIndexRoute: typeof ApiIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
   CookbookIndexRoute: typeof CookbookIndexRoute
+  EventsIndexRoute: typeof EventsIndexRoute
   McpIndexRoute: typeof McpIndexRoute
   ApiDataCapabilityRoute: typeof ApiDataCapabilityRoute
   ProjectsSlugTopicRoute: typeof ProjectsSlugTopicRoute
   ProjectsSlugThisWeekRoute: typeof ProjectsSlugThisWeekRoute
+  SecurityExploitsIncidentRoute: typeof SecurityExploitsIncidentRoute
   ProjectsSlugIndexRoute: typeof ProjectsSlugIndexRoute
+  SecurityExploitsIndexRoute: typeof SecurityExploitsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -370,6 +436,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CookbookRecipeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events/': {
+      id: '/events/'
+      path: '/events'
+      fullPath: '/events/'
+      preLoaderRoute: typeof EventsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events/$month': {
+      id: '/events/$month'
+      path: '/events/$month'
+      fullPath: '/events/$month'
+      preLoaderRoute: typeof EventsMonthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mcp/': {
       id: '/mcp/'
       path: '/mcp'
@@ -382,6 +462,13 @@ declare module '@tanstack/react-router' {
       path: '/mcp/$client'
       fullPath: '/mcp/$client'
       preLoaderRoute: typeof McpClientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research/governance': {
+      id: '/research/governance'
+      path: '/research/governance'
+      fullPath: '/research/governance'
+      preLoaderRoute: typeof ResearchGovernanceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/data/$capability': {
@@ -412,6 +499,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsSlugThisWeekRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/security/exploits/': {
+      id: '/security/exploits/'
+      path: '/security/exploits'
+      fullPath: '/security/exploits/'
+      preLoaderRoute: typeof SecurityExploitsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/security/exploits/$incident': {
+      id: '/security/exploits/$incident'
+      path: '/security/exploits/$incident'
+      fullPath: '/security/exploits/$incident'
+      preLoaderRoute: typeof SecurityExploitsIncidentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -426,15 +527,20 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDocsRoute: ApiDocsRoute,
   BSplatRoute: BSplatRoute,
   CookbookRecipeRoute: CookbookRecipeRoute,
+  EventsMonthRoute: EventsMonthRoute,
   McpClientRoute: McpClientRoute,
+  ResearchGovernanceRoute: ResearchGovernanceRoute,
   ApiIndexRoute: ApiIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
   CookbookIndexRoute: CookbookIndexRoute,
+  EventsIndexRoute: EventsIndexRoute,
   McpIndexRoute: McpIndexRoute,
   ApiDataCapabilityRoute: ApiDataCapabilityRoute,
   ProjectsSlugTopicRoute: ProjectsSlugTopicRoute,
   ProjectsSlugThisWeekRoute: ProjectsSlugThisWeekRoute,
+  SecurityExploitsIncidentRoute: SecurityExploitsIncidentRoute,
   ProjectsSlugIndexRoute: ProjectsSlugIndexRoute,
+  SecurityExploitsIndexRoute: SecurityExploitsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -141,6 +141,26 @@ pages. Those are right and this section does not restate them. Two additions.
 > oversight, and it does not change until the SSR origin cutover lands. **Until then this tier earns
 > nothing.** The cutover is the one unticked gate in
 > [Phase 2](./seo-strategy.md#phase-2--weeks-412--the-rebuild).
+>
+> **The gate opened and the hold did not lift with it — measured 28 Sep.** The cutover has landed, and
+> the sentence above made the `noindex` conditional on precisely that, so the condition is met. What
+> the build does today: `/mcp` and `/cookbook` are promoted, and the static tier is now **24** URLs
+> rather than 8 — the digest tier having joined it, not these pages. The **36 child pages are still
+> `noindex, follow` and still in no sitemap**, verified on production, where
+> `/cookbook/claude-crypto-news`, `/cookbook/dao-proposal-alerts` and `/mcp/cursor` all return 200
+> with their content server-rendered and a `noindex` header on top of it.
+>
+> So the tier is built, live, crawlable and deliberately uncrawled. **This is the highest-value
+> unblocked action on either document**: 36 pages of the content type this section argues converts
+> best, one `STATIC_STATES` edit from being submittable. It survives because it needs a decision
+> rather than a build — see the item at the front of
+> [Weeks 3–6](#weeks-36--engine-a--the-first-engine-b-asset).
+>
+> One caveat belongs with that decision rather than after it. The comment in
+> [indexState.ts](../src/seo/indexState.ts) justifying the default-deny says these pages do not need
+> indexing "to do its job" — the opposite of what this section argues for them, and it sits two lines
+> from a sentence making the case for the digest tier on exactly those grounds. Whichever way the
+> decision goes, that comment should be made to agree with it.
 
 ### A1 · The recipes tier — the biggest gap in the current plan
 
@@ -245,6 +265,84 @@ and there is no standard source. A recurring primary source becomes the citation
 **Secondary effect:** delegates discuss the report in the same governance forums Alphaday indexes.
 The content loop closes on itself.
 
+> **Shipped 30 Sep 2026 at [`/research/governance`](../src/pages/governance.jsx), with one of the
+> four metrics deliberately not built.** The headline holds and is stronger than this section
+> assumed; the metric this section calls "the headline" would have published a falsehood.
+>
+> **What shipped**, read on 30 Sep 2026 — the page recomputes on every request, so treat these as a
+> dated sample rather than standing figures. 291 proposals in the twelve complete months to
+> August 2026 across the 15
+> Snapshot spaces still being ingested, against 855 in the best twelve months on record — **down
+> 66%**, measured over a fixed cohort so that a source dropping out cannot be read as governance
+> slowing. Monthly series back to 2021, a per-space table, the last 25 votes linked to Snapshot, a
+> `Dataset` node, and the method on the page in plain language.
+>
+> **The dead-DAO index is not shipped, and this is a data blocker of the same order as
+> [B2](#b2--the-crypto-exploit-tracker--securityexploits--a-page-per-incident-continuous)'s missing
+> `amount_usd`.** 36 of the 51 indexed Snapshot spaces have no proposal in the last quarter and 28
+> none in a year, and the reason is coverage rather than death. The proof is internal to Alphaday's
+> own index and needs nobody's word for it: **`aave_dao` stops on 2 Apr 2025 while `aave_forum`
+> carried five `[ARFC]` threads — the stage that goes to a Snapshot vote — in the week to 28 Sep
+> 2026.** `dydx_dao` (943 days silent, forum active 4 days ago) and `metisdao_dao` (155 days, forum
+> 22 days) are the same shape; `yearn_dao` points at `ybaby.eth` and `thegraph_dao` at a space last
+> seen in 2021, so some are stale space ids rather than stopped fetches. Publishing that list as
+> "treasuries with no proposal in 90 days" would name Aave, Curve and Yearn as dead DAOs, to the
+> exact audience — delegates and governance researchers — most able to spot it in ten seconds. It
+> ships as a coverage figure with a last-indexed date instead, and the page says why.
+>
+> **The forum join is deferred, and the premise needs revising.** "The only place that has the
+> proposals *and* the forum discussion in one queryable set" is true of the two endpoints and does
+> not survive contact with the overlap: the DAO sources are DeFi Snapshot spaces and the forum
+> sources are mostly L1/L2 Discourse forums, only ~17 protocols carry both, and for six of those the
+> DAO half is stale. So *share of proposals with prior forum discussion* and *median time from
+> thread to vote* are unmeasurable today — and they would also need a per-proposal key neither feed
+> carries. The forum figure on the page is a quarter total for contrast, labelled as context rather
+> than a measured relationship.
+>
+> **Monthly report, one URL.** The cohort produces 13–30 proposals a month, so a page per month
+> would hold two dozen rows and clear no sensible index floor, and nobody searches "dao proposals
+> august 2026". The cadence stays monthly; the URL does not move, and the trend accumulates on it.
+>
+> **Endpoint facts, probed 30 Sep.** `/items/dao/` is newest-first, caps `limit` at 500, and accepts
+> `sources`, `tags`, `period=0..3` and `starts_at`/`ends_at` as *exact days*. **`starts_at__gte` and
+> `starts_at__lte` — the pair the events calendar is built on — are accepted and silently ignored**,
+> so no month range can be requested and the report walks the corpus. `active=true` returns 0 rows
+> against 6,612 live ones. **18.6% of the feed is duplicate**: 773 repeated URLs, and beyond those,
+> the same vote posted under two or three different Snapshot hashes — every one of Balancer's nine
+> most recent BIPs. Before that second rule existed the page opened "Latest proposals" with the same
+> BIP three times and counted 13 Balancer votes where it held 10.
+>
+> **An incomplete read fails the request rather than publishing a reduced page.** The report walks
+> fourteen pages, and a dropped page leaves a hole in the archive the comparison is measured
+> *against* — losing page 9 publishes "down 58%" where the truth is 66%. Rendering that as a
+> `noindex` 200 was the first fix and it was the wrong one: `server.mjs` stamps every 200 with
+> `s-maxage=3600, stale-while-revalidate=86400`, so the edge replaces the good copy with a `noindex`
+> one and may serve it for a day — and a URL dropped from the index can take weeks to return. The
+> loader now throws. A 5xx carries no `Cache-Control`, `stale-if-error` keeps the last good copy,
+> and Google reads a 5xx as temporary.
+>
+> **One thing that would have silently defeated this is checked and clear.** A CloudFront
+> `CustomErrorResponses` entry for 500 replaces the origin error with a page of its own and never
+> reaches the stale copy — and `rollout_landing_ssr.sh` in the infrastructure repo sets
+> `.CustomErrorResponses = {Quantity: 0}` on the SSR distribution, selected by alias on the live
+> domain. The `ErrorCachingMinTTL` block elsewhere in that repo is in `rollout_static_site.sh`, a
+> different distribution. Whether CloudFront honours `stale-if-error` at all is no longer the live
+> question it was recorded as — it has since 2023 — but even if it did not, a dropped page costs one
+> errored request rather than a day of cached `noindex`.
+>
+> **A backfill is a growth event this page has to survive.** The walk fetches `ceil(total / 500)`
+> pages up to a ceiling, and that ceiling used to be twenty — 10,000 rows against a corpus of 6,612.
+> Reaching it set the same flag a dropped page sets, which now throws, so a corpus of 10,001 rows
+> would have failed on every request from then on and started serving readers 500s a week later. If
+> the ~25 broken spaces below are repaired and backfill their archives, several thousand rows arrive
+> at once. The ceiling is sixty, requests are issued sixteen at a time, and reaching it is now its
+> own named error whose message says it will not clear by itself.
+>
+> **Still open, and it is a backend item:** why per-source DAO ingestion is failing while the forum
+> feed beside it is healthy. Until it is fixed the report measures 15 spaces where it should measure
+> closer to 40, and the dead-DAO index — the one metric here that journalists would actually run —
+> stays unbuildable.
+
 ### B2 · The Crypto Exploit Tracker — `/security/exploits` + a page per incident, continuous
 
 **Source:** `/security/exploits/` — 164 records, each with protocol, date, attack type, source URL
@@ -289,6 +387,100 @@ earlier draft billed it as, and it should not automatically ship first.** See
 
 **Third-order benefit, unchanged:** it is proof of the layer thesis. Security incidents are exactly
 the kind of data type a "crypto data layer" should have and a price API should not.
+
+> **Shipped 2 Oct 2026 at [`/security/exploits`](../src/pages/exploits.jsx) plus 33 incident pages —
+> and the blocker this section names turned out to be the wrong one.**
+>
+> **Widened 5 Oct 2026: every record now has a page** (207, from 211 rows after de-duplication), so a hub row lands on the facts rather
+> than a 404. Indexing is narrower and decided in one place, `isIndexableIncident`: reported
+> incidents (priced or not) that the press join matched are indexed, and the 159 reproductions are
+> served `noindex` and left out of the sitemap.
+>
+> **The amount backfill was declined as impossible, and that is half right — the half that matters
+> is wrong.** The data owner's position is that the figures are not available from the API's own
+> source. For the 48 press records it is partly true: 33 carry an amount, and of the 15 that do
+> not, **9 are thefts and exploits** — Taiko's bridge, the second Aztec Connect hack, Tectonic on
+> Cronos, Rain, KiiChain, Meter, Harmony, Ravencoin, The Kiss NFTs — whose loss simply was never
+> totalled in the report we ingest. Only 6 are collapses and depegs where nothing was taken. Those
+> 9 have press coverage that probably carries a figure, so they belong in the backfill too.
+>
+> **For the other 163 it is not true, and this document said it was.** Those come from DeFiHackLabs,
+> and its README states a loss for **134 of its 136 entries this year** — "Lost: 59,914.12 USDT net
+> to the attacker", "Lost: 4.025 ETH (full Genesis Alpha treasury)". The figures exist and are
+> public. What they are not is storable as `amount_usd` without work: they are prose in mixed units
+> (USDT, ETH, BNB, USDC, WHYPE), several state the attacker's net gain *beside* the protocol's gross
+> loss, and some are per-cycle or partial reproductions. Pricing them in dollars also needs a rate
+> at the time of the incident, which is a second dependency.
+>
+> So this is **an extraction and normalisation ticket, of the same kind as the `protocol` fix —
+> not an impossibility**, and it should not have been closed as one. What it needs decided before
+> anyone starts: which number counts when the source gives two, and whether a non-USD figure is
+> converted or stored in its own unit. **Reopened below.**
+>
+> **The field that actually blocked the tier is `protocol`, and nobody had looked at it.** On every
+> one of the 48 records that carries money it is the **first word of the headline** — 48 of 48,
+> verified. The $320M Liquid Network theft is filed under protocol `"4,000"`, MAYAChain under
+> `"$1.76"`, Flare under `"Two"`, Magic Eden under `"Magic"`, Rain under `"Exploit"`. So
+> `{protocol} exploit` — the URL scheme this whole section is built around — would have published
+> `/security/exploits/4000`. **No record anywhere has both a loss figure and a trustworthy protocol
+> name.** That is a parsing bug on one ingest rather than missing data, and it is a far cheaper ask
+> than the one that was declined. It is the ticket to raise.
+>
+> Two fallbacks die with it. `attack_type` is **148 distinct values across 163 records**, each a
+> restatement of that one bug, so there is no category tier in it; `chain` is 5 of 211.
+>
+> **What shipped instead.** A hub, plus a page for each of the 33 incidents that carry a figure,
+> keyed on a slug built from the headline — the only field that is both correct and identifying.
+> The other 174 are listed on the hub as what they are rather than given pages, because a page each
+> would be 174 reprints of someone else's write-up under URLs nobody queries, which is the
+> thin-affiliate shape [§12](#12-kill-list) rejects. *(Superseded 5 Oct — every record now has a
+> page, and the ones this paragraph worried about are served `noindex`. See the note above.)*
+>
+> **"Unpriced" is not the same question as "which dataset".** The hub first grouped on whether
+> `amount_usd` was set, which filed **15 press records** — "Poolin bitcoin mining pool operator
+> files for bankruptcy", "POAP shuts down", "msUSD loses its dollar peg" — under a *published
+> proof-of-concept* heading. They have no figure because no theft happened, which is a different
+> fact from a reproduction having none. The hub now splits on the source and runs three sections:
+> 33 reported with a figure, 15 reported without, 159 catalogued by reproduction.
+>
+> **The summaries open with the wrong date, and the clause is removed rather than rewritten.** All
+> 33 begin "On {Month d, yyyy}," and in all 33 that is the logged date — wrong about the incident
+> for 28 of them. The page labelled every date "Logged" and explained that logged dates run behind,
+> and then asserted the wrong one as fact in its first sentence. `stripOpeningDate` removes the
+> clause before rendering; it goes back when the feed carries a real date.
+>
+> **The press join is the positioning, and it measures well.** 27 of the 33 incidents match coverage
+> in the news index, up to five headlines each — via `/items/news/?search=`, a full-text parameter
+> this document never mentions. It is the one thing no incumbent does: DefiLlama has a complete
+> table and Rekt has the narrative, and neither connects the incident to what the press published.
+> On the Bitget page the matched headlines report **$352M and $170M against the $388M at the top of
+> the page**, which is a better argument for the "as reported, not verified" caveat than any wording
+> of it. **The six incidents with no match are served `noindex` and left out of the sitemap**: strip
+> the join and the page is a summary of someone else's report under a figure DefiLlama also has,
+> which is the thin shape this tier is otherwise arguing against.
+>
+> **Two fields mean something other than their names, and both were caught in review rather than by
+> probing.**
+>
+> `date` is **not the incident date**. Checked against the source pages for all 33 priced records:
+> five match, the rest run 1–17 days late, median 2, and five share 2026-06-15 because that is when
+> ingestion started rather than because five incidents did. It had been printed as "Date", put in
+> the meta description and published as an `Event`'s `startDate` — on the Bitget page dating the
+> event two days *after* Coindesk reported it. It is now named `loggedAt` in code, labelled "Logged"
+> on the page, and no event date is derived from it. It also skewed the coverage window, which is
+> why that window now looks three weeks back and one forward instead of ten days either side: 24 of
+> 33 matched symmetric, 27 lopsided.
+>
+> `description` is **not the source's write-up**. It does not appear on the source page, restates the
+> logged date in its first sentence and pads with "specific details … have not been disclosed" — it
+> is roughly a thousand *characters*, written upstream. Presenting it beside a source link, a
+> footer crediting the figure to that site and `isBasedOn` in the markup attributed machine-written
+> prose to someone else's publication. web3isgoinggreat is CC BY 3.0 so quoting and linking are
+> both fine; passing off a paraphrase is not. It is now labelled as a summary written here.
+>
+> **Competing on completeness is conceded explicitly.** 33 priced rows against DefiLlama's whole
+> history is a comparison this tier loses, the method section says so and links to them, and the
+> title says 2026 rather than implying an archive.
 
 ### B3 · The Narrative Index — `/research/narratives`, weekly
 
@@ -353,7 +545,38 @@ not just a better-optimised one.
 - It is the most natural possible proof that Alphaday indexes the whole media layer, which is the
   hardest part of the positioning to demonstrate.
 
-**Lowest risk and probably fastest to rank of anything in Engine B.** It should ship first.
+~~**Lowest risk and probably fastest to rank of anything in Engine B.** It should ship first.~~
+
+> **Measured 26 Sep 2026, and the ranking half of that claim does not survive.**
+>
+> | Keyword | Difficulty | Volume |
+> | --- | --- | ---: |
+> | `best crypto podcasts` | **Hard** | >100 |
+> | `best crypto youtube channels` | **Hard** | **<100** |
+> | `best crypto newsletters` | **Hard** | **<100** |
+>
+> Every variant — `2025`, `2026`, `for beginners`, `on spotify` — is under 100 searches a month. Hard
+> difficulty on a low-volume term usually means the SERP is held by high-authority domains, which is
+> exactly the incumbent list above.
+>
+> Search Console agrees rather than contradicting. All four targets drew **zero impressions in three
+> months**, while `best crypto wallet` drew 472 at position 80.8 — so this domain does surface for
+> listicle queries it ranks badly for, and zero means no top-100 ranking at all.
+>
+> **What dies is the queue position, not the asset.** "Lowest risk, fastest to rank, ship first" is
+> not supported by a Hard SERP at sub-100 volume. The two arguments above that never depended on
+> volume still hold: every listed show and outlet is a party with a reason to link to a page ranking
+> them, and it is the cheapest proof that Alphaday indexes the media layer. With 771 of ~1,000
+> referring domains pointing at the homepage and no page on this site having ever earned a link of
+> its own, an asset built to earn deep links is worth building. **B5 is a mid-tier Engine B link
+> asset, not the front of the queue.**
+>
+> **Two terms this section does not name are better first shots.** The 3-month export has the domain
+> at position **14.7 for `nft newsletters`** and 53.6 for `crypto youtubers`, both from Substack posts
+> with no data behind them. Moving 15 → 5 beats moving nothing → something. More broadly, 93
+> listicle-shaped queries already reach this domain for **2,023 impressions and zero clicks** at an
+> average position of 63, almost all landing on the blog — which is an argument for
+> [§7's](#7-the-blog-decision) migration, not for this page set.
 
 ### What Engine B is really buying
 
@@ -561,7 +784,29 @@ page is guaranteed to have something to say — and measure it for a month befor
 It is the cheapest decision-grade experiment available, and the head of this query class is genuinely
 more open than the tail, which is the reverse of the earlier assumption.
 
+> **Two changes to this tier were proposed on 28 Sep. Recorded here so neither is re-litigated from
+> scratch, and neither is adopted by default.**
+>
+> **Expanding `this-week` from 16 to 66.** The 16 were not a sample — they are what survived measuring
+> content density across all 66 boards against a floor of 30 items a week, and two rejections were
+> specific: `reserve` is fuzzy-match noise with 19 items all-time, `polygon` clears 16 a week.
+> Expanding to 66 ships 50 pages this work established are too thin to land on. **Not adopted
+> without re-measuring.**
+>
+> **Giving each period a dated, archived URL.** The dateless URL was chosen deliberately above — a
+> rolling window that accumulates no stale pages. The counter-argument is real: a rolling window with
+> no archive never produces a citable artifact, which matters for the model-citation case in §11 more
+> than for search. **Open, and worth deciding properly** rather than by whichever document was written
+> last.
+
 > **Measured 22 Sep 2026: the probe cannot report until the SSR cutover lands.**
+>
+> **The clock started — cutover verified live 28 Sep**, with all 16 digest pages returning 200 and
+> their content server-rendered. The month this callout was waiting for begins now, and the table
+> below is the pre-cutover baseline to measure against. One caveat on the input: the tier is
+> currently submitted with **no `lastmod`** (see
+> [seo-strategy.md, After cutover](./seo-strategy.md#after-cutover)), so a slow first recrawl is
+> expected and is not evidence about the format.
 >
 > Every entity in the shipped tier already has a board ranking in Google, and every one of them
 > converts at approximately zero:
@@ -966,28 +1211,64 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
       [§11](#the-2026-09-22-baseline). Search Console is connected and exported in the same pass, so
       the index-coverage gap closes with it
 - [ ] Run the first model-citation check — the half of this item that is still undone
-- [ ] ~~**Pull the Ahrefs export for the media-discovery cluster**~~ → **four keyword lookups.**
-      Reframed 22 Sep. This was recorded as an export blocking the front of the queue for three
-      weeks, and it is neither an export nor a blocker: the affiliate-thin half closed on 31 Aug,
-      leaving volume and difficulty for `best crypto podcasts` and three siblings. Ahrefs Webmaster
-      Tools does not cover them — Keywords Explorer is a paid tier, which "one export away" did not
-      account for — but the free keyword generator does. **Half an hour, no dependency, no seat**
+- [x] ~~**Pull the Ahrefs export for the media-discovery cluster**~~ → **four keyword lookups, done
+      26 Sep.** Reframed 22 Sep: this was recorded as an export blocking the front of the queue for
+      three weeks, and it was neither an export nor a blocker. The affiliate-thin half closed on
+      31 Aug, leaving volume and difficulty for `best crypto podcasts` and three siblings — which
+      Ahrefs Webmaster Tools does not cover, Keywords Explorer being a paid tier that "one export
+      away" did not account for, and which the free keyword generator answers in half an hour.
+      **The result demoted B5**: all three pulled terms come back KD **Hard**, two under 100 searches
+      a month. Verdict and what survives in
+      [B5](#b5--media-discovery--the-best-shaped-opportunity-found-in-the-research)
 - [x] **Audit the news tag slugs.** `polygon`, `avalanche`, `celestia` and `injective` return zero
       tagged news despite obvious coverage. This blocks C3, and it silently degrades every tagged
       surface in the product, not only SEO — audited, re-diagnosed and specified in
       [tag-taxonomy-fix.md](./tag-taxonomy-fix.md) (`2235e7e`). **Diagnosis and fix specified; the
       backend change is not deployed**, so C3 remains blocked
-- [ ] Start the `amount_usd` / `chain` backfill on the 164 exploit records. It no longer gates the
-      first shipped asset, but it still gates B2 — **not started, and diverging** (§14)
+- [ ] ~~Start the `amount_usd` / `chain` backfill on the 164 exploit records~~ → **reopened 2 Oct,
+      narrowed.** It was closed as impossible on the basis that the records carry no published
+      figure. That holds for only **6** of the 15 press records with no amount, the collapses and
+      depegs where nothing was taken; the other **9 are thefts and exploits** whose loss was never
+      totalled in the ingested report but is likely in the coverage. And it is **false for the 163
+      reproduced ones**, whose source states a loss for 134 of its 136 entries this year. They are prose in mixed units and sometimes give the attacker's
+      gain rather than the protocol's loss, so this is extraction and normalisation rather than a
+      lookup, and it needs two decisions first: which number counts when the source gives two, and
+      whether non-USD figures are converted at the incident-date rate or stored in their own unit.
+      Worth scoping before it is declined again
+- [ ] **Fix `protocol` and `date` on the web3isgoinggreat exploit ingest**, which is the ask that
+      should have been made instead of the amount backfill. `protocol` is `title.split(" ")[0]` on
+      48 of 48 records, so the $320M Liquid Network theft is filed under `"4,000"`; `date` is the
+      day the record was logged, not the day of the incident, running 1–17 days late with five
+      records sharing the day ingestion started. Both are parsing-and-storage fixes on one ingest.
+      `protocol` unlocks per-incident URLs keyed on the protocol rather than the headline; `date`
+      lets the pages state an incident date at all, and tightens the coverage match
+- [ ] **Diagnose per-source DAO ingestion.** Added 30 Sep, and it is the same class of item as the
+      line above: a data dependency that gates the most quotable half of an Engine B asset. 36 of
+      51 Snapshot spaces have produced nothing in a quarter, and the index contradicts itself about
+      why — `aave_dao` last ingested 2 Apr 2025, `aave_forum` carrying `[ARFC]` threads the week of
+      28 Sep 2026. Two distinguishable causes, both worth separating: fetches that have stopped, and
+      space ids that have moved (`yearn_dao` → `ybaby.eth`). The report ships without it and says so
+      on the page; the dead-DAO index cannot ([B1](#b1--the-alphaday-governance-report--researchgovernance-monthly))
 
 ### Weeks 3–6 · Engine A + the first Engine B asset
 
-- [ ] **Ship media discovery (B5) first** — the podcast, YouTube-channel and news-outlet rankings,
-      data-ranked and dated. Lowest risk, weakest incumbents, fastest to rank — **not started, and
-      no longer blocked** (see the reframed item above). Shipped fourth in intent and zeroth in fact.
-      The 3-month export strengthens it: `best crypto wallet`, `best crypto tax software` and
-      `nft newsletter` already draw impressions to this domain, from Substack posts at positions
-      56–81 where nothing can be controlled (§7)
+- [ ] **Promote the 36 Engine A child pages** — 8 MCP client, 6 cookbook, 22 capability. Added 28 Sep,
+      and at the front of this queue rather than filed as housekeeping: they are live and
+      server-rendered on production, and every one still emits `noindex, follow` and appears in no
+      sitemap, because the hold in [§4](#4-engine-a--proof-converts) was written to expire at the SSR
+      cutover and nothing expired it. Mechanically it is one edit to `STATIC_STATES` in
+      [indexState.ts](../src/seo/indexState.ts) — `staticPaths()` and the sitemap both follow from it,
+      and `src/__tests__/static-routes.test.ts` already asserts every promoted path has a route to
+      serve it. **Decide per tier rather than promoting wholesale**: 22 capability pages drawn from
+      one dataset is the cannibalisation risk §12 lists, and that question was never settled on the
+      merits, because the cutover made it moot before anyone had to answer it
+- [ ] ~~**Ship media discovery (B5) first**~~ → **ship it mid-queue.** The podcast, YouTube-channel
+      and news-outlet rankings, data-ranked and dated — still worth building, no longer first.
+      Re-sequenced 28 Sep on the measured keyword data: Hard difficulty at sub-100 volume kills the
+      "fastest to rank" premise, and the link-earning and positioning arguments that survive do not
+      by themselves justify the front of the queue. Shipped fourth in intent and zeroth in fact, and
+      now deliberately fourth. **The registry, `public-apis` and awesome-list submissions below take
+      its place** — the one Engine A item that earns links and waits on nobody
 - [x] `/mcp` and **eight** client pages — `331ebbf`, `#225`. Scoped as four; shipped eight because the
       six JSON clients disagree about config shape (`mcpServers` vs `servers` vs `mcp`, `url` vs
       `serverUrl`, `streamableHttp` vs `streamable-http`) and **one config block cannot be written for
@@ -1068,16 +1349,30 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
       measured rate (`base` 8 news against 64, `japan` 9 against 42), so `japan`, `optimism` and
       `uniswap` all render the widened 30-day view. That is the runtime fallback behaving correctly,
       but it means several pages launch degraded and recover only when the pipeline is fixed
-- [ ] Registry, `public-apis` and awesome-list submissions — **not started, and the only item here
-      that is not gated by the SSR cutover**, since the MCP registries point at the server endpoint
-      rather than the marketing site. It is also the only Engine A item that directly earns links
+- [ ] Registry, `public-apis` and awesome-list submissions — **not started.** The clause that ran
+      here, *"the only item here that is not gated by the SSR cutover"*, expired on 28 Sep when the
+      cutover landed: nothing on this list is gated by it any more, so that is no longer what
+      distinguishes this item. What survives is the half that never depended on the gate — it is the
+      only Engine A item that directly earns links, and the MCP registries point at the server
+      endpoint rather than the marketing site, so it was never waiting on rendering to begin with
 
 ### Weeks 7–12 · Engine B at cadence
 
-- [ ] Governance Report #1, with press outreach
+- [x] ~~Governance Report #1, with press outreach~~ → **page shipped 30 Sep at
+      `/research/governance`; outreach not started, and the pitch has changed.** The line to take to
+      DL News is the cohort-controlled one — proposal volume down 66% across a fixed set of live
+      Snapshot spaces — not the dead-DAO index this document led with, which the data cannot support
+      (see [B1](#b1--the-alphaday-governance-report--researchgovernance-monthly)). Outreach should
+      wait for the second monthly reading, so the pitch carries a trend rather than a snapshot
 - [ ] Events calendar with `Event` schema — the second listicle SERP on the list
-- [ ] **Ship the exploit tracker** once the amounts are backfilled — hub plus 164 incident pages,
-      aimed at `{protocol} exploit` and the news join, not at out-ranking DefiLlama's table
+- [x] ~~**Ship the exploit tracker** once the amounts are backfilled — hub plus 164 incident pages,
+      aimed at `{protocol} exploit` and the news join~~ → **shipped 2 Oct as a hub plus 33 incident
+      pages, and the amounts are not coming.** Both halves of the premise were wrong: the backfill
+      is impossible for 163 records that never had a figure, and `{protocol} exploit` is unbuildable
+      because `protocol` is the first word of the headline on every record that has money. The news
+      join — the part this line listed last — is what the tier actually rests on, and it is the half
+      that measured well (22 of 33).
+      [B2](#b2--the-crypto-exploit-tracker--securityexploits--a-page-per-incident-continuous)
 - [ ] Narrative Index weekly from week 8
 - [ ] Blog migration and 301s; no new explainer content
 - [ ] Comparison pages

@@ -28,6 +28,26 @@ import {
   projectIndexState,
   staticPaths,
 } from "../src/seo/indexState.ts";
+import { byIncident, isAbout } from "../src/data/analysis.ts";
+import { digestPaths } from "../src/data/digestEntities.js";
+import { shapeRows } from "../src/data/eventRows.ts";
+import {
+  COVERAGE_FETCH,
+  coverageQueries,
+  incidentPath,
+  isIndexableIncident,
+  isReproduction,
+  mergeNews,
+  rankCoverage,
+  shapeAll,
+} from "../src/data/exploits.ts";
+import {
+  monthBounds,
+  monthIndexState,
+  monthOf,
+  monthSlug,
+  shiftMonth,
+} from "../src/data/eventMonths.js";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const distPath = resolve(here, "../dist/client");
@@ -116,11 +136,250 @@ async function fetchLandingPages() {
 /**
  * Read the record's own `updated_at`. If it is missing or unparseable, emit no
  * `lastmod` at all — an absent signal beats a false one.
+ *
+ * These come back clustered around 2026-06-08, which looks stale and is not.
+ * A project page's *unique indexable text* — the About copy, the benefits, the
+ * FAQ — lives on that record and genuinely has not changed since June. The live
+ * feeds beside it are embedded data on a template every project shares, so
+ * stamping the page as modified daily would claim a change Google would find
+ * nothing behind, and spend crawl budget §4.4 already calls the binding
+ * constraint. Leave it reporting what actually changed.
  */
 function lastmodOf(record) {
   if (!record.updated_at) return undefined;
   const date = new Date(record.updated_at);
   return Number.isNaN(date.getTime()) ? undefined : date.toISOString();
+}
+
+/**
+ * The digest pages are the one tier where the reasoning above inverts, and they
+ * were shipping with no `lastmod` at all.
+ *
+ * `/projects/{slug}/this-week` *is* its rolling window — there is no stable copy
+ * underneath it, so the page genuinely differs from yesterday's. It is also the
+ * tier whose entire value is recency, which makes an absent recrawl signal the
+ * most expensive place on the site to have one.
+ *
+ * **Day granularity, not the build instant.** A timestamp that moves on every
+ * build is the failure this file was written to avoid (see `urlsetXml`): it
+ * trains Google to ignore the field, which would cost the tier the very signal
+ * this is meant to give it. Truncating to the UTC day means two builds on the
+ * same day emit an identical value, and the date advances only when the window
+ * actually has.
+ *
+ * **Known bound.** This is stamped at build time on a statically served file, so
+ * a week without a deploy leaves it a week behind while the pages keep rolling.
+ * That under-reports freshness, which costs a slower recrawl — the safe
+ * direction, and strictly better than the nothing it replaces. Serving the
+ * sitemap from `server.mjs` would close it properly; that is a larger change
+ * than this defect justifies.
+ */
+const rollingLastmod = () => `${new Date().toISOString().slice(0, 10)}T00:00:00.000Z`;
+
+/**
+ * The promoted month pages of the events calendar (content doc B4).
+ *
+ * These cannot come from `staticPaths()`: which months exist, and which carry
+ * enough events to be worth submitting, are both facts about the API on the day
+ * of the build. They are API-driven pages like the project dashboards, and they
+ * go through the same gate — `monthIndexState` decides, and this file only ever
+ * lists what it promotes.
+ *
+ * The walk runs forward from the current month and stops after three
+ * consecutive empty months rather than at the first, because the corpus has
+ * real gaps: July 2027 holds two events and August 2027 holds one, with
+ * populated months on either side. Stopping at the first gap would silently
+ * drop everything beyond it. `HORIZON_MONTHS` bounds the walk in case the
+ * corpus ever runs long.
+ */
+const HORIZON_MONTHS = 24;
+const EMPTY_RUN_LIMIT = 3;
+const EVENT_PAGE_SIZE = 500;
+const EVENT_MAX_PAGES = 6;
+
+/**
+ * A month's count as the *page* will report it, not as the API reports it.
+ *
+ * This used to read `?limit=1` and take the API's `total`, which is the raw row
+ * count — before placeholders are dropped and before the duplicates the corpus
+ * carries are collapsed. The route decides on the shaped count. A month holding
+ * 21 raw rows and 19 real ones was therefore submitted in the sitemap and
+ * served `noindex`: a borderline case, and exactly the kind of drift between
+ * "what we publish" and "what we serve" that `indexState.ts` exists to stop.
+ *
+ * So it reads the rows and shapes them through `shapeRows`, the same function
+ * `buildMonth` calls. Costlier — one request per month instead of one tiny one
+ * — and it happens once per build.
+ */
+async function shapedCount(month) {
+  const { from, to } = monthBounds(month);
+  const rows = [];
+
+  for (let page = 1; page <= EVENT_MAX_PAGES; page += 1) {
+    const url =
+      `${API_BASE}/items/events/?limit=${EVENT_PAGE_SIZE}&page=${page}` +
+      `&starts_at__gte=${from}&starts_at__lte=${to}`;
+
+    const response = await fetch(url, { headers: authHeaders });
+    if (!response.ok) {
+      throw new Error(
+        `build-sitemap: ${url} returned ${response.status}. Refusing to build ` +
+          "a partial sitemap."
+      );
+    }
+
+    const body = await response.json();
+    const results = body.results ?? [];
+    rows.push(...results);
+    if (results.length < EVENT_PAGE_SIZE || !body.links?.next) break;
+  }
+
+  return shapeRows(rows).length;
+}
+
+/**
+ * The incident URLs the exploit tier submits.
+ *
+ * Shaped through `shapeAll` — the same function the route calls — for the same
+ * reason `shapedCount` exists: the slug is derived from the headline, so a
+ * sitemap that built its own would publish URLs the router does not serve the
+ * moment the two derivations drifted by a stopword.
+ *
+ * **It also has to run the coverage join**, because the route demotes an
+ * incident it found no press coverage for. Listing those would submit URLs the
+ * page serves `noindex` — the precise drift `indexState.ts` exists to prevent,
+ * arrived at from the sitemap's side. The rule itself is `isIndexableIncident`,
+ * which the route also calls. Three searches per reported incident (48 on 2 Oct),
+ * once per build; reproductions are never indexed, so they are not queried.
+ */
+/**
+ * One `fetch`, retried, because this build makes ~144 of them.
+ *
+ * A single flaky response used to abort the whole sitemap. The run is long
+ * enough that one transient 502 is likely, and the cost of giving up is a build
+ * failure rather than a wrong sitemap — so it is worth three attempts before
+ * refusing. Still refuses in the end: a sitemap that cannot tell a covered
+ * incident from an uncovered one would submit pages the route serves `noindex`.
+ */
+async function retrying(url, attempts = 3) {
+  let last;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch(url, { headers: authHeaders });
+      if (response.ok) return response;
+      last = new Error(`${url} returned ${response.status}`);
+    } catch (error) {
+      last = error;
+    }
+    if (attempt < attempts) {
+      await new Promise((resolve) => setTimeout(resolve, 400 * 2 ** (attempt - 1)));
+    }
+  }
+  throw new Error(`build-sitemap: ${last?.message ?? url}. Refusing to build a partial sitemap.`);
+}
+
+async function fetchIncidents() {
+  const response = await retrying(`${API_BASE}/security/exploits/?limit=500`);
+  const body = await response.json();
+  const reported = shapeAll(body.results ?? []).filter(
+    (exploit) => !isReproduction(exploit)
+  );
+
+  // A published analysis makes a page indexable on its own, so the sitemap has
+  // to read the same store the route reads. Two requests deep, because the list
+  // endpoint omits `content` and the provenance block inside it is the only
+  // thing tying a post to an incident — see `src/server/analysis.ts`. Reading
+  // the list alone matched nothing and quietly dropped Meter and the ASI
+  // Alliance, whose only claim to the index is their analysis.
+  //
+  // `/posts/` is the whole blog, so the list is walked to its end: stopping at
+  // one page would drop the oldest analyses once the blog passed 100 posts.
+  const rows = [];
+  for (let url = `${API_BASE}/posts/?limit=100`; url; ) {
+    const page = await (await retrying(url)).json();
+    rows.push(...(page.results ?? []));
+    url = page.links?.next ?? null;
+  }
+  const slugs = rows
+    .filter((row) => row.status === "published" && row.slug)
+    .map((row) => row.slug);
+  const details = await Promise.all(
+    slugs.map(async (slug) =>
+      (await retrying(`${API_BASE}/posts/${encodeURIComponent(slug)}/`)).json()
+    )
+  );
+  const analyses = byIncident(details);
+
+  const listed = [];
+
+  for (const exploit of reported) {
+    // The same title cross-check the route applies, so the sitemap never
+    // submits a page on the strength of an analysis the page does not show.
+    const analysis = analyses.get(Number(exploit.id));
+    const hasAnalysis = !!analysis && isAbout(analysis, exploit.title);
+    const queries = coverageQueries(exploit);
+    if (!queries.length) {
+      if (hasAnalysis) listed.push(incidentPath(exploit));
+      continue;
+    }
+
+    // `COVERAGE_FETCH` and the queries are shared with the route: a different
+    // page size or search here would change which incidents come back covered,
+    // and the sitemap would submit URLs the page serves `noindex`. The three
+    // run together, as the route runs them, so ~144 requests take ~48 waits.
+    const results = await Promise.all(
+      queries.map(async (query) => {
+        const news = await retrying(
+          `${API_BASE}/items/news/?limit=${COVERAGE_FETCH}` +
+            `&search=${encodeURIComponent(query)}`
+        );
+        return (await news.json()).results ?? [];
+      })
+    );
+
+    const matched = rankCoverage(mergeNews(results), exploit, reported);
+    // Both `ok` flags are true: `retrying` throws rather than return a failure.
+    if (
+      isIndexableIncident({
+        exploit,
+        coverageCount: matched.length,
+        coverageOk: true,
+        hasAnalysis,
+        analysisOk: true,
+      })
+    ) {
+      listed.push(incidentPath(exploit));
+    }
+  }
+
+  return listed;
+}
+
+async function fetchEventMonths() {
+  const current = monthOf(new Date());
+  const promoted = [];
+  let emptyRun = 0;
+
+  for (let i = 0; i < HORIZON_MONTHS && emptyRun < EMPTY_RUN_LIMIT; i += 1) {
+    const month = shiftMonth(current, i);
+    const count = await shapedCount(month);
+
+    if (count === 0) {
+      emptyRun += 1;
+      continue;
+    }
+    emptyRun = 0;
+
+    // The current month lives at /events and is listed through STATIC_STATES;
+    // listing it twice would submit the same content under two URLs, which is
+    // what `canonicalForMonth` exists to prevent on the page itself.
+    if (month === current) continue;
+    if (monthIndexState(month, count, current) === "promoted") {
+      promoted.push(`/events/${monthSlug(month)}`);
+    }
+  }
+
+  return promoted;
 }
 
 async function main() {
@@ -131,9 +390,32 @@ async function main() {
   // editing two files and forgetting the second one silently dropped the page
   // from the sitemap. Each path is still filtered through the same gate, so a
   // route that is not `promoted` cannot be listed either way.
+  const rolling = new Set(digestPaths());
   const staticLinks = staticPaths()
     .filter((path) => belongsInSitemap(indexStateFor(path)))
-    .map((path) => ({ loc: path === "/" ? `${baseUrl}/` : `${baseUrl}${path}` }));
+    .map((path) => ({
+      loc: path === "/" ? `${baseUrl}/` : `${baseUrl}${path}`,
+      // Everything else in this tier is a genuinely static marketing or docs
+      // page. No `lastmod` for those, for the same reason as above: this file
+      // has no honest source for when they last changed, and inventing one is
+      // worse than omitting it.
+      lastmod: rolling.has(path) ? rollingLastmod() : undefined,
+    }));
+
+  const coveredIncidents = await fetchIncidents();
+  for (const path of coveredIncidents) {
+    // No `lastmod`: an incident record is written once and this build has no
+    // honest source for when it last changed (§4.4).
+    staticLinks.push({ loc: `${baseUrl}${path}`, lastmod: undefined });
+  }
+
+  const monthPaths = await fetchEventMonths();
+  for (const path of monthPaths) {
+    // No `lastmod`: a month page changes when the API gains an event, and this
+    // build has no honest source for when that last happened. An absent signal
+    // beats a false one (§4.4).
+    staticLinks.push({ loc: `${baseUrl}${path}`, lastmod: undefined });
+  }
 
   const pages = await fetchLandingPages();
   const projectLinks = pages
@@ -157,8 +439,9 @@ async function main() {
 
   const excluded = pages.length - projectLinks.length;
   console.log(
-    `build-sitemap: ${staticLinks.length} static + ${projectLinks.length} project ` +
-      `URLs across 2 tiers` +
+    `build-sitemap: ${staticLinks.length} static (${monthPaths.length} event ` +
+      `months) + ${projectLinks.length} project URLs across 2 tiers` +
+      `, ${rolling.size} rolling lastmod` +
       (excluded ? `, ${excluded} excluded by index state` : "")
   );
 }

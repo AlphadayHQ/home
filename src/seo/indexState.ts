@@ -19,6 +19,9 @@
  * extensions. Without it the sitemap build dies with ERR_MODULE_NOT_FOUND.
  */
 import { digestPaths } from "../data/digestEntities.js";
+import { capabilityPaths } from "../data/capabilityPages.js";
+import { recipePaths } from "../data/cookbook.js";
+import { mcpClientPaths } from "../data/mcpClients.js";
 
 
 /** §4.1's three layers. */
@@ -44,6 +47,9 @@ export const belongsInSitemap = (state: IndexState): boolean =>
  * Static routes whose state is known at build time. Anything absent is
  * `substrate` by default — see `indexStateFor`.
  */
+const promote = (paths: string[]): Record<string, IndexState> =>
+  Object.fromEntries(paths.map((path) => [path, "promoted" as IndexState]));
+
 const STATIC_STATES: Record<string, IndexState> = {
   "/": "promoted",
   "/api": "promoted",
@@ -51,28 +57,93 @@ const STATIC_STATES: Record<string, IndexState> = {
   "/mcp": "promoted",
   "/cookbook": "promoted",
   "/dashboards": "promoted",
+  /*
+   * B4's events calendar. Promoted on the same reasoning as the digest tier —
+   * it exists to be found in search, and the listicle SERP it attacks is the
+   * whole point of building it — with the same escape hatch: the route demotes
+   * itself to `substrate` when the current month comes back completely empty,
+   * so a feed outage cannot leave an indexed page claiming nothing is happening.
+   *
+   * Only *empty*, not *thin*. The hub shows the current month and leads with
+   * what is still to come, so in the last days of a month it legitimately has
+   * few upcoming rows and a full month of finished ones. Demoting on that would
+   * take the calendar out of the index for a few days every month.
+   */
+  "/events": "promoted",
+
+  /*
+   * B1's governance report. Promoted from the start, unlike the Engine A tiers
+   * that shipped `noindex` — a research page exists to be cited, and a `noindex`
+   * primary source is a contradiction in terms: it cannot be found, quoted or
+   * linked, so holding it back measures nothing and costs the only thing the
+   * asset is for.
+   *
+   * The escape hatch is `reportIsIndexable` rather than a raw count. The page
+   * demotes itself when the measured cohort falls below `COHORT_FLOOR` or when
+   * there are not two full years to compare — both of which mean the proposal
+   * feed has broken rather than that governance has gone quiet. A quiet quarter
+   * is a finding and keeps the page indexed; a collapsed cohort is a pipeline
+   * failure and takes it out, because the decline it would print did not happen
+   * in the DAOs.
+   */
+  "/research/governance": "promoted",
+
+  /*
+   * B2's exploit tier. The hub, and through `indexStateFor("/security/exploits")`
+   * the incident pages under it, which are not listed here because they are
+   * derived from the feed — the sitemap builds them with `fetchIncidents()` from
+   * the same `shapeAll` the route uses, so the two cannot disagree about which
+   * incidents exist. Every record has a page; `isIndexableIncident` decides
+   * which inherit this state and which are served `substrate`.
+   *
+   * The route demotes the hub when the priced-incident count falls under
+   * its floor, which means nothing has been written up recently and the press
+   * half of the feed may have stopped
+   * arriving. Thirty-three rows is already the thin side of a comparison with
+   * DefiLlama's complete table; a handful is not a list at all.
+   */
+  "/security/exploits": "promoted",
+
   "/mobile": "promoted",
   "/privacy": "promoted",
 
   /*
-   * The digest tier (content doc C3) — the only pages in the build promoted on
-   * purpose.
+   * The content tiers, all derived rather than listed.
    *
-   * Everything else added in this phase — 8 MCP client pages, 6 cookbook
-   * recipes, 22 capability pages — sits at the default-deny below, because none
-   * of them needs indexing to do its job. These are different in kind: they
-   * exist to be found in search, and a `noindex` recap measures nothing.
+   * **Every one of these is a set, and none of them is written out here.** Two
+   * hand-maintained lists of the same set is the drift this whole module exists
+   * to prevent: an entry promoted but not built is a sitemap URL that 404s, and
+   * one built but not promoted is a page no crawler can reach. Deriving each
+   * tier from the data that builds it makes both impossible rather than
+   * unlikely.
    *
-   * **Derived from `DIGEST_ENTITIES`, not listed here.** Two hand-maintained
-   * lists of the same set is the drift this whole module exists to prevent, and
-   * with 16 entities the odds of them disagreeing stop being hypothetical: an
-   * entity promoted but not built is a sitemap URL that 404s, and one built but
-   * not promoted is a page no crawler can reach. One source, so neither is
-   * possible.
+   * The digest tier (content doc C3) was promoted first and alone. The other
+   * three shipped 14–21 Sep behind `noindex` — correct at the time, because the
+   * SSR origin had not cut over and an indexable client-rendered shell is worse
+   * than an unindexed one. **That hold was written to expire at the cutover, the
+   * cutover landed on or before 24 Sep, and nothing expired it**, so 36 live
+   * server-rendered pages sat invisible for four days. Promoted 28 Sep.
+   *
+   * **Promoted per tier on measured uniqueness, not by assumption.** The worry
+   * on record was that 22 capability pages over one dataset would cannibalise
+   * each other. Measured against production, they do not: median pairwise
+   * 5-gram similarity 0.23, and 63% of each page is text no sibling shares.
+   * Recipes are cleaner still at 0.14 and 82% unique.
+   *
+   * **The client pages are the ones to watch, which is the opposite of the
+   * prediction.** They are the longest of the three tiers (~1,300 words) and the
+   * least distinct: 0.51 median similarity, only 34% of each page unique. That
+   * is inherent to what they are — eight explanations of one server differing
+   * mainly in the shape of a config block — and it is why they are promoted to
+   * be measured rather than assumed safe. The signal that this was wrong is
+   * `Duplicate without user-selected canonical` or `Crawled - currently not
+   * indexed` landing on `/mcp/*` in Search Console; the response is to trim the
+   * shared explainer to a link rather than to demote the tier.
    */
-  ...Object.fromEntries(
-    digestPaths().map((path) => [path, "promoted" as IndexState])
-  ),
+  ...promote(digestPaths()),
+  ...promote(capabilityPaths()),
+  ...promote(recipePaths()),
+  ...promote(mcpClientPaths()),
 };
 
 /**
