@@ -28,8 +28,19 @@ import {
   projectIndexState,
   staticPaths,
 } from "../src/seo/indexState.ts";
+import { byIncident, isAbout } from "../src/data/analysis.ts";
 import { digestPaths } from "../src/data/digestEntities.js";
 import { shapeRows } from "../src/data/eventRows.ts";
+import {
+  COVERAGE_FETCH,
+  coverageQueries,
+  incidentPath,
+  isIndexableIncident,
+  isReproduction,
+  mergeNews,
+  rankCoverage,
+  shapeAll,
+} from "../src/data/exploits.ts";
 import {
   monthBounds,
   monthIndexState,
@@ -226,6 +237,124 @@ async function shapedCount(month) {
   return shapeRows(rows).length;
 }
 
+/**
+ * The incident URLs the exploit tier submits.
+ *
+ * Shaped through `shapeAll` — the same function the route calls — for the same
+ * reason `shapedCount` exists: the slug is derived from the headline, so a
+ * sitemap that built its own would publish URLs the router does not serve the
+ * moment the two derivations drifted by a stopword.
+ *
+ * **It also has to run the coverage join**, because the route demotes an
+ * incident it found no press coverage for. Listing those would submit URLs the
+ * page serves `noindex` — the precise drift `indexState.ts` exists to prevent,
+ * arrived at from the sitemap's side. The rule itself is `isIndexableIncident`,
+ * which the route also calls. Three searches per reported incident (48 on 2 Oct),
+ * once per build; reproductions are never indexed, so they are not queried.
+ */
+/**
+ * One `fetch`, retried, because this build makes ~144 of them.
+ *
+ * A single flaky response used to abort the whole sitemap. The run is long
+ * enough that one transient 502 is likely, and the cost of giving up is a build
+ * failure rather than a wrong sitemap — so it is worth three attempts before
+ * refusing. Still refuses in the end: a sitemap that cannot tell a covered
+ * incident from an uncovered one would submit pages the route serves `noindex`.
+ */
+async function retrying(url, attempts = 3) {
+  let last;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch(url, { headers: authHeaders });
+      if (response.ok) return response;
+      last = new Error(`${url} returned ${response.status}`);
+    } catch (error) {
+      last = error;
+    }
+    if (attempt < attempts) {
+      await new Promise((resolve) => setTimeout(resolve, 400 * 2 ** (attempt - 1)));
+    }
+  }
+  throw new Error(`build-sitemap: ${last?.message ?? url}. Refusing to build a partial sitemap.`);
+}
+
+async function fetchIncidents() {
+  const response = await retrying(`${API_BASE}/security/exploits/?limit=500`);
+  const body = await response.json();
+  const reported = shapeAll(body.results ?? []).filter(
+    (exploit) => !isReproduction(exploit)
+  );
+
+  // A published analysis makes a page indexable on its own, so the sitemap has
+  // to read the same store the route reads. Two requests deep, because the list
+  // endpoint omits `content` and the provenance block inside it is the only
+  // thing tying a post to an incident — see `src/server/analysis.ts`. Reading
+  // the list alone matched nothing and quietly dropped Meter and the ASI
+  // Alliance, whose only claim to the index is their analysis.
+  //
+  // `/posts/` is the whole blog, so the list is walked to its end: stopping at
+  // one page would drop the oldest analyses once the blog passed 100 posts.
+  const rows = [];
+  for (let url = `${API_BASE}/posts/?limit=100`; url; ) {
+    const page = await (await retrying(url)).json();
+    rows.push(...(page.results ?? []));
+    url = page.links?.next ?? null;
+  }
+  const slugs = rows
+    .filter((row) => row.status === "published" && row.slug)
+    .map((row) => row.slug);
+  const details = await Promise.all(
+    slugs.map(async (slug) =>
+      (await retrying(`${API_BASE}/posts/${encodeURIComponent(slug)}/`)).json()
+    )
+  );
+  const analyses = byIncident(details);
+
+  const listed = [];
+
+  for (const exploit of reported) {
+    // The same title cross-check the route applies, so the sitemap never
+    // submits a page on the strength of an analysis the page does not show.
+    const analysis = analyses.get(Number(exploit.id));
+    const hasAnalysis = !!analysis && isAbout(analysis, exploit.title);
+    const queries = coverageQueries(exploit);
+    if (!queries.length) {
+      if (hasAnalysis) listed.push(incidentPath(exploit));
+      continue;
+    }
+
+    // `COVERAGE_FETCH` and the queries are shared with the route: a different
+    // page size or search here would change which incidents come back covered,
+    // and the sitemap would submit URLs the page serves `noindex`. The three
+    // run together, as the route runs them, so ~144 requests take ~48 waits.
+    const results = await Promise.all(
+      queries.map(async (query) => {
+        const news = await retrying(
+          `${API_BASE}/items/news/?limit=${COVERAGE_FETCH}` +
+            `&search=${encodeURIComponent(query)}`
+        );
+        return (await news.json()).results ?? [];
+      })
+    );
+
+    const matched = rankCoverage(mergeNews(results), exploit, reported);
+    // Both `ok` flags are true: `retrying` throws rather than return a failure.
+    if (
+      isIndexableIncident({
+        exploit,
+        coverageCount: matched.length,
+        coverageOk: true,
+        hasAnalysis,
+        analysisOk: true,
+      })
+    ) {
+      listed.push(incidentPath(exploit));
+    }
+  }
+
+  return listed;
+}
+
 async function fetchEventMonths() {
   const current = monthOf(new Date());
   const promoted = [];
@@ -272,6 +401,13 @@ async function main() {
       // worse than omitting it.
       lastmod: rolling.has(path) ? rollingLastmod() : undefined,
     }));
+
+  const coveredIncidents = await fetchIncidents();
+  for (const path of coveredIncidents) {
+    // No `lastmod`: an incident record is written once and this build has no
+    // honest source for when it last changed (§4.4).
+    staticLinks.push({ loc: `${baseUrl}${path}`, lastmod: undefined });
+  }
 
   const monthPaths = await fetchEventMonths();
   for (const path of monthPaths) {

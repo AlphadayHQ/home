@@ -88,6 +88,22 @@ const STATIC_STATES: Record<string, IndexState> = {
    */
   "/research/governance": "promoted",
 
+  /*
+   * B2's exploit tier. The hub, and through `indexStateFor("/security/exploits")`
+   * the incident pages under it, which are not listed here because they are
+   * derived from the feed — the sitemap builds them with `fetchIncidents()` from
+   * the same `shapeAll` the route uses, so the two cannot disagree about which
+   * incidents exist. Every record has a page; `isIndexableIncident` decides
+   * which inherit this state and which are served `substrate`.
+   *
+   * The route demotes the hub when the priced-incident count falls under
+   * its floor, which means nothing has been written up recently and the press
+   * half of the feed may have stopped
+   * arriving. Thirty-three rows is already the thin side of a comparison with
+   * DefiLlama's complete table; a handful is not a list at all.
+   */
+  "/security/exploits": "promoted",
+
   "/mobile": "promoted",
   "/privacy": "promoted",
 

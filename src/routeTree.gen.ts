@@ -31,6 +31,8 @@ import { Route as ApiDataCapabilityRouteImport } from './routes/api.data.$capabi
 import { Route as ProjectsSlugIndexRouteImport } from './routes/projects.$slug.index'
 import { Route as ProjectsSlugTopicRouteImport } from './routes/projects.$slug.$topic'
 import { Route as ProjectsSlugThisWeekRouteImport } from './routes/projects.$slug.this-week'
+import { Route as SecurityExploitsIndexRouteImport } from './routes/security.exploits.index'
+import { Route as SecurityExploitsIncidentRouteImport } from './routes/security.exploits.$incident'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -142,6 +144,17 @@ const ProjectsSlugThisWeekRoute = ProjectsSlugThisWeekRouteImport.update({
   path: '/projects/$slug/this-week',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SecurityExploitsIndexRoute = SecurityExploitsIndexRouteImport.update({
+  id: '/security/exploits/',
+  path: '/security/exploits/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SecurityExploitsIncidentRoute =
+  SecurityExploitsIncidentRouteImport.update({
+    id: '/security/exploits/$incident',
+    path: '/security/exploits/$incident',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -165,7 +178,9 @@ export interface FileRoutesByFullPath {
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
+  '/security/exploits/$incident': typeof SecurityExploitsIncidentRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
+  '/security/exploits/': typeof SecurityExploitsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -189,7 +204,9 @@ export interface FileRoutesByTo {
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
+  '/security/exploits/$incident': typeof SecurityExploitsIncidentRoute
   '/projects/$slug': typeof ProjectsSlugIndexRoute
+  '/security/exploits': typeof SecurityExploitsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -214,7 +231,9 @@ export interface FileRoutesById {
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
+  '/security/exploits/$incident': typeof SecurityExploitsIncidentRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
+  '/security/exploits/': typeof SecurityExploitsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -240,7 +259,9 @@ export interface FileRouteTypes {
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
+    | '/security/exploits/$incident'
     | '/projects/$slug/'
+    | '/security/exploits/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -264,7 +285,9 @@ export interface FileRouteTypes {
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
+    | '/security/exploits/$incident'
     | '/projects/$slug'
+    | '/security/exploits'
   id:
     | '__root__'
     | '/'
@@ -288,7 +311,9 @@ export interface FileRouteTypes {
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
+    | '/security/exploits/$incident'
     | '/projects/$slug/'
+    | '/security/exploits/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -313,7 +338,9 @@ export interface RootRouteChildren {
   ApiDataCapabilityRoute: typeof ApiDataCapabilityRoute
   ProjectsSlugTopicRoute: typeof ProjectsSlugTopicRoute
   ProjectsSlugThisWeekRoute: typeof ProjectsSlugThisWeekRoute
+  SecurityExploitsIncidentRoute: typeof SecurityExploitsIncidentRoute
   ProjectsSlugIndexRoute: typeof ProjectsSlugIndexRoute
+  SecurityExploitsIndexRoute: typeof SecurityExploitsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -472,6 +499,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsSlugThisWeekRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/security/exploits/': {
+      id: '/security/exploits/'
+      path: '/security/exploits'
+      fullPath: '/security/exploits/'
+      preLoaderRoute: typeof SecurityExploitsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/security/exploits/$incident': {
+      id: '/security/exploits/$incident'
+      path: '/security/exploits/$incident'
+      fullPath: '/security/exploits/$incident'
+      preLoaderRoute: typeof SecurityExploitsIncidentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -497,7 +538,9 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDataCapabilityRoute: ApiDataCapabilityRoute,
   ProjectsSlugTopicRoute: ProjectsSlugTopicRoute,
   ProjectsSlugThisWeekRoute: ProjectsSlugThisWeekRoute,
+  SecurityExploitsIncidentRoute: SecurityExploitsIncidentRoute,
   ProjectsSlugIndexRoute: ProjectsSlugIndexRoute,
+  SecurityExploitsIndexRoute: SecurityExploitsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
