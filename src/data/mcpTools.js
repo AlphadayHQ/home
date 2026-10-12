@@ -3,14 +3,14 @@
  *
  * The site used to claim "12 tools at launch" while the live server exposed 57.
  * `apiSurface.js` flagged that as an owner's decision rather than a typo, and
- * the decision was: publish **capabilities**, not raw tool count. A caller sees
- * 57 entries in `tools/list`, but `get_news` and `get_news_detail` are one
+ * the decision was: publish **capabilities**, not raw tool count. Every entry in
+ * `tools/list` is a tool, but `get_news` and `get_news_detail` are one
  * dataset with two access shapes, and counting them as two capabilities is
  * padding that this audience notices immediately.
  *
  * WHAT IS AUTHORED AND WHAT IS DERIVED
  *
- * The domain boundaries below are authored. Three of them are genuine judgement
+ * The domain boundaries below are authored. Four of them are genuine judgement
  * calls and are marked inline. The counts are then derived from this map — not
  * from the live tool list.
  *
@@ -70,12 +70,12 @@ export const TOOL_DOMAINS = {
     "get_news_last_24_hours",
   ],
   /*
-   * Judgement call 1 of 3: an AI-derived product is its own capability.
+   * Judgement call 1 of 4: an AI-derived product is its own capability.
    *
    * `get_news_summary` is a briefing generated over the news corpus, and
    * `get_kasandra_patterns` is pattern detection over market history. Neither
    * can be reconstructed from the dataset it reads, so both are capabilities in
-   * their own right. Folding both back into their base datasets gives 20.
+   * their own right. Folding both back into their base datasets gives 21.
    */
   "news-summary": ["get_news_summary"],
   blogs: ["get_blogs", "get_blogs_detail", "get_trending_blogs"],
@@ -96,12 +96,12 @@ export const TOOL_DOMAINS = {
   forum: ["get_forum", "get_forum_detail", "get_trending_forum"],
   keywords: ["get_trending_keywords", "get_trending_keywords_detail"],
   /*
-   * Judgement call 2 of 3: `projects` and `tags` are separate datasets.
+   * Judgement call 2 of 4: `projects` and `tags` are separate datasets.
    *
    * They look like one capability and are not. `search_projects` searches
    * project-tagged *content* across the superfeed; `get_tags` browses the *tag
    * taxonomy* — projects, chains and categories, with parent/child structure.
-   * Different data, different use. Folding them gives 21.
+   * Different data, different use. Folding them gives 22.
    */
   projects: ["search_projects"],
   tags: ["get_tags", "get_tags_detail"],
@@ -124,11 +124,25 @@ export const TOOL_DOMAINS = {
     "get_security_exploits_detail",
   ],
   /*
-   * Judgement call 3 of 3: TVL is three capabilities, not one.
+   * Judgement call 3 of 4: Alphaday's own posts are not `blogs`.
+   *
+   * `blogs` aggregates 133 third-party project blogs. `posts` is what Alphaday
+   * writes itself, currently researched analyses of the incidents in
+   * `security-exploits`, joined to them by incident id. Different author,
+   * different provenance, different reason to call it. Folding it into `blogs`
+   * gives 22.
+   *
+   * It is not in `HEADLINE_CAPABILITIES`: with only a handful of posts it has
+   * no `/api/data/posts` page to send anyone to, so /mcp shows it as a plain
+   * card.
+   */
+  posts: ["get_posts", "get_posts_detail"],
+  /*
+   * Judgement call 4 of 4: TVL is three capabilities, not one.
    *
    * Fees, stablecoins and yields share a URL prefix and nothing else — three
    * datasets with different shapes, which DefiLlama also treats separately.
-   * Counting TVL as a single capability gives 20.
+   * Counting TVL as a single capability gives 21.
    */
   "tvl-fees": ["get_tvl_fees", "get_tvl_fees_detail", "get_tvl_fees_top"],
   "tvl-stablecoins": ["get_tvl_stablecoins", "get_tvl_stablecoins_detail"],
