@@ -20,7 +20,7 @@ import { CAPABILITY_PAGES_VERIFIED_ON } from "../data/capabilityPages";
  *
  * WHY THESE EXIST AT ALL
  *
- * Four of the 22 data capabilities are not on any incumbent crypto API: a
+ * Four of the data capabilities are not on any incumbent crypto API: a
  * structured incident database, per-coin developer activity, AI-detected chart
  * patterns and one-call-per-pool DeFi yields. Most readers who land on `/api`
  * never realise the server has them, because the page is a stat band and a
