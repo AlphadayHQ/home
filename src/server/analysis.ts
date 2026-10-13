@@ -1,6 +1,6 @@
 import { API_BASE, fetchJsonSoft } from "./apiFetch";
 import type { Analysis, RawPost } from "../data/analysis";
-import { byIncident } from "../data/analysis";
+import { byIncident, isPublished } from "../data/analysis";
 
 /**
  * Reading the published analysis posts (content doc B2).
@@ -95,7 +95,7 @@ export async function readAnalyses(): Promise<AnalysisIndex> {
 
   const slugs = rows
     .filter(
-      (row) => row.status === "published" && typeof row.slug === "string"
+      (row) => isPublished(row.status) && typeof row.slug === "string"
     )
     .map((row) => row.slug as string);
 

@@ -91,7 +91,8 @@ const STATIC_STATES: Record<string, IndexState> = {
   /*
    * B2's exploit tier. The hub, and through `indexStateFor("/security/exploits")`
    * the incident pages under it, which are not listed here because they are
-   * derived from the feed — the sitemap builds them with `fetchIncidents()` from
+   * derived from the feed. The sitemap lists only those that carry a published
+   * post: `fetchPostPages()` places each post through `data/postPages.ts`, using
    * the same `shapeAll` the route uses, so the two cannot disagree about which
    * incidents exist. Every record has a page; `isIndexableIncident` decides
    * which inherit this state and which are served `substrate`.

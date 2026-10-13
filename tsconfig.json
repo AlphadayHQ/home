@@ -7,6 +7,12 @@
     "jsx": "react-jsx",
     "strict": true,
     "noEmit": true,
+    /*
+     * `scripts/build-sitemap.mjs` runs under Node's own type stripping, which
+     * resolves imports literally: a .ts module it loads that imports another
+     * .ts module must name the extension. Vite and Vitest accept either form.
+     */
+    "allowImportingTsExtensions": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
