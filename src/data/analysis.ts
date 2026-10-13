@@ -43,6 +43,8 @@ export interface RawPost {
   content?: unknown;
   status?: unknown;
   published_at?: unknown;
+  /** Last saved. Moves when a published post is edited; `published_at` does not. */
+  modified?: unknown;
 }
 
 export type Span =
