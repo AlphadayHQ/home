@@ -76,6 +76,18 @@ export interface Analysis {
 const asString = (value: unknown): string =>
   typeof value === "string" ? value : "";
 
+/**
+ * Whether a post is live.
+ *
+ * `status` became a number on 12 October (backend #2022): 0 archived, 1
+ * published, 2 draft. This compared against the string `"published"` until
+ * then, and against the numbers it matched nothing, so every analysis dropped
+ * off every page and out of the sitemap with no error anywhere. The string is
+ * still accepted, so a rollback of the backend cannot cause the same silence.
+ */
+export const isPublished = (status: unknown): boolean =>
+  status === 1 || status === "published";
+
 /** The body with the provenance block removed, whether or not one was present. */
 export function stripProvenance(content: string): string {
   return content.replace(PROVENANCE, "").trimEnd();
@@ -254,7 +266,7 @@ export function toBlocks(markdown: string): Block[] {
 
 /** A published post with a usable provenance block, or null. */
 export function shapeAnalysis(raw: RawPost): Analysis | null {
-  if (asString(raw.status) !== "published") return null;
+  if (!isPublished(raw.status)) return null;
 
   const slug = asString(raw.slug);
   const title = asString(raw.title);

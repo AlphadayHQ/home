@@ -28,7 +28,7 @@ import {
   projectIndexState,
   staticPaths,
 } from "../src/seo/indexState.ts";
-import { byIncident, isAbout } from "../src/data/analysis.ts";
+import { byIncident, isAbout, isPublished } from "../src/data/analysis.ts";
 import { digestPaths } from "../src/data/digestEntities.js";
 import { shapeRows } from "../src/data/eventRows.ts";
 import {
@@ -301,7 +301,7 @@ async function fetchIncidents() {
     url = page.links?.next ?? null;
   }
   const slugs = rows
-    .filter((row) => row.status === "published" && row.slug)
+    .filter((row) => isPublished(row.status) && row.slug)
     .map((row) => row.slug);
   const details = await Promise.all(
     slugs.map(async (slug) =>
