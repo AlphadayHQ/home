@@ -1,25 +1,19 @@
 import { describe, expect, it } from "vitest";
 import {
-  byIncident,
-  isAbout,
   isDecline,
   isPublished,
-  parseProvenance,
   readingMinutes,
   safeHref,
-  shapeAnalysis,
   stripProvenance,
   toBlocks,
 } from "../data/analysis";
 
 /**
- * The published analysis join (content doc B2).
+ * Rendering the analysis agent's posts (content doc B2).
  *
- * Two things are being defended here. The provenance block is the only link
- * between a post and an incident, and it is also the one part of the body a
- * reader must never see — so the tests check that it joins and that it is gone.
- * And the prose is assembled by an agent from pages written by strangers about
- * active attacks, so the renderer is checked for what it refuses.
+ * The prose is assembled by an agent from pages written by strangers about
+ * active attacks, so the renderer is checked for what it refuses. Posts from
+ * before 14 October end with a provenance block a reader must never see.
  */
 
 const provenance = (overrides: Record<string, unknown> = {}) =>
@@ -45,15 +39,10 @@ const post = (overrides: Record<string, unknown> = {}) => ({
   ...overrides,
 });
 
-describe("the provenance block", () => {
-  it("carries the incident id, which is the only link to a record", () => {
-    expect(parseProvenance(provenance())?.incidentId).toBe(200);
-  });
-
+describe("the retired provenance block", () => {
   /*
-   * It is visible on the public API for every post published so far, so the
-   * strip is the page's only defence. A body that still contains it would put
-   * internal endpoints and the agent's working on a public page.
+   * Posts from before 14 October still end with it. It holds internal endpoints
+   * and the agent's working, so it must never reach a rendered page.
    */
   it("never survives into the rendered body", () => {
     const body = stripProvenance(post().content as string);
@@ -63,21 +52,8 @@ describe("the provenance block", () => {
     expect(toBlocks(body).map((b) => b.kind)).toEqual(["heading", "paragraph"]);
   });
 
-  it("is absent rather than fatal on a post written by a person", () => {
-    expect(parseProvenance("## A post with no block\n\nWords.")).toBeNull();
-    expect(shapeAnalysis(post({ content: "## Human\n\nWords." }))).toBeNull();
-  });
-
-  it("refuses a malformed block instead of guessing", () => {
-    expect(parseProvenance("```alphaday-provenance\n{not json}\n```")).toBeNull();
-    expect(parseProvenance(provenance({ incidentId: "not-a-number" }))).toBeNull();
-    expect(parseProvenance(provenance({ incidentId: 0 }))).toBeNull();
-  });
-
-  it("keeps a bad incident date out rather than printing it", () => {
-    expect(parseProvenance(provenance({ incidentDate: "soon" }))?.incidentDate)
-      .toBeNull();
-    expect(parseProvenance(provenance())?.incidentDate).toBe("2026-09-23");
+  it("leaves a body without one untouched", () => {
+    expect(stripProvenance("## Human\n\nWords.")).toBe("## Human\n\nWords.");
   });
 });
 
@@ -174,129 +150,6 @@ describe("the markdown the agent actually writes", () => {
   });
 });
 
-describe("joining posts to incidents", () => {
-  it("keys on the incident id and ignores unpublished work", () => {
-    const map = byIncident([
-      post(),
-      post({ slug: "draft-one", status: 2 }),
-      post({ slug: "archived-one", status: 0 }),
-    ]);
-    expect([...map.keys()]).toEqual([200]);
-    expect(map.get(200)?.slug).toBe("meter-exploit-analysis");
-  });
-
-  /*
-   * The agent compares its own work by reading titles rather than matching ids,
-   * so a second post about one incident is possible. Showing the newest is a
-   * better answer than showing both.
-   */
-  it("keeps the newest when one incident has two posts", () => {
-    const map = byIncident([
-      post({ slug: "older", published_at: "2026-10-01T00:00:00Z" }),
-      post({ slug: "newer", published_at: "2026-10-07T00:00:00Z" }),
-    ]);
-    expect(map.get(200)?.slug).toBe("newer");
-  });
-
-  it("drops the sources it would not be willing to link", () => {
-    const shaped = shapeAnalysis(
-      post({
-        content: `Words.\n\n${provenance({
-          sourcesRead: ["https://protos.com/x", "javascript:alert(1)"],
-        })}`,
-      })
-    );
-    expect(shaped?.sourcesRead).toEqual(["https://protos.com/x"]);
-  });
-
-  /*
-   * The agent lists every URL it fetched, our own API included: 4 of the 10
-   * on Magic Eden were the exploit record and news searches. Printed on a
-   * public page they are plumbing, not sources.
-   */
-  it("does not list our own API calls as sources", () => {
-    const shaped = shapeAnalysis(
-      post({
-        content: `Words.\n\n${provenance({
-          sourcesRead: [
-            "https://protos.com/x",
-            "https://api.alphaday.com/v1/security/exploits/203/",
-            "https://api.alphaday.com/v1/items/news/?search=Magic%20Eden",
-            "https://alphaday.com/security/exploits",
-          ],
-        })}`,
-      })
-    );
-    expect(shaped?.sourcesRead).toEqual([
-      "https://protos.com/x",
-      "https://alphaday.com/security/exploits",
-    ]);
-  });
-
-  it("reports a reading time of at least a minute", () => {
-    expect(readingMinutes(toBlocks("One short line."))).toBe(1);
-    expect(
-      readingMinutes(toBlocks(Array(700).fill("word").join(" ")))
-    ).toBe(3);
-  });
-});
-
-/*
- * `incidentId` is written by the agent and editable in the admin, and a wrong
- * one would attach an analysis to the wrong incident and make that page
- * indexable. The title is the cross-check. These are the five live pairings,
- * all of which must pass.
- */
-describe("the title cross-check on the join", () => {
-  const live: Array<[string, string]> = [
-    [
-      "Artificial Superintelligence Alliance exploit analysis",
-      'Single attacker steals $2.25 million from three crypto projects in the "Artificial Superintelligence Alliance"',
-    ],
-    ["Magic Eden exploit analysis", "Magic Eden users lose NFTs and  $1.8 million in wETH to legacy approvals exploit"],
-    ["Meter exploit analysis", "Meter token prices crash after unauthorized mint"],
-    ["Duelbits exploit analysis", "Duelbits crypto casino goes offline after $7 million theft"],
-    ["Neutron exploit analysis", "Projects on the defunct Neutron chain lose $1.8 million to governance attack, Cosmos Hub halts chain"],
-  ];
-
-  it.each(live)("accepts %s", (title, headline) => {
-    expect(isAbout({ title }, headline)).toBe(true);
-  });
-
-  it("refuses an analysis keyed to the wrong incident", () => {
-    expect(
-      isAbout(
-        { title: "Magic Eden exploit analysis" },
-        "Duelbits crypto casino goes offline after $7 million theft"
-      )
-    ).toBe(false);
-  });
-
-  it("matches whole words only", () => {
-    expect(isAbout({ title: "Meter exploit analysis" }, "Metering protocol drained")).toBe(false);
-  });
-
-  it("ignores case and punctuation", () => {
-    expect(isAbout({ title: "KiiChain exploit analysis" }, "KiiChain, TAC, and other Cosmos-based blockchains exploited")).toBe(true);
-  });
-
-  it("does not hold spacing against a match, either way round", () => {
-    const renamed =
-      "2026-07-16: V2 Curie Unguarded Orderbook Funding Growth Update Lets Anyone Poison Cached Funding Draining The Vault on PerpetualProtocol";
-    expect(isAbout({ title: "Perpetual Protocol exploit analysis" }, renamed)).toBe(true);
-    expect(isAbout({ title: "PerpetualProtocol exploit analysis" }, "Perpetual Protocol drained")).toBe(true);
-  });
-
-  it("still matches whole words when joining them", () => {
-    expect(isAbout({ title: "Orb exploit analysis" }, "Absorb protocol drained")).toBe(false);
-    expect(isAbout({ title: "Perpetual Protocol exploit analysis" }, "PerpetualProtocolV2 drained")).toBe(false);
-  });
-
-  it("refuses a title with no subject", () => {
-    expect(isAbout({ title: "exploit analysis" }, "Anything at all")).toBe(false);
-  });
-});
-
 /*
  * The backend switched `status` from strings to numbers on 12 October. The
  * string comparison that was here matched none of them, so every analysis
@@ -306,7 +159,6 @@ describe("the title cross-check on the join", () => {
 describe("what counts as published", () => {
   it("accepts the numeric status the API serves", () => {
     expect(isPublished(1)).toBe(true);
-    expect(shapeAnalysis(post({ status: 1 }))).not.toBeNull();
   });
 
   it("still accepts the string, so a backend rollback cannot hide everything", () => {
@@ -317,21 +169,21 @@ describe("what counts as published", () => {
     for (const status of [0, 2, "draft", "archived", "1", null, undefined]) {
       expect(isPublished(status)).toBe(false);
     }
-    expect(shapeAnalysis(post({ status: 2 }))).toBeNull();
   });
 });
 
-describe("what is not an analysis", () => {
-  it("drops a decline even when it is published, so the page never shows one", () => {
-    const decline = post({
-      content: `> DECLINED: Main Street USD lost its peg; no attacker.\n\n${provenance()}`,
-    });
-    expect(isDecline(decline.content)).toBe(true);
-    expect(shapeAnalysis(decline)).toBeNull();
+describe("what is a decline", () => {
+  it("recognises the agent's one-line decline", () => {
+    expect(isDecline("> DECLINED: Main Street USD lost its peg; no attacker.")).toBe(true);
   });
 
-  it("does not mistake a quote inside an analysis for a decline", () => {
-    expect(isDecline(`## What happened\n\n> DECLINED: quoted\n\n${provenance()}`)).toBe(false);
-    expect(shapeAnalysis(post())).not.toBeNull();
+  it("does not mistake a quote inside an analysis for one", () => {
+    expect(isDecline(`## What happened\n\n> DECLINED: quoted\n\nMore.`)).toBe(false);
+  });
+});
+
+describe("reading time", () => {
+  it("is never zero", () => {
+    expect(readingMinutes(toBlocks("Short."))).toBe(1);
   });
 });
