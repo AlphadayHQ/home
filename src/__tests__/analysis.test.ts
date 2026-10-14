@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   byIncident,
   isAbout,
+  isDecline,
   isPublished,
   parseProvenance,
   readingMinutes,
@@ -279,6 +280,18 @@ describe("the title cross-check on the join", () => {
     expect(isAbout({ title: "KiiChain exploit analysis" }, "KiiChain, TAC, and other Cosmos-based blockchains exploited")).toBe(true);
   });
 
+  it("does not hold spacing against a match, either way round", () => {
+    const renamed =
+      "2026-07-16: V2 Curie Unguarded Orderbook Funding Growth Update Lets Anyone Poison Cached Funding Draining The Vault on PerpetualProtocol";
+    expect(isAbout({ title: "Perpetual Protocol exploit analysis" }, renamed)).toBe(true);
+    expect(isAbout({ title: "PerpetualProtocol exploit analysis" }, "Perpetual Protocol drained")).toBe(true);
+  });
+
+  it("still matches whole words when joining them", () => {
+    expect(isAbout({ title: "Orb exploit analysis" }, "Absorb protocol drained")).toBe(false);
+    expect(isAbout({ title: "Perpetual Protocol exploit analysis" }, "PerpetualProtocolV2 drained")).toBe(false);
+  });
+
   it("refuses a title with no subject", () => {
     expect(isAbout({ title: "exploit analysis" }, "Anything at all")).toBe(false);
   });
@@ -305,5 +318,20 @@ describe("what counts as published", () => {
       expect(isPublished(status)).toBe(false);
     }
     expect(shapeAnalysis(post({ status: 2 }))).toBeNull();
+  });
+});
+
+describe("what is not an analysis", () => {
+  it("drops a decline even when it is published, so the page never shows one", () => {
+    const decline = post({
+      content: `> DECLINED: Main Street USD lost its peg; no attacker.\n\n${provenance()}`,
+    });
+    expect(isDecline(decline.content)).toBe(true);
+    expect(shapeAnalysis(decline)).toBeNull();
+  });
+
+  it("does not mistake a quote inside an analysis for a decline", () => {
+    expect(isDecline(`## What happened\n\n> DECLINED: quoted\n\n${provenance()}`)).toBe(false);
+    expect(shapeAnalysis(post())).not.toBeNull();
   });
 });

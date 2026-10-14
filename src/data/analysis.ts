@@ -90,6 +90,19 @@ const asString = (value: unknown): string =>
 export const isPublished = (status: unknown): boolean =>
   status === 1 || status === "published";
 
+/**
+ * Whether a post is the agent's decline: a one-line "not a security incident"
+ * note, not an analysis.
+ *
+ * A decline carries an analysis's title and provenance block so the agent can tell
+ * next run that the incident is handled, so everything else here would accept one.
+ * Published by mistake (four were, on 14 October), it would show "DECLINED: ..."
+ * on the incident page as its analysis and put that page in the sitemap. Declines
+ * are meant to stay archived; this keeps one off the site whatever its status.
+ */
+export const isDecline = (content: string): boolean =>
+  /^\s*>\s*DECLINED:/.test(content);
+
 /** The body with the provenance block removed, whether or not one was present. */
 export function stripProvenance(content: string): string {
   return content.replace(PROVENANCE, "").trimEnd();
@@ -274,6 +287,7 @@ export function shapeAnalysis(raw: RawPost): Analysis | null {
   const title = asString(raw.title);
   const content = asString(raw.content);
   if (!slug || !title || !content) return null;
+  if (isDecline(content)) return null;
 
   const provenance = parseProvenance(content);
   if (!provenance) return null;
@@ -332,7 +346,12 @@ export const subjectOf = (title: string): string =>
  * published posts, and none of their subjects appears in any other reported
  * headline.
  *
- * Whole words, so "Meter" does not match "Metering". A mismatch drops the
+ * Whole words, so "Meter" does not match "Metering". Spacing is not held
+ * against a match: DeFiHackLabs writes names both ways and the harvester now
+ * refreshes a renamed headline in place, so "Perpetual Protocol" must still match
+ * "...on PerpetualProtocol" (it stopped doing so on 14 October). The joined
+ * subject has to equal a run of whole headline words joined the same way, so
+ * this loosens spacing only, never word boundaries. A mismatch drops the
  * analysis from the page rather than guessing. The page then stands on its
  * coverage, as it did before the analysis existed. That is the safe way to fail
  * here, and it is loud: the caller logs it.
@@ -342,7 +361,19 @@ export const subjectOf = (title: string): string =>
  */
 export function isAbout(analysis: { title: string }, headline: string): boolean {
   const subject = words(subjectOf(analysis.title));
-  return subject.trim() !== "" && words(headline).includes(subject);
+  if (subject.trim() === "") return false;
+  if (words(headline).includes(subject)) return true;
+
+  const joined = subject.replace(/ /g, "");
+  const tokens = words(headline).trim().split(" ");
+  return tokens.some((_, start) => {
+    let run = "";
+    for (let end = start; end < tokens.length && run.length < joined.length; end++) {
+      run += tokens[end];
+      if (run === joined) return true;
+    }
+    return false;
+  });
 }
 
 /** Reading time, rounded to the nearest minute and never zero. */

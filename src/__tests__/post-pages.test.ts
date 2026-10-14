@@ -58,6 +58,13 @@ describe("where a post is read", () => {
     expect(postPagePath(post({ status: 0 }), byId(incident()))).toBeNull();
   });
 
+  it("never places a decline, even one published by mistake", () => {
+    const decline = post({
+      content: `> DECLINED: The project shut down; no attack.\n\n${provenance(200)}`,
+    });
+    expect(postPagePath(decline, byId(incident()))).toBeNull();
+  });
+
   it("has no page yet for a post of another kind", () => {
     expect(
       postPagePath(post({ content: "A post with no provenance." }), byId(incident()))
