@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   byIncident,
   isAbout,
+  isPublished,
   parseProvenance,
   readingMinutes,
   safeHref,
@@ -36,7 +37,8 @@ const post = (overrides: Record<string, unknown> = {}) => ({
   slug: "meter-exploit-analysis",
   title: "Meter exploit analysis",
   excerpt: "An attacker exploited a block-validation flaw.",
-  status: "published",
+  // Numeric since backend #2022: 0 archived, 1 published, 2 draft.
+  status: 1,
   published_at: "2026-10-07T19:18:10Z",
   content: `## What happened\n\nThe bridge accepted mint instructions it should have rejected.\n\n${provenance()}`,
   ...overrides,
@@ -175,7 +177,8 @@ describe("joining posts to incidents", () => {
   it("keys on the incident id and ignores unpublished work", () => {
     const map = byIncident([
       post(),
-      post({ slug: "draft-one", status: "draft" }),
+      post({ slug: "draft-one", status: 2 }),
+      post({ slug: "archived-one", status: 0 }),
     ]);
     expect([...map.keys()]).toEqual([200]);
     expect(map.get(200)?.slug).toBe("meter-exploit-analysis");
@@ -278,5 +281,29 @@ describe("the title cross-check on the join", () => {
 
   it("refuses a title with no subject", () => {
     expect(isAbout({ title: "exploit analysis" }, "Anything at all")).toBe(false);
+  });
+});
+
+/*
+ * The backend switched `status` from strings to numbers on 12 October. The
+ * string comparison that was here matched none of them, so every analysis
+ * vanished from the pages and the sitemap without an error. This pins both
+ * shapes, and pins that nothing else counts as live.
+ */
+describe("what counts as published", () => {
+  it("accepts the numeric status the API serves", () => {
+    expect(isPublished(1)).toBe(true);
+    expect(shapeAnalysis(post({ status: 1 }))).not.toBeNull();
+  });
+
+  it("still accepts the string, so a backend rollback cannot hide everything", () => {
+    expect(isPublished("published")).toBe(true);
+  });
+
+  it("refuses drafts, archived posts and anything unrecognised", () => {
+    for (const status of [0, 2, "draft", "archived", "1", null, undefined]) {
+      expect(isPublished(status)).toBe(false);
+    }
+    expect(shapeAnalysis(post({ status: 2 }))).toBeNull();
   });
 });
