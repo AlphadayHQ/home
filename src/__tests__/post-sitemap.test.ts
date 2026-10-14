@@ -97,9 +97,10 @@ describe("the live post sitemap", () => {
    */
   it("answers an uncached 503 when it has never read the list", async () => {
     pages["https://api.test/posts/?limit=100"] = new Error("upstream down");
-    vi.spyOn(console, "error").mockImplementation(() => {});
+    const quiet = vi.spyOn(console, "error").mockImplementation(() => {});
     const { postSitemapResponse } = await import("../server/postSitemap");
     const res = await postSitemapResponse();
+    quiet.mockRestore();
     expect(res.status).toBe(503);
     expect(res.headers.get("Cache-Control")).toBe("no-store");
     expect(res.headers.get("Retry-After")).toBe("300");
@@ -119,13 +120,28 @@ describe("the live post sitemap", () => {
       expect(calls).toHaveLength(2);
     });
 
-    it("rebuilds once stale, and serves the held one if the rebuild fails", async () => {
+    it("answers a stale read at once and rebuilds behind it", async () => {
+      const { readPostSitemap, FRESH_MS } = await import("../server/postSitemap");
+      const first = await readPostSitemap();
+      pages["https://api.test/posts/?limit=100"] = page([post()]);
+      vi.setSystemTime(Date.now() + FRESH_MS);
+
+      expect(await readPostSitemap()).toEqual(first);
+      await vi.advanceTimersByTimeAsync(0);
+      expect((await readPostSitemap()).urls).toBe(1);
+    });
+
+    it("keeps serving the held one when a rebuild fails", async () => {
+      const quiet = vi.spyOn(console, "error").mockImplementation(() => {});
       const { readPostSitemap, FRESH_MS } = await import("../server/postSitemap");
       const first = await readPostSitemap();
       pages["https://api.test/posts/?limit=100"] = new Error("upstream down");
       vi.setSystemTime(Date.now() + FRESH_MS);
+
       expect(await readPostSitemap()).toEqual(first);
-      expect(calls).toHaveLength(3);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(await readPostSitemap()).toEqual(first);
+      quiet.mockRestore();
     });
   });
 });

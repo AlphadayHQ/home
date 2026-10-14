@@ -15,18 +15,22 @@ import { SITE_URL, urlsetXml } from "../seo/sitemapXml";
  * HOW OFTEN THE API IS READ
  *
  * The response says `s-maxage=3600`, but the CloudFront cache policy caps every
- * edge at five minutes (`MaxTTL: 300`, see `server.mjs`), so each edge asks
- * about every 5 minutes and a published post is listed within about that. A
- * query string is part of that cache key, so `?anything` reaches this server
- * uncached. Behind both, the read is held here for `FRESH_MS` and shared by
- * concurrent requests: however the requests arrive, the post list is walked at
- * most once per `FRESH_MS` per process. A walk takes 2–4s, almost all of it the
- * API answering each page.
+ * edge at five minutes (`MaxTTL: 300`, see `server.mjs`). A query string is part
+ * of that cache key, so `?anything` reaches this server uncached. Behind both,
+ * the read is held here for `FRESH_MS` and shared by concurrent requests:
+ * however the requests arrive, the post list is walked at most once per
+ * `FRESH_MS` per process. A walk takes 2–11s, almost all of it the API answering
+ * each page, so no request waits for one once anything is held: a stale read is
+ * answered at once and rebuilt behind it, as `server/exploits.ts` does.
  *
- * A failed read is never served short. With a good read held, it is served while
- * the next one is tried; with none, the route answers an uncached 503 and the
- * edge keeps serving its last good copy (`stale-if-error`). An empty sitemap
- * would read to Google as every post gone.
+ * The two holds add up, so a published post is listed within about ten minutes
+ * at worst — the edge's five plus this server's five — and one more stale answer
+ * from the edge's `stale-while-revalidate` after that.
+ *
+ * A failed read is never served short. With a good read held, it stays held and
+ * is served; with none, the route answers an uncached 503 and the edge keeps
+ * serving its last good copy (`stale-if-error`). An empty sitemap would read to
+ * Google as every post gone.
  */
 
 const PAGE_SIZE = 100;
@@ -88,15 +92,17 @@ function refresh(): Promise<PostSitemap> {
   return inFlight;
 }
 
-/** The held sitemap while fresh; otherwise one shared rebuild, falling back to the held one. */
-export async function readPostSitemap(): Promise<PostSitemap> {
-  if (held && Date.now() - held.at < FRESH_MS) return held.sitemap;
-  try {
-    return await refresh();
-  } catch (error) {
-    if (held) return held.sitemap;
-    throw error;
+/**
+ * The held sitemap, at once, whenever there is one; a stale one starts a single
+ * rebuild behind it. Only a process that has never read the list waits.
+ */
+export function readPostSitemap(): Promise<PostSitemap> {
+  if (!held) return refresh();
+  if (Date.now() - held.at >= FRESH_MS) {
+    // A failed rebuild keeps the held one; the next stale request tries again.
+    refresh().catch((error) => console.error(error));
   }
+  return Promise.resolve(held.sitemap);
 }
 
 /** For tests: forget the held sitemap. */
