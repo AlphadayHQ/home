@@ -1,5 +1,5 @@
 import type { RawPost } from "./analysis.ts";
-import { isAbout, isPublished, parseProvenance } from "./analysis.ts";
+import { isAbout, isDecline, isPublished, parseProvenance } from "./analysis.ts";
 import type { Exploit } from "./exploits.ts";
 import { incidentPath, isIndexableIncident } from "./exploits.ts";
 
@@ -47,6 +47,8 @@ export function postPagePath(
   if (!isPublished(post.status)) return null;
   const content = typeof post.content === "string" ? post.content : "";
   const title = typeof post.title === "string" ? post.title : "";
+  // A published decline still names its incident; the page drops it, so must this.
+  if (isDecline(content)) return null;
 
   const provenance = parseProvenance(content);
   if (provenance) {

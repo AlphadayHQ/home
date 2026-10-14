@@ -22,12 +22,20 @@ import { byIncident, isPublished } from "../data/analysis";
  * kind of failure worth a comment.
  *
  * The real fix is a metadata field on the list serializer — it is already on the
- * backend list. Until then every render costs 1 + N requests (the list pages,
- * then one per published post), bounded by `DETAIL_CONCURRENCY`. The CDN keeps
- * the HTML for 60s by default and 300s at most (`HtmlCachePolicy`), so each
- * incident page pays that roughly every one to five minutes per edge, and the
- * hub and every incident page pay it separately. At five posts that is nothing.
- * Past about fifty it is worth chasing.
+ * backend list. Until then the details are kept in this process, see below.
+ *
+ * WHY IT IS HELD IN MEMORY
+ *
+ * Read per render, this cost 1 + N requests for every incident page and the hub,
+ * each paying it separately. That was nothing at five posts. On 14 October 180
+ * were published at once, and every page view became 182 API calls: renders took
+ * 7–13s and a handful of concurrent ones returned 500. So the whole process now
+ * shares one read. It is fresh for `FRESH_MS`; after that the next caller gets
+ * the last good read at once while one refresh runs behind it. A refresh walks
+ * the list (two requests at 180 posts) and fetches only the posts whose
+ * `modified` changed, so an edit or a new post is picked up within a minute and
+ * an unchanged archive costs nothing. A refresh that fails keeps the last good
+ * read rather than replacing it with a partial one.
  *
  * WHY IT WALKS PAGES
  *
@@ -47,6 +55,9 @@ const MAX_PAGES = 20;
 /** Enough to keep the waves short without opening a connection per post. */
 const DETAIL_CONCURRENCY = 8;
 
+/** How long one read serves every render before a refresh is started. */
+export const FRESH_MS = 60_000;
+
 export type { Analysis };
 
 export interface AnalysisIndex {
@@ -64,6 +75,7 @@ export interface AnalysisIndex {
 interface RawListRow {
   slug?: unknown;
   status?: unknown;
+  modified?: unknown;
 }
 
 interface RawListPage {
@@ -71,7 +83,33 @@ interface RawListPage {
   links?: { next?: string | null };
 }
 
-export async function readAnalyses(): Promise<AnalysisIndex> {
+/** Post bodies by slug, with the `modified` they were read at. */
+const details = new Map<string, { modified: unknown; post: RawPost }>();
+let lastGood: { at: number; index: AnalysisIndex } | null = null;
+let refreshing: Promise<AnalysisIndex> | null = null;
+
+function refresh(): Promise<AnalysisIndex> {
+  refreshing ??= loadAnalyses()
+    .then((index) => {
+      if (index.ok || !lastGood) lastGood = { at: Date.now(), index };
+      return lastGood.index;
+    })
+    .finally(() => {
+      refreshing = null;
+    });
+  return refreshing;
+}
+
+export function readAnalyses(): Promise<AnalysisIndex> {
+  if (!lastGood) return refresh();
+  if (Date.now() - lastGood.at >= FRESH_MS) {
+    // Serve what we have; the refresh lands for the next caller.
+    refresh().catch(() => {});
+  }
+  return Promise.resolve(lastGood.index);
+}
+
+async function loadAnalyses(): Promise<AnalysisIndex> {
   const rows: RawListRow[] = [];
   let ok = true;
 
@@ -93,31 +131,38 @@ export async function readAnalyses(): Promise<AnalysisIndex> {
     if (page === MAX_PAGES) ok = false;
   }
 
-  const slugs = rows
-    .filter(
-      (row) => isPublished(row.status) && typeof row.slug === "string"
-    )
-    .map((row) => row.slug as string);
+  const published = rows.filter(
+    (row) => isPublished(row.status) && typeof row.slug === "string"
+  );
+  const live = new Set(published.map((row) => row.slug as string));
+  // A partial list says nothing about what was unpublished, so prune only on a full one.
+  if (ok) for (const slug of details.keys()) if (!live.has(slug)) details.delete(slug);
 
-  const posts: RawPost[] = [];
+  const stale = published.filter(
+    (row) => details.get(row.slug as string)?.modified !== row.modified
+  );
 
-  for (let start = 0; start < slugs.length; start += DETAIL_CONCURRENCY) {
-    const batch = await Promise.all(
-      slugs
-        .slice(start, start + DETAIL_CONCURRENCY)
-        .map((slug) =>
-          fetchJsonSoft<RawPost>(
-            `${API_BASE}/posts/${encodeURIComponent(slug)}/`
-          )
+  for (let start = 0; start < stale.length; start += DETAIL_CONCURRENCY) {
+    const batch = stale.slice(start, start + DETAIL_CONCURRENCY);
+    const bodies = await Promise.all(
+      batch.map((row) =>
+        fetchJsonSoft<RawPost>(
+          `${API_BASE}/posts/${encodeURIComponent(row.slug as string)}/`
         )
+      )
     );
-    for (const post of batch) {
+    bodies.forEach((post, i) => {
       // A post that failed to load is a missing analysis, not an empty one —
       // `ok` is what stops that being cached as a reason to deindex.
       if (post === null) ok = false;
-      else posts.push(post);
-    }
+      else details.set(batch[i].slug as string, { modified: batch[i].modified, post });
+    });
   }
+
+  const posts = published.flatMap((row) => {
+    const held = details.get(row.slug as string);
+    return held ? [held.post] : [];
+  });
 
   return { byIncident: byIncident(posts), ok };
 }
