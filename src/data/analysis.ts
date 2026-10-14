@@ -1,19 +1,9 @@
 /**
- * Published incident analysis, joined onto the exploit pages (content doc B2).
+ * Rendering the posts the analysis agent writes (content doc B2).
  *
- * WHAT THIS IS
- *
- * An agent reads each incident's sources and drafts an analysis; a person reviews
- * and publishes it to `/v1/posts/`. This module turns those posts into something
- * the exploit routes can render, and joins them to incidents.
- *
- * THE JOIN KEY IS INSIDE THE BODY
- *
- * `Post` has no metadata field, so the agent ends every body with a fenced
- * `alphaday-provenance` block carrying `incidentId` and what it read. That block
- * is the join key *and* the thing that must never reach a reader: it is currently
- * visible on the public API for all five published posts, which is the reason
- * `stripProvenance` runs before anything is rendered rather than after.
+ * Exploit analyses are read as posts — see `exploitPosts.ts` for how they are
+ * shaped and where they live. This module is the part shared by every kind of
+ * post: what counts as published, what is a decline, and the markdown renderer.
  *
  * WHY THE MARKDOWN IS RENDERED BY HAND
  *
@@ -22,19 +12,15 @@
  * to a markdown library and `dangerouslySetInnerHTML` would make any HTML that
  * slipped through executable. Instead the four constructs the agent actually
  * writes are parsed into spans and rendered as React elements, so nothing can
- * become markup. Measured across all five published posts: `##` headings, inline
- * links, inline code, paragraphs. No bold, no lists, no block quotes, no HTML.
- * Anything else renders as the literal characters, which is the safe failure.
+ * become markup: `##` headings, inline links, inline code, paragraphs. Anything
+ * else renders as the literal characters, which is the safe failure.
  */
 
-/** The fenced block the agent appends; see `src/server/exploits.ts`. */
+/**
+ * The fenced block posts ended with before 14 October, when their facts moved to
+ * `metadata`. Those posts keep it in their bodies, so it is still stripped.
+ */
 const PROVENANCE = /```alphaday-provenance\s*([\s\S]*?)```/;
-
-export interface Provenance {
-  incidentId: number;
-  incidentDate: string | null;
-  sourcesRead: string[];
-}
 
 export interface RawPost {
   slug?: unknown;
@@ -57,27 +43,6 @@ export interface Block {
   spans: Span[];
 }
 
-export interface Analysis {
-  /** The post's own slug, for a canonical link back to the full piece. */
-  slug: string;
-  title: string;
-  excerpt: string;
-  publishedAt: string;
-  /** The exploit record this analysis is about. */
-  incidentId: number;
-  /**
-   * The date the sources give for the incident, which is not the feed's `date`.
-   * All five published posts corrected it — by 3 to 7 days.
-   */
-  incidentDate: string | null;
-  /** Every URL the agent fetched, which is what makes the research checkable. */
-  sourcesRead: string[];
-  blocks: Block[];
-}
-
-const asString = (value: unknown): string =>
-  typeof value === "string" ? value : "";
-
 /**
  * Whether a post is live.
  *
@@ -90,63 +55,23 @@ const asString = (value: unknown): string =>
 export const isPublished = (status: unknown): boolean =>
   status === 1 || status === "published";
 
+/**
+ * Whether a post is the agent's decline: a one-line "not a security incident"
+ * note, not an analysis.
+ *
+ * A decline carries an analysis's title and type so the agent can tell next run
+ * that the incident is handled, so everything else would accept one. Published by
+ * mistake (four were, on 14 October), it would be a page reading "DECLINED: ..."
+ * in the sitemap. Declines are meant to stay archived and now carry
+ * `metadata.declined`; this catches one written before that flag existed.
+ */
+export const isDecline = (content: string): boolean =>
+  /^\s*>\s*DECLINED:/.test(content);
+
 /** The body with the provenance block removed, whether or not one was present. */
 export function stripProvenance(content: string): string {
   return content.replace(PROVENANCE, "").trimEnd();
 }
-
-/**
- * The provenance block, or null when it is absent or unparseable.
- *
- * Null is a real answer rather than an error: a post written by a person through
- * the admin carries no block, and it should simply not join to an incident rather
- * than break the page.
- */
-export function parseProvenance(content: string): Provenance | null {
-  const match = PROVENANCE.exec(content);
-  if (!match) return null;
-
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(match[1]);
-  } catch {
-    return null;
-  }
-  if (!parsed || typeof parsed !== "object") return null;
-
-  const record = parsed as Record<string, unknown>;
-  const id = Number(record.incidentId);
-  if (!Number.isInteger(id) || id <= 0) return null;
-
-  const date = asString(record.incidentDate);
-  return {
-    incidentId: id,
-    incidentDate: /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : null,
-    sourcesRead: Array.isArray(record.sourcesRead)
-      ? record.sourcesRead.filter(
-          (url): url is string =>
-            typeof url === "string" && !!safeHref(url) && !isOwnApi(url)
-        )
-      : [],
-  };
-}
-
-/*
- * The agent lists every URL it fetched, and that includes our own feed: the
- * exploit record and its news searches. On Magic Eden that was 4 of 10. They
- * are working calls rather than sources a reader would follow, and printed on
- * a public page they read as internal plumbing, so they are dropped here and
- * the list shows only what the analysis was actually researched from.
- */
-const OWN_API_HOST = "api.alphaday.com";
-
-const isOwnApi = (url: string): boolean => {
-  try {
-    return new URL(url).hostname === OWN_API_HOST;
-  } catch {
-    return false;
-  }
-};
 
 /**
  * An href we are willing to put in the document, or null.
@@ -264,85 +189,6 @@ export function toBlocks(markdown: string): Block[] {
   }
 
   return blocks.filter((block) => block.spans.length > 0);
-}
-
-/** A published post with a usable provenance block, or null. */
-export function shapeAnalysis(raw: RawPost): Analysis | null {
-  if (!isPublished(raw.status)) return null;
-
-  const slug = asString(raw.slug);
-  const title = asString(raw.title);
-  const content = asString(raw.content);
-  if (!slug || !title || !content) return null;
-
-  const provenance = parseProvenance(content);
-  if (!provenance) return null;
-
-  const blocks = toBlocks(stripProvenance(content));
-  if (blocks.length === 0) return null;
-
-  return {
-    slug,
-    title,
-    excerpt: asString(raw.excerpt),
-    publishedAt: asString(raw.published_at),
-    incidentId: provenance.incidentId,
-    incidentDate: provenance.incidentDate,
-    sourcesRead: provenance.sourcesRead,
-    blocks,
-  };
-}
-
-/**
- * Analyses by incident id, newest wins.
- *
- * A second post about one incident is possible — the agent compares its own work
- * by reading titles rather than matching ids — so the newest is shown and the
- * older one is simply not linked, instead of both appearing.
- */
-export function byIncident(posts: RawPost[]): Map<number, Analysis> {
-  const map = new Map<number, Analysis>();
-  for (const raw of posts) {
-    const analysis = shapeAnalysis(raw);
-    if (!analysis) continue;
-    const existing = map.get(analysis.incidentId);
-    if (!existing || existing.publishedAt < analysis.publishedAt) {
-      map.set(analysis.incidentId, analysis);
-    }
-  }
-  return map;
-}
-
-const words = (text: string): string =>
-  ` ${text.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim()} `;
-
-/** The title with the fixed suffix the agent is told to use taken off. */
-export const subjectOf = (title: string): string =>
-  title.replace(/\s+exploit analysis\s*$/i, "").trim();
-
-/**
- * Whether an analysis is plausibly about the incident its provenance names.
- *
- * `incidentId` is the join key, and nothing checks it: the agent writes it and
- * an admin edit can change it. A wrong one attaches an analysis to the wrong
- * incident and, because an analysis makes a page indexable on its own, puts
- * that page in the index. The title is the cross-check. The agent titles every
- * post "<subject> exploit analysis" with the subject as the sources name it,
- * and the incident's headline names the same subject: true of all five
- * published posts, and none of their subjects appears in any other reported
- * headline.
- *
- * Whole words, so "Meter" does not match "Metering". A mismatch drops the
- * analysis from the page rather than guessing. The page then stands on its
- * coverage, as it did before the analysis existed. That is the safe way to fail
- * here, and it is loud: the caller logs it.
- *
- * This stays a client-side stand-in until the backend carries `incidentId` in
- * a field of its own (backend ask #8) and can validate it on write.
- */
-export function isAbout(analysis: { title: string }, headline: string): boolean {
-  const subject = words(subjectOf(analysis.title));
-  return subject.trim() !== "" && words(headline).includes(subject);
 }
 
 /** Reading time, rounded to the nearest minute and never zero. */

@@ -2,104 +2,61 @@ import { describe, expect, it } from "vitest";
 import { postPagePath, postPages } from "../data/postPages";
 
 /**
- * The sitemap lists the pages that carry a published post. These pin where a
- * post is placed, that a post is never placed on a page that would not show it,
- * and that a post the site cannot place is counted rather than lost.
+ * The sitemap lists the pages that carry a published post, from the post list
+ * alone. These pin where each type is placed, that nothing unpublished or
+ * declined is, and that a post the site cannot place is counted rather than lost.
  */
-
-const incident = (overrides: Record<string, unknown> = {}) => ({
-  id: "200",
-  slug: "meter-token-prices-crash-after-unauthorized-mint",
-  title: "Meter token prices crash after unauthorized mint",
-  sourceSlug: "web3isgoinggreat-com",
-  ...overrides,
-});
-
-const provenance = (incidentId: number) =>
-  "```alphaday-provenance\n" +
-  JSON.stringify({ incidentId, incidentDate: null, sourcesRead: [] }) +
-  "\n```";
 
 const post = (overrides: Record<string, unknown> = {}) => ({
   slug: "meter-exploit-analysis",
   title: "Meter exploit analysis",
   status: 1,
+  type: "exploit-analysis",
   published_at: "2026-10-07T19:18:10Z",
-  content: `Words.\n\n${provenance(200)}`,
+  metadata: { schema: 1, incidentId: 200, kind: "reported" },
   ...overrides,
 });
 
-const byId = (...rows: ReturnType<typeof incident>[]) =>
-  new Map(rows.map((row) => [row.id, row]));
-
 describe("where a post is read", () => {
-  it("places an exploit analysis on its incident's page", () => {
-    expect(postPagePath(post(), byId(incident()))).toBe(
-      "/security/exploits/meter-token-prices-crash-after-unauthorized-mint"
-    );
+  it("places an exploit analysis at its own slug", () => {
+    expect(postPagePath(post())).toBe("/security/exploits/meter-exploit-analysis");
   });
 
-  it("places an analysed reproduction too, which is indexable once analysed", () => {
-    const reproduction = incident({ sourceSlug: "github-com" });
-    expect(postPagePath(post(), byId(reproduction))).not.toBeNull();
-  });
-
-  it("does not place a post on a page that would not show it", () => {
-    // The title cross-check fails, so the page drops the analysis.
+  it("never places a draft, an archived post, or a decline", () => {
+    expect(postPagePath(post({ status: 2 }))).toBeNull();
+    expect(postPagePath(post({ status: 0 }))).toBeNull();
     expect(
-      postPagePath(post({ title: "Duelbits exploit analysis" }), byId(incident()))
+      postPagePath(post({ metadata: { schema: 1, incidentId: 107, declined: true } }))
     ).toBeNull();
-    // The incident is not in the feed.
-    expect(postPagePath(post(), byId())).toBeNull();
   });
 
-  it("never places a draft or an archived post", () => {
-    expect(postPagePath(post({ status: 2 }), byId(incident()))).toBeNull();
-    expect(postPagePath(post({ status: 0 }), byId(incident()))).toBeNull();
-  });
-
-  it("has no page yet for a post of another kind", () => {
-    expect(
-      postPagePath(post({ content: "A post with no provenance." }), byId(incident()))
-    ).toBeNull();
+  it("has no page yet for another type, or for none", () => {
+    expect(postPagePath(post({ type: "trending-narrative" }))).toBeNull();
+    expect(postPagePath(post({ type: null }))).toBeNull();
   });
 });
 
 describe("the list the sitemap gets", () => {
-  it("lists each page once, dated by the post that changed last", () => {
-    const { pages } = postPages(
-      [
-        post({ slug: "older", published_at: "2026-10-01T00:00:00Z" }),
-        post({ slug: "newer", published_at: "2026-10-07T00:00:00Z" }),
-      ],
-      [incident()]
-    );
+  it("lists each page once, dated by when it last changed", () => {
+    const { pages } = postPages([
+      post({ published_at: "2026-10-01T00:00:00Z", modified: "2026-10-13T08:00:00Z" }),
+      post({ published_at: "2026-10-07T00:00:00Z" }),
+    ]);
     expect(pages).toEqual([
       {
-        path: "/security/exploits/meter-token-prices-crash-after-unauthorized-mint",
-        lastmod: "2026-10-07T00:00:00.000Z",
+        path: "/security/exploits/meter-exploit-analysis",
+        lastmod: "2026-10-13T08:00:00.000Z",
       },
     ]);
   });
 
   it("counts published posts it could not place, and ignores unpublished ones", () => {
-    const { pages, unplaced } = postPages(
-      [
-        post(),
-        post({ slug: "narrative", content: "No provenance block." }),
-        post({ slug: "draft", status: 2, content: "Draft." }),
-      ],
-      [incident()]
-    );
+    const { pages, unplaced } = postPages([
+      post(),
+      post({ slug: "a-narrative", type: "trending-narrative" }),
+      post({ slug: "draft-exploit-analysis", status: 2 }),
+    ]);
     expect(pages).toHaveLength(1);
     expect(unplaced).toBe(1);
-  });
-
-  it("dates a page by when its post was last edited, not first published", () => {
-    const { pages } = postPages(
-      [post({ published_at: "2026-10-07T19:18:10Z", modified: "2026-10-13T08:00:00Z" })],
-      [incident()]
-    );
-    expect(pages[0].lastmod).toBe("2026-10-13T08:00:00.000Z");
   });
 });
