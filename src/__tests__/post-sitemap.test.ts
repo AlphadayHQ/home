@@ -31,6 +31,9 @@ describe("the live post sitemap", () => {
   let pages: Record<string, unknown>;
   let calls: string[];
 
+  // Unconditional, so a failing test cannot leave console.error silenced.
+  afterEach(() => vi.mocked(console.error).mockRestore?.());
+
   beforeEach(async () => {
     calls = [];
     const { resetPostSitemap } = await import("../server/postSitemap");
@@ -97,10 +100,9 @@ describe("the live post sitemap", () => {
    */
   it("answers an uncached 503 when it has never read the list", async () => {
     pages["https://api.test/posts/?limit=100"] = new Error("upstream down");
-    const quiet = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
     const { postSitemapResponse } = await import("../server/postSitemap");
     const res = await postSitemapResponse();
-    quiet.mockRestore();
     expect(res.status).toBe(503);
     expect(res.headers.get("Cache-Control")).toBe("no-store");
     expect(res.headers.get("Retry-After")).toBe("300");
@@ -132,7 +134,7 @@ describe("the live post sitemap", () => {
     });
 
     it("keeps serving the held one when a rebuild fails", async () => {
-      const quiet = vi.spyOn(console, "error").mockImplementation(() => {});
+      vi.spyOn(console, "error").mockImplementation(() => {});
       const { readPostSitemap, FRESH_MS } = await import("../server/postSitemap");
       const first = await readPostSitemap();
       pages["https://api.test/posts/?limit=100"] = new Error("upstream down");
@@ -141,7 +143,18 @@ describe("the live post sitemap", () => {
       expect(await readPostSitemap()).toEqual(first);
       await vi.advanceTimersByTimeAsync(0);
       expect(await readPostSitemap()).toEqual(first);
-      quiet.mockRestore();
+    });
+
+    it("logs a failed rebuild once, however many requests share it", async () => {
+      const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+      const { readPostSitemap, FRESH_MS } = await import("../server/postSitemap");
+      await readPostSitemap();
+      pages["https://api.test/posts/?limit=100"] = new Error("upstream down");
+      vi.setSystemTime(Date.now() + FRESH_MS);
+
+      await Promise.all(Array.from({ length: 20 }, () => readPostSitemap()));
+      await vi.advanceTimersByTimeAsync(0);
+      expect(errors).toHaveBeenCalledTimes(1);
     });
   });
 });

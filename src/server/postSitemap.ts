@@ -100,7 +100,9 @@ export function readPostSitemap(): Promise<PostSitemap> {
   if (!held) return refresh();
   if (Date.now() - held.at >= FRESH_MS) {
     // A failed rebuild keeps the held one; the next stale request tries again.
-    refresh().catch((error) => console.error(error));
+    // Only the request that starts a rebuild logs its failure: the rest would
+    // share the same promise and print the same error once each.
+    if (!inFlight) refresh().catch((error) => console.error(error));
   }
   return Promise.resolve(held.sitemap);
 }
