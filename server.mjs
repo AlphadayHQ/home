@@ -32,6 +32,12 @@ const { default: handler } = await import("./dist/server/server.mjs");
  *
  * Tune `s-maxage` per tier as content types are added: minutes for digests and
  * trending pages, hours for entity hubs, days for editorial and tool pages.
+ *
+ * **The edge caps it at five minutes.** The CloudFront cache policy in front of
+ * this server sets `MaxTTL: 300` (`infrastructure`, `templates/shared/
+ * landing_origin.yaml`), which overrides a longer `s-maxage`: every edge
+ * revalidates about every 5 minutes, whatever is set here. A longer hold is an
+ * infrastructure change, not one to make in this file.
  */
 const HTML_CACHE_CONTROL =
   "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=604800";
@@ -99,7 +105,7 @@ const server = createServer(async (req, res) => {
 
     const headers = new Headers(response.headers);
     // Don't cache a redirect or an error the way a page is cached, and never
-    // let the edge hold a 404 for an hour on a URL that is about to exist.
+    // let the edge hold a 404 for its full TTL on a URL that is about to exist.
     if (!headers.has("Cache-Control") && response.status === 200) {
       headers.set("Cache-Control", HTML_CACHE_CONTROL);
     }

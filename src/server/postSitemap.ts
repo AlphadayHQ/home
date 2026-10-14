@@ -12,25 +12,45 @@ import { SITE_URL, urlsetXml } from "../seo/sitemapXml";
  * the post list, two requests at 175 posts, and places each post by its `type`
  * through `postPages`, the same function the pages agree with.
  *
- * The edge holds the result for an hour, so the API is read about once an hour
- * rather than once per crawl, and a post is in the sitemap within the hour of
- * being published.
+ * HOW OFTEN THE API IS READ
  *
- * A failed read throws rather than returning a short list. The route answers
- * that with a 503, and the edge keeps serving the last good file
- * (`stale-if-error`); an empty sitemap would read to Google as every post gone.
+ * The response says `s-maxage=3600`, but the CloudFront cache policy caps every
+ * edge at five minutes (`MaxTTL: 300`, see `server.mjs`), so each edge asks
+ * about every 5 minutes and a published post is listed within about that. A
+ * query string is part of that cache key, so `?anything` reaches this server
+ * uncached. Behind both, the read is held here for `FRESH_MS` and shared by
+ * concurrent requests: however the requests arrive, the post list is walked at
+ * most once per `FRESH_MS` per process. A walk takes 2–4s, almost all of it the
+ * API answering each page.
+ *
+ * A failed read is never served short. With a good read held, it is served while
+ * the next one is tried; with none, the route answers an uncached 503 and the
+ * edge keeps serving its last good copy (`stale-if-error`). An empty sitemap
+ * would read to Google as every post gone.
  */
 
 const PAGE_SIZE = 100;
 /** 2,000 posts. Past it the read is refused rather than truncated. */
-const MAX_PAGES = 20;
+export const MAX_PAGES = 20;
+
+/** How long one read serves every request, matching the edge's five minutes. */
+export const FRESH_MS = 300_000;
+
+const CACHE_CONTROL =
+  "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=604800";
 
 interface RawListPage {
   results?: RawExploitPost[];
   links?: { next?: string | null };
 }
 
-export async function buildPostSitemap(): Promise<{ xml: string; urls: number; unplaced: number }> {
+export interface PostSitemap {
+  xml: string;
+  urls: number;
+  unplaced: number;
+}
+
+export async function buildPostSitemap(): Promise<PostSitemap> {
   const rows: RawExploitPost[] = [];
   let url: string | null = `${API_BASE}/posts/?limit=${PAGE_SIZE}`;
 
@@ -51,4 +71,60 @@ export async function buildPostSitemap(): Promise<{ xml: string; urls: number; u
   }
   const xml = urlsetXml(pages.map(({ path, lastmod }) => ({ loc: `${SITE_URL}${path}`, lastmod })));
   return { xml, urls: pages.length, unplaced };
+}
+
+let held: { at: number; sitemap: PostSitemap } | null = null;
+let inFlight: Promise<PostSitemap> | null = null;
+
+function refresh(): Promise<PostSitemap> {
+  inFlight ??= buildPostSitemap()
+    .then((sitemap) => {
+      held = { at: Date.now(), sitemap };
+      return sitemap;
+    })
+    .finally(() => {
+      inFlight = null;
+    });
+  return inFlight;
+}
+
+/** The held sitemap while fresh; otherwise one shared rebuild, falling back to the held one. */
+export async function readPostSitemap(): Promise<PostSitemap> {
+  if (held && Date.now() - held.at < FRESH_MS) return held.sitemap;
+  try {
+    return await refresh();
+  } catch (error) {
+    if (held) return held.sitemap;
+    throw error;
+  }
+}
+
+/** For tests: forget the held sitemap. */
+export function resetPostSitemap(): void {
+  held = null;
+  inFlight = null;
+}
+
+/** The route's whole answer, so the 200 and the 503 can be tested without a server. */
+export async function postSitemapResponse(): Promise<Response> {
+  try {
+    const { xml } = await readPostSitemap();
+    return new Response(xml, {
+      status: 200,
+      headers: {
+        "Content-Type": "application/xml; charset=utf-8",
+        "Cache-Control": CACHE_CONTROL,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return new Response("Sitemap temporarily unavailable.\n", {
+      status: 503,
+      headers: {
+        "Content-Type": "text/plain; charset=utf-8",
+        "Cache-Control": "no-store",
+        "Retry-After": "300",
+      },
+    });
+  }
 }

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { SITEMAP_FILES, urlsetXml } from "../seo/sitemapXml";
 
 /**
@@ -29,8 +29,12 @@ const page = (results: unknown[], next: string | null = null) => ({
 
 describe("the live post sitemap", () => {
   let pages: Record<string, unknown>;
+  let calls: string[];
 
   beforeEach(async () => {
+    calls = [];
+    const { resetPostSitemap } = await import("../server/postSitemap");
+    resetPostSitemap();
     pages = {
       "https://api.test/posts/?limit=100": page(
         [post(), post({ slug: "a-draft", status: 2 })],
@@ -43,6 +47,7 @@ describe("the live post sitemap", () => {
     };
     const { fetchWithRetry } = await import("../server/apiFetch");
     vi.mocked(fetchWithRetry).mockImplementation(async (url: string) => {
+      calls.push(url);
       const found = pages[url];
       if (found instanceof Error) throw found;
       return (found ?? null) as never;
@@ -64,6 +69,64 @@ describe("the live post sitemap", () => {
     pages["https://api.test/posts/?limit=100&page=2"] = new Error("upstream down");
     const { buildPostSitemap } = await import("../server/postSitemap");
     await expect(buildPostSitemap()).rejects.toThrow();
+  });
+
+  it("refuses to walk past the page cap rather than truncate", async () => {
+    const { fetchWithRetry } = await import("../server/apiFetch");
+    // Every page points at another: an endless list.
+    vi.mocked(fetchWithRetry).mockImplementation(
+      async (url: string) => page([post()], `${url}x`) as never
+    );
+    const { buildPostSitemap, MAX_PAGES } = await import("../server/postSitemap");
+    await expect(buildPostSitemap()).rejects.toThrow(/refusing a truncated sitemap/);
+    expect(vi.mocked(fetchWithRetry).mock.calls.length).toBe(MAX_PAGES);
+  });
+
+  it("answers XML with the edge cache headers", async () => {
+    const { postSitemapResponse } = await import("../server/postSitemap");
+    const res = await postSitemapResponse();
+    expect(res.status).toBe(200);
+    expect(res.headers.get("Content-Type")).toBe("application/xml; charset=utf-8");
+    expect(res.headers.get("Cache-Control")).toContain("stale-if-error");
+    expect(await res.text()).toContain("<urlset");
+  });
+
+  /*
+   * A 503 with no-store is what lets the edge keep its last good copy. A 200
+   * with a short list would replace it.
+   */
+  it("answers an uncached 503 when it has never read the list", async () => {
+    pages["https://api.test/posts/?limit=100"] = new Error("upstream down");
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const { postSitemapResponse } = await import("../server/postSitemap");
+    const res = await postSitemapResponse();
+    expect(res.status).toBe(503);
+    expect(res.headers.get("Cache-Control")).toBe("no-store");
+    expect(res.headers.get("Retry-After")).toBe("300");
+  });
+
+  describe("held between requests", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-10-14T12:00:00Z"));
+    });
+    afterEach(() => vi.useRealTimers());
+
+    it("walks the list once for concurrent and repeated requests", async () => {
+      const { readPostSitemap } = await import("../server/postSitemap");
+      await Promise.all([readPostSitemap(), readPostSitemap(), readPostSitemap()]);
+      await readPostSitemap();
+      expect(calls).toHaveLength(2);
+    });
+
+    it("rebuilds once stale, and serves the held one if the rebuild fails", async () => {
+      const { readPostSitemap, FRESH_MS } = await import("../server/postSitemap");
+      const first = await readPostSitemap();
+      pages["https://api.test/posts/?limit=100"] = new Error("upstream down");
+      vi.setSystemTime(Date.now() + FRESH_MS);
+      expect(await readPostSitemap()).toEqual(first);
+      expect(calls).toHaveLength(3);
+    });
   });
 });
 
