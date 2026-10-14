@@ -28,11 +28,9 @@ import {
   projectIndexState,
   staticPaths,
 } from "../src/seo/indexState.ts";
-import { isPublished } from "../src/data/analysis.ts";
 import { postPages } from "../src/data/postPages.ts";
 import { digestPaths } from "../src/data/digestEntities.js";
 import { shapeRows } from "../src/data/eventRows.ts";
-import { shapeAll } from "../src/data/exploits.ts";
 import {
   monthBounds,
   monthIndexState,
@@ -259,19 +257,12 @@ async function retrying(url, attempts = 3) {
  * The pages that carry a published post, and only those.
  *
  * Built from the posts outward (`src/data/postPages.ts`): each published post is
- * asked which page it is read on, so a new kind of post adds a case there rather
- * than a pass here. Today every post is an exploit analysis, placed on its
- * incident's page. An incident page with press coverage and no analysis is
- * still indexable and reachable through its links, but it is not put forward.
- *
- * The posts are read two requests deep, because the list endpoint omits
- * `content` and the provenance block inside it is what places a post. `/posts/`
- * is the whole blog, so the list is walked to its end. The exploit feed is read
- * too, and shaped through `shapeAll` like the route does, because an incident's
- * URL comes from its headline.
+ * asked which page it is read on, by its `type`. The list rows carry `type` and
+ * `metadata`, so this is the list alone — two requests at 180 posts — walked to
+ * its end because `/posts/` is the whole blog.
  *
  * A published post that could not be placed is counted and printed, so a new
- * kind of post that this does not handle yet shows up in the build log.
+ * type that this does not handle yet shows up in the build log.
  */
 async function fetchPostPages() {
   const rows = [];
@@ -280,19 +271,8 @@ async function fetchPostPages() {
     rows.push(...(page.results ?? []));
     url = page.links?.next ?? null;
   }
-  const slugs = rows
-    .filter((row) => isPublished(row.status) && row.slug)
-    .map((row) => row.slug);
-  const posts = await Promise.all(
-    slugs.map(async (slug) =>
-      (await retrying(`${API_BASE}/posts/${encodeURIComponent(slug)}/`)).json()
-    )
-  );
 
-  const response = await retrying(`${API_BASE}/security/exploits/?limit=500`);
-  const incidents = shapeAll((await response.json()).results ?? []);
-
-  const { pages, unplaced } = postPages(posts, incidents);
+  const { pages, unplaced } = postPages(rows);
   if (unplaced > 0) {
     console.warn(
       `build-sitemap: ${unplaced} published post(s) have no page to list them on`
