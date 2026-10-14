@@ -27,6 +27,7 @@ import { Route as EventsMonthRouteImport } from './routes/events.$month'
 import { Route as McpIndexRouteImport } from './routes/mcp.index'
 import { Route as McpClientRouteImport } from './routes/mcp.$client'
 import { Route as ResearchGovernanceRouteImport } from './routes/research.governance'
+import { Route as SitemapsPostsDotxmlRouteImport } from './routes/sitemaps.posts[.]xml'
 import { Route as ApiDataCapabilityRouteImport } from './routes/api.data.$capability'
 import { Route as ProjectsSlugIndexRouteImport } from './routes/projects.$slug.index'
 import { Route as ProjectsSlugTopicRouteImport } from './routes/projects.$slug.$topic'
@@ -124,6 +125,11 @@ const ResearchGovernanceRoute = ResearchGovernanceRouteImport.update({
   path: '/research/governance',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapsPostsDotxmlRoute = SitemapsPostsDotxmlRouteImport.update({
+  id: '/sitemaps/posts.xml',
+  path: '/sitemaps/posts.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiDataCapabilityRoute = ApiDataCapabilityRouteImport.update({
   id: '/api/data/$capability',
   path: '/api/data/$capability',
@@ -169,6 +175,7 @@ export interface FileRoutesByFullPath {
   '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
   '/research/governance': typeof ResearchGovernanceRoute
+  '/sitemaps/posts.xml': typeof SitemapsPostsDotxmlRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/cookbook/': typeof CookbookIndexRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByTo {
   '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
   '/research/governance': typeof ResearchGovernanceRoute
+  '/sitemaps/posts.xml': typeof SitemapsPostsDotxmlRoute
   '/api': typeof ApiIndexRoute
   '/blog': typeof BlogIndexRoute
   '/cookbook': typeof CookbookIndexRoute
@@ -222,6 +230,7 @@ export interface FileRoutesById {
   '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
   '/research/governance': typeof ResearchGovernanceRoute
+  '/sitemaps/posts.xml': typeof SitemapsPostsDotxmlRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
   '/cookbook/': typeof CookbookIndexRoute
@@ -250,6 +259,7 @@ export interface FileRouteTypes {
     | '/events/$month'
     | '/mcp/$client'
     | '/research/governance'
+    | '/sitemaps/posts.xml'
     | '/api/'
     | '/blog/'
     | '/cookbook/'
@@ -276,6 +286,7 @@ export interface FileRouteTypes {
     | '/events/$month'
     | '/mcp/$client'
     | '/research/governance'
+    | '/sitemaps/posts.xml'
     | '/api'
     | '/blog'
     | '/cookbook'
@@ -302,6 +313,7 @@ export interface FileRouteTypes {
     | '/events/$month'
     | '/mcp/$client'
     | '/research/governance'
+    | '/sitemaps/posts.xml'
     | '/api/'
     | '/blog/'
     | '/cookbook/'
@@ -329,6 +341,7 @@ export interface RootRouteChildren {
   EventsMonthRoute: typeof EventsMonthRoute
   McpClientRoute: typeof McpClientRoute
   ResearchGovernanceRoute: typeof ResearchGovernanceRoute
+  SitemapsPostsDotxmlRoute: typeof SitemapsPostsDotxmlRoute
   ApiIndexRoute: typeof ApiIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
   CookbookIndexRoute: typeof CookbookIndexRoute
@@ -470,6 +483,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResearchGovernanceRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemaps/posts.xml': {
+      id: '/sitemaps/posts.xml'
+      path: '/sitemaps/posts.xml'
+      fullPath: '/sitemaps/posts.xml'
+      preLoaderRoute: typeof SitemapsPostsDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/data/$capability': {
       id: '/api/data/$capability'
       path: '/api/data/$capability'
@@ -529,6 +549,7 @@ const rootRouteChildren: RootRouteChildren = {
   EventsMonthRoute: EventsMonthRoute,
   McpClientRoute: McpClientRoute,
   ResearchGovernanceRoute: ResearchGovernanceRoute,
+  SitemapsPostsDotxmlRoute: SitemapsPostsDotxmlRoute,
   ApiIndexRoute: ApiIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
   CookbookIndexRoute: CookbookIndexRoute,

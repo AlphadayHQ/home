@@ -14,9 +14,10 @@
  *     with itself.
  *
  * §4.4 also asks for a sitemap index split by content type so each tier is
- * separately measurable in Search Console. Two tiers exist today (static pages
- * and project dashboards); the structure is what matters, since the corpus is
- * expected to grow into it.
+ * separately measurable in Search Console. Three tiers: static pages and project
+ * dashboards, built here at deploy, and posts, which change whenever someone
+ * publishes and so are served live from `/sitemaps/posts.xml`. This file still
+ * writes the index that lists all three.
  */
 import { resolve, dirname } from "node:path";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
@@ -28,7 +29,7 @@ import {
   projectIndexState,
   staticPaths,
 } from "../src/seo/indexState.ts";
-import { postPages } from "../src/data/postPages.ts";
+import { SITE_URL, SITEMAP_FILES, sitemapIndexXml, urlsetXml } from "../src/seo/sitemapXml.ts";
 import { digestPaths } from "../src/data/digestEntities.js";
 import { shapeRows } from "../src/data/eventRows.ts";
 import {
@@ -41,7 +42,7 @@ import {
 
 const here = dirname(fileURLToPath(import.meta.url));
 const distPath = resolve(here, "../dist/client");
-const baseUrl = "https://alphaday.com";
+const baseUrl = SITE_URL;
 
 const API_BASE = process.env.API_BASE_URL ?? "https://api.alphaday.com";
 // §5.10: no VITE_ prefix. A VITE_-prefixed value is inlined into the client
@@ -57,44 +58,6 @@ const appSecret = process.env.API_APP_SECRET ?? process.env.VITE_X_APP_SECRET;
 // otherwise produce a silently empty sitemap.
 const authHeaders =
   appId && appSecret ? { "x-app-id": appId, "x-app-secret": appSecret } : {};
-
-const escapeXml = (value) =>
-  String(value).replace(/[<>&'"]/g, (char) =>
-    ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" })[char]
-  );
-
-/**
- * Written by hand rather than through the `sitemaps` package, which emits
- * `link.lastmod || <build time>` — there is no way to express "no known
- * modification date" through it, and a `lastmod` that changes on every build
- * trains Google to ignore the field entirely (§4.4).
- */
-function urlsetXml(links) {
-  const body = links
-    .map((link) => {
-      const parts = [`\t\t<loc>${escapeXml(link.loc)}</loc>`];
-      if (link.lastmod) parts.push(`\t\t<lastmod>${escapeXml(link.lastmod)}</lastmod>`);
-      return `\t<url>\n${parts.join("\n")}\n\t</url>`;
-    })
-    .join("\n");
-
-  return (
-    '<?xml version="1.0" encoding="UTF-8"?>\n' +
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-    `${body}\n</urlset>\n`
-  );
-}
-
-function sitemapIndexXml(entries) {
-  const body = entries
-    .map((e) => `\t<sitemap>\n\t\t<loc>${escapeXml(e.loc)}</loc>\n\t</sitemap>`)
-    .join("\n");
-  return (
-    '<?xml version="1.0" encoding="UTF-8"?>\n' +
-    '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-    `${body}\n</sitemapindex>\n`
-  );
-}
 
 function write(relativePath, xml) {
   const full = resolve(distPath, relativePath);
@@ -227,60 +190,6 @@ async function shapedCount(month) {
   return shapeRows(rows).length;
 }
 
-/**
- * One `fetch`, retried, because this build makes dozens of them.
- *
- * A single flaky response used to abort the whole sitemap. The run is long
- * enough that one transient 502 is likely, and the cost of giving up is a build
- * failure rather than a wrong sitemap — so it is worth three attempts before
- * refusing. Still refuses in the end: a sitemap that cannot read the analyses
- * would silently drop every incident page from the index.
- */
-async function retrying(url, attempts = 3) {
-  let last;
-  for (let attempt = 1; attempt <= attempts; attempt += 1) {
-    try {
-      const response = await fetch(url, { headers: authHeaders });
-      if (response.ok) return response;
-      last = new Error(`${url} returned ${response.status}`);
-    } catch (error) {
-      last = error;
-    }
-    if (attempt < attempts) {
-      await new Promise((resolve) => setTimeout(resolve, 400 * 2 ** (attempt - 1)));
-    }
-  }
-  throw new Error(`build-sitemap: ${last?.message ?? url}. Refusing to build a partial sitemap.`);
-}
-
-/**
- * The pages that carry a published post, and only those.
- *
- * Built from the posts outward (`src/data/postPages.ts`): each published post is
- * asked which page it is read on, by its `type`. The list rows carry `type` and
- * `metadata`, so this is the list alone — two requests at 180 posts — walked to
- * its end because `/posts/` is the whole blog.
- *
- * A published post that could not be placed is counted and printed, so a new
- * type that this does not handle yet shows up in the build log.
- */
-async function fetchPostPages() {
-  const rows = [];
-  for (let url = `${API_BASE}/posts/?limit=100`; url; ) {
-    const page = await (await retrying(url)).json();
-    rows.push(...(page.results ?? []));
-    url = page.links?.next ?? null;
-  }
-
-  const { pages, unplaced } = postPages(rows);
-  if (unplaced > 0) {
-    console.warn(
-      `build-sitemap: ${unplaced} published post(s) have no page to list them on`
-    );
-  }
-  return pages;
-}
-
 async function fetchEventMonths() {
   const current = monthOf(new Date());
   const promoted = [];
@@ -328,11 +237,6 @@ async function main() {
       lastmod: rolling.has(path) ? rollingLastmod() : undefined,
     }));
 
-  const postPagesListed = await fetchPostPages();
-  for (const { path, lastmod } of postPagesListed) {
-    staticLinks.push({ loc: `${baseUrl}${path}`, lastmod });
-  }
-
   const monthPaths = await fetchEventMonths();
   for (const path of monthPaths) {
     // No `lastmod`: a month page changes when the API gains an event, and this
@@ -353,18 +257,15 @@ async function main() {
 
   write("sitemaps/pages.xml", urlsetXml(staticLinks));
   write("sitemaps/projects.xml", urlsetXml(projectLinks));
-  write(
-    "sitemap.xml",
-    sitemapIndexXml([
-      { loc: `${baseUrl}/sitemaps/pages.xml` },
-      { loc: `${baseUrl}/sitemaps/projects.xml` },
-    ])
-  );
+  // `posts.xml` is listed but not written: it is served live by its own route
+  // (`src/routes/sitemaps.posts[.]xml.ts`), and a file here would shadow it,
+  // because `server.mjs` serves `dist/client` before the app.
+  write("sitemap.xml", sitemapIndexXml(SITEMAP_FILES.map((loc) => ({ loc }))));
 
   const excluded = pages.length - projectLinks.length;
   console.log(
     `build-sitemap: ${staticLinks.length} static (${monthPaths.length} event ` +
-      `months) + ${projectLinks.length} project URLs across 2 tiers` +
+      `months) + ${projectLinks.length} project URLs; posts are served live` +
       `, ${rolling.size} rolling lastmod` +
       (excluded ? `, ${excluded} excluded by index state` : "")
   );
