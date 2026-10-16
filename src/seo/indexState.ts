@@ -99,6 +99,19 @@ const STATIC_STATES: Record<string, IndexState> = {
    */
   "/security/exploits": "promoted",
 
+  /*
+   * B3's narrative pages: a page per trending topic, written by an agent and
+   * reviewed. The hub, and through `indexStateFor("/research/narratives")` the
+   * topic pages under it. A topic page inherits this state only when it carries
+   * a published post; one that is merely trending renders `substrate`.
+   *
+   * The hub demotes itself until `NARRATIVE_HUB_FLOOR` topics are written up,
+   * which a publish changes, not a deploy. So it is listed live with the posts
+   * (`POST_HUBS` in `data/postPages.ts`), on the same floor, and the build
+   * leaves it out of its file.
+   */
+  "/research/narratives": "promoted",
+
   "/mobile": "promoted",
   "/privacy": "promoted",
 

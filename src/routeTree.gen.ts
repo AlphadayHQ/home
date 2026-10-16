@@ -32,6 +32,8 @@ import { Route as ApiDataCapabilityRouteImport } from './routes/api.data.$capabi
 import { Route as ProjectsSlugIndexRouteImport } from './routes/projects.$slug.index'
 import { Route as ProjectsSlugTopicRouteImport } from './routes/projects.$slug.$topic'
 import { Route as ProjectsSlugThisWeekRouteImport } from './routes/projects.$slug.this-week'
+import { Route as ResearchNarrativesIndexRouteImport } from './routes/research.narratives.index'
+import { Route as ResearchNarrativesNarrativeRouteImport } from './routes/research.narratives.$narrative'
 import { Route as SecurityExploitsIndexRouteImport } from './routes/security.exploits.index'
 import { Route as SecurityExploitsSlugRouteImport } from './routes/security.exploits.$slug'
 
@@ -150,6 +152,17 @@ const ProjectsSlugThisWeekRoute = ProjectsSlugThisWeekRouteImport.update({
   path: '/projects/$slug/this-week',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResearchNarrativesIndexRoute = ResearchNarrativesIndexRouteImport.update({
+  id: '/research/narratives/',
+  path: '/research/narratives/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchNarrativesNarrativeRoute =
+  ResearchNarrativesNarrativeRouteImport.update({
+    id: '/research/narratives/$narrative',
+    path: '/research/narratives/$narrative',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const SecurityExploitsIndexRoute = SecurityExploitsIndexRouteImport.update({
   id: '/security/exploits/',
   path: '/security/exploits/',
@@ -184,8 +197,10 @@ export interface FileRoutesByFullPath {
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
+  '/research/narratives/$narrative': typeof ResearchNarrativesNarrativeRoute
   '/security/exploits/$slug': typeof SecurityExploitsSlugRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
+  '/research/narratives/': typeof ResearchNarrativesIndexRoute
   '/security/exploits/': typeof SecurityExploitsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -211,8 +226,10 @@ export interface FileRoutesByTo {
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
+  '/research/narratives/$narrative': typeof ResearchNarrativesNarrativeRoute
   '/security/exploits/$slug': typeof SecurityExploitsSlugRoute
   '/projects/$slug': typeof ProjectsSlugIndexRoute
+  '/research/narratives': typeof ResearchNarrativesIndexRoute
   '/security/exploits': typeof SecurityExploitsIndexRoute
 }
 export interface FileRoutesById {
@@ -239,8 +256,10 @@ export interface FileRoutesById {
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
+  '/research/narratives/$narrative': typeof ResearchNarrativesNarrativeRoute
   '/security/exploits/$slug': typeof SecurityExploitsSlugRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
+  '/research/narratives/': typeof ResearchNarrativesIndexRoute
   '/security/exploits/': typeof SecurityExploitsIndexRoute
 }
 export interface FileRouteTypes {
@@ -268,8 +287,10 @@ export interface FileRouteTypes {
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
+    | '/research/narratives/$narrative'
     | '/security/exploits/$slug'
     | '/projects/$slug/'
+    | '/research/narratives/'
     | '/security/exploits/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -295,8 +316,10 @@ export interface FileRouteTypes {
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
+    | '/research/narratives/$narrative'
     | '/security/exploits/$slug'
     | '/projects/$slug'
+    | '/research/narratives'
     | '/security/exploits'
   id:
     | '__root__'
@@ -322,8 +345,10 @@ export interface FileRouteTypes {
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
+    | '/research/narratives/$narrative'
     | '/security/exploits/$slug'
     | '/projects/$slug/'
+    | '/research/narratives/'
     | '/security/exploits/'
   fileRoutesById: FileRoutesById
 }
@@ -350,8 +375,10 @@ export interface RootRouteChildren {
   ApiDataCapabilityRoute: typeof ApiDataCapabilityRoute
   ProjectsSlugTopicRoute: typeof ProjectsSlugTopicRoute
   ProjectsSlugThisWeekRoute: typeof ProjectsSlugThisWeekRoute
+  ResearchNarrativesNarrativeRoute: typeof ResearchNarrativesNarrativeRoute
   SecurityExploitsSlugRoute: typeof SecurityExploitsSlugRoute
   ProjectsSlugIndexRoute: typeof ProjectsSlugIndexRoute
+  ResearchNarrativesIndexRoute: typeof ResearchNarrativesIndexRoute
   SecurityExploitsIndexRoute: typeof SecurityExploitsIndexRoute
 }
 
@@ -518,6 +545,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProjectsSlugThisWeekRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/research/narratives/': {
+      id: '/research/narratives/'
+      path: '/research/narratives'
+      fullPath: '/research/narratives/'
+      preLoaderRoute: typeof ResearchNarrativesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research/narratives/$narrative': {
+      id: '/research/narratives/$narrative'
+      path: '/research/narratives/$narrative'
+      fullPath: '/research/narratives/$narrative'
+      preLoaderRoute: typeof ResearchNarrativesNarrativeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/security/exploits/': {
       id: '/security/exploits/'
       path: '/security/exploits'
@@ -558,8 +599,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDataCapabilityRoute: ApiDataCapabilityRoute,
   ProjectsSlugTopicRoute: ProjectsSlugTopicRoute,
   ProjectsSlugThisWeekRoute: ProjectsSlugThisWeekRoute,
+  ResearchNarrativesNarrativeRoute: ResearchNarrativesNarrativeRoute,
   SecurityExploitsSlugRoute: SecurityExploitsSlugRoute,
   ProjectsSlugIndexRoute: ProjectsSlugIndexRoute,
+  ResearchNarrativesIndexRoute: ResearchNarrativesIndexRoute,
   SecurityExploitsIndexRoute: SecurityExploitsIndexRoute,
 }
 export const routeTree = rootRouteImport

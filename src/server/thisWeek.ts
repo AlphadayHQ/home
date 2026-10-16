@@ -78,7 +78,7 @@ export type DigestWindow = "24h" | "7d" | "30d";
  * still declaring the parameter `"type": "string", "format": "date-time"`, which
  * is what made `1d` look plausible in the first place.)
  */
-const PERIOD: Record<DigestWindow, number> = { "24h": 0, "7d": 1, "30d": 2 };
+export const PERIOD: Record<DigestWindow, number> = { "24h": 0, "7d": 1, "30d": 2 };
 
 /**
  * Rows to pull per API-counted feed.

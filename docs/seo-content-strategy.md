@@ -493,6 +493,20 @@ distinct from what is being traded. Attention, not price. Everyone measures pric
 Recurring, naturally social, and the weekly rhythm makes it a standing reason for people to link and
 subscribe. It is also the most direct possible demonstration of `get_trending_keywords`.
 
+> **Built 16 Oct 2026 as a page per trending topic rather than a weekly index; not yet merged**
+> (`feat/narratives-post-first`). `/research/narratives` is today's trending list with each
+> topic's attention beside it (articles this week matching the topic's keywords, their share of
+> every article in the news index, general outlets included, and pace against 30 days);
+> `/research/narratives/{tag}` adds podcasts, video and the week's headlines. The tag is the
+> page, so two keywords for one topic share a URL. What makes a page indexable is a written
+> post: a daily agent drafts one per topic when it finds a development with three independent
+> sources, a person reviews it, and updates are folded into the same page as dated sections. A
+> topic with nothing written renders `noindex`; the hub is indexed, and listed in the live posts
+> sitemap, once three topics are written up. Posts are `type: "trending-narrative"` with the tag
+> in `metadata`, read as one list the way the exploit tier is. No post exists yet, so the tier
+> goes live `noindex` and promotes itself as reviews land. Before the agent's first run, generic
+> keywords on the trending list ("debt", "wallet", "dollar") need `ignore_trending` ticked.
+
 ### B4 · The Crypto Events Calendar — `/events`, evergreen with dated entries
 
 **Source:** `/items/events/` — 6,041 records spanning conferences, meetups, hackathons and
@@ -1373,7 +1387,9 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
       join — the part this line listed last — is what the tier actually rests on, and it is the half
       that measured well (22 of 33).
       [B2](#b2--the-crypto-exploit-tracker--securityexploits--a-page-per-incident-continuous)
-- [ ] Narrative Index weekly from week 8
+- [ ] Narrative Index weekly from week 8 → **built 16 Oct as a page per trending topic, written
+      daily by the agent and reviewed; awaiting merge and the first reviewed posts.**
+      [B3](#b3--the-narrative-index--researchnarratives-weekly)
 - [ ] Blog migration and 301s; no new explainer content
 - [ ] Comparison pages
 - [ ] Measure indexation on the exploit tier before committing to the entity × topic generator
