@@ -482,7 +482,7 @@ the kind of data type a "crypto data layer" should have and a price API should n
 > history is a comparison this tier loses, the method section says so and links to them, and the
 > title says 2026 rather than implying an archive.
 
-### B3 · The Narrative Index — `/research/narratives`, weekly
+### B3 · The Narrative Index — `/research/trending`, per topic
 
 **Source:** `/keywords/trending/` joined across 49 news outlets, 118 podcast feeds and 121 YouTube
 channels.
@@ -493,19 +493,21 @@ distinct from what is being traded. Attention, not price. Everyone measures pric
 Recurring, naturally social, and the weekly rhythm makes it a standing reason for people to link and
 subscribe. It is also the most direct possible demonstration of `get_trending_keywords`.
 
-> **Built 16 Oct 2026 as a page per trending topic rather than a weekly index; not yet merged**
-> (`feat/narratives-post-first`). `/research/narratives` is today's trending list with each
-> topic's attention beside it (articles this week matching the topic's keywords, their share of
-> every article in the news index, general outlets included, and pace against 30 days);
-> `/research/narratives/{tag}` adds podcasts, video and the week's headlines. The tag is the
-> page, so two keywords for one topic share a URL. What makes a page indexable is a written
-> post: a daily agent drafts one per topic when it finds a development with three independent
-> sources, a person reviews it, and updates are folded into the same page as dated sections. A
-> topic with nothing written renders `noindex`; the hub is indexed, and listed in the live posts
-> sitemap, once three topics are written up. Posts are `type: "trending-narrative"` with the tag
-> in `metadata`, read as one list the way the exploit tier is. No post exists yet, so the tier
-> goes live `noindex` and promotes itself as reviews land. Before the agent's first run, generic
-> keywords on the trending list ("debt", "wallet", "dollar") need `ignore_trending` ticked.
+> **Built 16 Oct 2026, reshaped 19 Oct, as a page per trending topic rather than a weekly index;
+> not yet merged** (`feat/narratives-post-first`). The live attention counts were dropped: they
+> matched the tag's keywords, not the story, and a topic page is about why something is in the
+> news, not how much. `/research/trending` lists every topic that has a written page, the most
+> recently updated first, 20 to a page; `/research/trending/{post slug}` is one topic. A daily
+> agent drafts a page when a trending topic has a development with three independent sources,
+> titled exactly "<Topic> narrative" so the server-derived slug names the topic and never dates
+> (`/research/trending/xrp-narrative`). When the topic trends again with something new, the agent
+> drafts an update: its own post, naming the page, shown on it newest first above the original, 10
+> to a page. Updates have no URL of their own, so the sitemap lists the page and dates it by its
+> newest update. A person reviews every draft. Posts are `type: "trending-narrative"`, read as one
+> list the way the exploit tier is. The first page of each topic is indexed; older pages of updates
+> and of the hub are `noindex, follow`. The hub is indexed, and listed in the live posts sitemap,
+> once three topics are written up. Before the agent's first run, generic keywords on the trending
+> list ("debt", "wallet", "dollar") need `ignore_trending` ticked.
 
 ### B4 · The Crypto Events Calendar — `/events`, evergreen with dated entries
 
@@ -1389,7 +1391,7 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
       [B2](#b2--the-crypto-exploit-tracker--securityexploits--a-page-per-incident-continuous)
 - [ ] Narrative Index weekly from week 8 → **built 16 Oct as a page per trending topic, written
       daily by the agent and reviewed; awaiting merge and the first reviewed posts.**
-      [B3](#b3--the-narrative-index--researchnarratives-weekly)
+      [B3](#b3--the-narrative-index--researchtrending-per-topic)
 - [ ] Blog migration and 301s; no new explainer content
 - [ ] Comparison pages
 - [ ] Measure indexation on the exploit tier before committing to the entity × topic generator

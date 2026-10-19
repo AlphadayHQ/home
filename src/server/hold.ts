@@ -2,7 +2,7 @@
  * A read held in memory, fresh for a while, and refreshed behind the callers.
  *
  * Every held read on the server goes through this: the exploit list, the posts
- * sitemap and the narrative reads. The rule:
+ * sitemap and the trending reads. The rule:
  *
  *  - With nothing held, callers wait for one shared load.
  *  - While fresh, the held value is answered at once.
@@ -114,13 +114,12 @@ export function hold<T>(
 }
 
 /**
- * `hold` per key, for reads that differ by topic.
+ * `hold` per key, for reads that differ by post.
  *
- * The keys are bounded by the pages that exist (a topic is trending or written
- * up, or it 404s before anything is read), but a long-lived process sees the
- * trending list turn over. Past `maxKeys` the least recently read key is
- * dropped, so a crawler walking old topic pages costs those pages a cold read
- * and never the hub's warm ones.
+ * The keys are bounded by the posts that exist, but a long-lived process sees
+ * posts edited, and each version is a key. Past `maxKeys` the least recently
+ * read key is dropped, so a crawler walking old topic pages costs those pages a
+ * cold read and never the recent ones.
  */
 export function holdByKey<T>(
   load: (key: string) => Promise<T>,

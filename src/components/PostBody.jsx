@@ -2,7 +2,7 @@ import React from "react";
 
 /**
  * A reviewed post's facts, body and sources, shared by the exploit and
- * narrative pages so the one safe renderer is the only one.
+ * trending pages so the one safe renderer is the only one.
  *
  * The body is rendered from spans rather than from HTML. `data/analysis.ts`
  * parses the markdown; nothing here touches `dangerouslySetInnerHTML`, because

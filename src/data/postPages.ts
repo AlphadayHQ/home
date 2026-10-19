@@ -1,13 +1,15 @@
 import type { RawPost } from "./analysis.ts";
 import { isPublished } from "./analysis.ts";
 import { EXPLOIT_TYPE, exploitPostPath, toExploitRow } from "./exploitPosts.ts";
+import type { TrendingRow } from "./trending.ts";
 import {
-  NARRATIVE_HUB,
-  NARRATIVE_HUB_FLOOR,
-  NARRATIVE_TYPE,
-  narrativePath,
-  toNarrativeRow,
-} from "./narratives.ts";
+  TRENDING_HUB,
+  TRENDING_HUB_FLOOR,
+  TRENDING_TYPE,
+  groupTopics,
+  toTrendingRow,
+  trendingPostPath,
+} from "./trending.ts";
 import { belongsInSitemap, indexStateFor } from "../seo/indexState.ts";
 
 /**
@@ -22,10 +24,15 @@ import { belongsInSitemap, indexStateFor } from "../seo/indexState.ts";
  * the same function its pages use, so the sitemap lists a page exactly when the
  * page shows the post.
  *
- * A narrative's row carries no body, and its topic page refuses an empty or
- * decline body that the row cannot show; until the backend refuses those at
- * publish, such a post is listed here and logged by its page
- * (`server/narratives.ts`).
+ * A trending topic is one page however many posts it has: its page post, and
+ * the updates published on it, which have no URL of their own. So trending
+ * posts are grouped first (`groupTopics`, as the pages group them), the page is
+ * listed once, and it is dated by its newest update. An update whose page is not
+ * published has nowhere to be read and is counted as unplaced.
+ *
+ * A row carries no body, and a topic page refuses an empty or decline body that
+ * the row cannot show; until the backend refuses those at publish, such a post
+ * is listed here and logged by its page (`server/trending.ts`).
  *
  * Nothing is listed under a section, or as a hub, that `indexState.ts` does not
  * promote: the routes read the same state to decide `noindex`, so demoting one
@@ -49,12 +56,15 @@ export interface PostPage {
  */
 const SECTION: ReadonlyMap<unknown, string> = new Map([
   [EXPLOIT_TYPE, "/security/exploits"],
-  [NARRATIVE_TYPE, NARRATIVE_HUB],
+  [TRENDING_TYPE, TRENDING_HUB],
 ]);
 
 const promoted = (path: string): boolean => belongsInSitemap(indexStateFor(path));
 
-/** The site path a published post is read at, or null when it has none. */
+/**
+ * The site path a published post is read at on its own, or null when it has
+ * none. A trending update is read on its page; `postPages` places it there.
+ */
 export function postPagePath(post: RawPost): string | null {
   const section = SECTION.get(post.type);
   if (!section || !promoted(section)) return null;
@@ -62,9 +72,8 @@ export function postPagePath(post: RawPost): string | null {
     const row = toExploitRow(post);
     return row ? exploitPostPath(row.slug) : null;
   }
-  // Two posts on one topic are one page; `postPages` lists it once.
-  const row = toNarrativeRow(post);
-  return row ? narrativePath(row.tag) : null;
+  const row = toTrendingRow(post);
+  return row?.kind === "page" ? trendingPostPath(row.slug) : null;
 }
 
 /**
@@ -76,7 +85,7 @@ export function postPagePath(post: RawPost): string | null {
  * `noindex`, until the next deploy.
  */
 export const POST_HUBS: ReadonlyArray<{ path: string; floor: number }> = [
-  { path: NARRATIVE_HUB, floor: NARRATIVE_HUB_FLOOR },
+  { path: TRENDING_HUB, floor: TRENDING_HUB_FLOOR },
 ];
 
 const isoOrUndefined = (value: unknown): string | undefined => {
@@ -91,9 +100,16 @@ const newer = (a: string | undefined, b: string | undefined): string | undefined
 export function postPages(posts: RawPost[]): { pages: PostPage[]; unplaced: number } {
   const pages = new Map<string, PostPage>();
   let unplaced = 0;
+  const trending: TrendingRow[] = [];
 
   for (const post of posts) {
     if (!isPublished(post.status)) continue;
+    if (post.type === TRENDING_TYPE && promoted(TRENDING_HUB)) {
+      const row = toTrendingRow(post);
+      if (row) trending.push(row);
+      else unplaced += 1;
+      continue;
+    }
     const path = postPagePath(post);
     if (!path) {
       unplaced += 1;
@@ -103,6 +119,13 @@ export function postPages(posts: RawPost[]): { pages: PostPage[]; unplaced: numb
     const existing = pages.get(path);
     if (!existing) pages.set(path, { path, lastmod });
     else existing.lastmod = newer(lastmod, existing.lastmod);
+  }
+
+  const { topics, orphans } = groupTopics(trending);
+  unplaced += orphans.length;
+  for (const topic of topics) {
+    const path = trendingPostPath(topic.page.slug);
+    pages.set(path, { path, lastmod: topic.latest });
   }
 
   const listed = [...pages.values()];
