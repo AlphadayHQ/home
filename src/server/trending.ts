@@ -307,15 +307,15 @@ export async function buildTrendingArticle(
   if (!updates) return null;
 
   // The page's own body leads the first page only; later pages are older updates.
-  const [pagePost, opened] = await Promise.all([
+  const [pagePost, openedUpdates] = await Promise.all([
     page === 1 ? (fresh ?? openRow(topic.page)) : null,
     mapLimit(updates, CONCURRENCY, openRow),
   ]);
   if (page === 1 && !pagePost) return null;
-  const shown = opened.filter((post): post is TrendingPost => post !== null);
+  const shown = openedUpdates.filter((post): post is TrendingPost => post !== null);
 
   // An update refused here is not shown, so it does not lead, date or count.
-  const refused = new Set(updates.filter((_, at) => !opened[at]).map((update) => update.slug));
+  const refused = new Set(updates.filter((_, at) => !openedUpdates[at]).map((update) => update.slug));
   const kept = topic.updates.filter((update) => !refused.has(update.slug));
   const latest = kept.reduce(
     (at, update) => (update.modified > at ? update.modified : at),
