@@ -33,9 +33,9 @@ import {
  *
  * A narrative post is `type: "trending-narrative"` and names its tag in
  * `metadata.tag`, which the list endpoint returns. So the hub, every topic page
- * and the sitemap read one filtered list and never open a post to find out what
- * it is about: the pattern that cost the exploit pages 182 requests a view
- * before 14 October (`exploitPosts.ts`). A topic page opens one post, its own.
+ * and the sitemap read one filtered list, not the 182 requests a view the
+ * exploit pages made before 14 October (`exploitPosts.ts`). A topic page opens
+ * one post, its own, to read and check the body the row lacks.
  *
  * WHICH TOPICS NEVER GET A PAGE
  *
@@ -223,10 +223,10 @@ export interface NarrativeRow {
  * carries), and its title names the topic (`isAboutNarrative`). A post failing
  * any of them is left off.
  *
- * The hub's count, its indexing floor and the sitemap can only ever see the
- * list row, so this is everything they test. The topic page also checks the
- * body (`toNarrativePost`), and falls back to an older post on the topic when
- * the newest fails it, so a broken newest post cannot hide a good one.
+ * This is the test on the list row, and the hub, its floor and the sitemap
+ * trust it, as the exploit tier trusts its rows. A topic page also checks the
+ * body (`checkNarrativePost`); a newer post refused there leaves an older good
+ * one on the topic to be shown.
  */
 export function toNarrativeRow(raw: RawPost): NarrativeRow | null {
   if (!isPublished(raw.status) || raw.type !== NARRATIVE_TYPE) return null;
@@ -235,7 +235,7 @@ export function toNarrativeRow(raw: RawPost): NarrativeRow | null {
   if (!slug || !isPostSlug(slug) || !title) return null;
 
   const meta = readNarrativeMeta(raw.metadata);
-  if (!meta.tag || meta.kind !== "page" || meta.declined || isDeclineExcerpt(raw.excerpt)) {
+  if (!meta.tag || meta.kind !== "page" || meta.declined || isDeclineExcerpt(raw.excerpt, "narrative")) {
     return null;
   }
   if (!isAboutNarrative({ title, topic: meta.topic }, meta.tag)) return null;
@@ -262,8 +262,8 @@ export function toNarrativeRow(raw: RawPost): NarrativeRow | null {
  * is one post per tag. Two can exist if a reviewer publishes a second page for
  * a topic; the page then shows whichever changed last, rather than both.
  */
-export function byNarrative(rows: NarrativeRow[]): Map<string, NarrativeRow> {
-  const map = new Map<string, NarrativeRow>();
+export function byNarrative<T extends NarrativeRow>(rows: T[]): Map<string, T> {
+  const map = new Map<string, T>();
   for (const row of rows) {
     const existing = map.get(row.tag);
     if (!existing || existing.modified < row.modified) map.set(row.tag, row);
@@ -276,29 +276,29 @@ export interface NarrativePost extends NarrativeRow {
 }
 
 /**
- * Why a post's body cannot be shown, or null when it is fine: a decline's one
- * line, or nothing that renders.
+ * A post as its topic page would show it, or why it would not: the row's test,
+ * plus a body worth indexing (an indexed page that is only a title would cost
+ * the brand). The body is parsed once.
+ *
+ * The list cannot see the body, so the hub and the sitemap trust the row; a
+ * post refused here for its body is logged by the server so a person fixes it
+ * (`server/narratives.ts`).
  */
-export function bodyProblem(content: unknown): string | null {
-  const text = typeof content === "string" ? content : "";
-  if (isDecline(text)) return "its body is a decline";
-  return toBlocks(stripProvenance(text)).length === 0 ? "its body is empty" : null;
+export function checkNarrativePost(raw: RawPost): { post: NarrativePost } | { problem: string } {
+  const row = toNarrativeRow(raw);
+  if (!row) return { problem: "it is no longer shown" };
+  const text = typeof raw.content === "string" ? raw.content : "";
+  if (isDecline(text)) return { problem: "its body is a decline" };
+  const blocks = toBlocks(stripProvenance(text));
+  return blocks.length > 0 ? { post: { ...row, blocks } } : { problem: "its body is empty" };
 }
 
-/**
- * The full post for its topic page, or null.
- *
- * The row's test, plus a body worth indexing. The list cannot see the body, so
- * a post refused here for its body is still counted by the hub and listed by
- * the sitemap; the server logs it (`server/narratives.ts`) so a person fixes the
- * post. A listed URL that renders `noindex` until then costs a crawl; an
- * indexed page that is only a title would cost the brand.
- */
+/** The post for its topic page, or null; see `checkNarrativePost`. */
 export function toNarrativePost(raw: RawPost): NarrativePost | null {
-  const row = toNarrativeRow(raw);
-  if (!row || bodyProblem(raw.content)) return null;
-  return { ...row, blocks: toBlocks(stripProvenance(String(raw.content))) };
+  const checked = checkNarrativePost(raw);
+  return "post" in checked ? checked.post : null;
 }
+
 
 export interface Attention {
   /**

@@ -87,13 +87,20 @@ export const isDecline = (content: string): boolean =>
  * Whether a list row's excerpt is a decline's. The list carries no body, so this
  * is how a decline published without `metadata.declined` is caught from the row.
  *
- * The agents write exactly "Declined: not a security incident." and "Declined:
- * not a topic.", and every decline on the backend carries one (checked 16
- * October). The colon is required: "Declined ETF applications pile up" is a real
- * headline-shaped excerpt, and a bare word match would hide that post.
+ * Two rules, because the two kinds of post risk opposite mistakes:
+ *
+ *  - An exploit analysis's excerpt says what was attacked; one that opens with
+ *    the word "Declined" is a decline however it is punctuated ("Declined - not
+ *    a security incident" as well as the prompt's "Declined: ..."). The word is
+ *    enough, and missing a decline puts it on the hub and in the sitemap.
+ *  - A narrative's excerpt says what is happening, and "Declined ETF
+ *    applications pile up" is a real one. Only the prompt's exact "Declined:"
+ *    opening counts, or that post would be hidden.
+ *
+ * Every decline on the backend opens "Declined: not ..." (checked 16 October).
  */
-export const isDeclineExcerpt = (excerpt: unknown): boolean =>
-  /^\s*declined:/i.test(str(excerpt) ?? "");
+export const isDeclineExcerpt = (excerpt: unknown, kind: "exploit" | "narrative"): boolean =>
+  (kind === "exploit" ? /^\s*declined\b/i : /^\s*declined:/i).test(str(excerpt) ?? "");
 
 /** The body with the provenance block removed, whether or not one was present. */
 export function stripProvenance(content: string): string {

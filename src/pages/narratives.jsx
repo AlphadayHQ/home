@@ -74,7 +74,7 @@ const NarrativesPage = ({ hub }) => {
                 <tr className="border-b border-surface-border text-[12px] font-medium uppercase tracking-[0.1em] text-text-muted">
                   <th className="py-3 pr-4 font-medium">Topic</th>
                   <th className="py-3 pr-4 text-right font-medium">Articles, 7 days</th>
-                  <th className="py-3 pr-4 text-right font-medium">Share of news</th>
+                  <th className="py-3 pr-4 text-right font-medium">Share of indexed news</th>
                   <th className="py-3 text-right font-medium">Pace vs 30 days</th>
                 </tr>
               </thead>

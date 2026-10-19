@@ -2,8 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   NARRATIVE_HUB,
   NARRATIVE_HUB_FLOOR,
-  bodyProblem,
   byNarrative,
+  checkNarrativePost,
   displayName,
   isAboutNarrative,
   isNarrativeSlug,
@@ -155,19 +155,27 @@ describe("narrative posts, from their metadata", () => {
     expect(toNarrativeRow(post({ excerpt: "Declined: not a topic." }))).toBeNull();
   });
 
-  it("never shows a body that is a decline or renders nothing", () => {
-    for (const content of ["> DECLINED: generic word.", "", "   "]) {
+  it("never shows a body that is a decline or renders nothing, and says which", () => {
+    const cases: Array<[string, RegExp]> = [
+      ["> DECLINED: generic word.", /decline/],
+      ["", /empty/],
+      ["   ", /empty/],
+    ];
+    for (const [content, problem] of cases) {
+      // The row cannot see the body; only the page's check can.
       expect(toNarrativeRow(post({ content }))?.slug).toBe("ripples-court-win");
       expect(toNarrativePost(post({ content }))).toBeNull();
-      expect(bodyProblem(content)).not.toBeNull();
+      expect(checkNarrativePost(post({ content }))).toEqual({ problem: expect.stringMatching(problem) });
     }
-    expect(bodyProblem(post().content)).toBeNull();
+    expect(checkNarrativePost(post())).toHaveProperty("post");
   });
 
   it("does not take a real excerpt that starts with the word for a decline", () => {
-    expect(isDeclineExcerpt("Declined ETF applications pile up at the SEC")).toBe(false);
-    expect(isDeclineExcerpt("Declined: not a topic.")).toBe(true);
-    expect(isDeclineExcerpt("Declined: not a security incident.")).toBe(true);
+    expect(isDeclineExcerpt("Declined ETF applications pile up at the SEC", "narrative")).toBe(false);
+    expect(isDeclineExcerpt("Declined: not a topic.", "narrative")).toBe(true);
+    // An exploit's check stays on the word: its declines vary in punctuation.
+    expect(isDeclineExcerpt("Declined - not a security incident", "exploit")).toBe(true);
+    expect(isDeclineExcerpt("Declined: not a security incident.", "exploit")).toBe(true);
     expect(toNarrativeRow(post({ excerpt: "Declined ETF applications pile up" }))).not.toBeNull();
   });
 
@@ -259,8 +267,15 @@ describe("the sitemap", () => {
     });
   });
 
+  it("places nothing for a type that names an inherited property", () => {
+    for (const type of ["constructor", "toString", "__proto__"]) {
+      expect(postPagePath(post({ type }))).toBeNull();
+    }
+  });
+
   it("lists live only promoted hubs", () => {
-    // `scripts/build-sitemap.mjs` leaves these same paths out of pages.xml.
+    // `scripts/build-sitemap.mjs` leaves these same paths out of pages.xml, and
+    // `postPages` checks the state itself, so a demotion there takes them out.
     expect(POST_HUBS.map((hub) => hub.path)).toEqual([NARRATIVE_HUB]);
     for (const hub of POST_HUBS) expect(indexStateFor(hub.path)).toBe("promoted");
   });
@@ -345,6 +360,19 @@ describe("holding a read", () => {
     expect(await held.read()).toBe(3);
   });
 
+  it("holds a thrown failure for failMs, as it holds a failed value", async () => {
+    const load = vi.fn(async () => {
+      throw new Error("down");
+    });
+    const held = hold(load, 10_000, { failMs: 1000 });
+    await expect(held.read()).rejects.toThrow("down");
+    // Inside the window: the same error, and no new attempt.
+    for (let i = 0; i < 3; i += 1) await expect(held.read()).rejects.toThrow("down");
+    expect(load).toHaveBeenCalledTimes(1);
+    vi.setSystemTime(Date.now() + 1000);
+    await expect(held.read()).rejects.toThrow("down");
+    expect(load).toHaveBeenCalledTimes(2);
+  });
   it("does not let a load that started before a reset write after it", async () => {
     let calls = 0;
     let finish: (v: number) => void = () => {};
@@ -417,6 +445,8 @@ describe("reading the pages", () => {
   let postsDown: boolean;
   let countsDown: boolean;
   let duplicateHeadline: boolean;
+  /** What opening a post returns, where it differs from its list row. */
+  let detail: Record<string, Record<string, unknown>>;
   let seen: string[];
 
   beforeEach(async () => {
@@ -436,6 +466,7 @@ describe("reading the pages", () => {
     postsDown = false;
     countsDown = false;
     duplicateHeadline = false;
+    detail = {};
     seen = [];
 
     const { fetchJsonSoft, fetchWithRetry } = await import("../server/apiFetch");
@@ -443,7 +474,13 @@ describe("reading the pages", () => {
       seen.push(url);
       const path = url.replace("https://api.test/", "");
       if (path.startsWith("posts/")) {
-        return (postsDown ? null : { results: posts, links: { next: null } }) as never;
+        // List rows carry no body: the reads must open a post to see it.
+        const rows = posts.map((row) => {
+          if (!row) return row;
+          const { content: _content, ...listed } = row;
+          return listed;
+        });
+        return (postsDown ? null : { results: rows, links: { next: null } }) as never;
       }
       if (path.startsWith("keywords/trending/")) {
         return (
@@ -481,7 +518,7 @@ describe("reading the pages", () => {
     vi.mocked(fetchWithRetry).mockImplementation(async (url: string) => {
       seen.push(url);
       const slug = url.split("/posts/")[1].replace(/\/$/, "");
-      const found = posts.find((row) => row.slug === slug);
+      const found = detail[slug] ?? posts.find((row) => row.slug === slug);
       return (found ? { json: async () => found } : null) as never;
     });
 
@@ -506,6 +543,12 @@ describe("reading the pages", () => {
     ]);
     expect(hub.written).toBe(2);
     expect(hub.rows[0].attention).toMatchObject({ news7: 70, allNews7: 3500, podcasts7: null });
+  });
+
+  it("skips a list row that is not an object rather than throw", async () => {
+    posts.push(null as never);
+    const { buildNarrativeHub } = await import("../server/narratives");
+    expect((await buildNarrativeHub()).written).toBe(2);
   });
 
   it("does not count a decline published without its flag as written", async () => {
@@ -551,22 +594,25 @@ describe("reading the pages", () => {
 
   it("fails rather than render a hub short of its written topics", async () => {
     postsDown = true;
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
     const { buildNarrativeHub } = await import("../server/narratives");
     await expect(buildNarrativeHub()).rejects.toThrow(/read short/);
+    errors.mockRestore();
   });
 
-  it("opens one post for a written topic, its own", async () => {
+  it("opens one post for a written topic, its own, and holds it", async () => {
     const { buildNarrativePage } = await import("../server/narratives");
     const page = await buildNarrativePage("xrpl");
     expect(seen.filter((url) => /\/posts\/[^?]/.test(url))).toEqual([
       "https://api.test/posts/ripples-court-win/",
     ]);
     expect(page?.post?.title).toBe("Ripple's court win and what it means for XRP");
-    // The week's count comes with its headlines: no separate limit=1 read of it.
-    expect(seen).not.toContain("https://api.test/items/news/?tags=xrpl&period=1&limit=1");
     expect(page?.attention).toMatchObject({ news7: 70, podcasts7: 70, allNews7: 3500 });
     // The undated headline is skipped, not rendered.
     expect(page?.headlines.map((item) => item.title)).toEqual(["XRP rallies"]);
+    seen = [];
+    await buildNarrativePage("xrpl");
+    expect(seen).toEqual([]);
   });
 
   it("renders a trending topic with nothing written, and 404s one that is neither", async () => {
@@ -583,6 +629,16 @@ describe("reading the pages", () => {
     await expect(buildNarrativePage("aave")).rejects.toThrow(/trending list unavailable/);
     // A written topic does not need the trending list to exist.
     expect((await buildNarrativePage("starknet"))?.post?.slug).toBe("starknet-staking");
+  });
+
+  it("will not 404 a topic whose only post was refused while trending is down", async () => {
+    // It may still be trending and owed a noindex page; a cached 404 is wrong.
+    posts[0] = post({ content: "" });
+    trendingDown = true;
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const { buildNarrativePage } = await import("../server/narratives");
+    await expect(buildNarrativePage("xrpl")).rejects.toThrow(/trending list unavailable/);
+    warn.mockRestore();
   });
 
   it("refuses a listed post with a broken body, logs it, and shows the next one on the topic", async () => {
@@ -605,33 +661,71 @@ describe("reading the pages", () => {
     warn.mockRestore();
   });
 
-  it("does not show a post retagged since the list was read", async () => {
-    const { buildNarrativePage } = await import("../server/narratives");
-    await buildNarrativePage("starknet");
-    // Retagged in the admin: the held list still places it on starknet.
-    posts[1] = { ...posts[1], metadata: meta({ tag: "xrpl", topic: "Starknet" }) };
+  it("does not show a post retagged since the list was read on its old tag", async () => {
+    // Retagged between the list read and the open: the row still says starknet.
+    detail["starknet-staking"] = { ...posts[1], metadata: meta({ tag: "xrpl", topic: "Starknet" }) };
     const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
-    // Not trending and nothing it can show: no page, rather than this post
+    const { buildNarrativePage } = await import("../server/narratives");
+    // Not trending and nothing on it now: no page, rather than this post
     // indexed under the old topic's URL.
     expect(await buildNarrativePage("starknet")).toBeNull();
     expect(warn).toHaveBeenCalledWith(expect.stringMatching(/starknet-staking.*now on xrpl/));
     warn.mockRestore();
   });
 
-  it("reads the hub's week counts bare, and dedupes a page's headlines", async () => {
+  it("reads bare counts for the hub, and a deduped week for a topic page", async () => {
+    duplicateHeadline = true;
     const { buildNarrativeHub, buildNarrativePage } = await import("../server/narratives");
     await buildNarrativeHub();
+    // The hub shows no headlines, so it does not fetch them.
     expect(seen.some((url) => url.includes("limit=8"))).toBe(false);
     expect(seen).toContain("https://api.test/items/news/?tags=xrpl&period=1&limit=1");
-    duplicateHeadline = true;
-    const page = await buildNarrativePage("aave");
+    const page = await buildNarrativePage("xrpl");
     expect(page?.headlines.map((item) => item.url)).toEqual(["https://news.example/xrp"]);
   });
 
-  it("fails on an outage reading the post, rather than render the page without it", async () => {
+  it("keeps the first good copy of a headline, not the first copy", async () => {
+    const { fetchJsonSoft } = await import("../server/apiFetch");
+    const base = vi.mocked(fetchJsonSoft).getMockImplementation();
+    vi.mocked(fetchJsonSoft).mockImplementation(async (url: string) =>
+      url.includes("limit=8")
+        ? ({
+            total: 2,
+            results: [
+              { title: "Undated copy", url: "https://news.example/a", published_at: "" },
+              { title: "Dated copy", url: "https://news.example/a", published_at: "2026-10-15T08:00:00Z" },
+            ],
+          } as never)
+        : (base?.(url) as never)
+    );
+    const { buildNarrativePage } = await import("../server/narratives");
+    const page = await buildNarrativePage("aave");
+    expect(page?.headlines.map((item) => item.title)).toEqual(["Dated copy"]);
+  });
+
+  it("fails only its own page on an outage opening its post", async () => {
     const { fetchWithRetry } = await import("../server/apiFetch");
     vi.mocked(fetchWithRetry).mockRejectedValueOnce(new Error("upstream down"));
-    const { buildNarrativePage } = await import("../server/narratives");
+    const { buildNarrativeHub, buildNarrativePage } = await import("../server/narratives");
     await expect(buildNarrativePage("xrpl")).rejects.toThrow(/upstream down/);
+    // The hub never opens a post, and the next render of the page tries again.
+    expect((await buildNarrativeHub()).written).toBe(2);
+    expect((await buildNarrativePage("xrpl"))?.post?.slug).toBe("ripples-court-win");
+  });
+
+  it("fails its page, not the process, on a body that is not a post", async () => {
+    const { fetchWithRetry } = await import("../server/apiFetch");
+    vi.mocked(fetchWithRetry).mockResolvedValueOnce({ json: async () => null } as never);
+    const { buildNarrativePage } = await import("../server/narratives");
+    await expect(buildNarrativePage("xrpl")).rejects.toThrow(/not a post/);
+  });
+
+  it("says so when the list itself does not answer", async () => {
+    postsDown = true;
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    const { buildNarrativeHub } = await import("../server/narratives");
+    await expect(buildNarrativeHub()).rejects.toThrow(/read short/);
+    expect(errors).toHaveBeenCalledWith(expect.stringMatching(/post list did not answer/));
+    errors.mockRestore();
   });
 });

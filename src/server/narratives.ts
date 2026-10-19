@@ -13,12 +13,11 @@ import type {
 } from "../data/narratives";
 import {
   NARRATIVE_TYPE,
-  bodyProblem,
   byNarrative,
+  checkNarrativePost,
   isNarrativeSlug,
   shapeTrending,
   slugName,
-  toNarrativePost,
   toNarrativeRow,
   validDate,
 } from "../data/narratives";
@@ -34,22 +33,34 @@ import {
  * with no post yet renders `noindex`, so a reader following the hub lands on
  * the numbers and headlines; it is indexed once a reviewed post is on it.
  *
- * WHAT IS READ, AND HOW OFTEN
+ * WHAT IS READ
  *
  * The posts are one filtered list, `?type=trending-narrative`, whose rows carry
- * each post's tag in `metadata`; a topic page then opens its own post, and
- * nothing else. The attention numbers are the expensive part: a tagged news
- * count takes 1–3s upstream (measured 16 October) and the hub wants two per
- * row. They move over days, not seconds, so each is held (`server/hold.ts`):
- * a warm hub makes no upstream request at all, and a stale one is answered at
- * once while it refreshes behind the reader.
+ * each post's tag in `metadata`. The hub, its indexing floor and the posts
+ * sitemap trust the row (`toNarrativeRow`), as the exploit tier does: a decline
+ * is caught there by its flag or its excerpt. A topic page opens its own post,
+ * one request, and checks what the row cannot show: that the body is worth
+ * indexing, and that the post is still on this tag.
  *
- * WHY A FAILED POST READ IS AN ERROR AND NOT A SMALLER PAGE
+ * The one case the row cannot catch is a post published with an empty body, or
+ * a decline's one line under a normal excerpt. Its topic page refuses it and
+ * logs it, and serves `noindex` (or 404, if the topic is not trending) while
+ * the hub and the sitemap still count it, until a person fixes the post. The
+ * backend closing that at publish is the fix; it is ticketed.
  *
- * The posts decide whether a page exists and whether it is indexed. Reading
- * them short and rendering anyway would 404 or `noindex` a page that has a
- * published post, and the CDN would cache that. Throwing leaves the edge on its
- * last good copy instead: the rule `routes/research.governance.tsx` explains.
+ * The attention numbers are the expensive part: a tagged news count takes 1–3s
+ * upstream (measured 16 October) and the hub wants two per row. They move over
+ * days, not seconds, so each is held (`server/hold.ts`): a warm hub makes no
+ * upstream request at all, and a stale one is answered at once while it
+ * refreshes behind the reader.
+ *
+ * WHY A FAILED READ IS AN ERROR AND NOT A SMALLER PAGE
+ *
+ * The list decides whether every page exists and whether it is indexed.
+ * Reading it short and rendering anyway would 404 or `noindex` pages that have
+ * published posts, and the CDN would cache that. So a failed list throws, and so
+ * does a topic page whose post could not be opened; the edge keeps its last
+ * good copy instead: the rule `routes/research.governance.tsx` explains.
  */
 
 const NEWS = "items/news";
@@ -60,13 +71,16 @@ const PAGE_SIZE = 100;
 /** 2,000 posts. Reaching it reports a short read rather than truncating quietly. */
 const MAX_PAGES = 20;
 
-/** The post list: short, so a publish shows on the hub within a minute. */
+/** The post list, and each opened post: short, so a publish shows within a minute. */
 export const LIST_FRESH_MS = 60_000;
 /** The trending list is rescored every six hours upstream. */
 export const TRENDING_FRESH_MS = 10 * 60_000;
-/** Counts over 30 days, podcasts, video, and all news. */
+/** Counts over 30 days, podcasts, video, all news, and the hub's 7-day counts. */
 export const COUNT_FRESH_MS = 30 * 60_000;
-/** The topic's week of news: its count and its headlines, read together. */
+/**
+ * A topic page's week: its 7-day count and its headlines. Shorter than the
+ * counts, because the headlines are the newest thing on the page.
+ */
 export const WEEK_FRESH_MS = 10 * 60_000;
 /**
  * How long a failed count is answered as unknown before it is tried again. A
@@ -79,10 +93,10 @@ export const FAILED_COUNT_MS = 60_000;
 const HEADLINES = 8;
 
 /**
- * Topics counted at once while the counts are cold. Each costs two tagged news
- * counts; uncapped, a cold hub's reads would all land on the API together.
+ * Topics counted at once while the counts are cold. Uncapped, a cold hub's
+ * reads would all land on the API together.
  */
-const ATTENTION_CONCURRENCY = 6;
+const CONCURRENCY = 6;
 
 /**
  * Topics that have cooled but keep their row because they are written up: only
@@ -110,7 +124,7 @@ async function mapLimit<T, R>(
 }
 
 interface RawListPage {
-  results?: RawPost[];
+  results?: unknown[];
   links?: { next?: string | null };
 }
 
@@ -122,36 +136,82 @@ export interface NarrativeList {
 
 async function loadList(): Promise<NarrativeList> {
   const raw: RawPost[] = [];
-  let ok = true;
   for (let page = 1; page <= MAX_PAGES; page += 1) {
     const body = await fetchJsonSoft<RawListPage>(
       `${API_BASE}/posts/?type=${NARRATIVE_TYPE}&limit=${PAGE_SIZE}&page=${page}`
     );
     if (body === null) {
-      ok = false;
-      break;
+      console.error(`narratives: the post list did not answer on page ${page}`);
+      return { rows: [], ok: false };
     }
-    const rows = body.results ?? [];
-    raw.push(...rows);
+    const rows = Array.isArray(body.results) ? body.results : [];
+    // A row that is not an object is skipped, not read: `null` would throw.
+    raw.push(...rows.filter((row): row is RawPost => !!row && typeof row === "object"));
     if (rows.length < PAGE_SIZE || !body.links?.next) break;
-    if (page === MAX_PAGES) ok = false;
+    if (page === MAX_PAGES) {
+      console.error(`narratives: more than ${MAX_PAGES * PAGE_SIZE} posts; refusing a truncated list`);
+      return { rows: [], ok: false };
+    }
   }
   const rows = raw.map(toNarrativeRow).filter((row): row is NarrativeRow => row !== null);
-  return { rows, ok };
+  return { rows, ok: true };
 }
 
-const list = hold(loadList, LIST_FRESH_MS, { keep: (value) => value.ok });
+const list = hold(loadList, LIST_FRESH_MS, {
+  keep: (value) => value.ok,
+  onBackgroundError: (error) => console.error("narratives: refreshing the post list failed", error),
+});
 
-/** Every shown narrative row, or an error: see the header for why not fewer. */
+/** Every listed narrative row, or an error: see the header for why not fewer. */
 async function readRows(): Promise<NarrativeRow[]> {
   const { rows, ok } = await list.read();
   if (!ok) throw new Error("narratives: the posts read short, so a page with a post could be dropped");
   return rows;
 }
 
-/** The written topics, one post each: the newest per tag. */
-export const readWritten = async (): Promise<Map<string, NarrativeRow>> =>
-  byNarrative(await readRows());
+/**
+ * Each post as its topic page opened it, held per slug for `LIST_FRESH_MS`: the
+ * raw post, or null for a 404. A failure to open is not held; it throws, and is
+ * tried again on the next render.
+ */
+const opened = holdByKey(
+  async (slug: string): Promise<RawPost | null> => {
+    const res = await fetchWithRetry(`${API_BASE}/posts/${encodeURIComponent(slug)}/`);
+    if (!res) return null;
+    const raw: unknown = await res.json();
+    if (!raw || typeof raw !== "object") throw new Error(`narratives: post ${slug} is not a post`);
+    return raw as RawPost;
+  },
+  LIST_FRESH_MS
+);
+
+/**
+ * The newest post on `tag` that its page can show, or null.
+ *
+ * Normally one request: the list said which post. A post refused here is
+ * logged, since the hub and the sitemap still count it, and the next newest on
+ * the topic is tried. A post retagged since the list was read is refused on
+ * the old tag, and shows on its new one once the list catches up, within a
+ * minute.
+ */
+async function readPost(rows: NarrativeRow[], tag: string): Promise<NarrativePost | null> {
+  const candidates = rows
+    .filter((row) => row.tag === tag)
+    .sort((a, b) => b.modified.localeCompare(a.modified));
+  for (const row of candidates) {
+    const raw = await opened.read(row.slug);
+    const checked = raw ? checkNarrativePost(raw) : { problem: "it is gone" };
+    const why =
+      "problem" in checked
+        ? checked.problem
+        : checked.post.tag !== tag
+          ? `it is now on ${checked.post.tag}`
+          : null;
+    if (!why && "post" in checked) return checked.post;
+    console.warn(`narratives: post ${row.slug} is listed on ${tag} but ${why}; its page does not show it`);
+  }
+  return null;
+}
 
 const trending = hold(
   async (): Promise<TrendingTopic[] | null> => {
@@ -195,27 +255,6 @@ const allNews7 = hold(
   { keep: (value) => value !== null, failMs: FAILED_COUNT_MS }
 );
 
-const readAllNews7 = () => allNews7.read();
-
-/*
- * The hub reads news alone, which is what its share and pace columns need, and
- * its week count is a bare `limit=1`: it shows no headlines, so it does not pay
- * for them. A topic page adds podcasts and video, and takes its week count from
- * the headline read it makes anyway. A 10-row hub reading all four made 40
- * counts at once and took 17 seconds cold (14 October).
- */
-async function readAttention(tag: string, page: boolean): Promise<Omit<Attention, "allNews7">> {
-  const [news7, news30, podcasts7, videos7] = await Promise.all([
-    page
-      ? week.read(tag).then((read) => read?.total ?? null)
-      : counts.read(tagged(NEWS, tag, PERIOD["7d"])),
-    counts.read(tagged(NEWS, tag, PERIOD["30d"])),
-    page ? counts.read(tagged(PODCASTS, tag, PERIOD["7d"])) : null,
-    page ? counts.read(tagged(VIDEOS, tag, PERIOD["7d"])) : null,
-  ]);
-  return { news7, news30, podcasts7, videos7 };
-}
-
 export interface Headline {
   title: string;
   url: string;
@@ -237,9 +276,12 @@ interface Week {
 }
 
 /*
- * A topic page's week count and its headlines are one request: the headline
- * read returns the same `total` a `limit=1` count would, and this tagged 7-day
- * query is the slowest of the lot.
+ * A topic page's week: its 7-day count and its headlines, one request. The hub
+ * takes its 7-day count from a bare `limit=1` count instead, held for 30
+ * minutes: refreshing every row's headlines every 10 minutes for a page that
+ * shows none would triple its upstream load. So the hub's figure can trail the
+ * topic page's by up to the difference between the two holds, which a reader
+ * comparing the two will rarely see and never be misled by.
  */
 const week = holdByKey(
   async (tag: string): Promise<Week | null> => {
@@ -249,23 +291,22 @@ const week = holdByKey(
     if (body === null) return null;
     // A row that cannot be linked safely or dated is skipped, not rendered: one
     // bad `published_at` would otherwise throw in the formatter and fail the page.
-    // The feed can carry one URL twice (one story, two ingests); the first stays.
+    // The feed can carry one URL twice (one story, two ingests); the first good
+    // copy stays.
     const seen = new Set<string>();
     const headlines = (body.results ?? []).flatMap((row) => {
       const url = typeof row.url === "string" ? safeHref(row.url) : null;
       const publishedAt = validDate(row.published_at);
-      if (!url || seen.has(url)) return [];
+      if (typeof row.title !== "string" || !url || !publishedAt || seen.has(url)) return [];
       seen.add(url);
-      return typeof row.title === "string" && publishedAt
-        ? [
-            {
-              title: row.title,
-              url,
-              sourceName: typeof row.source?.name === "string" ? row.source.name : "",
-              publishedAt,
-            },
-          ]
-        : [];
+      return [
+        {
+          title: row.title,
+          url,
+          sourceName: typeof row.source?.name === "string" ? row.source.name : "",
+          publishedAt,
+        },
+      ];
     });
     return { total: typeof body.total === "number" ? body.total : null, headlines };
   },
@@ -273,9 +314,33 @@ const week = holdByKey(
   { keep: (value) => value !== null, failMs: FAILED_COUNT_MS }
 );
 
+/*
+ * The hub reads news alone, which is what its share and pace columns need; a
+ * topic page adds podcasts and video. A 10-row hub reading all four made 40
+ * counts at once and took 17 seconds cold (14 October). A topic page passes in
+ * its week read, so one read gives it its count and its headlines and the
+ * counts below do not wait for it; the hub passes none and reads a bare count.
+ */
+async function readAttention(
+  tag: string,
+  weekRead: Promise<Week | null> | null
+): Promise<Omit<Attention, "allNews7">> {
+  const media = weekRead !== null;
+  const [news7, news30, podcasts7, videos7] = await Promise.all([
+    weekRead
+      ? weekRead.then((read) => read?.total ?? null)
+      : counts.read(tagged(NEWS, tag, PERIOD["7d"])),
+    counts.read(tagged(NEWS, tag, PERIOD["30d"])),
+    media ? counts.read(tagged(PODCASTS, tag, PERIOD["7d"])) : null,
+    media ? counts.read(tagged(VIDEOS, tag, PERIOD["7d"])) : null,
+  ]);
+  return { news7, news30, podcasts7, videos7 };
+}
+
 /** For tests: forget everything held. */
 export function resetNarratives(): void {
   list.reset();
+  opened.reset();
   trending.reset();
   allNews7.reset();
   counts.reset();
@@ -301,11 +366,12 @@ export interface NarrativeHub {
 }
 
 export async function buildNarrativeHub(): Promise<NarrativeHub> {
-  const [topicsNow, written, allNews7] = await Promise.all([
+  const [topicsNow, rows, total] = await Promise.all([
     readTrending(),
-    readWritten(),
-    readAllNews7(),
+    readRows(),
+    allNews7.read(),
   ]);
+  const written = byNarrative(rows);
 
   const topics = new Map<string, { name: string; trendiness: number | null }>();
   for (const topic of topicsNow ?? []) {
@@ -330,27 +396,23 @@ export async function buildNarrativeHub(): Promise<NarrativeHub> {
       .map(([slug]) => slug)
   );
 
-  const rows = await mapLimit(
-    ordered,
-    ATTENTION_CONCURRENCY,
-    async ([slug, topic]): Promise<HubRow> => {
-      const post = written.get(slug);
-      const attention = counted.has(slug)
-        ? await readAttention(slug, false)
-        : { news7: null, news30: null, podcasts7: null, videos7: null };
-      return {
-        slug,
-        // The post's own name for the topic wins: "Ripple", not "ripple".
-        name: post?.topic ?? topic.name,
-        trendiness: topic.trendiness,
-        attention: { ...attention, allNews7 },
-        post: post ? { title: post.title, modified: post.modified } : null,
-      };
-    }
-  );
+  const hubRows = await mapLimit(ordered, CONCURRENCY, async ([slug, topic]): Promise<HubRow> => {
+    const post = written.get(slug);
+    const attention = counted.has(slug)
+      ? await readAttention(slug, null)
+      : { news7: null, news30: null, podcasts7: null, videos7: null };
+    return {
+      slug,
+      // The post's own name for the topic wins: "Ripple", not "ripple".
+      name: post?.topic ?? topic.name,
+      trendiness: topic.trendiness,
+      attention: { ...attention, allNews7: total },
+      post: post ? { title: post.title, modified: post.modified } : null,
+    };
+  });
 
   return {
-    rows,
+    rows: hubRows,
     trendingOk: topicsNow !== null,
     written: written.size,
     asOf: new Date().toISOString(),
@@ -371,55 +433,12 @@ export interface NarrativePage {
   asOf: string;
 }
 
-/** Posts on one topic a page will try, newest first, before showing none. */
-const CANDIDATES = 3;
-
-/**
- * Why a post the list placed on `tag` cannot be shown there now, or null.
- *
- * The list can be a minute old and carries no body, so the post itself is
- * checked again: still shown at all, still on this tag (a retagged post would
- * otherwise render, indexed, under the old topic's URL, and the edge would keep
- * that copy), and a body with something in it (an indexed page that is only a
- * title and an excerpt is a thin page under the brand).
- */
-function refusal(raw: RawPost, tag: string): string | null {
-  const post = toNarrativePost(raw);
-  if (post) return post.tag === tag ? null : `it is now on ${post.tag}`;
-  return bodyProblem(raw.content) ?? "it is no longer shown";
-}
-
-/**
- * The newest post on `tag` that can be shown, or null.
- *
- * Usually one request: the list already said which post. A post refused here
- * is logged, because the hub and the sitemap, which see only the list, still
- * count it until a person fixes it; the next newest on the topic is tried
- * instead. Only a 404 is "no post"; any other failure throws, for the reason
- * in the header.
- */
-async function readPost(rows: NarrativeRow[], tag: string): Promise<NarrativePost | null> {
-  const candidates = rows
-    .filter((row) => row.tag === tag)
-    .sort((a, b) => b.modified.localeCompare(a.modified))
-    .slice(0, CANDIDATES);
-  for (const row of candidates) {
-    const res = await fetchWithRetry(`${API_BASE}/posts/${encodeURIComponent(row.slug)}/`);
-    if (!res) continue;
-    const raw = (await res.json()) as RawPost;
-    const why = refusal(raw, tag);
-    if (!why) return toNarrativePost(raw);
-    console.warn(`narratives: post ${row.slug} is listed on ${tag} but ${why}; not shown there`);
-  }
-  return null;
-}
-
 /** One topic, or null when it has no page (see the header). */
 export async function buildNarrativePage(tag: string): Promise<NarrativePage | null> {
   const [topicsNow, rows] = await Promise.all([readTrending(), readRows()]);
-  const row = byNarrative(rows).get(tag) ?? null;
   const topic = topicsNow?.find((candidate) => candidate.slug === tag) ?? null;
-  if (!row && !topic) {
+  const listed = rows.some((row) => row.tag === tag);
+  if (!listed && !topic) {
     // Not trending and nothing written. If the trending read failed, the page
     // may exist; say so with an error rather than a cached 404.
     if (topicsNow === null) {
@@ -428,22 +447,28 @@ export async function buildNarrativePage(tag: string): Promise<NarrativePage | n
     return null;
   }
 
-  const [post, allNews7, news, attention] = await Promise.all([
-    row ? readPost(rows, tag) : null,
-    readAllNews7(),
-    week.read(tag),
-    readAttention(tag, true),
+  const weekRead = week.read(tag);
+  const [post, total, weekNow, attention] = await Promise.all([
+    listed ? readPost(rows, tag) : null,
+    allNews7.read(),
+    weekRead,
+    readAttention(tag, weekRead),
   ]);
-  // Listed, but nothing on it can be shown now (unpublished, retagged, or an
-  // empty body): the topic has no page unless it is trending.
-  if (!post && !topic) return null;
+  if (!post && !topic) {
+    // Listed, but nothing on it can be shown now: no page, unless the trending
+    // read failed, when the topic may still be trending and owed one.
+    if (topicsNow === null) {
+      throw new Error("narratives: trending list unavailable, cannot tell whether this page exists");
+    }
+    return null;
+  }
 
   return {
     slug: tag,
     name: post?.topic ?? topic?.name ?? slugName(tag),
     trendiness: topic?.trendiness ?? null,
-    attention: { ...attention, allNews7 },
-    headlines: news?.headlines ?? [],
+    attention: { ...attention, allNews7: total },
+    headlines: weekNow?.headlines ?? [],
     post,
     asOf: new Date().toISOString(),
   };

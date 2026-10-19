@@ -8,6 +8,7 @@ import {
   narrativePath,
   toNarrativeRow,
 } from "./narratives.ts";
+import { belongsInSitemap, indexStateFor } from "../seo/indexState.ts";
 
 /**
  * Where each published post is read on the site (content docs B2, B3).
@@ -21,6 +22,15 @@ import {
  * the same function its pages use, so the sitemap lists a page exactly when the
  * page shows the post.
  *
+ * A narrative's row carries no body, and its topic page refuses an empty or
+ * decline body that the row cannot show; until the backend refuses those at
+ * publish, such a post is listed here and logged by its page
+ * (`server/narratives.ts`).
+ *
+ * Nothing is listed under a section, or as a hub, that `indexState.ts` does not
+ * promote: the routes read the same state to decide `noindex`, so demoting one
+ * there takes it out of the sitemap too.
+ *
  * A published post with no page is counted, not dropped silently: a new type the
  * sitemap does not place yet, or a decline published by mistake, should show up
  * in the log rather than as a page that quietly never reaches search.
@@ -32,18 +42,29 @@ export interface PostPage {
   lastmod: string | undefined;
 }
 
+/**
+ * The section a type's pages live under; its index state is theirs. A `Map`,
+ * not an object literal: `type` comes from the API, and "constructor" must not
+ * find an inherited function and throw inside `indexStateFor`.
+ */
+const SECTION: ReadonlyMap<unknown, string> = new Map([
+  [EXPLOIT_TYPE, "/security/exploits"],
+  [NARRATIVE_TYPE, NARRATIVE_HUB],
+]);
+
+const promoted = (path: string): boolean => belongsInSitemap(indexStateFor(path));
+
 /** The site path a published post is read at, or null when it has none. */
 export function postPagePath(post: RawPost): string | null {
+  const section = SECTION.get(post.type);
+  if (!section || !promoted(section)) return null;
   if (post.type === EXPLOIT_TYPE) {
     const row = toExploitRow(post);
     return row ? exploitPostPath(row.slug) : null;
   }
-  if (post.type === NARRATIVE_TYPE) {
-    // Two posts on one topic are one page; `postPages` lists it once.
-    const row = toNarrativeRow(post);
-    return row ? narrativePath(row.tag) : null;
-  }
-  return null;
+  // Two posts on one topic are one page; `postPages` lists it once.
+  const row = toNarrativeRow(post);
+  return row ? narrativePath(row.tag) : null;
 }
 
 /**
@@ -87,7 +108,7 @@ export function postPages(posts: RawPost[]): { pages: PostPage[]; unplaced: numb
   const listed = [...pages.values()];
   for (const hub of POST_HUBS) {
     const under = listed.filter((page) => page.path.startsWith(`${hub.path}/`));
-    if (under.length >= hub.floor) {
+    if (promoted(hub.path) && under.length >= hub.floor) {
       // The hub changes when a page under it does.
       pages.set(hub.path, {
         path: hub.path,

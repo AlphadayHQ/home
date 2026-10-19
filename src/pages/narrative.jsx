@@ -70,7 +70,7 @@ const NarrativePageView = ({ page }) => {
               <Fact mono label="Articles, 7 days">{attention.news7.toLocaleString("en-GB")}</Fact>
             )}
             {share !== null && (
-              <Fact mono label="Share of all news">{formatShare(share)}</Fact>
+              <Fact mono label="Share of indexed news">{formatShare(share)}</Fact>
             )}
             {pace !== null && <Fact mono label="Pace vs 30 days">{pace.toFixed(1)}×</Fact>}
             {attention.podcasts7 !== null && (

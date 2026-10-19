@@ -13,11 +13,12 @@
  *  - A failed refresh behind a good value is not tried again for `retryMs`.
  *    Without that, every request during an outage would start another refresh,
  *    each three attempts deep, against an API that is already failing.
- *  - A failed read with nothing good to fall back on is held for `failMs` when
- *    one is given, so a read that keeps failing is not retried by every render.
- *    When it expires the next caller waits for a fresh load rather than being
- *    answered the failure again. Without `failMs` it is answered to the callers
- *    that waited for it and then forgotten.
+ *  - A failed read with nothing good to fall back on, a value `keep` refuses or a
+ *    load that throws, is held for `failMs` when one is given, so a read that
+ *    keeps failing is not retried by every render: callers in that window get
+ *    the same value, or the same error. When it expires the next caller waits
+ *    for a fresh load rather than being answered the failure again. Without
+ *    `failMs` it is answered to the callers that waited for it and forgotten.
  */
 
 /** How long a failed refresh behind a good value waits, unless `failMs` says. */
@@ -47,7 +48,10 @@ export function hold<T>(
   { keep = () => true, failMs, onBackgroundError = () => {} }: HoldOptions<T> = {}
 ): Hold<T> {
   const retryMs = failMs ?? RETRY_AFTER_FAILURE_MS;
-  let held: { at: number; value: T; failed: boolean } | null = null;
+  let held:
+    | { at: number; failed: false; value: T }
+    | { at: number; failed: true; answer: () => Promise<T> }
+    | null = null;
   let inFlight: Promise<T> | null = null;
   /** No background refresh before this; set when one fails. */
   let retryAt = 0;
@@ -62,17 +66,24 @@ export function hold<T>(
         (value) => {
           if (started !== generation) return value;
           if (keep(value)) {
-            held = { at: Date.now(), value, failed: false };
+            held = { at: Date.now(), failed: false, value };
             retryAt = 0;
           } else if (held && !held.failed) {
             retryAt = Date.now() + retryMs;
           } else if (failMs !== undefined) {
-            held = { at: Date.now(), value, failed: true };
+            held = { at: Date.now(), failed: true, answer: () => Promise.resolve(value) };
           }
           return held && !held.failed ? held.value : value;
         },
         (error) => {
-          if (started === generation && held && !held.failed) retryAt = Date.now() + retryMs;
+          if (started === generation) {
+            // Behind a good value, wait before the next try. Otherwise hold the
+            // error itself for `failMs`, exactly as a failed value is held.
+            if (held && !held.failed) retryAt = Date.now() + retryMs;
+            else if (failMs !== undefined) {
+              held = { at: Date.now(), failed: true, answer: () => Promise.reject(error) };
+            }
+          }
           throw error;
         }
       )
@@ -87,7 +98,7 @@ export function hold<T>(
     read() {
       if (!held) return refresh();
       const now = Date.now();
-      if (held.failed) return now - held.at >= retryMs ? refresh() : Promise.resolve(held.value);
+      if (held.failed) return now - held.at >= retryMs ? refresh() : held.answer();
       if (now - held.at >= freshMs && now >= retryAt && !inFlight) {
         refresh().catch(onBackgroundError);
       }
