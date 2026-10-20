@@ -1,5 +1,6 @@
 import { API_BASE, fetchWithRetry } from "./apiFetch";
-import type { RawExploitPost } from "../data/exploitPosts";
+import { hold } from "./hold";
+import type { RawPost } from "../data/analysis";
 import { postPages } from "../data/postPages";
 import { SITE_URL, urlsetXml } from "../seo/sitemapXml";
 
@@ -44,7 +45,7 @@ const CACHE_CONTROL =
   "public, max-age=300, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=604800";
 
 interface RawListPage {
-  results?: RawExploitPost[];
+  results?: RawPost[];
   links?: { next?: string | null };
 }
 
@@ -55,7 +56,7 @@ export interface PostSitemap {
 }
 
 export async function buildPostSitemap(): Promise<PostSitemap> {
-  const rows: RawExploitPost[] = [];
+  const rows: RawPost[] = [];
   let url: string | null = `${API_BASE}/posts/?limit=${PAGE_SIZE}`;
 
   for (let page = 1; url; page += 1) {
@@ -77,41 +78,24 @@ export async function buildPostSitemap(): Promise<PostSitemap> {
   return { xml, urls: pages.length, unplaced };
 }
 
-let held: { at: number; sitemap: PostSitemap } | null = null;
-let inFlight: Promise<PostSitemap> | null = null;
-
-function refresh(): Promise<PostSitemap> {
-  inFlight ??= buildPostSitemap()
-    .then((sitemap) => {
-      held = { at: Date.now(), sitemap };
-      return sitemap;
-    })
-    .finally(() => {
-      inFlight = null;
-    });
-  return inFlight;
-}
+/*
+ * A failed rebuild keeps the held one, and the next is tried 30 seconds later
+ * (`RETRY_AFTER_FAILURE_MS`), not by every request in an outage. Only the
+ * request that starts a rebuild logs its failure: the rest share the same
+ * promise and would print the same error once each.
+ */
+const sitemap = hold(buildPostSitemap, FRESH_MS, {
+  onBackgroundError: (error) => console.error(error),
+});
 
 /**
  * The held sitemap, at once, whenever there is one; a stale one starts a single
  * rebuild behind it. Only a process that has never read the list waits.
  */
-export function readPostSitemap(): Promise<PostSitemap> {
-  if (!held) return refresh();
-  if (Date.now() - held.at >= FRESH_MS) {
-    // A failed rebuild keeps the held one; the next stale request tries again.
-    // Only the request that starts a rebuild logs its failure: the rest would
-    // share the same promise and print the same error once each.
-    if (!inFlight) refresh().catch((error) => console.error(error));
-  }
-  return Promise.resolve(held.sitemap);
-}
+export const readPostSitemap = (): Promise<PostSitemap> => sitemap.read();
 
 /** For tests: forget the held sitemap. */
-export function resetPostSitemap(): void {
-  held = null;
-  inFlight = null;
-}
+export const resetPostSitemap = (): void => sitemap.reset();
 
 /** The route's whole answer, so the 200 and the 503 can be tested without a server. */
 export async function postSitemapResponse(): Promise<Response> {

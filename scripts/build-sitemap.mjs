@@ -31,6 +31,7 @@ import {
 } from "../src/seo/indexState.ts";
 import { SITE_URL, SITEMAP_FILES, sitemapIndexXml, urlsetXml } from "../src/seo/sitemapXml.ts";
 import { digestPaths } from "../src/data/digestEntities.js";
+import { POST_HUBS } from "../src/data/postPages.ts";
 import { shapeRows } from "../src/data/eventRows.ts";
 import {
   monthBounds,
@@ -226,8 +227,10 @@ async function main() {
   // from the sitemap. Each path is still filtered through the same gate, so a
   // route that is not `promoted` cannot be listed either way.
   const rolling = new Set(digestPaths());
+  const listedWithPosts = new Set(POST_HUBS.map((hub) => hub.path));
   const staticLinks = staticPaths()
-    .filter((path) => belongsInSitemap(indexStateFor(path)))
+    // A hub whose floor a publish changes is listed live, with the posts.
+    .filter((path) => belongsInSitemap(indexStateFor(path)) && !listedWithPosts.has(path))
     .map((path) => ({
       loc: path === "/" ? `${baseUrl}/` : `${baseUrl}${path}`,
       // Everything else in this tier is a genuinely static marketing or docs

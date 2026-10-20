@@ -31,6 +31,10 @@ export interface RawPost {
   published_at?: unknown;
   /** Last saved. Moves when a published post is edited; `published_at` does not. */
   modified?: unknown;
+  /** "exploit-analysis" or "trending-narrative"; each kind reads its own. */
+  type?: unknown;
+  /** Free-form JSON the agent writes; each kind reads it defensively. */
+  metadata?: unknown;
 }
 
 export type Span =
@@ -55,6 +59,17 @@ export interface Block {
 export const isPublished = (status: unknown): boolean =>
   status === 1 || status === "published";
 
+/** A non-blank string, trimmed, or null. Every reader of agent-written fields uses this one. */
+export const str = (value: unknown): string | null =>
+  typeof value === "string" && value.trim() !== "" ? value.trim() : null;
+
+/**
+ * Post slugs are server-derived from titles by Django's `slugify`: lowercase
+ * letters, digits, hyphens and underscores ("unverified_a152-exploit-analysis").
+ */
+export const isPostSlug = (slug: unknown): slug is string =>
+  typeof slug === "string" && /^[a-z0-9_-]{3,250}$/.test(slug);
+
 /**
  * Whether a post is the agent's decline: a one-line "not a security incident"
  * note, not an analysis.
@@ -67,6 +82,25 @@ export const isPublished = (status: unknown): boolean =>
  */
 export const isDecline = (content: string): boolean =>
   /^\s*>\s*DECLINED:/.test(content);
+
+/**
+ * Whether a list row's excerpt is a decline's. The list carries no body, so this
+ * is how a decline published without `metadata.declined` is caught from the row.
+ *
+ * Two rules, because the two kinds of post risk opposite mistakes:
+ *
+ *  - An exploit analysis's excerpt says what was attacked; one that opens with
+ *    the word "Declined" is a decline however it is punctuated ("Declined - not
+ *    a security incident" as well as the prompt's "Declined: ..."). The word is
+ *    enough, and missing a decline puts it on the hub and in the sitemap.
+ *  - A narrative's excerpt says what is happening, and "Declined ETF
+ *    applications pile up" is a real one. Only the prompt's exact "Declined:"
+ *    opening counts, or that post would be hidden.
+ *
+ * Every decline on the backend opens "Declined: not ..." (checked 16 October).
+ */
+export const isDeclineExcerpt = (excerpt: unknown, kind: "exploit" | "narrative"): boolean =>
+  (kind === "exploit" ? /^\s*declined\b/i : /^\s*declined:/i).test(str(excerpt) ?? "");
 
 /** The body with the provenance block removed, whether or not one was present. */
 export function stripProvenance(content: string): string {
@@ -90,6 +124,27 @@ export function safeHref(url: string): string | null {
     return null;
   }
 }
+
+const OWN_API_HOST = "api.alphaday.com";
+
+const isOwnApi = (url: string): boolean => {
+  try {
+    return new URL(url).hostname === OWN_API_HOST;
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * `sourcesRead` as safe, outside links only. Shared by every kind of post: our
+ * own API calls are how the agent reads, not research it read.
+ */
+export const cleanSources = (value: unknown): string[] =>
+  Array.isArray(value)
+    ? value.filter(
+        (url): url is string => typeof url === "string" && !!safeHref(url) && !isOwnApi(url)
+      )
+    : [];
 
 /*
  * The URL allows one level of balanced parentheses, because they occur in both
