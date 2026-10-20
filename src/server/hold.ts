@@ -21,6 +21,18 @@
  *    `failMs` it is answered to the callers that waited for it and forgotten.
  */
 
+/*
+ * WHY `hold` AND `holdByKey` ARE MARKED `@__NO_SIDE_EFFECTS__`
+ *
+ * Their callers (`server/exploits.ts`, `server/trending.ts`) are also imported by
+ * routes for their server functions, so they reach the client bundle, where the
+ * handlers are stubbed out. A held read is created at module level, and to the
+ * bundler an unmarked call there might have an effect, so it kept the call, its
+ * loader, and through it `apiFetch` with the credential header names: the
+ * deploy's B20 check failed on 20 October. Marked, a call whose result the
+ * client never reads is dropped with everything it reaches. Keep the marks.
+ */
+
 /** How long a failed refresh behind a good value waits, unless `failMs` says. */
 export const RETRY_AFTER_FAILURE_MS = 30_000;
 
@@ -42,6 +54,7 @@ export interface Hold<T> {
   reset(): void;
 }
 
+/* @__NO_SIDE_EFFECTS__ */
 export function hold<T>(
   load: () => Promise<T>,
   freshMs: number,
@@ -121,6 +134,7 @@ export function hold<T>(
  * read key is dropped, so a crawler walking old topic pages costs those pages a
  * cold read and never the recent ones.
  */
+/* @__NO_SIDE_EFFECTS__ */
 export function holdByKey<T>(
   load: (key: string) => Promise<T>,
   freshMs: number,
