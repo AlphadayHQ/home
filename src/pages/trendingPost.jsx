@@ -55,6 +55,20 @@ const TrendingArticlePage = ({ article }) => {
     ]),
   ];
 
+  // One line of dates, said once. With no updates the page is as published; a save
+  // that only fixes a typo is not news, so it is never called an update.
+  const published = formatDate(post.publishedAt);
+  const meta =
+    updateCount > 0
+      ? [
+          formatDate(latest) && `Updated ${formatDate(latest)}`,
+          `${updateCount} ${updateCount === 1 ? "update" : "updates"}`,
+          published && `first published ${published}`,
+        ]
+      : [published && `Published ${published}`];
+  if (page > 1) meta.push(`earlier updates, page ${page} of ${pages}`);
+  else if (sources.length > 0) meta.push(`${sources.length} ${sources.length === 1 ? "source" : "sources"}`);
+
   return (
     <Layout>
       <Section className="bg-background">
@@ -67,8 +81,10 @@ const TrendingArticlePage = ({ article }) => {
             Trending in crypto
           </a>
 
-          <h1 className="max-w-[24ch] font-display text-[clamp(30px,4.6vw,50px)] font-medium leading-[1.05] tracking-tight text-text">
-            {post.title}
+          {/* The topic, as the hub names it. The post's title ("XRP narrative") exists
+              to make the slug; it is the search title, not the page's heading. */}
+          <h1 className="max-w-[24ch] font-display text-[clamp(34px,5.4vw,58px)] font-medium leading-[1.02] tracking-tight text-text">
+            {post.topic}
           </h1>
 
           {(lead.excerpt || post.excerpt) && (
@@ -78,9 +94,7 @@ const TrendingArticlePage = ({ article }) => {
           )}
 
           <p className="mt-5 font-mono text-[13px] tabular-nums text-text-muted">
-            {formatDate(latest) && `Updated ${formatDate(latest)}`}
-            {updateCount > 0 && ` · ${updateCount} ${updateCount === 1 ? "update" : "updates"}`}
-            {page > 1 && ` · earlier updates, page ${page} of ${pages}`}
+            {meta.filter(Boolean).join(" · ")}
           </p>
         </div>
       </Section>
@@ -100,11 +114,10 @@ const TrendingArticlePage = ({ article }) => {
       {post.blocks && (
         <Section className="bg-background">
           <article className="mx-auto w-11/12 max-w-5xl border-t border-surface-border pt-8 pb-10">
-            <h2 className="text-[12px] font-medium uppercase tracking-[0.1em] text-text-muted">
+            <h2 className="text-[12px] font-medium uppercase tracking-widest text-text-muted">
               {updateCount > 0 ? "Background" : "Analysis"}
               <span className="ml-3 font-normal normal-case tracking-normal text-text-muted/70">
                 {readingMinutes(post.blocks)} min read
-                {formatDate(post.publishedAt) && ` · first published ${formatDate(post.publishedAt)}`}
               </span>
             </h2>
             <PostBlocks blocks={post.blocks} />
