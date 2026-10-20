@@ -3,8 +3,9 @@ import { postPagePath, postPages } from "../data/postPages";
 
 /**
  * The sitemap lists the pages that carry a published post, from the post list
- * alone. These pin where each type is placed, that nothing unpublished or
- * declined is, and that a post the site cannot place is counted rather than lost.
+ * alone. These pin where an exploit analysis is placed (trending posts are
+ * pinned in `trending.test.ts`), that nothing unpublished or declined is, and that a
+ * post the site cannot place is counted rather than lost.
  */
 
 const post = (overrides: Record<string, unknown> = {}) => ({
@@ -30,9 +31,11 @@ describe("where a post is read", () => {
     ).toBeNull();
   });
 
-  it("has no page yet for another type, or for none", () => {
-    expect(postPagePath(post({ type: "trending-narrative" }))).toBeNull();
+  it("has no page for an unknown type, for none, or for metadata of the wrong kind", () => {
+    expect(postPagePath(post({ type: "newsletter" }))).toBeNull();
     expect(postPagePath(post({ type: null }))).toBeNull();
+    // A trending post carrying an exploit's metadata has no kind it knows, so no page.
+    expect(postPagePath(post({ type: "trending-narrative" }))).toBeNull();
   });
 });
 
@@ -53,7 +56,7 @@ describe("the list the sitemap gets", () => {
   it("counts published posts it could not place, and ignores unpublished ones", () => {
     const { pages, unplaced } = postPages([
       post(),
-      post({ slug: "a-narrative", type: "trending-narrative" }),
+      post({ slug: "a-newsletter", type: "newsletter" }),
       post({ slug: "draft-exploit-analysis", status: 2 }),
     ]);
     expect(pages).toHaveLength(1);

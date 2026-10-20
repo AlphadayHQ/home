@@ -45,7 +45,7 @@ describe("the live post sitemap", () => {
       ),
       "https://api.test/posts/?limit=100&page=2": page([
         post({ slug: "bitget-exploit-analysis", modified: "2026-10-12T00:00:00Z" }),
-        post({ slug: "a-narrative", type: "trending-narrative" }),
+        post({ slug: "a-newsletter", type: "newsletter" }),
       ]),
     };
     const { fetchWithRetry } = await import("../server/apiFetch");
