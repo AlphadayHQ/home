@@ -24,10 +24,18 @@ const DATE = new Intl.DateTimeFormat("en-GB", {
   timeZone: "UTC",
 });
 
+/** For lists, as the hub dates its rows. */
+const SHORT = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+});
+
 /** A date if the string is one, else nothing: a bad date must not fail the page. */
-const formatDate = (iso) => {
+const formatDate = (iso, format = DATE) => {
   const time = Date.parse(iso);
-  return Number.isNaN(time) ? null : DATE.format(new Date(time));
+  return Number.isNaN(time) ? null : format.format(new Date(time));
 };
 
 const Dated = ({ iso }) =>
@@ -105,7 +113,11 @@ const TrendingArticlePage = ({ article }) => {
       )}
 
       <Section className="bg-background">
-        <div className="mx-auto w-11/12 max-w-5xl pb-14">
+        {/* `flow-root` keeps the first child's top margin inside this section: the pager
+            renders nothing on a single page, and the sources' margin would otherwise
+            collapse through it and open a gap of the body's lighter ground. The pull up
+            sets the sources against the text they list, not the topics below. */}
+        <div className="mx-auto -mt-6 flow-root w-11/12 max-w-5xl pb-16">
           <Pager
             page={page}
             pages={pages}
@@ -126,13 +138,16 @@ const TrendingArticlePage = ({ article }) => {
               </h2>
               <ul className="mt-5 flex flex-col gap-2.5">
                 {others.map((other) => (
-                  <li key={other.slug} className="max-w-160 text-[16px]">
+                  <li
+                    key={other.slug}
+                    className="flex max-w-160 flex-wrap items-baseline gap-x-3 text-[16px]"
+                  >
                     <a href={trendingPostPath(other.slug)} className={`font-medium text-text ${LINK}`}>
                       {other.topic}
-                    </a>{" "}
-                    {formatDate(other.latest) && (
-                      <span className="whitespace-nowrap font-mono text-[13px] text-text-muted">
-                        {formatDate(other.latest)}
+                    </a>
+                    {formatDate(other.latest, SHORT) && (
+                      <span className="whitespace-nowrap font-mono text-[13px] tabular-nums text-text-muted">
+                        {formatDate(other.latest, SHORT)}
                       </span>
                     )}
                   </li>
