@@ -42,9 +42,16 @@ export type Span =
   | { kind: "link"; text: string; href: string }
   | { kind: "code"; text: string };
 
+/**
+ * A list is one block per item, so every block is still a run of spans (reading
+ * time and every reader of `spans` are unchanged); the renderer groups
+ * consecutive items of one kind into a single list.
+ */
 export interface Block {
-  kind: "heading" | "paragraph";
+  kind: "heading" | "paragraph" | "item";
   spans: Span[];
+  /** For an item: numbered ("1. ") rather than bulleted ("- "). */
+  ordered?: boolean;
 }
 
 /**
@@ -204,8 +211,35 @@ function toSpans(line: string): Span[] {
   return spans.filter((span) => span.kind !== "text" || span.text !== "");
 }
 
+/** A list line: "- ", "* " or "+ ", or "1. " / "1) ". The capture is the number, if any. */
+const ITEM = /^(?:[-*+]|(\d{1,3})[.)])\s+(\S.*)$/;
+
 /**
- * Markdown to blocks. Headings are `## `; everything else is a paragraph.
+ * Lines of prose as blocks: a paragraph up to the first list line, then one item
+ * per list line. A line that is not a list line continues the item above it, as a
+ * wrapped item does in markdown.
+ */
+function proseBlocks(lines: string[]): Block[] {
+  const first = lines.findIndex((line) => ITEM.test(line));
+  const lead = (first === -1 ? lines : lines.slice(0, first)).join(" ").trim();
+  const blocks: Block[] = lead ? [{ kind: "paragraph", spans: toSpans(lead) }] : [];
+  if (first === -1) return blocks;
+
+  const items: Array<{ ordered: boolean; text: string }> = [];
+  for (const line of lines.slice(first)) {
+    const match = ITEM.exec(line);
+    if (match) items.push({ ordered: match[1] !== undefined, text: match[2] });
+    else items[items.length - 1].text += ` ${line}`;
+  }
+  for (const { ordered, text } of items) {
+    blocks.push({ kind: "item", ordered, spans: toSpans(text.trim()) });
+  }
+  return blocks;
+}
+
+/**
+ * Markdown to blocks. Headings are `## `, list lines are items, and everything
+ * else is a paragraph.
  *
  * Line endings are normalised first. Content that has been through Django's
  * admin arrives CRLF — a textarea posts `\r\n` — so splitting paragraphs on
@@ -223,24 +257,18 @@ export function toBlocks(markdown: string): Block[] {
     const trimmed = chunk.trim();
     if (!trimmed) continue;
 
-    const [first, ...rest] = trimmed.split("\n");
-    const heading = /^#{2,6}\s+(.+)$/.exec(first.trim());
+    const lines = trimmed.split("\n").map((line) => line.trim());
+    const heading = /^#{2,6}\s+(.+)$/.exec(lines[0]);
 
     if (heading) {
       blocks.push({ kind: "heading", spans: toSpans(heading[1].trim()) });
-      // A paragraph that began on the heading's own line still gets rendered.
-      const remainder = rest.join(" ").trim();
-      if (remainder) {
-        blocks.push({ kind: "paragraph", spans: toSpans(remainder) });
-      }
+      // Prose that began on the heading's own line still gets rendered.
+      blocks.push(...proseBlocks(lines.slice(1)));
       continue;
     }
 
     // A soft-wrapped paragraph is one paragraph, as in markdown.
-    blocks.push({
-      kind: "paragraph",
-      spans: toSpans(trimmed.replace(/\s*\n\s*/g, " ")),
-    });
+    blocks.push(...proseBlocks(lines));
   }
 
   return blocks.filter((block) => block.spans.length > 0);

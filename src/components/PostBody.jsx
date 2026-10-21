@@ -49,22 +49,53 @@ const Spans = ({ spans }) =>
     return <React.Fragment key={index}>{span.text}</React.Fragment>;
   });
 
+/** Consecutive list items of one kind as one list; every other block on its own. */
+const grouped = (blocks) =>
+  blocks.reduce((groups, block) => {
+    const last = groups[groups.length - 1];
+    if (block.kind === "item" && last?.list && last.ordered === Boolean(block.ordered)) {
+      last.items.push(block);
+    } else if (block.kind === "item") {
+      groups.push({ list: true, ordered: Boolean(block.ordered), items: [block] });
+    } else {
+      groups.push(block);
+    }
+    return groups;
+  }, []);
+
 export const PostBlocks = ({ blocks }) => (
   <div className="mt-4 max-w-160">
-    {blocks.map((block, index) =>
-      block.kind === "heading" ? (
+    {grouped(blocks).map((group, index) => {
+      if (group.list) {
+        const List = group.ordered ? "ol" : "ul";
+        return (
+          <List
+            key={index}
+            className={`mt-4 space-y-2 pl-6 text-[18px] leading-relaxed text-text marker:text-text-muted ${
+              group.ordered ? "list-decimal" : "list-disc"
+            }`}
+          >
+            {group.items.map((item, at) => (
+              <li key={at} className="pl-1">
+                <Spans spans={item.spans} />
+              </li>
+            ))}
+          </List>
+        );
+      }
+      return group.kind === "heading" ? (
         <h3
           key={index}
           className="mt-8 font-display text-[21px] font-medium tracking-tight text-text"
         >
-          <Spans spans={block.spans} />
+          <Spans spans={group.spans} />
         </h3>
       ) : (
         <p key={index} className="mt-4 text-[18px] leading-relaxed text-text">
-          <Spans spans={block.spans} />
+          <Spans spans={group.spans} />
         </p>
-      )
-    )}
+      );
+    })}
   </div>
 );
 

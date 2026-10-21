@@ -148,6 +148,39 @@ describe("the markdown the agent actually writes", () => {
     const [block] = toBlocks("A sentence that was\nwrapped by the author.");
     expect(block.spans[0].text).toBe("A sentence that was wrapped by the author.");
   });
+
+  /*
+   * Lists were not parsed until 21 October: every "- " line was joined into the
+   * paragraph above it with its marker left in, so a transaction sequence read as
+   * one run-on sentence studded with dashes.
+   */
+  describe("lists", () => {
+    const shape = (markdown: string) =>
+      toBlocks(markdown).map((b) => (b.kind === "item" ? `${b.ordered ? "ol" : "ul"}:${b.spans.map((s) => s.text).join("")}` : b.kind));
+
+    it("reads bulleted and numbered items, each with its own spans", () => {
+      expect(shape("Then it runs:\n\n- `deal` four times\n- [flux](https://etherscan.io/x) out\n\n1. one\n2) two")).toEqual([
+        "paragraph",
+        "ul:deal four times",
+        "ul:flux out",
+        "ol:one",
+        "ol:two",
+      ]);
+      const [, item] = toBlocks("Lead.\n\n- `deal` it");
+      expect(item.spans[0]).toEqual({ kind: "code", text: "deal" });
+    });
+
+    it("splits a list from the paragraph or heading it follows without a blank line", () => {
+      expect(shape("The sequence:\n- first\n- second")).toEqual(["paragraph", "ul:first", "ul:second"]);
+      expect(shape("## Steps\n- first")).toEqual(["heading", "ul:first"]);
+    });
+
+    it("continues a wrapped item, and leaves prose that only looks like a list alone", () => {
+      expect(shape("- a long item\nthat wrapped\n- next")).toEqual(["ul:a long item that wrapped", "ul:next"]);
+      // No space after the marker, or a year: not list lines.
+      expect(shape("-5% on the day.\n\n2026 was quiet.")).toEqual(["paragraph", "paragraph"]);
+    });
+  });
 });
 
 /*
