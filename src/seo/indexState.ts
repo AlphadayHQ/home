@@ -85,6 +85,10 @@ const STATIC_STATES: Record<string, IndexState> = {
    * is a finding and keeps the page indexed; a collapsed cohort is a pipeline
    * failure and takes it out, because the decline it would print did not happen
    * in the DAOs.
+   *
+   * The proposal pages under it, one DAO proposal each, inherit this state
+   * through `indexStateFor("/research/governance")`: each is a reviewed,
+   * published post, placed in the sitemap by `data/postPages.ts`.
    */
   "/research/governance": "promoted",
 

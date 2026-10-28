@@ -70,6 +70,7 @@ export const API_COMMANDS = {
   search: "curl https://api.alphaday.com/search/?project=arbitrum",
   news: "curl https://api.alphaday.com/items/news/?tags=arbitrum",
   trending: "curl https://api.alphaday.com/items/news/trending/?limit=3",
+  dao: "curl https://api.alphaday.com/items/dao/?limit=5",
   getStarted: "curl https://api.alphaday.com/get-started/",
   mcpUrl: "https://api.alphaday.com/mcp",
   mcporter: "mcporter config add alphaday --url https://api.alphaday.com/mcp",

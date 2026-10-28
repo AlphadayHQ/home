@@ -471,14 +471,32 @@ describe("the index gate", () => {
  * and no `Cache-Control` on the response.
  */
 describe("the route's response to a partial read", () => {
-  const loadWith = async (report: Record<string, unknown>) => {
+  const EMPTY = { rows: [], page: 1, pages: 1, total: 0, explained: {}, complete: false };
+  let cacheSet: string[];
+
+  const loadWith = async (
+    report: Record<string, unknown>,
+    {
+      page,
+      explained = async () => ({ ...EMPTY, complete: true }),
+    }: { page?: unknown; explained?: (page: number) => Promise<unknown> } = {}
+  ) => {
     vi.resetModules();
+    cacheSet = [];
     vi.doMock("../server/governance", () => ({
       getGovernanceReport: async () => report,
     }));
-    vi.doMock("../seo/robotsHeader", () => ({ setRobotsHeader: () => {} }));
-    const { Route } = await import("../routes/research.governance");
-    return (Route.options.loader as (ctx: unknown) => Promise<unknown>)({});
+    vi.doMock("../server/governanceProposals", () => ({
+      NO_EXPLAINED: EMPTY,
+      getExplainedPage: ({ data }: { data: number }) => explained(data),
+    }));
+    vi.doMock("../seo/robotsHeader", () => ({
+      BRIEF_CACHE_CONTROL: "brief",
+      setRobotsHeader: () => {},
+      setCacheControl: (value: string) => cacheSet.push(value),
+    }));
+    const { Route } = await import("../routes/research.governance.index");
+    return (Route.options.loader as (ctx: unknown) => Promise<unknown>)({ deps: { page } });
   };
 
   const whole = {
@@ -499,6 +517,7 @@ describe("the route's response to a partial read", () => {
 
   afterEach(() => {
     vi.doUnmock("../server/governance");
+    vi.doUnmock("../server/governanceProposals");
     vi.doUnmock("../seo/robotsHeader");
     vi.resetModules();
   });
@@ -509,6 +528,35 @@ describe("the route's response to a partial read", () => {
 
   it("renders a whole read", async () => {
     await expect(loadWith(whole)).resolves.toMatchObject({ indexable: false });
+    expect(cacheSet).toEqual([]);
+  });
+
+  it("renders without its proposal list when that read fails, and is held briefly", async () => {
+    const loaded = await loadWith(whole, {
+      explained: async () => {
+        throw new Error("network");
+      },
+    });
+    expect(loaded).toMatchObject({ proposals: { total: 0, complete: false } });
+    expect(cacheSet).toEqual(["brief"]);
+  });
+
+  it("is a 404 for a page that is not a number or is past the last", async () => {
+    await expect(loadWith(whole, { page: "two" })).rejects.toMatchObject({ isNotFound: true });
+    await expect(loadWith(whole, { page: "9", explained: async () => null })).rejects.toMatchObject({
+      isNotFound: true,
+    });
+  });
+
+  it("fails a later page whose list cannot be read, rather than rendering it empty", async () => {
+    await expect(
+      loadWith(whole, {
+        page: "2",
+        explained: async () => {
+          throw new Error("read short");
+        },
+      })
+    ).rejects.toThrow(/read short/);
   });
 });
 

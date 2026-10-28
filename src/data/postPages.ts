@@ -1,6 +1,12 @@
 import type { RawPost } from "./analysis.ts";
 import { isPublished } from "./analysis.ts";
 import { EXPLOIT_TYPE, exploitPostPath, toExploitRow } from "./exploitPosts.ts";
+import {
+  GOVERNANCE_SECTION,
+  GOVERNANCE_TYPE,
+  proposalPath,
+  toProposalRow,
+} from "./governanceProposals.ts";
 import type { TrendingRow } from "./trending.ts";
 import {
   TRENDING_HUB,
@@ -50,30 +56,55 @@ export interface PostPage {
 }
 
 /**
- * The section a type's pages live under; its index state is theirs. A `Map`,
- * not an object literal: `type` comes from the API, and "constructor" must not
- * find an inherited function and throw inside `indexStateFor`.
+ * Where each type's posts are read: the section whose index state its pages
+ * inherit, and the path of one post, or null when that post has no page of its
+ * own. One entry per type, so adding a type is one entry here; a type with a
+ * section but no path rule, or the reverse, cannot be written.
+ *
+ * A `Map`, not an object literal: `type` comes from the API, and "constructor"
+ * must not find an inherited function and throw inside `indexStateFor`.
  */
-const SECTION: ReadonlyMap<unknown, string> = new Map([
-  [EXPLOIT_TYPE, "/security/exploits"],
-  [TRENDING_TYPE, TRENDING_HUB],
-]);
+const PLACES: ReadonlyMap<unknown, { section: string; path: (post: RawPost) => string | null }> =
+  new Map([
+    [
+      EXPLOIT_TYPE,
+      {
+        section: "/security/exploits",
+        path: (post: RawPost) => {
+          const row = toExploitRow(post);
+          return row ? exploitPostPath(row.slug) : null;
+        },
+      },
+    ],
+    [
+      TRENDING_TYPE,
+      {
+        section: TRENDING_HUB,
+        // An update is read on its page; `postPages` places it there.
+        path: (post: RawPost) => {
+          const row = toTrendingRow(post);
+          return row?.kind === "page" ? trendingPostPath(row.slug) : null;
+        },
+      },
+    ],
+    [
+      GOVERNANCE_TYPE,
+      {
+        section: GOVERNANCE_SECTION,
+        path: (post: RawPost) => {
+          const row = toProposalRow(post);
+          return row ? proposalPath(row.slug) : null;
+        },
+      },
+    ],
+  ]);
 
 const promoted = (path: string): boolean => belongsInSitemap(indexStateFor(path));
 
-/**
- * The site path a published post is read at on its own, or null when it has
- * none. A trending update is read on its page; `postPages` places it there.
- */
+/** The site path a published post is read at on its own, or null when it has none. */
 export function postPagePath(post: RawPost): string | null {
-  const section = SECTION.get(post.type);
-  if (!section || !promoted(section)) return null;
-  if (post.type === EXPLOIT_TYPE) {
-    const row = toExploitRow(post);
-    return row ? exploitPostPath(row.slug) : null;
-  }
-  const row = toTrendingRow(post);
-  return row?.kind === "page" ? trendingPostPath(row.slug) : null;
+  const place = PLACES.get(post.type);
+  return place && promoted(place.section) ? place.path(post) : null;
 }
 
 /**

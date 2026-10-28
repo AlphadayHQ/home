@@ -34,7 +34,7 @@ import {
  * Reading it short and rendering anyway would 404 or `noindex` pages that have
  * published posts, and the CDN would cache that. So a failed list throws, and so
  * does a topic page whose posts could not be opened; the edge keeps its last
- * good copy instead: the rule `routes/research.governance.tsx` explains. Only a
+ * good copy instead: the rule `routes/research.governance.index.tsx` explains. Only a
  * 404 is an answer: that post is gone, so it is left out.
  */
 
