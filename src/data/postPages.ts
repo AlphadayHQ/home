@@ -7,6 +7,13 @@ import {
   proposalPath,
   toProposalRow,
 } from "./governanceProposals.ts";
+import {
+  PODCAST_HUB,
+  PODCAST_HUB_FLOOR,
+  PODCAST_TYPE,
+  podcastPostPath,
+  toPodcastRow,
+} from "./podcastPosts.ts";
 import type { TrendingRow } from "./trending.ts";
 import {
   TRENDING_HUB,
@@ -97,6 +104,16 @@ const PLACES: ReadonlyMap<unknown, { section: string; path: (post: RawPost) => s
         },
       },
     ],
+    [
+      PODCAST_TYPE,
+      {
+        section: PODCAST_HUB,
+        path: (post: RawPost) => {
+          const row = toPodcastRow(post);
+          return row ? podcastPostPath(row.slug) : null;
+        },
+      },
+    ],
   ]);
 
 const promoted = (path: string): boolean => belongsInSitemap(indexStateFor(path));
@@ -117,6 +134,7 @@ export function postPagePath(post: RawPost): string | null {
  */
 export const POST_HUBS: ReadonlyArray<{ path: string; floor: number }> = [
   { path: TRENDING_HUB, floor: TRENDING_HUB_FLOOR },
+  { path: PODCAST_HUB, floor: PODCAST_HUB_FLOOR },
 ];
 
 const isoOrUndefined = (value: unknown): string | undefined => {

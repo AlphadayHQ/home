@@ -33,6 +33,8 @@ import { Route as ProjectsSlugTopicRouteImport } from './routes/projects.$slug.$
 import { Route as ProjectsSlugThisWeekRouteImport } from './routes/projects.$slug.this-week'
 import { Route as ResearchGovernanceIndexRouteImport } from './routes/research.governance.index'
 import { Route as ResearchGovernanceSlugRouteImport } from './routes/research.governance.$slug'
+import { Route as ResearchPodcastsIndexRouteImport } from './routes/research.podcasts.index'
+import { Route as ResearchPodcastsSlugRouteImport } from './routes/research.podcasts.$slug'
 import { Route as ResearchTrendingIndexRouteImport } from './routes/research.trending.index'
 import { Route as ResearchTrendingSlugRouteImport } from './routes/research.trending.$slug'
 import { Route as SecurityExploitsIndexRouteImport } from './routes/security.exploits.index'
@@ -158,6 +160,16 @@ const ResearchGovernanceSlugRoute = ResearchGovernanceSlugRouteImport.update({
   path: '/research/governance/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResearchPodcastsIndexRoute = ResearchPodcastsIndexRouteImport.update({
+  id: '/research/podcasts/',
+  path: '/research/podcasts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchPodcastsSlugRoute = ResearchPodcastsSlugRouteImport.update({
+  id: '/research/podcasts/$slug',
+  path: '/research/podcasts/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResearchTrendingIndexRoute = ResearchTrendingIndexRouteImport.update({
   id: '/research/trending/',
   path: '/research/trending/',
@@ -202,10 +214,12 @@ export interface FileRoutesByFullPath {
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
   '/research/governance/$slug': typeof ResearchGovernanceSlugRoute
+  '/research/podcasts/$slug': typeof ResearchPodcastsSlugRoute
   '/research/trending/$slug': typeof ResearchTrendingSlugRoute
   '/security/exploits/$slug': typeof SecurityExploitsSlugRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
   '/research/governance/': typeof ResearchGovernanceIndexRoute
+  '/research/podcasts/': typeof ResearchPodcastsIndexRoute
   '/research/trending/': typeof ResearchTrendingIndexRoute
   '/security/exploits/': typeof SecurityExploitsIndexRoute
 }
@@ -232,10 +246,12 @@ export interface FileRoutesByTo {
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
   '/research/governance/$slug': typeof ResearchGovernanceSlugRoute
+  '/research/podcasts/$slug': typeof ResearchPodcastsSlugRoute
   '/research/trending/$slug': typeof ResearchTrendingSlugRoute
   '/security/exploits/$slug': typeof SecurityExploitsSlugRoute
   '/projects/$slug': typeof ProjectsSlugIndexRoute
   '/research/governance': typeof ResearchGovernanceIndexRoute
+  '/research/podcasts': typeof ResearchPodcastsIndexRoute
   '/research/trending': typeof ResearchTrendingIndexRoute
   '/security/exploits': typeof SecurityExploitsIndexRoute
 }
@@ -263,10 +279,12 @@ export interface FileRoutesById {
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
   '/research/governance/$slug': typeof ResearchGovernanceSlugRoute
+  '/research/podcasts/$slug': typeof ResearchPodcastsSlugRoute
   '/research/trending/$slug': typeof ResearchTrendingSlugRoute
   '/security/exploits/$slug': typeof SecurityExploitsSlugRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
   '/research/governance/': typeof ResearchGovernanceIndexRoute
+  '/research/podcasts/': typeof ResearchPodcastsIndexRoute
   '/research/trending/': typeof ResearchTrendingIndexRoute
   '/security/exploits/': typeof SecurityExploitsIndexRoute
 }
@@ -295,10 +313,12 @@ export interface FileRouteTypes {
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
     | '/research/governance/$slug'
+    | '/research/podcasts/$slug'
     | '/research/trending/$slug'
     | '/security/exploits/$slug'
     | '/projects/$slug/'
     | '/research/governance/'
+    | '/research/podcasts/'
     | '/research/trending/'
     | '/security/exploits/'
   fileRoutesByTo: FileRoutesByTo
@@ -325,10 +345,12 @@ export interface FileRouteTypes {
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
     | '/research/governance/$slug'
+    | '/research/podcasts/$slug'
     | '/research/trending/$slug'
     | '/security/exploits/$slug'
     | '/projects/$slug'
     | '/research/governance'
+    | '/research/podcasts'
     | '/research/trending'
     | '/security/exploits'
   id:
@@ -355,10 +377,12 @@ export interface FileRouteTypes {
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
     | '/research/governance/$slug'
+    | '/research/podcasts/$slug'
     | '/research/trending/$slug'
     | '/security/exploits/$slug'
     | '/projects/$slug/'
     | '/research/governance/'
+    | '/research/podcasts/'
     | '/research/trending/'
     | '/security/exploits/'
   fileRoutesById: FileRoutesById
@@ -386,10 +410,12 @@ export interface RootRouteChildren {
   ProjectsSlugTopicRoute: typeof ProjectsSlugTopicRoute
   ProjectsSlugThisWeekRoute: typeof ProjectsSlugThisWeekRoute
   ResearchGovernanceSlugRoute: typeof ResearchGovernanceSlugRoute
+  ResearchPodcastsSlugRoute: typeof ResearchPodcastsSlugRoute
   ResearchTrendingSlugRoute: typeof ResearchTrendingSlugRoute
   SecurityExploitsSlugRoute: typeof SecurityExploitsSlugRoute
   ProjectsSlugIndexRoute: typeof ProjectsSlugIndexRoute
   ResearchGovernanceIndexRoute: typeof ResearchGovernanceIndexRoute
+  ResearchPodcastsIndexRoute: typeof ResearchPodcastsIndexRoute
   ResearchTrendingIndexRoute: typeof ResearchTrendingIndexRoute
   SecurityExploitsIndexRoute: typeof SecurityExploitsIndexRoute
 }
@@ -564,6 +590,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResearchGovernanceSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/research/podcasts/': {
+      id: '/research/podcasts/'
+      path: '/research/podcasts'
+      fullPath: '/research/podcasts/'
+      preLoaderRoute: typeof ResearchPodcastsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research/podcasts/$slug': {
+      id: '/research/podcasts/$slug'
+      path: '/research/podcasts/$slug'
+      fullPath: '/research/podcasts/$slug'
+      preLoaderRoute: typeof ResearchPodcastsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/research/trending/': {
       id: '/research/trending/'
       path: '/research/trending'
@@ -618,10 +658,12 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsSlugTopicRoute: ProjectsSlugTopicRoute,
   ProjectsSlugThisWeekRoute: ProjectsSlugThisWeekRoute,
   ResearchGovernanceSlugRoute: ResearchGovernanceSlugRoute,
+  ResearchPodcastsSlugRoute: ResearchPodcastsSlugRoute,
   ResearchTrendingSlugRoute: ResearchTrendingSlugRoute,
   SecurityExploitsSlugRoute: SecurityExploitsSlugRoute,
   ProjectsSlugIndexRoute: ProjectsSlugIndexRoute,
   ResearchGovernanceIndexRoute: ResearchGovernanceIndexRoute,
+  ResearchPodcastsIndexRoute: ResearchPodcastsIndexRoute,
   ResearchTrendingIndexRoute: ResearchTrendingIndexRoute,
   SecurityExploitsIndexRoute: SecurityExploitsIndexRoute,
 }

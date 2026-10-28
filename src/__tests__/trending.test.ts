@@ -229,7 +229,7 @@ describe("the sitemap", () => {
   it("lists live only promoted hubs", () => {
     // `scripts/build-sitemap.mjs` leaves these same paths out of pages.xml, and
     // `postPages` checks the state itself, so a demotion there takes them out.
-    expect(POST_HUBS.map((hub) => hub.path)).toEqual([TRENDING_HUB]);
+    expect(POST_HUBS.map((hub) => hub.path)).toEqual([TRENDING_HUB, "/research/podcasts"]);
     for (const hub of POST_HUBS) expect(indexStateFor(hub.path)).toBe("promoted");
   });
 });

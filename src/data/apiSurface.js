@@ -71,10 +71,20 @@ export const API_COMMANDS = {
   news: "curl https://api.alphaday.com/items/news/?tags=arbitrum",
   trending: "curl https://api.alphaday.com/items/news/trending/?limit=3",
   dao: "curl https://api.alphaday.com/items/dao/?limit=5",
+  podcasts: "curl https://api.alphaday.com/items/podcasts/?limit=5",
   getStarted: "curl https://api.alphaday.com/get-started/",
   mcpUrl: "https://api.alphaday.com/mcp",
   mcporter: "mcporter config add alphaday --url https://api.alphaday.com/mcp",
 };
+
+/**
+ * One podcast episode's record, by its id in `/items/podcasts/`: the data a
+ * podcast insight page was written from. Built here, beside the commands, so a
+ * page prints it without holding a URL of its own; the test checks it against
+ * the spec as it checks them.
+ */
+export const podcastEpisodeCommand = (id) =>
+  `curl https://api.alphaday.com/items/podcasts/${id}/`;
 
 export const API_TOOLS = [
   { name: "get_news", desc: "Real-time news from 49 crypto outlets — 440,000+ articles" },
