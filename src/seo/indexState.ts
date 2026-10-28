@@ -85,6 +85,10 @@ const STATIC_STATES: Record<string, IndexState> = {
    * is a finding and keeps the page indexed; a collapsed cohort is a pipeline
    * failure and takes it out, because the decline it would print did not happen
    * in the DAOs.
+   *
+   * The proposal pages under it, one DAO proposal each, inherit this state
+   * through `indexStateFor("/research/governance")`: each is a reviewed,
+   * published post, placed in the sitemap by `data/postPages.ts`.
    */
   "/research/governance": "promoted",
 
@@ -112,6 +116,16 @@ const STATIC_STATES: Record<string, IndexState> = {
    * leaves it out of its file.
    */
   "/research/trending": "promoted",
+
+  /*
+   * Ideas from crypto podcasts: a page per idea, written by an agent from the
+   * episode's transcript and reviewed, at its post's own slug. The hub and,
+   * through `indexStateFor("/research/podcasts")`, every page under it, on the
+   * trending hub's terms: the hub demotes itself until `PODCAST_HUB_FLOOR`
+   * pages are published, so it is listed live with the posts (`POST_HUBS`),
+   * and the pages, each a reviewed article, inherit the state without the floor.
+   */
+  "/research/podcasts": "promoted",
 
   "/mobile": "promoted",
   "/privacy": "promoted",

@@ -14,19 +14,15 @@ export const LINK =
 
 /**
  * A labelled fact, shown only by callers that have the value: a row reading
- * "Chain: —" states nothing. `mono` sets a number in the tabular face, for
- * counts and shares that sit side by side.
+ * "Chain: —" states nothing. Figures are tabular so counts and shares side by
+ * side line up, in the text face: monospace is for code.
  */
-export const Fact = ({ label, mono = false, children }) => (
+export const Fact = ({ label, children }) => (
   <div>
-    <dt className="text-[12px] font-medium uppercase tracking-[0.1em] text-text-muted">
+    <dt className="text-[12px] font-medium uppercase tracking-widest text-text-muted">
       {label}
     </dt>
-    <dd
-      className={`mt-1 text-[17px] font-medium text-text ${mono ? "font-mono tabular-nums" : ""}`}
-    >
-      {children}
-    </dd>
+    <dd className="mt-1 text-[17px] font-medium tabular-nums text-text">{children}</dd>
   </div>
 );
 
@@ -107,7 +103,7 @@ export const PostBlocks = ({ blocks }) => (
 export const SourcesRead = ({ urls }) =>
   urls.length > 0 && (
     <details className="mt-8 max-w-160">
-      <summary className="cursor-pointer text-[13px] font-medium uppercase tracking-[0.1em] text-text-muted transition-colors hover:text-text">
+      <summary className="cursor-pointer text-[13px] font-medium uppercase tracking-widest text-text-muted transition-colors hover:text-text">
         Sources read ({urls.length})
       </summary>
       <ul className="mt-3 flex flex-col gap-1.5">

@@ -229,7 +229,7 @@ describe("the sitemap", () => {
   it("lists live only promoted hubs", () => {
     // `scripts/build-sitemap.mjs` leaves these same paths out of pages.xml, and
     // `postPages` checks the state itself, so a demotion there takes them out.
-    expect(POST_HUBS.map((hub) => hub.path)).toEqual([TRENDING_HUB]);
+    expect(POST_HUBS.map((hub) => hub.path)).toEqual([TRENDING_HUB, "/research/podcasts"]);
     for (const hub of POST_HUBS) expect(indexStateFor(hub.path)).toBe("promoted");
   });
 });
@@ -338,12 +338,13 @@ describe("reading the pages", () => {
   });
 
   it("opens an edited post again", async () => {
-    const { buildTrendingArticle, LIST_FRESH_MS } = await import("../server/trending");
+    const { buildTrendingArticle } = await import("../server/trending");
+    const { POST_LIST_FRESH_MS } = await import("../server/postList");
     await buildTrendingArticle("sui-narrative", 1);
     const sui = posts[3] as Record<string, unknown>;
     sui.modified = "2026-10-18T00:00:00Z";
     sui.content = "Rewritten.";
-    vi.setSystemTime(Date.now() + LIST_FRESH_MS);
+    vi.setSystemTime(Date.now() + POST_LIST_FRESH_MS);
     await buildTrendingArticle("sui-narrative", 1); // answers the stale list, refreshes behind it
     await vi.advanceTimersByTimeAsync(0);
     const article = await buildTrendingArticle("sui-narrative", 1);

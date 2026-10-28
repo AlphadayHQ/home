@@ -6,6 +6,7 @@ import { TRENDING_HUB, trendingPostPath } from "../data/trending";
 import { readingMinutes } from "../data/analysis";
 import { LINK, PostBlocks, SourcesRead } from "../components/PostBody";
 import Pager, { pagedHref } from "../components/Pager";
+import { longDate, shortDate } from "../components/dates";
 
 /**
  * One trending topic (content doc B3).
@@ -17,33 +18,16 @@ import Pager, { pagedHref } from "../components/Pager";
  * page, where a reader arriving from search lands.
  */
 
-const DATE = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-/** For lists, as the hub dates its rows. */
-const SHORT = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-/** A date if the string is one, else nothing: a bad date must not fail the page. */
-const formatDate = (iso, format = DATE) => {
-  const time = Date.parse(iso);
-  return Number.isNaN(time) ? null : format.format(new Date(time));
-};
-
-const Dated = ({ iso }) =>
-  formatDate(iso) && (
-    <time dateTime={iso} className="font-mono text-[13px] tabular-nums text-text-muted">
-      {formatDate(iso)}
-    </time>
+const Dated = ({ iso }) => {
+  const text = longDate(iso);
+  return (
+    text && (
+      <time dateTime={iso} className="text-[14px] tabular-nums text-text-muted">
+        {text}
+      </time>
+    )
   );
+};
 
 const TrendingArticlePage = ({ article }) => {
   const { post, updates, updateCount, latest, lead, page, pages, others } = article;
@@ -57,11 +41,12 @@ const TrendingArticlePage = ({ article }) => {
 
   // One line of dates, said once. With no updates the page is as published; a save
   // that only fixes a typo is not news, so it is never called an update.
-  const published = formatDate(post.publishedAt);
+  const published = longDate(post.publishedAt);
+  const updated = longDate(latest);
   const meta =
     updateCount > 0
       ? [
-          formatDate(latest) && `Updated ${formatDate(latest)}`,
+          updated && `Updated ${updated}`,
           `${updateCount} ${updateCount === 1 ? "update" : "updates"}`,
           published && `first published ${published}`,
         ]
@@ -93,7 +78,7 @@ const TrendingArticlePage = ({ article }) => {
             </p>
           )}
 
-          <p className="mt-5 font-mono text-[13px] tabular-nums text-text-muted">
+          <p className="mt-5 text-[14px] tabular-nums text-text-muted">
             {meta.filter(Boolean).join(" · ")}
           </p>
         </div>
@@ -150,21 +135,24 @@ const TrendingArticlePage = ({ article }) => {
                 Other topics
               </h2>
               <ul className="mt-5 flex flex-col gap-2.5">
-                {others.map((other) => (
-                  <li
-                    key={other.slug}
-                    className="flex max-w-160 flex-wrap items-baseline gap-x-3 text-[16px]"
-                  >
-                    <a href={trendingPostPath(other.slug)} className={`font-medium text-text ${LINK}`}>
-                      {other.topic}
-                    </a>
-                    {formatDate(other.latest, SHORT) && (
-                      <span className="whitespace-nowrap font-mono text-[13px] tabular-nums text-text-muted">
-                        {formatDate(other.latest, SHORT)}
-                      </span>
-                    )}
-                  </li>
-                ))}
+                {others.map((other) => {
+                  const changed = shortDate(other.latest);
+                  return (
+                    <li
+                      key={other.slug}
+                      className="flex max-w-160 flex-wrap items-baseline gap-x-3 text-[16px]"
+                    >
+                      <a href={trendingPostPath(other.slug)} className={`font-medium text-text ${LINK}`}>
+                        {other.topic}
+                      </a>
+                      {changed && (
+                        <span className="whitespace-nowrap text-[14px] tabular-nums text-text-muted">
+                          {changed}
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
               </ul>
             </>
           )}

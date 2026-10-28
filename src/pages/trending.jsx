@@ -4,6 +4,7 @@ import CONFIG from "../config";
 import { TRENDING_HUB, trendingPostPath } from "../data/trending";
 import { LINK } from "../components/PostBody";
 import Pager, { pagedHref } from "../components/Pager";
+import { shortDate } from "../components/dates";
 
 /**
  * The trending hub (content doc B3).
@@ -13,19 +14,6 @@ import Pager, { pagedHref } from "../components/Pager";
  * so a topic that trended again last night does not lead with last month's
  * reason.
  */
-
-const DATE = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-/** A date if the string is one, else nothing: a bad date must not fail the page. */
-const formatDate = (iso) => {
-  const time = Date.parse(iso);
-  return Number.isNaN(time) ? null : DATE.format(new Date(time));
-};
 
 const TrendingHubPage = ({ hub }) => {
   const { rows, total, page, pages } = hub;
@@ -62,26 +50,29 @@ const TrendingHubPage = ({ hub }) => {
             </p>
           ) : (
             <ul className="border-t border-surface-border">
-              {rows.map((row) => (
-                <li key={row.slug} className="border-b border-surface-border py-6">
-                  <a
-                    href={trendingPostPath(row.slug)}
-                    className={`font-display text-[clamp(22px,3vw,28px)] font-medium tracking-tight text-text ${LINK}`}
-                  >
-                    {row.topic}
-                  </a>
-                  {row.lead && (
-                    <p className="mt-2 max-w-160 text-[17px] leading-relaxed text-text-muted">
-                      {row.lead}
+              {rows.map((row) => {
+                const updated = shortDate(row.latest);
+                return (
+                  <li key={row.slug} className="border-b border-surface-border py-6">
+                    <a
+                      href={trendingPostPath(row.slug)}
+                      className={`font-display text-[clamp(22px,3vw,28px)] font-medium tracking-tight text-text ${LINK}`}
+                    >
+                      {row.topic}
+                    </a>
+                    {row.lead && (
+                      <p className="mt-2 max-w-160 text-[17px] leading-relaxed text-text-muted">
+                        {row.lead}
+                      </p>
+                    )}
+                    <p className="mt-2 text-[14px] tabular-nums text-text-muted">
+                      {updated && `Updated ${updated}`}
+                      {row.updates > 0 &&
+                        ` · ${row.updates} ${row.updates === 1 ? "update" : "updates"}`}
                     </p>
-                  )}
-                  <p className="mt-2 font-mono text-[13px] tabular-nums text-text-muted">
-                    {formatDate(row.latest) && `Updated ${formatDate(row.latest)}`}
-                    {row.updates > 0 &&
-                      ` · ${row.updates} ${row.updates === 1 ? "update" : "updates"}`}
-                  </p>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
             </ul>
           )}
 

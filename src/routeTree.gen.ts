@@ -26,12 +26,15 @@ import { Route as EventsIndexRouteImport } from './routes/events.index'
 import { Route as EventsMonthRouteImport } from './routes/events.$month'
 import { Route as McpIndexRouteImport } from './routes/mcp.index'
 import { Route as McpClientRouteImport } from './routes/mcp.$client'
-import { Route as ResearchGovernanceRouteImport } from './routes/research.governance'
 import { Route as SitemapsPostsDotxmlRouteImport } from './routes/sitemaps.posts[.]xml'
 import { Route as ApiDataCapabilityRouteImport } from './routes/api.data.$capability'
 import { Route as ProjectsSlugIndexRouteImport } from './routes/projects.$slug.index'
 import { Route as ProjectsSlugTopicRouteImport } from './routes/projects.$slug.$topic'
 import { Route as ProjectsSlugThisWeekRouteImport } from './routes/projects.$slug.this-week'
+import { Route as ResearchGovernanceIndexRouteImport } from './routes/research.governance.index'
+import { Route as ResearchGovernanceSlugRouteImport } from './routes/research.governance.$slug'
+import { Route as ResearchPodcastsIndexRouteImport } from './routes/research.podcasts.index'
+import { Route as ResearchPodcastsSlugRouteImport } from './routes/research.podcasts.$slug'
 import { Route as ResearchTrendingIndexRouteImport } from './routes/research.trending.index'
 import { Route as ResearchTrendingSlugRouteImport } from './routes/research.trending.$slug'
 import { Route as SecurityExploitsIndexRouteImport } from './routes/security.exploits.index'
@@ -122,11 +125,6 @@ const McpClientRoute = McpClientRouteImport.update({
   path: '/mcp/$client',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ResearchGovernanceRoute = ResearchGovernanceRouteImport.update({
-  id: '/research/governance',
-  path: '/research/governance',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SitemapsPostsDotxmlRoute = SitemapsPostsDotxmlRouteImport.update({
   id: '/sitemaps/posts.xml',
   path: '/sitemaps/posts.xml',
@@ -150,6 +148,26 @@ const ProjectsSlugTopicRoute = ProjectsSlugTopicRouteImport.update({
 const ProjectsSlugThisWeekRoute = ProjectsSlugThisWeekRouteImport.update({
   id: '/projects/$slug/this-week',
   path: '/projects/$slug/this-week',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchGovernanceIndexRoute = ResearchGovernanceIndexRouteImport.update({
+  id: '/research/governance/',
+  path: '/research/governance/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchGovernanceSlugRoute = ResearchGovernanceSlugRouteImport.update({
+  id: '/research/governance/$slug',
+  path: '/research/governance/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchPodcastsIndexRoute = ResearchPodcastsIndexRouteImport.update({
+  id: '/research/podcasts/',
+  path: '/research/podcasts/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResearchPodcastsSlugRoute = ResearchPodcastsSlugRouteImport.update({
+  id: '/research/podcasts/$slug',
+  path: '/research/podcasts/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResearchTrendingIndexRoute = ResearchTrendingIndexRouteImport.update({
@@ -186,7 +204,6 @@ export interface FileRoutesByFullPath {
   '/cookbook/$recipe': typeof CookbookRecipeRoute
   '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
-  '/research/governance': typeof ResearchGovernanceRoute
   '/sitemaps/posts.xml': typeof SitemapsPostsDotxmlRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
@@ -196,9 +213,13 @@ export interface FileRoutesByFullPath {
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
+  '/research/governance/$slug': typeof ResearchGovernanceSlugRoute
+  '/research/podcasts/$slug': typeof ResearchPodcastsSlugRoute
   '/research/trending/$slug': typeof ResearchTrendingSlugRoute
   '/security/exploits/$slug': typeof SecurityExploitsSlugRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
+  '/research/governance/': typeof ResearchGovernanceIndexRoute
+  '/research/podcasts/': typeof ResearchPodcastsIndexRoute
   '/research/trending/': typeof ResearchTrendingIndexRoute
   '/security/exploits/': typeof SecurityExploitsIndexRoute
 }
@@ -215,7 +236,6 @@ export interface FileRoutesByTo {
   '/cookbook/$recipe': typeof CookbookRecipeRoute
   '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
-  '/research/governance': typeof ResearchGovernanceRoute
   '/sitemaps/posts.xml': typeof SitemapsPostsDotxmlRoute
   '/api': typeof ApiIndexRoute
   '/blog': typeof BlogIndexRoute
@@ -225,9 +245,13 @@ export interface FileRoutesByTo {
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
+  '/research/governance/$slug': typeof ResearchGovernanceSlugRoute
+  '/research/podcasts/$slug': typeof ResearchPodcastsSlugRoute
   '/research/trending/$slug': typeof ResearchTrendingSlugRoute
   '/security/exploits/$slug': typeof SecurityExploitsSlugRoute
   '/projects/$slug': typeof ProjectsSlugIndexRoute
+  '/research/governance': typeof ResearchGovernanceIndexRoute
+  '/research/podcasts': typeof ResearchPodcastsIndexRoute
   '/research/trending': typeof ResearchTrendingIndexRoute
   '/security/exploits': typeof SecurityExploitsIndexRoute
 }
@@ -245,7 +269,6 @@ export interface FileRoutesById {
   '/cookbook/$recipe': typeof CookbookRecipeRoute
   '/events/$month': typeof EventsMonthRoute
   '/mcp/$client': typeof McpClientRoute
-  '/research/governance': typeof ResearchGovernanceRoute
   '/sitemaps/posts.xml': typeof SitemapsPostsDotxmlRoute
   '/api/': typeof ApiIndexRoute
   '/blog/': typeof BlogIndexRoute
@@ -255,9 +278,13 @@ export interface FileRoutesById {
   '/api/data/$capability': typeof ApiDataCapabilityRoute
   '/projects/$slug/$topic': typeof ProjectsSlugTopicRoute
   '/projects/$slug/this-week': typeof ProjectsSlugThisWeekRoute
+  '/research/governance/$slug': typeof ResearchGovernanceSlugRoute
+  '/research/podcasts/$slug': typeof ResearchPodcastsSlugRoute
   '/research/trending/$slug': typeof ResearchTrendingSlugRoute
   '/security/exploits/$slug': typeof SecurityExploitsSlugRoute
   '/projects/$slug/': typeof ProjectsSlugIndexRoute
+  '/research/governance/': typeof ResearchGovernanceIndexRoute
+  '/research/podcasts/': typeof ResearchPodcastsIndexRoute
   '/research/trending/': typeof ResearchTrendingIndexRoute
   '/security/exploits/': typeof SecurityExploitsIndexRoute
 }
@@ -276,7 +303,6 @@ export interface FileRouteTypes {
     | '/cookbook/$recipe'
     | '/events/$month'
     | '/mcp/$client'
-    | '/research/governance'
     | '/sitemaps/posts.xml'
     | '/api/'
     | '/blog/'
@@ -286,9 +312,13 @@ export interface FileRouteTypes {
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
+    | '/research/governance/$slug'
+    | '/research/podcasts/$slug'
     | '/research/trending/$slug'
     | '/security/exploits/$slug'
     | '/projects/$slug/'
+    | '/research/governance/'
+    | '/research/podcasts/'
     | '/research/trending/'
     | '/security/exploits/'
   fileRoutesByTo: FileRoutesByTo
@@ -305,7 +335,6 @@ export interface FileRouteTypes {
     | '/cookbook/$recipe'
     | '/events/$month'
     | '/mcp/$client'
-    | '/research/governance'
     | '/sitemaps/posts.xml'
     | '/api'
     | '/blog'
@@ -315,9 +344,13 @@ export interface FileRouteTypes {
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
+    | '/research/governance/$slug'
+    | '/research/podcasts/$slug'
     | '/research/trending/$slug'
     | '/security/exploits/$slug'
     | '/projects/$slug'
+    | '/research/governance'
+    | '/research/podcasts'
     | '/research/trending'
     | '/security/exploits'
   id:
@@ -334,7 +367,6 @@ export interface FileRouteTypes {
     | '/cookbook/$recipe'
     | '/events/$month'
     | '/mcp/$client'
-    | '/research/governance'
     | '/sitemaps/posts.xml'
     | '/api/'
     | '/blog/'
@@ -344,9 +376,13 @@ export interface FileRouteTypes {
     | '/api/data/$capability'
     | '/projects/$slug/$topic'
     | '/projects/$slug/this-week'
+    | '/research/governance/$slug'
+    | '/research/podcasts/$slug'
     | '/research/trending/$slug'
     | '/security/exploits/$slug'
     | '/projects/$slug/'
+    | '/research/governance/'
+    | '/research/podcasts/'
     | '/research/trending/'
     | '/security/exploits/'
   fileRoutesById: FileRoutesById
@@ -364,7 +400,6 @@ export interface RootRouteChildren {
   CookbookRecipeRoute: typeof CookbookRecipeRoute
   EventsMonthRoute: typeof EventsMonthRoute
   McpClientRoute: typeof McpClientRoute
-  ResearchGovernanceRoute: typeof ResearchGovernanceRoute
   SitemapsPostsDotxmlRoute: typeof SitemapsPostsDotxmlRoute
   ApiIndexRoute: typeof ApiIndexRoute
   BlogIndexRoute: typeof BlogIndexRoute
@@ -374,9 +409,13 @@ export interface RootRouteChildren {
   ApiDataCapabilityRoute: typeof ApiDataCapabilityRoute
   ProjectsSlugTopicRoute: typeof ProjectsSlugTopicRoute
   ProjectsSlugThisWeekRoute: typeof ProjectsSlugThisWeekRoute
+  ResearchGovernanceSlugRoute: typeof ResearchGovernanceSlugRoute
+  ResearchPodcastsSlugRoute: typeof ResearchPodcastsSlugRoute
   ResearchTrendingSlugRoute: typeof ResearchTrendingSlugRoute
   SecurityExploitsSlugRoute: typeof SecurityExploitsSlugRoute
   ProjectsSlugIndexRoute: typeof ProjectsSlugIndexRoute
+  ResearchGovernanceIndexRoute: typeof ResearchGovernanceIndexRoute
+  ResearchPodcastsIndexRoute: typeof ResearchPodcastsIndexRoute
   ResearchTrendingIndexRoute: typeof ResearchTrendingIndexRoute
   SecurityExploitsIndexRoute: typeof SecurityExploitsIndexRoute
 }
@@ -502,13 +541,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpClientRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/research/governance': {
-      id: '/research/governance'
-      path: '/research/governance'
-      fullPath: '/research/governance'
-      preLoaderRoute: typeof ResearchGovernanceRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sitemaps/posts.xml': {
       id: '/sitemaps/posts.xml'
       path: '/sitemaps/posts.xml'
@@ -542,6 +574,34 @@ declare module '@tanstack/react-router' {
       path: '/projects/$slug/this-week'
       fullPath: '/projects/$slug/this-week'
       preLoaderRoute: typeof ProjectsSlugThisWeekRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research/governance/': {
+      id: '/research/governance/'
+      path: '/research/governance'
+      fullPath: '/research/governance/'
+      preLoaderRoute: typeof ResearchGovernanceIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research/governance/$slug': {
+      id: '/research/governance/$slug'
+      path: '/research/governance/$slug'
+      fullPath: '/research/governance/$slug'
+      preLoaderRoute: typeof ResearchGovernanceSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research/podcasts/': {
+      id: '/research/podcasts/'
+      path: '/research/podcasts'
+      fullPath: '/research/podcasts/'
+      preLoaderRoute: typeof ResearchPodcastsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/research/podcasts/$slug': {
+      id: '/research/podcasts/$slug'
+      path: '/research/podcasts/$slug'
+      fullPath: '/research/podcasts/$slug'
+      preLoaderRoute: typeof ResearchPodcastsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/research/trending/': {
@@ -588,7 +648,6 @@ const rootRouteChildren: RootRouteChildren = {
   CookbookRecipeRoute: CookbookRecipeRoute,
   EventsMonthRoute: EventsMonthRoute,
   McpClientRoute: McpClientRoute,
-  ResearchGovernanceRoute: ResearchGovernanceRoute,
   SitemapsPostsDotxmlRoute: SitemapsPostsDotxmlRoute,
   ApiIndexRoute: ApiIndexRoute,
   BlogIndexRoute: BlogIndexRoute,
@@ -598,9 +657,13 @@ const rootRouteChildren: RootRouteChildren = {
   ApiDataCapabilityRoute: ApiDataCapabilityRoute,
   ProjectsSlugTopicRoute: ProjectsSlugTopicRoute,
   ProjectsSlugThisWeekRoute: ProjectsSlugThisWeekRoute,
+  ResearchGovernanceSlugRoute: ResearchGovernanceSlugRoute,
+  ResearchPodcastsSlugRoute: ResearchPodcastsSlugRoute,
   ResearchTrendingSlugRoute: ResearchTrendingSlugRoute,
   SecurityExploitsSlugRoute: SecurityExploitsSlugRoute,
   ProjectsSlugIndexRoute: ProjectsSlugIndexRoute,
+  ResearchGovernanceIndexRoute: ResearchGovernanceIndexRoute,
+  ResearchPodcastsIndexRoute: ResearchPodcastsIndexRoute,
   ResearchTrendingIndexRoute: ResearchTrendingIndexRoute,
   SecurityExploitsIndexRoute: SecurityExploitsIndexRoute,
 }
