@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { API_COMMANDS, API_TOOLS, HOME_TOOLS } from "../data/apiSurface";
+import { API_COMMANDS, API_TOOLS, HOME_TOOLS, podcastEpisodeCommand } from "../data/apiSurface";
 import mcp from "../api/mcp-tools.generated.json";
 import spec from "../api/docs-spec.generated.json";
 
@@ -54,6 +54,14 @@ describe("API_COMMANDS", () => {
         );
       }
     }
+  });
+});
+
+describe("podcastEpisodeCommand", () => {
+  it("is one episode's record, at the path the spec documents", () => {
+    const [url] = urlsIn(podcastEpisodeCommand("161971"));
+    expect(url).toBe("https://api.alphaday.com/items/podcasts/161971/");
+    expect(specPaths.has("/items/podcasts/{id}/")).toBe(true);
   });
 });
 
