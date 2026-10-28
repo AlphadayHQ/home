@@ -1,6 +1,6 @@
 import type { ProposalArticle } from "../server/governanceProposals";
 import { proposalPath } from "../data/governanceProposals";
-import { canonicalFor, seoHead } from "./head";
+import { DESCRIPTION_ROOM, canonicalFor, clip, seoHead } from "./head";
 
 /**
  * Head and structured data for a governance proposal page. The facts it states
@@ -8,12 +8,6 @@ import { canonicalFor, seoHead } from "./head";
  * dates and the reader may find has moved on: it is the excerpt, which says
  * where the proposal stood when it was written.
  */
-
-/** What a result page shows of a description. */
-const DESCRIPTION_ROOM = 155;
-
-const clip = (text: string, room: number): string =>
-  text.length > room ? `${text.slice(0, room).replace(/\s+\S*$/, "")}…` : text;
 
 export function proposalArticleHead({
   article,

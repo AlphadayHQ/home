@@ -3,10 +3,11 @@ import { ArrowLeft } from "lucide-react";
 import { Layout, Section } from "../shared";
 import CONFIG from "../config";
 import { API_COMMANDS, podcastEpisodeCommand } from "../data/apiSurface";
-import { CodeBlock } from "../components/ui/CodeBlock";
+import BuildOnIt from "../components/BuildOnIt";
 import { PODCAST_HUB, podcastPostPath } from "../data/podcastPosts";
 import { readingMinutes } from "../data/analysis";
 import { Fact, LINK, PostBlocks, SourcesRead } from "../components/PostBody";
+import { longDate } from "../components/dates";
 
 /**
  * One idea from crypto podcasts: the episodes it was heard on, the write-up,
@@ -18,30 +19,14 @@ import { Fact, LINK, PostBlocks, SourcesRead } from "../components/PostBody";
  * body carries the timestamp it starts at.
  */
 
-const DATE = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-/** A day that can be formatted, or null: `Intl` throws a RangeError on an invalid date. */
-const day = (iso) => {
-  if (!iso) return null;
-  const date = new Date(iso);
-  return Number.isNaN(date.getTime()) ? null : DATE.format(date);
-};
-
 /*
  * WHERE THE PAGE SENDS A READER NEXT
  *
- * One block, after the sources, in the order the site ranks its readers: a
- * working call first, then one action in orange, then the recipe, MCP and the
- * news feed as plain links. The call is the record of the episode the page
- * quotes first, by its id in the podcast feed, so what it prints is the data
- * this page was written from rather than a sample. A page whose episodes carry
- * no id shows the feed itself. Both come from `data/apiSurface.js`, like every
- * command the site prints.
+ * The shared block (`components/BuildOnIt.jsx`), offering the podcast feed. The
+ * call is the record of the episode the page quotes first, by its id in the
+ * podcast feed, so what it prints is the data this page was written from rather
+ * than a sample. A page whose episodes carry no id shows the feed itself. Both
+ * come from `data/apiSurface.js`, like every command the site prints.
  */
 
 const NEXT = [
@@ -61,44 +46,6 @@ const NEXT = [
     why: "The stories the shows are reacting to.",
   },
 ];
-
-const BuildOnIt = ({ itemId }) => (
-  <div className="mt-14 max-w-160 border-t border-surface-border pt-10">
-    <h2 className="font-display text-[26px] font-medium tracking-tight text-text">
-      Every crypto podcast episode, as data
-    </h2>
-    <p className="mt-3 text-[16px] text-text-muted">
-      {itemId
-        ? "This page was written from an episode in Alphaday’s podcast feed. Its record, with the audio file, the episode page and a description, is one call away."
-        : "The episodes behind these pages are in Alphaday’s podcast feed, each with its audio file, its page and a description."}{" "}
-      Free, no signup, no key.
-    </p>
-    <div className="mt-5 rounded-xl border border-surface-border bg-surface p-1.5">
-      <CodeBlock
-        code={itemId ? podcastEpisodeCommand(itemId) : API_COMMANDS.podcasts}
-        language="bash"
-      />
-    </div>
-    <p className="mt-5 text-[17px]">
-      <a
-        href={`${CONFIG.api}/data/podcasts`}
-        className="font-medium text-primary underline decoration-primary/40 underline-offset-4 transition-colors hover:text-primary-hover"
-      >
-        Start building with the podcasts API
-      </a>
-    </p>
-    <ul className="mt-6 flex flex-col gap-4">
-      {NEXT.map((step) => (
-        <li key={step.href}>
-          <a href={step.href} className={`text-[16px] font-medium text-text ${LINK}`}>
-            {step.name}
-          </a>
-          <p className="mt-1 text-[15px] text-text-muted">{step.why}</p>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
 
 const PodcastPostPage = ({ article }) => {
   const { post, others } = article;
@@ -132,26 +79,27 @@ const PodcastPostPage = ({ article }) => {
               <Fact label={meta.episodes.length === 1 ? "Episode" : "Episodes"}>
                 <ul className="flex flex-col gap-1.5">
                   {/* By position: two episodes of one show can share a title. */}
-                  {meta.episodes.map((episode, index) => (
-                    <li key={index} className="max-w-160">
-                      {episode.pageUrl ? (
-                        <a href={episode.pageUrl} target="_blank" rel="noreferrer" className={LINK}>
-                          {episode.show}
-                          {episode.title && `: ${episode.title}`}
-                        </a>
-                      ) : (
-                        <>
-                          {episode.show}
-                          {episode.title && `: ${episode.title}`}
-                        </>
-                      )}
-                      {day(episode.aired) && (
-                        <span className="ml-2 text-[14px] font-normal text-text-muted">
-                          {day(episode.aired)}
-                        </span>
-                      )}
-                    </li>
-                  ))}
+                  {meta.episodes.map((episode, index) => {
+                    const aired = longDate(episode.aired);
+                    return (
+                      <li key={index} className="max-w-160">
+                        {episode.pageUrl ? (
+                          <a href={episode.pageUrl} target="_blank" rel="noreferrer" className={LINK}>
+                            {episode.show}
+                            {episode.title && `: ${episode.title}`}
+                          </a>
+                        ) : (
+                          <>
+                            {episode.show}
+                            {episode.title && `: ${episode.title}`}
+                          </>
+                        )}
+                        {aired && (
+                          <span className="ml-2 text-[14px] font-normal text-text-muted">{aired}</span>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </Fact>
             </dl>
@@ -170,7 +118,17 @@ const PodcastPostPage = ({ article }) => {
 
           <PostBlocks blocks={post.blocks} />
           <SourcesRead urls={meta.sourcesRead} />
-          <BuildOnIt itemId={itemId} />
+          <BuildOnIt
+            title="Every crypto podcast episode, as data"
+            intro={`${
+              itemId
+                ? "This page was written from an episode in Alphaday’s podcast feed. Its record, with the audio file, the episode page and a description, is one call away."
+                : "The episodes behind these pages are in Alphaday’s podcast feed, each with its audio file, its page and a description."
+            } Free, no signup, no key.`}
+            code={itemId ? podcastEpisodeCommand(itemId) : API_COMMANDS.podcasts}
+            action={{ href: `${CONFIG.api}/data/podcasts`, label: "Start building with the podcasts API" }}
+            next={NEXT}
+          />
         </div>
       </Section>
 

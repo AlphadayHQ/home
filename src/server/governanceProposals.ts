@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
-import { API_BASE, fetchJsonSoft, fetchWithRetry } from "./apiFetch";
-import { hold, withinMs } from "./hold";
-import type { RawPost } from "../data/analysis";
+import { withinMs } from "./hold";
+import type { PostList } from "./postList";
+import { fetchPost, holdPostList } from "./postList";
 import type { ProposalPost, ProposalRow } from "../data/governanceProposals";
 import {
   GOVERNANCE_TYPE,
@@ -21,14 +21,6 @@ import { pageCount, pageOf } from "../data/trending";
  * held in memory and shared by the report's "proposals explained" and every
  * page's "other proposals"; and one post by slug for a page.
  */
-
-const PAGE_SIZE = 100;
-
-/** 2,000 posts. Reaching it reports a short read rather than truncating quietly. */
-const MAX_PAGES = 20;
-
-/** How long one read serves every render before a refresh is started. */
-export const FRESH_MS = 60_000;
 
 /** How many other proposals a page links to. */
 export const OTHERS = 6;
@@ -51,42 +43,9 @@ export const REPORT_WAIT_MS = 5_000;
 /** Proposal pages per page of the report's list. */
 export const EXPLAINED_PAGE_SIZE = 12;
 
-interface RawListPage {
-  results?: RawPost[];
-  links?: { next?: string | null };
-}
+export type ProposalList = PostList<ProposalRow>;
 
-export interface ProposalList {
-  rows: ProposalRow[];
-  /** Every page answered; when false the rows are a floor. */
-  ok: boolean;
-}
-
-async function loadList(): Promise<ProposalList> {
-  const raw: RawPost[] = [];
-  let ok = true;
-  for (let page = 1; page <= MAX_PAGES; page += 1) {
-    const body = await fetchJsonSoft<RawListPage>(
-      `${API_BASE}/posts/?type=${GOVERNANCE_TYPE}&limit=${PAGE_SIZE}&page=${page}`
-    );
-    if (body === null) {
-      ok = false;
-      break;
-    }
-    const rows = body.results ?? [];
-    raw.push(...rows);
-    if (rows.length < PAGE_SIZE || !body.links?.next) break;
-    if (page === MAX_PAGES) ok = false;
-  }
-  const rows = raw
-    .map(toProposalRow)
-    .filter((row): row is ProposalRow => row !== null)
-    .sort(byNewest);
-  return { rows, ok };
-}
-
-// Only a whole read is held; see `server/exploits.ts`.
-const list = hold(loadList, FRESH_MS, { keep: (value) => value.ok });
+const list = holdPostList(GOVERNANCE_TYPE, toProposalRow, byNewest);
 
 export const readProposalList = (): Promise<ProposalList> => list.read();
 
@@ -168,11 +127,10 @@ export interface ProposalArticle {
  * a 5xx the edge does not cache, rather than as a 404 it does.
  */
 export async function buildProposalArticle(slug: string): Promise<ProposalArticle | null> {
-  const [res, read] = await Promise.all([
-    fetchWithRetry(`${API_BASE}/posts/${encodeURIComponent(slug)}/`),
+  const [raw, read] = await Promise.all([
+    fetchPost(slug),
     withinMs(readProposalList(), LIST_WAIT_MS),
   ]);
-  const raw = res ? ((await res.json()) as RawPost) : null;
   const post = raw ? toProposalPost(raw) : null;
   if (!post) return null;
 

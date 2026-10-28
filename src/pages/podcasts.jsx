@@ -4,25 +4,13 @@ import CONFIG from "../config";
 import { PODCAST_HUB, latestAired, podcastPostPath, showsOf } from "../data/podcastPosts";
 import { LINK } from "../components/PostBody";
 import Pager, { pagedHref } from "../components/Pager";
+import { shortDate } from "../components/dates";
 
 /**
  * The podcast hub: one row per idea written up, the newest first. Each row
  * names the shows it was heard on and the day the newest of those episodes
  * aired, which is when the idea was said, not when the page was published.
  */
-
-const DATE = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
-/** A date if the string is one, else nothing: a bad date must not fail the page. */
-const formatDate = (iso) => {
-  const time = Date.parse(iso ?? "");
-  return Number.isNaN(time) ? null : DATE.format(new Date(time));
-};
 
 const PodcastHubPage = ({ hub }) => {
   const { rows, total, page, pages } = hub;
@@ -61,7 +49,7 @@ const PodcastHubPage = ({ hub }) => {
             <ul className="border-t border-surface-border">
               {rows.map((row) => {
                 const shows = showsOf(row.meta);
-                const aired = formatDate(latestAired(row.meta));
+                const aired = shortDate(latestAired(row.meta));
                 return (
                   <li key={row.slug} className="border-b border-surface-border py-6">
                     <a

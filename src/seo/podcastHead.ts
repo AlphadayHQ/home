@@ -1,18 +1,12 @@
 import type { PodcastArticle, PodcastHub } from "../server/podcasts";
 import { PODCAST_HUB, podcastPostPath } from "../data/podcastPosts";
-import { canonicalFor, seoHead } from "./head";
+import { DESCRIPTION_ROOM, canonicalFor, clip, seoHead } from "./head";
 
 /**
  * Head and structured data for both podcast routes. Shared for the reason
  * `exploitsHead.ts` is: the hub and the pages describe one set of posts at two
  * scales, and two copies of a canonical rule drift.
  */
-
-/** What a result page shows of a description. */
-const DESCRIPTION_ROOM = 155;
-
-const clip = (text: string, room: number): string =>
-  text.length > room ? `${text.slice(0, room).replace(/\s+\S*$/, "")}…` : text;
 
 export function podcastHubHead({ hub, indexable }: { hub: PodcastHub; indexable: boolean }) {
   const paged = hub.page > 1 ? `, page ${hub.page}` : "";

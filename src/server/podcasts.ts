@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
-import { API_BASE, fetchJsonSoft, fetchWithRetry } from "./apiFetch";
-import { hold, withinMs } from "./hold";
-import type { RawPost } from "../data/analysis";
+import { withinMs } from "./hold";
+import type { PostList } from "./postList";
+import { fetchPost, holdPostList, warnOncePer } from "./postList";
 import type { PodcastPost, PodcastRow } from "../data/podcastPosts";
 import {
   HUB_PAGE_SIZE,
@@ -38,21 +38,6 @@ import { pageCount, pageOf, parsePage } from "../data/trending";
  * stop; refusing such a body at publish is the backend's to do, for every type.
  */
 
-const PAGE_SIZE = 100;
-
-/** 2,000 posts. Reaching it reports a short read rather than truncating quietly. */
-const MAX_PAGES = 20;
-
-/** How long one read serves every render before a refresh is started. */
-export const FRESH_MS = 60_000;
-
-/**
- * How long a failed list read is answered before it is tried again. A page only
- * needs the list for its links, and in an outage every render would otherwise
- * walk it again.
- */
-export const FAILED_LIST_MS = 30_000;
-
 /** How many other pages a page links to. */
 export const OTHERS = 6;
 
@@ -62,58 +47,18 @@ export const OTHERS = 6;
  */
 export const LIST_WAIT_MS = 800;
 
-interface RawListPage {
-  results?: unknown[];
-  links?: { next?: string | null };
-}
+export type PodcastList = PostList<PodcastRow>;
 
-export interface PodcastList {
-  rows: PodcastRow[];
-  /** Every page answered; when false the rows are a floor. */
-  ok: boolean;
-}
-
-async function loadList(): Promise<PodcastList> {
-  const raw: RawPost[] = [];
-  let ok = true;
-  for (let page = 1; page <= MAX_PAGES; page += 1) {
-    const body = await fetchJsonSoft<RawListPage>(
-      `${API_BASE}/posts/?type=${PODCAST_TYPE}&limit=${PAGE_SIZE}&page=${page}`
-    );
-    if (body === null) {
-      console.error(`podcasts: the post list did not answer on page ${page}`);
-      ok = false;
-      break;
-    }
-    const rows = Array.isArray(body.results) ? body.results : [];
-    // A row that is not an object is skipped, not read: `null` would throw.
-    raw.push(...rows.filter((row): row is RawPost => !!row && typeof row === "object"));
-    if (rows.length < PAGE_SIZE || !body.links?.next) break;
-    if (page === MAX_PAGES) {
-      console.error(`podcasts: more than ${MAX_PAGES * PAGE_SIZE} posts; refusing a truncated list`);
-      ok = false;
-    }
-  }
-  const rows = raw
-    .map(toPodcastRow)
-    .filter((row): row is PodcastRow => row !== null)
-    .sort(byNewest);
-  return { rows, ok };
-}
-
-// Only a whole read is held; see `server/exploits.ts`.
-const list = hold(loadList, FRESH_MS, {
-  keep: (value) => value.ok,
-  failMs: FAILED_LIST_MS,
-  onBackgroundError: (error) => console.error("podcasts: refreshing the post list failed", error),
-});
+const list = holdPostList(PODCAST_TYPE, toPodcastRow, byNewest);
 
 export const readPodcastList = (): Promise<PodcastList> => list.read();
+
+const refused = warnOncePer();
 
 /** For tests: forget the held list and what has been logged. */
 export function resetPodcastList(): void {
   list.reset();
-  warned.clear();
+  refused.clear();
 }
 
 export interface PodcastHub {
@@ -157,39 +102,23 @@ export interface PodcastArticle {
 }
 
 /**
- * Posts already logged as refused, by `slug@modified`, so each version is
- * reported once rather than on every render. Cleared at a cap, which only means
- * a long-lived problem is reported again.
- */
-const warned = new Set<string>();
-const WARNED_CAP = 1000;
-
-function warnOnce(key: string, message: string): void {
-  if (warned.has(key)) return;
-  if (warned.size >= WARNED_CAP) warned.clear();
-  warned.add(key);
-  console.warn(message);
-}
-
-/**
  * One page, or null when there is none to show at that slug.
  *
  * Only a 404 means "no such post". Any other failure throws, so it is served as
  * a 5xx the edge does not cache, rather than as a 404 it does.
  */
 export async function buildPodcastArticle(slug: string): Promise<PodcastArticle | null> {
-  const [res, read] = await Promise.all([
-    fetchWithRetry(`${API_BASE}/posts/${encodeURIComponent(slug)}/`),
+  const [raw, read] = await Promise.all([
+    fetchPost(slug),
     withinMs(readPodcastList(), LIST_WAIT_MS),
   ]);
-  const raw = res ? ((await res.json()) as RawPost) : null;
   if (!raw) return null;
   const post = toPodcastPost(raw);
   if (!post) {
     const row = toPodcastRow(raw);
     // Listed, so on the hub and in the sitemap, but nothing to show: see the header.
     if (row) {
-      warnOnce(
+      refused.warn(
         `${row.slug}@${row.modified}`,
         `podcasts: post ${row.slug} is published but its body is empty or a decline; it is not shown`
       );

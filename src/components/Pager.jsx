@@ -24,7 +24,7 @@ const Pager = ({ page, pages, hrefFor, newer = "Newer", older = "Older" }) =>
       ) : (
         <span />
       )}
-      <span className="font-mono text-[13px] tabular-nums text-text-muted">
+      <span className="text-[14px] tabular-nums text-text-muted">
         Page {page} of {pages}
       </span>
       {page < pages ? (
