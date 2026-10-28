@@ -20,3 +20,23 @@ export const setRobotsHeader = createIsomorphicFn()
   // On a client-side navigation there is no response to set a header on. The
   // meta tag the route already renders is what applies there.
   .client(() => {});
+
+/**
+ * Emit `Cache-Control` for a page that is right but incomplete, so the edge
+ * holds it briefly. `server.mjs` sets the long policy only on a 200 that carries
+ * none, so a route setting this keeps it.
+ *
+ * Used where a page renders without part of itself rather than failing: the
+ * report without its "proposals explained" after a cold start. Without it that
+ * copy is held as long as a whole one, and `stale-while-revalidate` keeps
+ * serving it while the edge refreshes. No `stale-while-revalidate` here, so the
+ * first request after a minute gets a fresh render.
+ */
+export const BRIEF_CACHE_CONTROL = "public, max-age=0, s-maxage=60, stale-if-error=604800";
+
+export const setCacheControl = createIsomorphicFn()
+  .server((value: string) => {
+    setResponseHeader("Cache-Control", value);
+  })
+  // A client-side navigation has no response, and nothing caches it.
+  .client(() => {});

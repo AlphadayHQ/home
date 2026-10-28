@@ -2,7 +2,7 @@
  * A read held in memory, fresh for a while, and refreshed behind the callers.
  *
  * Every held read on the server goes through this: the exploit list, the posts
- * sitemap and the trending reads. The rule:
+ * sitemap, the trending reads and the governance proposal list. The rule:
  *
  *  - With nothing held, callers wait for one shared load.
  *  - While fresh, the held value is answered at once.
@@ -24,7 +24,8 @@
 /*
  * WHY `hold` AND `holdByKey` ARE MARKED `@__NO_SIDE_EFFECTS__`
  *
- * Their callers (`server/exploits.ts`, `server/trending.ts`) are also imported by
+ * Their callers (`server/exploits.ts`, `server/trending.ts`,
+ * `server/governanceProposals.ts`) are also imported by
  * routes for their server functions, so they reach the client bundle, where the
  * handlers are stubbed out. A held read is created at module level, and to the
  * bundler an unmarked call there might have an effect, so it kept the call, its
@@ -164,4 +165,17 @@ export function holdByKey<T>(
       holds.clear();
     },
   };
+}
+
+/**
+ * The value if it arrives within `ms`, else null; never a rejection. For a held
+ * read a page can do without: after a deploy the read is cold, and the page
+ * does not wait for it, while the load carries on to warm it for the next render.
+ */
+export function withinMs<T>(promise: Promise<T>, ms: number): Promise<T | null> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const late = new Promise<null>((resolve) => {
+    timer = setTimeout(() => resolve(null), ms);
+  });
+  return Promise.race([promise.catch(() => null), late]).finally(() => clearTimeout(timer));
 }

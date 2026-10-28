@@ -71,6 +71,17 @@ export const str = (value: unknown): string | null =>
   typeof value === "string" && value.trim() !== "" ? value.trim() : null;
 
 /**
+ * The day of an ISO 8601 date an agent wrote, as `YYYY-MM-DD`, or null when it is
+ * not one. Shared by every kind of post that carries dates in its metadata.
+ */
+export const isoDay = (value: unknown): string | null => {
+  const text = str(value);
+  return text && /^\d{4}-\d{2}-\d{2}/.test(text) && !Number.isNaN(Date.parse(text))
+    ? text.slice(0, 10)
+    : null;
+};
+
+/**
  * Post slugs are server-derived from titles by Django's `slugify`: lowercase
  * letters, digits, hyphens and underscores ("unverified_a152-exploit-analysis").
  */

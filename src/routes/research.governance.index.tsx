@@ -1,13 +1,25 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import GovernancePage from "../pages/governance";
 import { getGovernanceReport } from "../server/governance";
+import { NO_EXPLAINED, getExplainedPage } from "../server/governanceProposals";
+import { parsePage } from "../data/trending";
 import { reportIsIndexable } from "../data/governance";
 import { governanceHead } from "../seo/governanceHead";
 import { indexStateFor, isIndexable, robotsHeader } from "../seo/indexState";
-import { setRobotsHeader } from "../seo/robotsHeader";
+import { BRIEF_CACHE_CONTROL, setCacheControl, setRobotsHeader } from "../seo/robotsHeader";
 
 /**
  * `/research/governance` — the DAO governance report (content doc B1).
+ *
+ * An index route, so that the proposal pages at `/research/governance/{slug}` are
+ * its siblings rather than its children: named `research.governance.tsx`, it
+ * would become their parent layout and render in place of every one of them.
+ *
+ * Paged by `?page=`, for its list of those pages ("proposals explained"); the
+ * rest of the report is the same on every page. The first page is the one
+ * indexed; later pages are `noindex, follow`, since every proposal page is in
+ * the sitemap and they only lead to older ones. A `?page=` that is not a page
+ * number, or is past the last, is a 404.
  *
  * WHY THIS IS ONE EVERGREEN URL AND NOT A MONTH PER REPORT
  *
@@ -33,9 +45,25 @@ import { setRobotsHeader } from "../seo/robotsHeader";
  * pipeline. `reportIsIndexable` also requires a trend, so the page cannot be
  * submitted while its central number is unavailable.
  */
-export const Route = createFileRoute("/research/governance")({
-  loader: async () => {
-    const report = await getGovernanceReport();
+export const Route = createFileRoute("/research/governance/")({
+  validateSearch: (search: Record<string, unknown>): { page?: unknown } =>
+    search.page === undefined ? {} : { page: search.page },
+  loaderDeps: ({ search }) => ({ page: search.page }),
+  loader: async ({ deps }) => {
+    const page = parsePage(deps.page);
+    if (page === null) throw notFound();
+
+    /*
+     * On the first page the proposal list is links the report can do without: a
+     * cold or failing list leaves the section out rather than failing the report.
+     * The server function never rejects on the server, but on a client-side
+     * navigation it is a network call, which can, so the catch is the guarantee.
+     * A later page is only that list, so its failure is the page's.
+     */
+    const explainedRead =
+      page === 1 ? getExplainedPage({ data: 1 }).catch(() => NO_EXPLAINED) : getExplainedPage({ data: page });
+    const [report, proposals] = await Promise.all([getGovernanceReport(), explainedRead]);
+    if (!proposals) throw notFound();
 
     /*
      * AN INCOMPLETE READ IS AN ORIGIN FAILURE, NOT A PAGE STATE.
@@ -69,12 +97,14 @@ export const Route = createFileRoute("/research/governance")({
       );
     }
 
-    const state = reportIsIndexable(report)
-      ? indexStateFor("/research/governance")
-      : "substrate";
+    const state =
+      page === 1 && reportIsIndexable(report) ? indexStateFor("/research/governance") : "substrate";
     setRobotsHeader(robotsHeader(state));
+    // Rendered without its list, the report is right but missing the site's only
+    // links to the proposal pages; held briefly, the next render can add them.
+    if (!proposals.complete) setCacheControl(BRIEF_CACHE_CONTROL);
 
-    return { report, indexable: isIndexable(state) };
+    return { report, proposals, indexable: isIndexable(state) };
   },
 
   head: ({ loaderData }) => {
@@ -100,6 +130,6 @@ export const Route = createFileRoute("/research/governance")({
 });
 
 function GovernanceReport() {
-  const { report } = Route.useLoaderData();
-  return <GovernancePage report={report} />;
+  const { report, proposals } = Route.useLoaderData();
+  return <GovernancePage report={report} explained={proposals} />;
 }

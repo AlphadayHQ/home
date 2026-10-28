@@ -4,6 +4,8 @@ import CONFIG from "../config";
 import { monthLabel } from "../data/eventMonths";
 import { COHORT_WINDOW_DAYS } from "../data/governance";
 import { headlineOf } from "../seo/governanceHead";
+import { proposalPath, snapshotId } from "../data/governanceProposals";
+import Pager, { pagedHref } from "../components/Pager";
 
 /**
  * The DAO governance report (content doc B1).
@@ -252,7 +254,7 @@ const SpaceTable = ({ spaces, windowDays }) => (
           {spaces.map((space) => (
             <tr key={space.space}>
               <td>
-                <span className="font-semibold text-text">{space.name}</span>
+                <span className="font-medium text-text">{space.name}</span>
                 {space.spaceId && (
                   <span className="ml-2 font-mono text-[12px] text-text-muted">
                     {space.spaceId}
@@ -299,7 +301,18 @@ const NEXT_STEPS = [
   },
 ];
 
-const GovernancePage = ({ report }) => {
+/**
+ * The report without its proposal list: no section, and no vote matched to a page.
+ * @type {{ rows: Array<any>, page: number, pages: number, total: number, explained: Record<string, string> }}
+ */
+const NO_EXPLAINED = { rows: [], page: 1, pages: 1, total: 0, explained: {} };
+
+const GovernancePage = ({ report, explained = NO_EXPLAINED }) => {
+  /** The slug of our page for a Snapshot vote, or null; matched on the proposal id. */
+  const explainedSlug = (proposal) => {
+    const id = snapshotId(proposal.url);
+    return (id && explained.explained[id]) || null;
+  };
   const {
     cohort,
     dormant,
@@ -362,21 +375,21 @@ const GovernancePage = ({ report }) => {
           */}
           {headline ? (
             <p className="mt-5 max-w-160 text-[18px] text-text-muted">
-              <span className="font-semibold text-text">
+              <span className="font-medium text-text">
                 {n(headline.trailing)} governance proposals
               </span>{" "}
               across the {headline.spaces} Snapshot spaces indexed here in the
               twelve months to {headline.windowEnd} —{" "}
               {headline.atPeak ? (
                 <>
-                  <span className="font-semibold text-text">
+                  <span className="font-medium text-text">
                     the busiest twelve months on record
                   </span>
                   .
                 </>
               ) : (
                 <>
-                  <span className="font-semibold text-text">
+                  <span className="font-medium text-text">
                     down {Math.abs(headline.changePct)}%
                   </span>{" "}
                   on the busiest twelve months on record, {n(headline.peak)} in{" "}
@@ -387,7 +400,7 @@ const GovernancePage = ({ report }) => {
                 <>
                   {" "}
                   The twelve months before them held{" "}
-                  <span className="font-semibold text-text">
+                  <span className="font-medium text-text">
                     {n(headline.previous)}
                   </span>
                   .
@@ -405,7 +418,7 @@ const GovernancePage = ({ report }) => {
           <p className="mt-5 text-[16px]">
             <a
               href={`${CONFIG.api}/data/dao`}
-              className="font-semibold text-primary underline decoration-primary/40 underline-offset-4 transition-colors hover:text-primary-hover"
+              className="font-medium text-primary underline decoration-primary/40 underline-offset-4 transition-colors hover:text-primary-hover"
             >
               Query this yourself — free, no signup
             </a>
@@ -417,6 +430,47 @@ const GovernancePage = ({ report }) => {
           </p>
         </div>
       </Section>
+
+      {/*
+        The proposals written up one at a time, at their own pages under this
+        one, and the site's way into them: so it comes straight after the
+        figures, ahead of the evidence behind them. Paged, newest first; the
+        pager's links carry the anchor so a reader lands back on the list.
+      */}
+      {explained.total > 0 && (
+        <Section className="bg-background">
+          <div id="proposals" className="mx-auto w-11/12 max-w-5xl scroll-mt-24 pt-6 pb-14">
+            <SectionHead>Proposals explained</SectionHead>
+            <p className="mt-3 max-w-160 text-[16px] text-text-muted">
+              What each proposal changes, the case made for it, the objections, and where it
+              stood when it was written up.
+            </p>
+            <ul className="mt-6 border-t border-surface-border">
+              {explained.rows.map((proposal) => (
+                <li
+                  key={proposal.slug}
+                  className="flex flex-col gap-1 border-b border-surface-border py-3.5 sm:flex-row sm:items-baseline sm:gap-6"
+                >
+                  <a
+                    href={proposalPath(proposal.slug)}
+                    className="flex-1 text-[17px] font-medium leading-snug text-text underline decoration-surface-border underline-offset-4 transition-colors hover:decoration-text"
+                  >
+                    {proposal.title}
+                  </a>
+                  {proposal.meta.dao && (
+                    <span className="shrink-0 text-[13px] text-text-muted">{proposal.meta.dao}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+            <Pager
+              page={explained.page}
+              pages={explained.pages}
+              hrefFor={(page) => `${pagedHref("/research/governance", page)}#proposals`}
+            />
+          </div>
+        </Section>
+      )}
 
       {/*
         `pt-6` rather than a margin on the first child: the margin collapses out
@@ -446,7 +500,7 @@ const GovernancePage = ({ report }) => {
                 {topOfWindow && share >= 15 && (
                   <>
                     {" "}
-                    <span className="font-semibold text-text">
+                    <span className="font-medium text-text">
                       {topOfWindow.name} alone is {share}% of them
                     </span>
                     , which is worth knowing before reading the total as a
@@ -485,14 +539,31 @@ const GovernancePage = ({ report }) => {
                   >
                     {DAY_SHORT.format(new Date(proposal.startsAt))}
                   </time>
-                  <a
-                    href={proposal.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex-1 text-[17px] font-semibold leading-snug text-text underline decoration-surface-border underline-offset-4 transition-colors hover:decoration-text"
-                  >
-                    {proposal.title}
-                  </a>
+                  {/*
+                    A vote with a page of ours links there, tagged, rather than
+                    out to Snapshot: the page links on to the vote, and the
+                    report's own reading is what a reader of the report wants.
+                  */}
+                  {explainedSlug(proposal) ? (
+                    <a
+                      href={proposalPath(explainedSlug(proposal))}
+                      className="flex-1 text-[17px] font-medium leading-snug text-text underline decoration-surface-border underline-offset-4 transition-colors hover:decoration-text"
+                    >
+                      {proposal.title}
+                      <span className="ml-2 align-middle text-[11px] font-medium uppercase tracking-[0.1em] text-text-muted">
+                        Explained
+                      </span>
+                    </a>
+                  ) : (
+                    <a
+                      href={proposal.url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex-1 text-[17px] font-medium leading-snug text-text underline decoration-surface-border underline-offset-4 transition-colors hover:decoration-text"
+                    >
+                      {proposal.title}
+                    </a>
+                  )}
                   <span className="shrink-0 text-[13px] text-text-muted">
                     {proposal.spaceName}
                   </span>
@@ -518,7 +589,7 @@ const GovernancePage = ({ report }) => {
           <SectionHead>Method, and what this does not measure</SectionHead>
           <dl className="mt-6 flex max-w-160 flex-col gap-6 text-[16px]">
             <div>
-              <dt className="font-semibold text-text">The measured set</dt>
+              <dt className="font-medium text-text">The measured set</dt>
               <dd className="mt-1.5 text-text-muted">
                 {cohort.length} of the {spaceCount} Snapshot spaces in the index
                 have a proposal in the last {COHORT_WINDOW_DAYS} days. Every
@@ -530,7 +601,7 @@ const GovernancePage = ({ report }) => {
               </dd>
             </div>
             <div>
-              <dt className="font-semibold text-text">
+              <dt className="font-medium text-text">
                 The {dormant.length} spaces left out, and why they are not a
                 dead-DAO list
               </dt>
@@ -575,7 +646,7 @@ const GovernancePage = ({ report }) => {
               </dd>
             </div>
             <div>
-              <dt className="font-semibold text-text">Counting</dt>
+              <dt className="font-medium text-text">Counting</dt>
               <dd className="mt-1.5 text-text-muted">
                 A proposal is counted in the month voting opened. One vote is
                 often reported more than once — sometimes the same Snapshot URL
@@ -590,7 +661,7 @@ const GovernancePage = ({ report }) => {
             </div>
             {forumQuarter !== null && (
               <div>
-                <dt className="font-semibold text-text">
+                <dt className="font-medium text-text">
                   Forum discussion, for contrast
                 </dt>
                 <dd className="mt-1.5 text-text-muted">
@@ -616,7 +687,7 @@ const GovernancePage = ({ report }) => {
                 <a
                   href={step.href}
                   {...(step.external ? { target: "_blank", rel: "noreferrer" } : {})}
-                  className="text-[17px] font-semibold text-text underline decoration-surface-border underline-offset-4 transition-colors hover:decoration-text"
+                  className="text-[17px] font-medium text-text underline decoration-surface-border underline-offset-4 transition-colors hover:decoration-text"
                 >
                   {step.name}
                 </a>
