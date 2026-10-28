@@ -2,7 +2,8 @@
  * A read held in memory, fresh for a while, and refreshed behind the callers.
  *
  * Every held read on the server goes through this: the exploit list, the posts
- * sitemap, the trending reads and the governance proposal list. The rule:
+ * sitemap, the trending reads, the governance proposal list and the podcast
+ * list. The rule:
  *
  *  - With nothing held, callers wait for one shared load.
  *  - While fresh, the held value is answered at once.
@@ -25,7 +26,7 @@
  * WHY `hold` AND `holdByKey` ARE MARKED `@__NO_SIDE_EFFECTS__`
  *
  * Their callers (`server/exploits.ts`, `server/trending.ts`,
- * `server/governanceProposals.ts`) are also imported by
+ * `server/governanceProposals.ts`, `server/podcasts.ts`) are also imported by
  * routes for their server functions, so they reach the client bundle, where the
  * handlers are stubbed out. A held read is created at module level, and to the
  * bundler an unmarked call there might have an effect, so it kept the call, its
