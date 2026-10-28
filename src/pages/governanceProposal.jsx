@@ -1,6 +1,9 @@
 import React from "react";
 import { ArrowLeft } from "lucide-react";
 import { Layout, Section } from "../shared";
+import CONFIG from "../config";
+import { API_COMMANDS } from "../data/apiSurface";
+import { CodeBlock } from "../components/ui/CodeBlock";
 import { proposalPath } from "../data/governanceProposals";
 import { readingMinutes } from "../data/analysis";
 import { Fact, LINK, PostBlocks, SourcesRead } from "../components/PostBody";
@@ -73,6 +76,71 @@ const Tally = ({ vote, asOf }) => {
     </div>
   );
 };
+
+/*
+ * WHERE THE PAGE SENDS A READER NEXT
+ *
+ * One block, after the sources: the page was researched from Alphaday's DAO and
+ * forum feeds, so the offer is those feeds. In the order the site ranks its
+ * readers: a working call first, because for someone wiring governance into an
+ * agent or a bot a request that answers beats any sentence about it; then one
+ * action in orange, the API; then the recipe, MCP and the forum feed as plain
+ * links. The call is the real, keyless endpoint, unfiltered: the feed's source
+ * slugs are not the DAO names a post carries, and a filter guessed from one
+ * would return nothing for some DAOs. It comes from `API_COMMANDS`, like every
+ * command the site prints, so a change to the API is made in one place.
+ */
+
+const NEXT = [
+  {
+    href: `${CONFIG.cookbook}/dao-proposal-alerts`,
+    name: "Alert on proposals closing soon",
+    why: "A 15-minute recipe: forty lines and a cron entry.",
+  },
+  {
+    href: CONFIG.mcp,
+    name: "Use it from your agent over MCP",
+    why: "The same feeds as tools, for Claude, Cursor and any MCP client.",
+  },
+  {
+    href: `${CONFIG.api}/data/forum`,
+    name: "Governance forum API",
+    why: "The discussion threads that come before the votes.",
+  },
+];
+
+const BuildOnIt = () => (
+  <div className="mt-14 max-w-160 border-t border-surface-border pt-10">
+    <h2 className="font-display text-[26px] font-medium tracking-tight text-text">
+      Every DAO proposal, as data
+    </h2>
+    <p className="mt-3 text-[16px] text-text-muted">
+      This page was researched from Alphaday&rsquo;s DAO proposal and governance forum feeds. They
+      are open: free, no signup, no key.
+    </p>
+    <div className="mt-5 rounded-xl border border-surface-border bg-surface p-1.5">
+      <CodeBlock code={API_COMMANDS.dao} language="bash" />
+    </div>
+    <p className="mt-5 text-[17px]">
+      <a
+        href={`${CONFIG.api}/data/dao`}
+        className="font-medium text-primary underline decoration-primary/40 underline-offset-4 transition-colors hover:text-primary-hover"
+      >
+        Start building with the DAO proposals API
+      </a>
+    </p>
+    <ul className="mt-6 flex flex-col gap-4">
+      {NEXT.map((step) => (
+        <li key={step.href}>
+          <a href={step.href} className={`text-[16px] font-medium text-text ${LINK}`}>
+            {step.name}
+          </a>
+          <p className="mt-1 text-[15px] text-text-muted">{step.why}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+);
 
 const GovernanceProposalPage = ({ article }) => {
   const { post, others } = article;
@@ -154,6 +222,7 @@ const GovernanceProposalPage = ({ article }) => {
 
           <PostBlocks blocks={post.blocks} />
           <SourcesRead urls={meta.sourcesRead} />
+          <BuildOnIt />
         </div>
       </Section>
 
