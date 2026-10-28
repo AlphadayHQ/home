@@ -27,6 +27,13 @@ export const canonicalFor = (path = "/"): string => {
   return `${ORIGIN}${withSlash.replace(/\/$/, "")}`;
 };
 
+/** What a result page shows of a description, in characters. */
+export const DESCRIPTION_ROOM = 155;
+
+/** `text` cut to `room` at a word boundary, with an ellipsis when it was cut. */
+export const clip = (text: string, room: number): string =>
+  text.length > room ? `${text.slice(0, room).replace(/\s+\S*$/, "")}…` : text;
+
 const INDEXABLE_ROBOTS =
   "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
 const NOINDEX_ROBOTS = "noindex, follow";

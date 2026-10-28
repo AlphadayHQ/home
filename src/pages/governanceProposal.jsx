@@ -3,10 +3,11 @@ import { ArrowLeft } from "lucide-react";
 import { Layout, Section } from "../shared";
 import CONFIG from "../config";
 import { API_COMMANDS } from "../data/apiSurface";
-import { CodeBlock } from "../components/ui/CodeBlock";
+import BuildOnIt from "../components/BuildOnIt";
 import { proposalPath } from "../data/governanceProposals";
 import { readingMinutes } from "../data/analysis";
 import { Fact, LINK, PostBlocks, SourcesRead } from "../components/PostBody";
+import { longDate } from "../components/dates";
 
 /**
  * One governance proposal, explained: a facts panel from the post's `metadata`,
@@ -22,13 +23,6 @@ import { Fact, LINK, PostBlocks, SourcesRead } from "../components/PostBody";
  * vote closes; the forum and vote links are there for the current state.
  */
 
-const DATE = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-  timeZone: "UTC",
-});
-
 const POWER = new Intl.NumberFormat("en-GB", { notation: "compact", maximumFractionDigits: 1 });
 
 const SHARE = new Intl.NumberFormat("en-GB", { style: "percent", maximumFractionDigits: 1 });
@@ -41,19 +35,13 @@ const SHARE = new Intl.NumberFormat("en-GB", { style: "percent", maximumFraction
 const power = (value) => (value > 0 && value < 1 ? "<1" : POWER.format(value));
 const share = (value) => (value > 0 && value < 0.001 ? "<0.1%" : SHARE.format(value));
 
-/** A day that can be formatted, or null: `Intl` throws a RangeError on an invalid date. */
-const day = (iso) => {
-  if (!iso) return null;
-  const date = new Date(iso);
-  return Number.isNaN(date.getTime()) ? null : DATE.format(date);
-};
-
 const Tally = ({ vote, asOf }) => {
   const total = vote.choices.reduce((sum, choice) => sum + choice.power, 0);
+  const read = longDate(asOf);
   return (
     <div className="mt-8 max-w-160">
       <h2 className="text-[12px] font-medium uppercase tracking-[0.1em] text-text-muted">
-        The vote{asOf && `, as read on ${day(asOf)}`}
+        The vote{read && `, as read on ${read}`}
       </h2>
       <ul className="mt-3 flex flex-col gap-2">
         {/* By position: labels are trimmed, so two can read the same; the order is the vote's. */}
@@ -80,12 +68,9 @@ const Tally = ({ vote, asOf }) => {
 /*
  * WHERE THE PAGE SENDS A READER NEXT
  *
- * One block, after the sources: the page was researched from Alphaday's DAO and
- * forum feeds, so the offer is those feeds. In the order the site ranks its
- * readers: a working call first, because for someone wiring governance into an
- * agent or a bot a request that answers beats any sentence about it; then one
- * action in orange, the API; then the recipe, MCP and the forum feed as plain
- * links. The call is the real, keyless endpoint, unfiltered: the feed's source
+ * The page was researched from Alphaday's DAO and forum feeds, so the offer is
+ * those feeds, in the shared block (`components/BuildOnIt.jsx`). The call is
+ * the real, keyless endpoint, unfiltered: the feed's source
  * slugs are not the DAO names a post carries, and a filter guessed from one
  * would return nothing for some DAOs. It comes from `API_COMMANDS`, like every
  * command the site prints, so a change to the API is made in one place.
@@ -109,53 +94,16 @@ const NEXT = [
   },
 ];
 
-const BuildOnIt = () => (
-  <div className="mt-14 max-w-160 border-t border-surface-border pt-10">
-    <h2 className="font-display text-[26px] font-medium tracking-tight text-text">
-      Every DAO proposal, as data
-    </h2>
-    <p className="mt-3 text-[16px] text-text-muted">
-      This page was researched from Alphaday&rsquo;s DAO proposal and governance forum feeds. They
-      are open: free, no signup, no key.
-    </p>
-    <div className="mt-5 rounded-xl border border-surface-border bg-surface p-1.5">
-      <CodeBlock code={API_COMMANDS.dao} language="bash" />
-    </div>
-    <p className="mt-5 text-[17px]">
-      <a
-        href={`${CONFIG.api}/data/dao`}
-        className="font-medium text-primary underline decoration-primary/40 underline-offset-4 transition-colors hover:text-primary-hover"
-      >
-        Start building with the DAO proposals API
-      </a>
-    </p>
-    <ul className="mt-6 flex flex-col gap-4">
-      {NEXT.map((step) => (
-        <li key={step.href}>
-          <a href={step.href} className={`text-[16px] font-medium text-text ${LINK}`}>
-            {step.name}
-          </a>
-          <p className="mt-1 text-[15px] text-text-muted">{step.why}</p>
-        </li>
-      ))}
-    </ul>
-  </div>
-);
-
 const GovernanceProposalPage = ({ article }) => {
   const { post, others } = article;
   const { meta } = post;
   const { vote } = meta;
   // A vote known by one date still says so: an open vote may have a start and no tally yet.
-  const voting = !vote
-    ? null
-    : vote.start && vote.end
-      ? `${day(vote.start)} to ${day(vote.end)}`
-      : vote.start
-        ? `From ${day(vote.start)}`
-        : vote.end
-          ? `Until ${day(vote.end)}`
-          : null;
+  const start = longDate(vote?.start);
+  const end = longDate(vote?.end);
+  const voting =
+    start && end ? `${start} to ${end}` : start ? `From ${start}` : end ? `Until ${end}` : null;
+  const asOf = longDate(meta.asOf);
 
   return (
     <Layout>
@@ -182,7 +130,7 @@ const GovernanceProposalPage = ({ article }) => {
           <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-6">
             {meta.dao && <Fact label="DAO">{meta.dao}</Fact>}
             {meta.stageLabel && (
-              <Fact label={meta.asOf ? `Stage, ${day(meta.asOf)}` : "Stage"}>{meta.stageLabel}</Fact>
+              <Fact label={asOf ? `Stage, ${asOf}` : "Stage"}>{meta.stageLabel}</Fact>
             )}
             {voting && <Fact label="Voting">{voting}</Fact>}
             {meta.treasuryAsk && (
@@ -222,7 +170,13 @@ const GovernanceProposalPage = ({ article }) => {
 
           <PostBlocks blocks={post.blocks} />
           <SourcesRead urls={meta.sourcesRead} />
-          <BuildOnIt />
+          <BuildOnIt
+            title="Every DAO proposal, as data"
+            intro="This page was researched from Alphaday’s DAO proposal and governance forum feeds. They are open: free, no signup, no key."
+            code={API_COMMANDS.dao}
+            action={{ href: `${CONFIG.api}/data/dao`, label: "Start building with the DAO proposals API" }}
+            next={NEXT}
+          />
         </div>
       </Section>
 
@@ -249,7 +203,7 @@ const GovernanceProposalPage = ({ article }) => {
           )}
 
           <p className="mt-8 text-[13px] text-text-muted">
-            {meta.asOf ? `Stage and vote as read on ${day(meta.asOf)}. ` : ""}
+            {asOf ? `Stage and vote as read on ${asOf}. ` : ""}
             Proposals move after a page is written; the forum thread and the vote have the current
             state. Quotes are from the posts linked beside them.
           </p>

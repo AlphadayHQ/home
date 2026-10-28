@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
-import { API_BASE, fetchJsonSoft, fetchWithRetry } from "./apiFetch";
-import { hold, holdByKey } from "./hold";
+import { holdByKey } from "./hold";
+import { fetchPost, holdPostList, warnOncePer } from "./postList";
 import type { RawPost } from "../data/analysis";
 import { isPostSlug } from "../data/analysis";
 import type { Topic, TrendingPost, TrendingRow } from "../data/trending";
@@ -22,8 +22,8 @@ import {
  *
  * WHAT IS READ
  *
- * One filtered list, `?type=trending-narrative`, held in memory as the exploit
- * list is (`server/exploits.ts`). The hub and the sitemap are built from it
+ * One filtered list, `?type=trending-narrative`, held in memory by
+ * `server/postList.ts` as every post type's is. The hub and the sitemap are built from it
  * alone. A topic page also opens the posts it shows, its page and the updates
  * on the page of updates asked for, each held by slug and version (`modified`),
  * so a warm page makes no request and an edited post is read again.
@@ -37,13 +37,6 @@ import {
  * good copy instead: the rule `routes/research.governance.index.tsx` explains. Only a
  * 404 is an answer: that post is gone, so it is left out.
  */
-
-const PAGE_SIZE = 100;
-/** 2,000 posts. Reaching it reports a short read rather than truncating quietly. */
-const MAX_PAGES = 20;
-
-/** The post list: short, so a publish shows within a minute. */
-export const LIST_FRESH_MS = 60_000;
 
 /**
  * An opened post, keyed by its version: an edit changes `modified`, and so the
@@ -82,59 +75,13 @@ async function mapLimit<T, R>(
   return results;
 }
 
-interface RawListPage {
-  results?: unknown[];
-  links?: { next?: string | null };
-}
+const list = holdPostList(TRENDING_TYPE, toTrendingRow);
 
-interface TrendingList {
-  rows: TrendingRow[];
-  /** Every page answered; when false nothing is known. */
-  ok: boolean;
-}
-
-async function loadList(): Promise<TrendingList> {
-  const raw: RawPost[] = [];
-  for (let page = 1; page <= MAX_PAGES; page += 1) {
-    const body = await fetchJsonSoft<RawListPage>(
-      `${API_BASE}/posts/?type=${TRENDING_TYPE}&limit=${PAGE_SIZE}&page=${page}`
-    );
-    if (body === null) {
-      console.error(`trending: the post list did not answer on page ${page}`);
-      return { rows: [], ok: false };
-    }
-    const rows = Array.isArray(body.results) ? body.results : [];
-    // A row that is not an object is skipped, not read: `null` would throw.
-    raw.push(...rows.filter((row): row is RawPost => !!row && typeof row === "object"));
-    if (rows.length < PAGE_SIZE || !body.links?.next) break;
-    if (page === MAX_PAGES) {
-      console.error(`trending: more than ${MAX_PAGES * PAGE_SIZE} posts; refusing a truncated list`);
-      return { rows: [], ok: false };
-    }
-  }
-  const rows = raw.map(toTrendingRow).filter((row): row is TrendingRow => row !== null);
-  return { rows, ok: true };
-}
-
-const list = hold(loadList, LIST_FRESH_MS, {
-  keep: (value) => value.ok,
-  onBackgroundError: (error) => console.error("trending: refreshing the post list failed", error),
-});
-
-/**
- * Problems already logged, by `slug@modified`, so each version of a post is
- * reported once rather than on every render. Cleared at a cap, which only means
- * a long-lived problem is reported again.
- */
-const warned = new Set<string>();
-const WARNED_CAP = 1000;
+/** Problems already logged, once per version of a post. */
+const warned = warnOncePer();
 
 function warnOnce(row: TrendingRow, message: string): void {
-  const key = `${row.slug}@${row.modified}`;
-  if (warned.has(key)) return;
-  if (warned.size >= WARNED_CAP) warned.clear();
-  warned.add(key);
-  console.warn(message);
+  warned.warn(`${row.slug}@${row.modified}`, message);
 }
 
 /** Every topic, the most recently changed first, or an error: see the header. */
@@ -156,14 +103,7 @@ export async function readTopics(): Promise<Topic[]> {
  * A failure to open throws, and the error is answered for `FAILED_OPEN_MS`.
  */
 const opened = holdByKey(
-  async (key: string): Promise<RawPost | null> => {
-    const slug = key.slice(0, key.indexOf("@"));
-    const res = await fetchWithRetry(`${API_BASE}/posts/${encodeURIComponent(slug)}/`);
-    if (!res) return null;
-    const raw: unknown = await res.json();
-    if (!raw || typeof raw !== "object") throw new Error(`trending: post ${slug} is not a post`);
-    return raw as RawPost;
-  },
+  (key: string): Promise<RawPost | null> => fetchPost(key.slice(0, key.indexOf("@"))),
   OPENED_FRESH_MS,
   { failMs: FAILED_OPEN_MS }
 );
@@ -294,11 +234,10 @@ export async function buildTrendingArticle(
   let fresh: TrendingPost | null = null;
   if (!topic) {
     // Only a page post has a URL; an update's slug is a 404.
-    const res = await fetchWithRetry(`${API_BASE}/posts/${encodeURIComponent(slug)}/`);
-    const raw: unknown = res ? await res.json() : null;
-    const row = raw && typeof raw === "object" ? toTrendingRow(raw as RawPost) : null;
+    const raw = await fetchPost(slug);
+    const row = raw ? toTrendingRow(raw) : null;
     if (!row || row.kind !== "page") return null;
-    fresh = checkOpened(row, raw as RawPost);
+    fresh = checkOpened(row, raw);
     if (!fresh) return null;
     topic = { page: row, updates: [], latest: row.modified };
   }
