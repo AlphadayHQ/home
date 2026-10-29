@@ -7,7 +7,7 @@ import linkedinLogo from "../../images/socials/linkedin.svg";
 import CONFIG from "../../config";
 
 const ColTitle = ({ children }) => (
-  <p className="text-xs font-bold uppercase tracking-[0.12em] text-text-muted mb-3.5">
+  <p className="text-xs font-medium uppercase tracking-[0.12em] text-text-muted mb-3.5">
     {children}
   </p>
 );
@@ -32,10 +32,12 @@ function Footer({ isMobile }) {
     blogLinks,
     dashboards,
     discord,
+    events,
     feedBack,
     linkedin,
     pulse,
     recipes,
+    research,
     privacyPolicy,
     terms,
     twitter,
@@ -52,7 +54,7 @@ function Footer({ isMobile }) {
       <div
         className={`mx-auto w-11/12 max-w-7xl pb-9 ${isMobile ? "pt-16" : "pt-16"}`}
       >
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-9">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-9">
           <div className="col-span-2 md:col-span-3 lg:col-span-1">
             <a href="/" aria-label="Alphaday home">
               <img
@@ -83,6 +85,25 @@ function Footer({ isMobile }) {
             </Anchor>
             <Anchor href={recipes} target="_self">
               Recipes
+            </Anchor>
+          </div>
+
+          <div>
+            <ColTitle>Research</ColTitle>
+            <Anchor href={research.exploits} target="_self">
+              Exploit analyses
+            </Anchor>
+            <Anchor href={research.governance} target="_self">
+              DAO governance
+            </Anchor>
+            <Anchor href={research.trending} target="_self">
+              Trending topics
+            </Anchor>
+            <Anchor href={research.podcasts} target="_self">
+              Podcast ideas
+            </Anchor>
+            <Anchor href={events} target="_self">
+              Events calendar
             </Anchor>
           </div>
 
