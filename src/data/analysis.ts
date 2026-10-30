@@ -143,6 +143,20 @@ export function safeHref(url: string): string | null {
   }
 }
 
+/**
+ * An href for a link in a post body: anything `safeHref` allows, or a path on
+ * this site. The agents link one post to another as `/security/exploits/{slug}`,
+ * which `new URL` cannot parse without a base, so those links rendered as plain
+ * text.
+ *
+ * `//host` and `/\host` are refused: browsers read both as another site. So is
+ * any whitespace or control character, which a browser strips before reading
+ * the URL, turning `/\t/host` into `//host`.
+ */
+export function bodyHref(url: string): string | null {
+  return /^\/(?![/\\])[^\s\x00-\x1f]*$/.test(url) ? url : safeHref(url);
+}
+
 const OWN_API_HOST = "api.alphaday.com";
 
 const isOwnApi = (url: string): boolean => {
@@ -204,7 +218,7 @@ function toSpans(line: string): Span[] {
     }
 
     if (next === "link") {
-      const href = safeHref(match[2]);
+      const href = bodyHref(match[2]);
       // A rejected scheme keeps the words and drops the link, rather than
       // silently deleting a sentence.
       spans.push(
