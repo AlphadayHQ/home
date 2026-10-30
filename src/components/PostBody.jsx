@@ -29,8 +29,15 @@ export const Fact = ({ label, children }) => (
 const Spans = ({ spans }) =>
   spans.map((span, index) => {
     if (span.kind === "link") {
+      // A path on this site, from a post linking another, stays in the tab.
+      const external = !span.href.startsWith("/");
       return (
-        <a key={index} href={span.href} target="_blank" rel="noreferrer" className={LINK}>
+        <a
+          key={index}
+          href={span.href}
+          {...(external && { target: "_blank", rel: "noreferrer" })}
+          className={LINK}
+        >
           {span.text}
         </a>
       );

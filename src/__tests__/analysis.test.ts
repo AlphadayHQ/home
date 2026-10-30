@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  bodyHref,
   isDecline,
   isPublished,
   readingMinutes,
@@ -68,6 +69,26 @@ describe("what the renderer refuses", () => {
     expect(safeHref("javascript:alert(1)")).toBeNull();
     expect(safeHref("data:text/html,<script>")).toBeNull();
     expect(safeHref("/relative")).toBeNull();
+  });
+
+  it("links a path on this site from a body, and no other site through it", () => {
+    expect(bodyHref("/security/exploits/yam-finance-exploit-analysis")).toBe(
+      "/security/exploits/yam-finance-exploit-analysis"
+    );
+    expect(bodyHref("https://protos.com/x")).toBe("https://protos.com/x");
+    expect(bodyHref("//evil.example/x")).toBeNull();
+    expect(bodyHref("/\\evil.example/x")).toBeNull();
+    expect(bodyHref("/\t/evil.example/x")).toBeNull();
+    expect(bodyHref("javascript:alert(1)")).toBeNull();
+
+    const [block] = toBlocks(
+      "Compare [Yam](/security/exploits/yam-finance-exploit-analysis)."
+    );
+    expect(block.spans).toContainEqual({
+      kind: "link",
+      text: "Yam",
+      href: "/security/exploits/yam-finance-exploit-analysis",
+    });
   });
 
   it("keeps the words when it drops a dangerous link", () => {
