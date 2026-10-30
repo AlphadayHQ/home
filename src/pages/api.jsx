@@ -615,7 +615,7 @@ const ApiPage = () => {
 
           <div className="flex flex-wrap gap-x-12 gap-y-8 text-sm">
             <div className="flex flex-col gap-3">
-              <span className="font-bold text-text uppercase tracking-widest text-[11px] mb-1">
+              <span className="font-medium text-text uppercase tracking-widest text-[11px] mb-1">
                 Product
               </span>
               <a
@@ -638,7 +638,27 @@ const ApiPage = () => {
               </a>
             </div>
             <div className="flex flex-col gap-3">
-              <span className="font-bold text-text uppercase tracking-widest text-[11px] mb-1">
+              <span className="font-medium text-text uppercase tracking-widest text-[11px] mb-1">
+                Research
+              </span>
+              {[
+                [CONFIG.research.exploits, "Exploit analyses"],
+                [CONFIG.research.governance, "DAO governance"],
+                [CONFIG.research.trending, "Trending topics"],
+                [CONFIG.research.podcasts, "Podcast ideas"],
+                [CONFIG.events, "Events calendar"],
+              ].map(([href, label]) => (
+                <a
+                  key={href}
+                  href={href}
+                  className="text-text-muted hover:text-primary transition-colors"
+                >
+                  {label}
+                </a>
+              ))}
+            </div>
+            <div className="flex flex-col gap-3">
+              <span className="font-medium text-text uppercase tracking-widest text-[11px] mb-1">
                 Resources
               </span>
               <a
@@ -661,7 +681,7 @@ const ApiPage = () => {
               </a>
             </div>
             <div className="flex flex-col gap-3">
-              <span className="font-bold text-text uppercase tracking-widest text-[11px] mb-1">
+              <span className="font-medium text-text uppercase tracking-widest text-[11px] mb-1">
                 Company
               </span>
               <a

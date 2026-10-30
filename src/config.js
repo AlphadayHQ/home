@@ -19,6 +19,18 @@ const CONFIG = {
   apiDocs: "/api/docs",
   mcp: "/mcp",
   cookbook: "/cookbook",
+  /*
+   * The research pages, linked from the footer so every page reaches them; until
+   * then only the sitemap did. Each must match the constant its route reads
+   * (`data/trending.ts` and the rest), which `footer-links.test.ts` checks.
+   */
+  research: {
+    exploits: "/security/exploits",
+    governance: "/research/governance",
+    trending: "/research/trending",
+    podcasts: "/research/podcasts",
+  },
+  events: "/events",
   appStore: {
     apple: "https://apps.apple.com/us/app/alphaday/id1581443943",
     google: "https://play.google.com/store/apps/details?id=com.alphaday",

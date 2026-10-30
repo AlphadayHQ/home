@@ -306,9 +306,8 @@ const EventsPage = ({ calendar, currentMonth, isHub }) => {
         `pt-6` here rather than a margin on the list, and that is a bug fix
         rather than a preference. A margin on the first child collapsed out of
         this section — the parent has no padding to contain it — leaving a 24px
-        band that painted no background. `Layout` positions page content
-        absolutely over the footer, so what showed through the band was the
-        footer's own border and copyright rule, read as a stray divider.
+        band that painted no background, so whatever lay beneath showed through
+        it as a stray divider.
       */}
       <Section className="bg-background">
         <div className="mx-auto w-11/12 max-w-5xl pt-6 pb-16">
