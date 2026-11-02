@@ -16,7 +16,7 @@ import { canonicalFor } from "../seo/head";
 
 /**
  * The research bylines. What has to hold: every bylined type has exactly one
- * name, with an avatar and a bio page that carries its bio and its rules.
+ * name, with an avatar and a bio page.
  */
 
 vi.mock("../server/apiFetch", () => ({
@@ -65,12 +65,12 @@ describe("the byline", () => {
 });
 
 describe("a bio page", () => {
-  it("shows the bio and every rule", () => {
+  it("shows the whole bio", () => {
     for (const author of AUTHORS) {
       const html = renderToStaticMarkup(
         createElement(AuthorPage, { page: { slug: author.slug, latest: [], total: 0 } })
       );
-      for (const line of [...author.bio, ...author.rules]) {
+      for (const line of author.bio) {
         expect(html, author.slug).toContain(line.replace(/"/g, "&quot;").replace(/'/g, "&#x27;"));
       }
     }

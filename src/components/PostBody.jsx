@@ -17,12 +17,12 @@ export const LINK =
  * "Chain: —" states nothing. Figures are tabular so counts and shares side by
  * side line up, in the text face: monospace is for code.
  */
-export const Fact = ({ label, children }) => (
-  <div>
+export const Fact = ({ label, className = "", children }) => (
+  <div className={className}>
     <dt className="text-[12px] font-medium uppercase tracking-widest text-text-muted">
       {label}
     </dt>
-    <dd className="mt-1 text-[17px] font-medium tabular-nums text-text">{children}</dd>
+    <dd className="mt-2 text-[17px] font-medium leading-snug tabular-nums text-text">{children}</dd>
   </div>
 );
 

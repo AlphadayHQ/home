@@ -7,7 +7,7 @@ import BuildOnIt from "../components/BuildOnIt";
 import { GOVERNANCE_TYPE, proposalPath } from "../data/governanceProposals";
 import { readingMinutes } from "../data/analysis";
 import { Fact, LINK, PostBlocks, SourcesRead } from "../components/PostBody";
-import { longDate } from "../components/dates";
+import { dateRange, longDate } from "../components/dates";
 import Byline from "../components/Byline";
 
 /**
@@ -40,7 +40,7 @@ const Tally = ({ vote, asOf }) => {
   const total = vote.choices.reduce((sum, choice) => sum + choice.power, 0);
   const read = longDate(asOf);
   return (
-    <div className="mt-8 max-w-160">
+    <div className="mt-12 max-w-160">
       <h2 className="text-[12px] font-medium uppercase tracking-[0.1em] text-text-muted">
         The vote{read && `, as read on ${read}`}
       </h2>
@@ -103,16 +103,16 @@ const GovernanceProposalPage = ({ article }) => {
   const start = longDate(vote?.start);
   const end = longDate(vote?.end);
   const voting =
-    start && end ? `${start} to ${end}` : start ? `From ${start}` : end ? `Until ${end}` : null;
+    dateRange(vote?.start, vote?.end) ?? (start ? `From ${start}` : end ? `Until ${end}` : null);
   const asOf = longDate(meta.asOf);
 
   return (
     <Layout>
       <Section className="bg-background">
-        <div className="mx-auto w-11/12 max-w-5xl pt-24 pb-4">
+        <div className="mx-auto w-11/12 max-w-5xl pt-24 pb-14">
           <a
             href="/research/governance"
-            className="mb-5 inline-flex items-center gap-2 text-[13px] font-medium uppercase tracking-[0.14em] text-text-muted transition-colors hover:text-text"
+            className="mb-7 inline-flex items-center gap-2 text-[13px] font-medium uppercase tracking-[0.14em] text-text-muted transition-colors hover:text-text"
           >
             <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             DAO governance
@@ -123,37 +123,38 @@ const GovernanceProposalPage = ({ article }) => {
           </h1>
 
           {post.excerpt && (
-            <p className="mt-5 max-w-160 text-[19px] leading-relaxed text-text-muted">
+            <p className="mt-6 max-w-160 text-[19px] leading-relaxed text-text-muted">
               {post.excerpt}
             </p>
           )}
 
-          <Byline type={GOVERNANCE_TYPE} />
+          <Byline type={GOVERNANCE_TYPE} date={post.publishedAt} />
 
-          <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-6">
+          <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-8 border-t border-surface-border pt-8 lg:grid-cols-4">
             {meta.dao && <Fact label="DAO">{meta.dao}</Fact>}
             {meta.stageLabel && (
               <Fact label={asOf ? `Stage, ${asOf}` : "Stage"}>{meta.stageLabel}</Fact>
             )}
             {voting && <Fact label="Voting">{voting}</Fact>}
             {meta.treasuryAsk && (
-              <Fact label="Moves">
+              <Fact label="Moves" className="col-span-2">
                 <span className="block max-w-120 text-[15px] font-normal">{meta.treasuryAsk}</span>
               </Fact>
             )}
             {(meta.forumUrl || meta.snapshotUrl) && (
               <Fact label="Read it">
-                {meta.forumUrl && (
-                  <a href={meta.forumUrl} target="_blank" rel="noreferrer" className={LINK}>
-                    Forum thread
-                  </a>
-                )}
-                {meta.forumUrl && meta.snapshotUrl && <span className="text-text-muted"> · </span>}
-                {meta.snapshotUrl && (
-                  <a href={meta.snapshotUrl} target="_blank" rel="noreferrer" className={LINK}>
-                    Snapshot vote
-                  </a>
-                )}
+                <span className="flex flex-col items-start gap-1.5">
+                  {meta.forumUrl && (
+                    <a href={meta.forumUrl} target="_blank" rel="noreferrer" className={LINK}>
+                      Forum thread
+                    </a>
+                  )}
+                  {meta.snapshotUrl && (
+                    <a href={meta.snapshotUrl} target="_blank" rel="noreferrer" className={LINK}>
+                      Snapshot vote
+                    </a>
+                  )}
+                </span>
               </Fact>
             )}
           </dl>
@@ -163,7 +164,7 @@ const GovernanceProposalPage = ({ article }) => {
       </Section>
 
       <Section className="bg-background">
-        <div className="mx-auto w-11/12 max-w-5xl pt-6 pb-14">
+        <div className="mx-auto w-11/12 max-w-5xl border-t border-surface-border pt-12 pb-14">
           <h2 className="text-[12px] font-medium uppercase tracking-[0.1em] text-text-muted">
             The proposal
             <span className="ml-3 font-normal normal-case tracking-normal text-text-muted/70">

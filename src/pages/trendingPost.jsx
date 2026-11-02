@@ -58,10 +58,10 @@ const TrendingArticlePage = ({ article }) => {
   return (
     <Layout>
       <Section className="bg-background">
-        <div className="mx-auto w-11/12 max-w-5xl pt-24 pb-4">
+        <div className="mx-auto w-11/12 max-w-5xl pt-24 pb-12">
           <a
             href={TRENDING_HUB}
-            className="mb-5 inline-flex items-center gap-2 text-[13px] font-medium uppercase tracking-[0.14em] text-text-muted transition-colors hover:text-text"
+            className="mb-7 inline-flex items-center gap-2 text-[13px] font-medium uppercase tracking-[0.14em] text-text-muted transition-colors hover:text-text"
           >
             <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             Trending in crypto
@@ -74,16 +74,12 @@ const TrendingArticlePage = ({ article }) => {
           </h1>
 
           {(lead.excerpt || post.excerpt) && (
-            <p className="mt-5 max-w-160 text-[19px] leading-relaxed text-text-muted">
+            <p className="mt-6 max-w-160 text-[19px] leading-relaxed text-text-muted">
               {lead.excerpt || post.excerpt}
             </p>
           )}
 
-          <Byline type={TRENDING_TYPE} />
-
-          <p className="mt-5 text-[14px] tabular-nums text-text-muted">
-            {meta.filter(Boolean).join(" · ")}
-          </p>
+          <Byline type={TRENDING_TYPE} note={meta.filter(Boolean).join(" · ")} />
         </div>
       </Section>
 
