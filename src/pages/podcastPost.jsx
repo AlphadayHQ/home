@@ -4,10 +4,11 @@ import { Layout, Section } from "../shared";
 import CONFIG from "../config";
 import { API_COMMANDS, podcastEpisodeCommand } from "../data/apiSurface";
 import BuildOnIt from "../components/BuildOnIt";
-import { PODCAST_HUB, podcastPostPath } from "../data/podcastPosts";
+import { PODCAST_HUB, PODCAST_TYPE, podcastPostPath } from "../data/podcastPosts";
 import { readingMinutes } from "../data/analysis";
 import { Fact, LINK, PostBlocks, SourcesRead } from "../components/PostBody";
 import { longDate } from "../components/dates";
+import Byline from "../components/Byline";
 
 /**
  * One idea from crypto podcasts: the episodes it was heard on, the write-up,
@@ -73,6 +74,8 @@ const PodcastPostPage = ({ article }) => {
               {post.excerpt}
             </p>
           )}
+
+          <Byline type={PODCAST_TYPE} />
 
           {meta.episodes.length > 0 && (
             <dl className="mt-8">

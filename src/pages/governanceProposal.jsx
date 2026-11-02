@@ -4,10 +4,11 @@ import { Layout, Section } from "../shared";
 import CONFIG from "../config";
 import { API_COMMANDS } from "../data/apiSurface";
 import BuildOnIt from "../components/BuildOnIt";
-import { proposalPath } from "../data/governanceProposals";
+import { GOVERNANCE_TYPE, proposalPath } from "../data/governanceProposals";
 import { readingMinutes } from "../data/analysis";
 import { Fact, LINK, PostBlocks, SourcesRead } from "../components/PostBody";
 import { longDate } from "../components/dates";
+import Byline from "../components/Byline";
 
 /**
  * One governance proposal, explained: a facts panel from the post's `metadata`,
@@ -126,6 +127,8 @@ const GovernanceProposalPage = ({ article }) => {
               {post.excerpt}
             </p>
           )}
+
+          <Byline type={GOVERNANCE_TYPE} />
 
           <dl className="mt-8 flex flex-wrap gap-x-12 gap-y-6">
             {meta.dao && <Fact label="DAO">{meta.dao}</Fact>}

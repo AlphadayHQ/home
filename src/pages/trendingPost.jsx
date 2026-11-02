@@ -2,11 +2,12 @@ import React from "react";
 import { ArrowLeft } from "lucide-react";
 import { Layout, Section } from "../shared";
 import CONFIG from "../config";
-import { TRENDING_HUB, trendingPostPath } from "../data/trending";
+import { TRENDING_HUB, TRENDING_TYPE, trendingPostPath } from "../data/trending";
 import { readingMinutes } from "../data/analysis";
 import { LINK, PostBlocks, SourcesRead } from "../components/PostBody";
 import Pager, { pagedHref } from "../components/Pager";
 import { longDate, shortDate } from "../components/dates";
+import Byline from "../components/Byline";
 
 /**
  * One trending topic (content doc B3).
@@ -77,6 +78,8 @@ const TrendingArticlePage = ({ article }) => {
               {lead.excerpt || post.excerpt}
             </p>
           )}
+
+          <Byline type={TRENDING_TYPE} />
 
           <p className="mt-5 text-[14px] tabular-nums text-text-muted">
             {meta.filter(Boolean).join(" · ")}

@@ -6,6 +6,7 @@ import { routeTree } from "../routeTree.gen";
 import CONFIG from "../config";
 import Footer from "../components/footer/Footer";
 import ApiPage from "../pages/api";
+import { EXPLOIT_HUB } from "../data/exploitPosts";
 import { GOVERNANCE_SECTION } from "../data/governanceProposals";
 import { PODCAST_HUB } from "../data/podcastPosts";
 import { TRENDING_HUB } from "../data/trending";
@@ -22,6 +23,7 @@ const LINKED = { ...CONFIG.research, events: CONFIG.events };
 
 describe("the footer's research links", () => {
   it("are the paths the routes read", () => {
+    expect(CONFIG.research.exploits).toBe(EXPLOIT_HUB);
     expect(CONFIG.research.governance).toBe(GOVERNANCE_SECTION);
     expect(CONFIG.research.trending).toBe(TRENDING_HUB);
     expect(CONFIG.research.podcasts).toBe(PODCAST_HUB);
