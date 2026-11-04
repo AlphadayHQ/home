@@ -93,3 +93,36 @@ describe("warning once per version", () => {
     warn.mockRestore();
   });
 });
+
+describe("the others a post's page links to", () => {
+  const rows = Array.from({ length: 22 }, (_, n) => `t${n}`);
+
+  it("links every page from as many pages as it links, the ends included", async () => {
+    const { neighbours } = await import("../server/postList");
+    // Eight is the shortest list of six others that wraps.
+    for (const list of [rows.slice(0, 8), rows]) {
+      const shownBy = new Map(list.map((row) => [row, 0]));
+      list.forEach((row, at) => {
+        const others = neighbours(list, at, 6);
+        expect(others).toHaveLength(6);
+        expect(others).not.toContain(row);
+        others.forEach((other) => shownBy.set(other, (shownBy.get(other) ?? 0) + 1));
+      });
+      expect(new Set(shownBy.values())).toEqual(new Set([6]));
+    }
+  });
+
+  it("takes half from each side, wrapping at the ends, in list order", async () => {
+    const { neighbours } = await import("../server/postList");
+    expect(neighbours(rows, 10, 6)).toEqual(["t7", "t8", "t9", "t11", "t12", "t13"]);
+    expect(neighbours(rows, 21, 6)).toEqual(["t0", "t1", "t2", "t18", "t19", "t20"]);
+    expect(neighbours(rows, 0, 6)).toEqual(["t1", "t2", "t3", "t19", "t20", "t21"]);
+    expect(neighbours(rows.slice(0, 8), 0, 6)).toEqual(["t1", "t2", "t3", "t5", "t6", "t7"]);
+  });
+
+  it("links every other row from a short list, and the first from a row not in it", async () => {
+    const { neighbours } = await import("../server/postList");
+    expect(neighbours(["a", "b", "c"], 1, 6)).toEqual(["a", "c"]);
+    expect(neighbours(rows, -1, 6)).toEqual(["t0", "t1", "t2", "t3", "t4", "t5"]);
+  });
+});

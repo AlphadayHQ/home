@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { holdByKey } from "./hold";
-import { fetchPost, holdPostList, warnOncePer } from "./postList";
+import { fetchPost, holdPostList, neighbours, warnOncePer } from "./postList";
 import type { RawPost } from "../data/analysis";
 import { isPostSlug } from "../data/analysis";
 import type { Topic, TrendingPost, TrendingRow } from "../data/trending";
@@ -212,7 +212,7 @@ export interface TrendingArticle {
   lead: { title: string; excerpt: string };
   page: number;
   pages: number;
-  /** Other topics, the most recently changed first, for navigation. */
+  /** Topics published around this one, the most recently changed first, for navigation. */
   others: HubRow[];
   asOf: string;
 }
@@ -262,7 +262,19 @@ export async function buildTrendingArticle(
   );
   // Later pages do not show the newest update, so they lead with the page itself.
   const lead = page === 1 ? (shown[0] ?? topic.page) : topic.page;
-  const others = topics.filter((other) => other.page.slug !== slug).slice(0, OTHERS).map(hubRow);
+  // Chosen around this one in the order the topics' pages were published, which
+  // does not move, so every topic is linked from as many pages and a page's links
+  // do not change each time another topic is updated. Shown newest change first.
+  const byPublished = [...topics].sort(
+    (a, b) => b.page.publishedAt.localeCompare(a.page.publishedAt) || a.page.slug.localeCompare(b.page.slug)
+  );
+  const others = neighbours(
+    byPublished,
+    byPublished.findIndex((other) => other.page.slug === slug),
+    OTHERS
+  )
+    .sort((a, b) => b.latest.localeCompare(a.latest))
+    .map(hubRow);
 
   return {
     post: { ...topic.page, blocks: pagePost?.blocks ?? null },

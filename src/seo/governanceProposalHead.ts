@@ -1,5 +1,6 @@
 import type { ProposalArticle } from "../server/governanceProposals";
-import { proposalPath } from "../data/governanceProposals";
+import { GOVERNANCE_TYPE, proposalPath } from "../data/governanceProposals";
+import { authorForType, authorJsonLd } from "../data/authors";
 import { DESCRIPTION_ROOM, canonicalFor, clip, seoHead } from "./head";
 
 /**
@@ -41,7 +42,7 @@ export function proposalArticleHead({
       description,
       ...(post.publishedAt ? { datePublished: post.publishedAt } : {}),
       ...(post.modified ? { dateModified: post.modified } : {}),
-      author: { "@type": "Organization", name: "Alphaday" },
+      author: authorJsonLd(authorForType(GOVERNANCE_TYPE)!, canonicalFor),
       publisher: { "@type": "Organization", name: "Alphaday" },
       ...(meta.forumUrl ? { isBasedOn: meta.forumUrl } : {}),
       ...(meta.sourcesRead.length > 0

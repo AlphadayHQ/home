@@ -4,10 +4,11 @@ import { Layout, Section } from "../shared";
 import CONFIG from "../config";
 import { API_COMMANDS, podcastEpisodeCommand } from "../data/apiSurface";
 import BuildOnIt from "../components/BuildOnIt";
-import { PODCAST_HUB, podcastPostPath } from "../data/podcastPosts";
+import { PODCAST_HUB, PODCAST_TYPE, podcastPostPath } from "../data/podcastPosts";
 import { readingMinutes } from "../data/analysis";
 import { Fact, LINK, PostBlocks, SourcesRead } from "../components/PostBody";
 import { longDate } from "../components/dates";
+import Byline from "../components/Byline";
 
 /**
  * One idea from crypto podcasts: the episodes it was heard on, the write-up,
@@ -55,10 +56,10 @@ const PodcastPostPage = ({ article }) => {
   return (
     <Layout>
       <Section className="bg-background">
-        <div className="mx-auto w-11/12 max-w-5xl pt-24 pb-4">
+        <div className="mx-auto w-11/12 max-w-5xl pt-24 pb-14">
           <a
             href={PODCAST_HUB}
-            className="mb-5 inline-flex items-center gap-2 text-[13px] font-medium uppercase tracking-[0.14em] text-text-muted transition-colors hover:text-text"
+            className="mb-7 inline-flex items-center gap-2 text-[13px] font-medium uppercase tracking-[0.14em] text-text-muted transition-colors hover:text-text"
           >
             <ArrowLeft className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             Podcast ideas
@@ -69,13 +70,15 @@ const PodcastPostPage = ({ article }) => {
           </h1>
 
           {post.excerpt && (
-            <p className="mt-5 max-w-160 text-[19px] leading-relaxed text-text-muted">
+            <p className="mt-6 max-w-160 text-[19px] leading-relaxed text-text-muted">
               {post.excerpt}
             </p>
           )}
 
+          <Byline type={PODCAST_TYPE} date={post.publishedAt} />
+
           {meta.episodes.length > 0 && (
-            <dl className="mt-8">
+            <dl className="mt-10 border-t border-surface-border pt-8">
               <Fact label={meta.episodes.length === 1 ? "Episode" : "Episodes"}>
                 <ul className="flex flex-col gap-1.5">
                   {/* By position: two episodes of one show can share a title. */}
@@ -108,7 +111,7 @@ const PodcastPostPage = ({ article }) => {
       </Section>
 
       <Section className="bg-background">
-        <div className="mx-auto w-11/12 max-w-5xl pt-6 pb-14">
+        <div className="mx-auto w-11/12 max-w-5xl border-t border-surface-border pt-12 pb-14">
           <h2 className="text-[12px] font-medium uppercase tracking-[0.1em] text-text-muted">
             The idea
             <span className="ml-3 font-normal normal-case tracking-normal text-text-muted/70">

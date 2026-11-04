@@ -22,6 +22,7 @@ import { digestPaths } from "../data/digestEntities.js";
 import { capabilityPaths } from "../data/capabilityPages.js";
 import { recipePaths } from "../data/cookbook.js";
 import { mcpClientPaths } from "../data/mcpClients.js";
+import { authorPaths } from "../data/authors.ts";
 
 
 /** §4.1's three layers. */
@@ -167,6 +168,12 @@ const STATIC_STATES: Record<string, IndexState> = {
   ...promote(capabilityPaths()),
   ...promote(recipePaths()),
   ...promote(mcpClientPaths()),
+
+  /*
+   * The bio pages for the research bylines, one per beat (`data/authors.ts`).
+   * Promoted because every byline links to one.
+   */
+  ...promote(authorPaths()),
 };
 
 /**

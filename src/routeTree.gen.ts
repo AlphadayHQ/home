@@ -18,6 +18,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SlugThisWeekRouteImport } from './routes/$slug_.this-week'
 import { Route as ApiIndexRouteImport } from './routes/api.index'
 import { Route as ApiDocsRouteImport } from './routes/api.docs'
+import { Route as AuthorsSlugRouteImport } from './routes/authors.$slug'
 import { Route as BSplatRouteImport } from './routes/b.$'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
 import { Route as CookbookIndexRouteImport } from './routes/cookbook.index'
@@ -83,6 +84,11 @@ const ApiIndexRoute = ApiIndexRouteImport.update({
 const ApiDocsRoute = ApiDocsRouteImport.update({
   id: '/api/docs',
   path: '/api/docs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthorsSlugRoute = AuthorsSlugRouteImport.update({
+  id: '/authors/$slug',
+  path: '/authors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BSplatRoute = BSplatRouteImport.update({
@@ -200,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/$slug/this-week': typeof SlugThisWeekRoute
   '/api/docs': typeof ApiDocsRoute
+  '/authors/$slug': typeof AuthorsSlugRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
   '/events/$month': typeof EventsMonthRoute
@@ -232,6 +239,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/$slug/this-week': typeof SlugThisWeekRoute
   '/api/docs': typeof ApiDocsRoute
+  '/authors/$slug': typeof AuthorsSlugRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
   '/events/$month': typeof EventsMonthRoute
@@ -265,6 +273,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/$slug_/this-week': typeof SlugThisWeekRoute
   '/api/docs': typeof ApiDocsRoute
+  '/authors/$slug': typeof AuthorsSlugRoute
   '/b/$': typeof BSplatRoute
   '/cookbook/$recipe': typeof CookbookRecipeRoute
   '/events/$month': typeof EventsMonthRoute
@@ -299,6 +308,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/$slug/this-week'
     | '/api/docs'
+    | '/authors/$slug'
     | '/b/$'
     | '/cookbook/$recipe'
     | '/events/$month'
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/$slug/this-week'
     | '/api/docs'
+    | '/authors/$slug'
     | '/b/$'
     | '/cookbook/$recipe'
     | '/events/$month'
@@ -363,6 +374,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/$slug_/this-week'
     | '/api/docs'
+    | '/authors/$slug'
     | '/b/$'
     | '/cookbook/$recipe'
     | '/events/$month'
@@ -396,6 +408,7 @@ export interface RootRouteChildren {
   PrivacyRoute: typeof PrivacyRoute
   SlugThisWeekRoute: typeof SlugThisWeekRoute
   ApiDocsRoute: typeof ApiDocsRoute
+  AuthorsSlugRoute: typeof AuthorsSlugRoute
   BSplatRoute: typeof BSplatRoute
   CookbookRecipeRoute: typeof CookbookRecipeRoute
   EventsMonthRoute: typeof EventsMonthRoute
@@ -483,6 +496,13 @@ declare module '@tanstack/react-router' {
       path: '/api/docs'
       fullPath: '/api/docs'
       preLoaderRoute: typeof ApiDocsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/authors/$slug': {
+      id: '/authors/$slug'
+      path: '/authors/$slug'
+      fullPath: '/authors/$slug'
+      preLoaderRoute: typeof AuthorsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/b/$': {
@@ -644,6 +664,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacyRoute: PrivacyRoute,
   SlugThisWeekRoute: SlugThisWeekRoute,
   ApiDocsRoute: ApiDocsRoute,
+  AuthorsSlugRoute: AuthorsSlugRoute,
   BSplatRoute: BSplatRoute,
   CookbookRecipeRoute: CookbookRecipeRoute,
   EventsMonthRoute: EventsMonthRoute,

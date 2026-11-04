@@ -1,6 +1,6 @@
 import type { RawPost } from "./analysis.ts";
 import { isPublished } from "./analysis.ts";
-import { EXPLOIT_TYPE, exploitPostPath, toExploitRow } from "./exploitPosts.ts";
+import { EXPLOIT_HUB, EXPLOIT_TYPE, exploitPostPath, toExploitRow } from "./exploitPosts.ts";
 import {
   GOVERNANCE_SECTION,
   GOVERNANCE_TYPE,
@@ -76,7 +76,7 @@ const PLACES: ReadonlyMap<unknown, { section: string; path: (post: RawPost) => s
     [
       EXPLOIT_TYPE,
       {
-        section: "/security/exploits",
+        section: EXPLOIT_HUB,
         path: (post: RawPost) => {
           const row = toExploitRow(post);
           return row ? exploitPostPath(row.slug) : null;
