@@ -135,8 +135,17 @@ export const TOOL_DOMAINS = {
    * It is not in `HEADLINE_CAPABILITIES`: with only a handful of posts it has
    * no `/api/data/posts` page to send anyone to, so /mcp shows it as a plain
    * card.
+   *
+   * The persona tools belong here too. Personas are the research bylines the
+   * posts are written under, so they are the author dimension of this dataset
+   * rather than a dataset of their own. Counting them separately gives 23.
    */
-  posts: ["get_posts", "get_posts_detail"],
+  posts: [
+    "get_posts",
+    "get_posts_detail",
+    "get_personas",
+    "get_personas_detail",
+  ],
   /*
    * Judgement call 4 of 4: TVL is three capabilities, not one.
    *
