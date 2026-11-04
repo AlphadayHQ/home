@@ -1,5 +1,6 @@
 import type { TrendingArticle, TrendingHub } from "../server/trending";
-import { TRENDING_HUB, trendingPostPath } from "../data/trending";
+import { TRENDING_HUB, TRENDING_TYPE, trendingPostPath } from "../data/trending";
+import { authorForType, authorJsonLd } from "../data/authors";
 import { canonicalFor, seoHead } from "./head";
 
 /**
@@ -79,6 +80,7 @@ export function trendingArticleHead({
       datePublished: post.publishedAt,
       dateModified: article.latest,
       about: { "@type": "Thing", name: post.topic },
+      author: authorJsonLd(authorForType(TRENDING_TYPE)!, canonicalFor),
       publisher: { "@type": "Organization", name: "Alphaday" },
       isAccessibleForFree: true,
       ...(sources.length > 0

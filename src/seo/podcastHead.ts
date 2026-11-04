@@ -1,5 +1,6 @@
 import type { PodcastArticle, PodcastHub } from "../server/podcasts";
-import { PODCAST_HUB, podcastPostPath } from "../data/podcastPosts";
+import { PODCAST_HUB, PODCAST_TYPE, podcastPostPath } from "../data/podcastPosts";
+import { authorForType, authorJsonLd } from "../data/authors";
 import { DESCRIPTION_ROOM, canonicalFor, clip, seoHead } from "./head";
 
 /**
@@ -81,7 +82,7 @@ export function podcastArticleHead({
       url,
       ...(post.publishedAt ? { datePublished: post.publishedAt } : {}),
       ...(post.modified ? { dateModified: post.modified } : {}),
-      author: { "@type": "Organization", name: "Alphaday" },
+      author: authorJsonLd(authorForType(PODCAST_TYPE)!, canonicalFor),
       publisher: { "@type": "Organization", name: "Alphaday" },
       isAccessibleForFree: true,
       ...(episodes.length > 0 ? { isBasedOn: episodes } : {}),

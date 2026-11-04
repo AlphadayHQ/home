@@ -23,10 +23,21 @@ const SHORT = new Intl.DateTimeFormat("en-GB", {
   timeZone: "UTC",
 });
 
-const format = (formatter, value) => {
+const DAY_MONTH = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "long",
+  timeZone: "UTC",
+});
+
+const toDate = (value) => {
   if (value === null || value === undefined || value === "") return null;
   const date = value instanceof Date ? value : new Date(value);
-  return Number.isNaN(date.getTime()) ? null : formatter.format(date);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const format = (formatter, value) => {
+  const date = toDate(value);
+  return date ? formatter.format(date) : null;
 };
 
 /** "21 October 2026", or null. */
@@ -34,3 +45,18 @@ export const longDate = (value) => format(LONG, value);
 
 /** "21 Oct 2026", or null. */
 export const shortDate = (value) => format(SHORT, value);
+
+/**
+ * Two days as one range, saying the month and year once where they are shared:
+ * "27–30 October 2026", "27 October – 3 November 2026". Null unless both are
+ * dates; one day when they are the same.
+ */
+export const dateRange = (from, to) => {
+  const a = toDate(from);
+  const b = toDate(to);
+  if (!a || !b) return null;
+  if (LONG.format(a) === LONG.format(b)) return LONG.format(a);
+  const sameYear = a.getUTCFullYear() === b.getUTCFullYear();
+  if (sameYear && a.getUTCMonth() === b.getUTCMonth()) return `${a.getUTCDate()}–${LONG.format(b)}`;
+  return `${sameYear ? DAY_MONTH.format(a) : LONG.format(a)} – ${LONG.format(b)}`;
+};
