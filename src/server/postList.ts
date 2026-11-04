@@ -122,6 +122,30 @@ export async function fetchPost(slug: string): Promise<RawPost | null> {
 }
 
 /**
+ * The `n` rows around `rows[at]`, in list order: what a post's page links to as
+ * its others.
+ *
+ * Half come from before it and half from after, wrapping past either end, so
+ * every row is shown by `n` others as well as showing `n`. That holds only while
+ * the order does: sort `rows` on something that does not move, or pages cached
+ * from different reads link unevenly. At the ends the wrap takes rows from the
+ * far end, so there the others are not the row's neighbours.
+ *
+ * A row missing from the list, a post published since it was read, gets the
+ * first `n`.
+ */
+export function neighbours<Row>(rows: Row[], at: number, n: number): Row[] {
+  if (at < 0) return rows.slice(0, n);
+  if (rows.length - 1 <= n) return rows.filter((_, index) => index !== at);
+  const before = Math.floor(n / 2);
+  const offsets = Array.from({ length: n }, (_, k) => (k < before ? k - before : k - before + 1));
+  return offsets
+    .map((offset) => (at + offset + rows.length) % rows.length)
+    .sort((a, b) => a - b)
+    .map((index) => rows[index]);
+}
+
+/**
  * A warning logged once per key, `slug@modified` by convention, so each version
  * of a post with a problem is reported once rather than on every render. Cleared
  * at a cap, which only means a long-lived problem is reported again.

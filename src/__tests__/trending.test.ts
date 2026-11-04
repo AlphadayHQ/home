@@ -337,6 +337,33 @@ describe("reading the pages", () => {
     expect(opens()).toHaveLength(3);
   });
 
+  it("links the topics published around this one, whichever was changed last", async () => {
+    const topic = (n: number, changed = n) =>
+      post({
+        slug: `t${n}-narrative`,
+        title: `T${n} narrative`,
+        published_at: `2026-10-0${n + 1}T09:00:00Z`,
+        modified: `2026-10-${String(changed + 1).padStart(2, "0")}T09:00:00Z`,
+        metadata: meta({ topic: `T${n}` }),
+      });
+    const { buildTrendingArticle, resetTrending } = await import("../server/trending");
+    const othersOf = async (slug: string) =>
+      (await buildTrendingArticle(slug, 1))?.others.map((o) => o.slug);
+
+    posts = Array.from({ length: 9 }, (_, n) => topic(n));
+    // The oldest wraps to the newest; shown newest change first.
+    expect(await othersOf("t0-narrative")).toEqual([
+      "t8-narrative", "t7-narrative", "t6-narrative", "t3-narrative", "t2-narrative", "t1-narrative",
+    ]);
+
+    // Another topic's update moves it up the hub, not into this page's links.
+    posts = Array.from({ length: 9 }, (_, n) => topic(n, n === 5 ? 20 : n === 1 ? 19 : n));
+    resetTrending();
+    expect(await othersOf("t0-narrative")).toEqual([
+      "t1-narrative", "t8-narrative", "t7-narrative", "t6-narrative", "t3-narrative", "t2-narrative",
+    ]);
+  });
+
   it("opens an edited post again", async () => {
     const { buildTrendingArticle } = await import("../server/trending");
     const { POST_LIST_FRESH_MS } = await import("../server/postList");
