@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-10-12T07:18:31.529Z",
+  "fetchedAt": "2026-11-04T18:34:15.514Z",
   "serverInfo": {
     "name": "alphaday",
     "version": "1.30.0"
@@ -2051,7 +2051,7 @@
     },
     {
       "name": "get_posts",
-      "description": "Authored posts\n\nBrowse published posts. Editors with change permission can also browse drafts\nand archived posts. Filter by tag, author, status, date, or title.",
+      "description": "Authored posts\n\nBrowse posts. Use include_draft=true to include your drafts through own\npermissions, or other creators' drafts with view_draft_post. Normal view\npermissions still apply. Filter by tag, author, creator, status, date, or title.",
       "inputSchema": {
         "properties": {
           "page": {
@@ -2101,7 +2101,7 @@
     },
     {
       "name": "get_posts_detail",
-      "description": "Read an authored post\n\nFetch the full Markdown body by slug. Unpublished posts require the\nposts.change_post permission.",
+      "description": "Read an authored post\n\nFetch the full Markdown body by slug. Drafts require include_draft=true\nand own permission for your post or view_draft_post for another creator's\npost. Normal view permissions still apply.",
       "inputSchema": {
         "properties": {
           "slug": {
@@ -2135,6 +2135,95 @@
           "slug"
         ],
         "title": "get_posts_detailArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_personas",
+      "description": "List persona.",
+      "inputSchema": {
+        "properties": {
+          "page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Page number for paginated results (1-indexed).",
+            "title": "Page"
+          },
+          "limit": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Maximum number of results per page (default: 10, max: 500).",
+            "title": "Limit"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "title": "get_personasArguments",
+        "type": "object"
+      }
+    },
+    {
+      "name": "get_personas_detail",
+      "description": "Retrieve a single persona.",
+      "inputSchema": {
+        "properties": {
+          "pk": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "description": "Primary key identifier of the resource. Integer and string values are accepted.",
+            "title": "Pk"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "Additional query parameters for filtering and search.",
+            "title": "Query"
+          }
+        },
+        "required": [
+          "pk"
+        ],
+        "title": "get_personas_detailArguments",
         "type": "object"
       }
     },
