@@ -29,7 +29,6 @@ function Footer({ isMobile }) {
     apiDocs,
     alphadayApp,
     blog,
-    blogLinks,
     dashboards,
     discord,
     events,
@@ -54,7 +53,7 @@ function Footer({ isMobile }) {
       <div
         className={`mx-auto w-11/12 max-w-7xl pb-9 ${isMobile ? "pt-16" : "pt-16"}`}
       >
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-9">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-9">
           <div className="col-span-2 md:col-span-3 lg:col-span-1">
             <a href="/" aria-label="Alphaday home">
               <img
@@ -116,24 +115,6 @@ function Footer({ isMobile }) {
             <Anchor href={privacyPolicy} target="_self">
               Privacy Policy
             </Anchor>
-          </div>
-
-          <div>
-            <ColTitle>Crypto 101</ColTitle>
-            {blogLinks["Crypto 101"].map(({ title, link }) => (
-              <Anchor key={link} href={link}>
-                {title}
-              </Anchor>
-            ))}
-          </div>
-
-          <div>
-            <ColTitle>Learn</ColTitle>
-            {blogLinks.learn.map(({ title, link }) => (
-              <Anchor key={link} href={link}>
-                {title}
-              </Anchor>
-            ))}
           </div>
         </div>
 
