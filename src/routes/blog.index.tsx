@@ -7,8 +7,8 @@ import CONFIG from "../config";
  * nothing at all from the SPA's version, so the redirect never happened for the
  * clients that matter most here.
  *
- * When the blog migrates onto `/blog` (Phase 2), this route becomes the index
- * and the 301s reverse direction — Substack to here.
+ * The migration onto `/blog` was dropped (content doc §7, 6 Nov 2026): the
+ * posts stay on Substack, so this redirect is permanent.
  */
 export const Route = createFileRoute("/blog/")({
   loader: () => {
