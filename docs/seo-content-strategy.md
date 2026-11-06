@@ -91,6 +91,7 @@ The problem it does not handle is **authority**. Three facts compound:
    get indexed, regardless of how good the template is.
 2. **Alphaday's entire content property is off-domain.** Twelve Substack articles, linked out twelve
    times from every page footer. Whatever authority the site has built, it has been exporting.
+   **Footer links removed 6 Nov 2026; the posts stay on Substack — [§7](#7-the-blog-decision).**
 3. **There is no link acquisition plan anywhere in the current documents.** Not one line. The
    companion document's measurement section has no link metric at all.
 
@@ -592,7 +593,8 @@ not just a better-optimised one.
 > with no data behind them. Moving 15 → 5 beats moving nothing → something. More broadly, 93
 > listicle-shaped queries already reach this domain for **2,023 impressions and zero clicks** at an
 > average position of 63, almost all landing on the blog — which is an argument for
-> [§7's](#7-the-blog-decision) migration, not for this page set.
+> [§7's](#7-the-blog-decision) migration, not for this page set. *(§7 has since been reversed: at
+> position 63 those rankings would not survive a 301 to pages that are not the same content.)*
 
 ### What Engine B is really buying
 
@@ -897,6 +899,34 @@ and reinforces the infrastructure positioning the homepage is built on.
 >
 > The recommendation is unchanged — migrate, 301, stop writing them. The data adds only that the
 > migration is not housekeeping.
+
+> **Reversed 6 Nov 2026 — the blog stays on Substack.** The migration rested on four arguments, and
+> none of them survives:
+>
+> - *The footer exporting authority.* Fixed by deleting the footer's twelve links, which needed no
+>   migration — and links to the domain's own subdomain were never lost in any meaningful sense.
+> - *Headline figures inflated by the blog.* A Search Console host filter fixes that.
+> - *Titles and internal links that cannot be changed.* That only matters for pages worth keeping,
+>   and none of these is.
+> - *Bringing the `best crypto X` footing onto the domain.* A 301 to a page that is not the same
+>   content is usually treated as a soft 404, so positions of 53–81 (one outlier at 14.7) would not
+>   have come across. The only links the posts hold are the 199 nofollow scraper links on the
+>   Coinbase transfer post ([§11](#the-2026-09-22-baseline)).
+>
+> The inventory also corrects this section's premise. Substack's sitemap holds **100 posts, not
+> twelve** — twelve is only how many the footer linked. About 60 are consumer explainers from an
+> April–May 2023 burst; the rest are newsletters, product announcements and contest posts, and the
+> newest is from 18 Jul 2024. Porting them was weighed and rejected: they are dated 2023, lean on
+> images and embeds, and include tax guidance not worth republishing under this domain. Rewriting
+> them as 2026 editions was rejected on this section's original grounds.
+>
+> What carries forward:
+>
+> - New writing lands on alphaday.com, as it already does under `/research` and `/security/exploits`.
+> - Substack stays the newsletter, at `blog.alphaday.com`, and `/blog` keeps its 301 there.
+> - When [B5's](#b5--media-discovery--the-best-shaped-opportunity-found-in-the-research) YouTube page
+>   ships, the Substack YouTube and influencer posts are edited to link to it. That is the cheap
+>   version of what the 301s were meant to do.
 
 ---
 
@@ -1392,7 +1422,8 @@ in [seo-strategy.md §8](./seo-strategy.md#8-build-sequence) and gate everything
 - [ ] Narrative Index weekly from week 8 → **built 16 Oct as a page per trending topic, written
       daily by the agent and reviewed; awaiting merge and the first reviewed posts.**
       [B3](#b3--the-narrative-index--researchtrending-per-topic)
-- [ ] Blog migration and 301s; no new explainer content
+- [x] ~~Blog migration and 301s~~; no new explainer content → **migration dropped 6 Nov: the posts
+      stay on Substack and the footer no longer links them.** [§7](#7-the-blog-decision)
 - [ ] Comparison pages
 - [ ] Measure indexation on the exploit tier before committing to the entity × topic generator
 

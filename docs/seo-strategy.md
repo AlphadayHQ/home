@@ -467,7 +467,8 @@ Twenty-five files covering an unbounded corpus.
 > this map never listed — `$slug.tsx` (the 301 shim for the legacy root slugs, Appendix C), `b.$.tsx`
 > (the app redirect) and `dashboard.tsx`. Ten allocated routes are unbuilt: `security.exploits`,
 > `security.$incident`, `governance.$id`, `research.$slug`, `events.index`, `events.$id`, `media.$id`,
-> `news.$id`, `blog.$slug` and `compare.$slug` — `blog.index.tsx` does exist. **The map is an
+> `news.$id`, `blog.$slug` and `compare.$slug` — `blog.index.tsx` does exist, as a 301 to Substack,
+> and `blog.$slug` will not be built now the blog stays there (6 Nov). **The map is an
 > allocation, not an inventory**, which is the point of §3.2: the prefix is reserved so the content
 > document can commission the page without renegotiating the URL.
 
@@ -1229,6 +1230,7 @@ it is not an AI opt-in control.
 > carried it went out on or before 24 Sep. **Only the blog migration is still open**, and it is a
 > content task sitting in
 > [the content document's Weeks 7–12](./seo-content-strategy.md#weeks-712--engine-b-at-cadence).
+> *(Dropped 6 Nov 2026: the blog stays on Substack — [content doc §7](./seo-content-strategy.md#7-the-blog-decision).)*
 >
 > **What the gate was holding — and why opening it changed less than it should have.** The paragraph
 > this replaces read *"the 38 Engine A pages now merged to `dev` are not crawlable by anything"*. That
@@ -1273,7 +1275,9 @@ and a measurement window, not infrastructure.
       verified: `verify-301-map.mjs` takes `--base`, so the full 76-URL sweep should be re-run against
       `https://alphaday.com` rather than a local server before this is treated as closed
 - [x] `/dashboards` hub and server-rendered internal linking (§5.8) — all 66 pages linked, server-rendered
-- [ ] Blog migrated to `/blog` with 301s from Substack
+- [x] ~~Blog migrated to `/blog` with 301s from Substack~~ → **dropped 6 Nov 2026.** The posts stay on
+      Substack and `/blog` keeps its 301 to it;
+      [content doc §7](./seo-content-strategy.md#7-the-blog-decision) has the reasons
 - [x] Server-side data fetching; `VITE_X_APP_SECRET` retired (§5.10) — `src/server/landingPages.ts`
 
 **The rebuild is built and verified locally.** `scripts/verify-ssr.mjs` asserts every testable
@@ -1507,9 +1511,9 @@ Every current URL must resolve. Project pages move from root slugs to `/projects
 | `/{slug}` × 66 | `/projects/{slug}` |
 | `/oceanprotocol` | **resolved: 404.** It is in `/ui/views/` but has no landing-page record, so the old sitemap published a URL with no page. A genuine 404 drops it cleanly; the current site answers 200 with a 404 body |
 | `/berachain` | **resolved: 404**, and no longer linked — removed from `CONFIG.featuredBoards`. It exists in neither `/ui/views/` nor `/ui/landing-pages/` |
-| `/blog` | `/blog` — now a real page, not a client-side redirect |
+| `/blog` | `blog.alphaday.com` — a server-side 301, not a client-side redirect |
 | `/api`, `/api/docs`, `/mobile`, `/privacy` | unchanged |
-| `blog.alphaday.com/p/{slug}` | `alphaday.com/blog/{slug}` |
+| `blog.alphaday.com/p/{slug}` | ~~`alphaday.com/blog/{slug}`~~ **not migrated — stays on Substack (6 Nov 2026,** [content doc §7](./seo-content-strategy.md#7-the-blog-decision)**)** |
 | `www.alphaday.com/*` | `alphaday.com/*` — **added 22 Sep; this map did not cover it. Live 2026-09-28.** `www` served the whole site at 200, so every URL existed twice, and Search Console has `www.alphaday.com/berachain` indexed with 28 impressions. Now a 301 to the apex, issued at the edge — [Appendix E](#appendix-e--the-www-redirect) |
 
 Generate the map from the same data source the pages are built from. Verify every entry returns a
