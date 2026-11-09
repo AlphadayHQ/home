@@ -9,6 +9,7 @@ import { readingMinutes } from "../data/analysis";
 import { Fact, LINK, PostBlocks, SourcesRead } from "../components/PostBody";
 import { dateRange, longDate } from "../components/dates";
 import Byline from "../components/Byline";
+import { projectPath } from "../data/projectLinks";
 
 /**
  * One governance proposal, explained: a facts panel from the post's `metadata`,
@@ -96,7 +97,7 @@ const NEXT = [
 ];
 
 const GovernanceProposalPage = ({ article }) => {
-  const { post, others } = article;
+  const { post, others, project } = article;
   const { meta } = post;
   const { vote } = meta;
   // A vote known by one date still says so: an open vote may have a start and no tally yet.
@@ -131,7 +132,18 @@ const GovernanceProposalPage = ({ article }) => {
           <Byline type={GOVERNANCE_TYPE} date={post.publishedAt} />
 
           <dl className="mt-10 grid grid-cols-2 gap-x-8 gap-y-8 border-t border-surface-border pt-8 lg:grid-cols-4">
-            {meta.dao && <Fact label="DAO">{meta.dao}</Fact>}
+            {meta.dao && (
+              <Fact label="DAO">
+                {/* To the DAO's project page, where there is one: its dashboard and its other research. */}
+                {project ? (
+                  <a href={projectPath(project)} className={LINK}>
+                    {meta.dao}
+                  </a>
+                ) : (
+                  meta.dao
+                )}
+              </Fact>
+            )}
             {meta.stageLabel && (
               <Fact label={asOf ? `Stage, ${asOf}` : "Stage"}>{meta.stageLabel}</Fact>
             )}

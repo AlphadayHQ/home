@@ -3,6 +3,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { Layout, Section } from "../shared";
 import { CodeBlock } from "../components/ui/CodeBlock";
 import CONFIG from "../config";
+import { capabilityPagePath } from "../data/capabilityLinks";
 import {
   API_COMMANDS,
   API_TOOLS,
@@ -177,31 +178,40 @@ const McpPage = () => (
         </p>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3.5 mt-9">
-          {capabilities.map(({ slug, copy, toolCount, isNew, isHeadline }) => (
-            <div
-              key={slug}
-              className={`bg-surface-light border rounded-[10px] px-4.25 py-3.75 transition-colors ${
-                isHeadline
-                  ? "border-primary/45 hover:border-primary"
-                  : "border-surface-border hover:border-primary/50"
-              }`}
-            >
-              <div className="flex items-baseline gap-2">
-                <span className="font-mono text-[13.5px] font-semibold text-primary">
-                  {label(slug)}
-                </span>
-                {isNew && (
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted border border-surface-border rounded px-1.5 py-0.5">
-                    New
+          {/*
+            A headline capability has its own page at /api/data/{slug}, so its
+            card is a link to it. The hover border promised a click on every card
+            long before any card had one; the rest stay plain.
+          */}
+          {capabilities.map(({ slug, copy, toolCount, isNew, isHeadline }) => {
+            const Card = isHeadline ? "a" : "div";
+            return (
+              <Card
+                key={slug}
+                {...(isHeadline && { href: capabilityPagePath(slug) })}
+                className={`block bg-surface-light border rounded-[10px] px-4.25 py-3.75 transition-colors ${
+                  isHeadline
+                    ? "border-primary/45 hover:border-primary"
+                    : "border-surface-border"
+                }`}
+              >
+                <div className="flex items-baseline gap-2">
+                  <span className="font-mono text-[13.5px] font-semibold text-primary">
+                    {label(slug)}
                   </span>
-                )}
-                <span className="ml-auto font-mono text-[11.5px] text-text-muted">
-                  {toolCount}
-                </span>
-              </div>
-              <div className="text-[13.5px] text-text-muted mt-1.5">{copy}</div>
-            </div>
-          ))}
+                  {isNew && (
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-text-muted border border-surface-border rounded px-1.5 py-0.5">
+                      New
+                    </span>
+                  )}
+                  <span className="ml-auto font-mono text-[11.5px] text-text-muted">
+                    {toolCount}
+                  </span>
+                </div>
+                <div className="text-[13.5px] text-text-muted mt-1.5">{copy}</div>
+              </Card>
+            );
+          })}
         </div>
 
         <p className="text-text-muted text-[14px] mt-6">
@@ -212,7 +222,9 @@ const McpPage = () => (
           <a href={CONFIG.api} className="text-primary hover:underline">
             /api
           </a>
-          . The number in each card is how many tools reach that dataset.
+          . The number in each card is how many tools reach that dataset, and
+          each outlined card opens its dataset&apos;s page: a real call, a real
+          payload, and what it does not cover.
         </p>
       </div>
     </Section>
@@ -229,17 +241,23 @@ const McpPage = () => (
           </p>
           <div className="flex flex-wrap gap-3.5 mt-7">
             <a
-              className="group inline-flex items-center gap-2 border border-surface-border text-text font-bold text-[14.5px] rounded-lg px-5 py-3 hover:border-primary/50 transition-colors"
+              className="group inline-flex items-center gap-2 border border-surface-border text-text font-medium text-[14.5px] rounded-lg px-5 py-3 hover:border-primary/50 transition-colors"
               href={CONFIG.api}
             >
               REST API
               <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
             </a>
             <a
-              className="inline-flex items-center gap-2 border border-surface-border text-text font-bold text-[14.5px] rounded-lg px-5 py-3 hover:border-primary/50 transition-colors"
-              href="/api/docs"
+              className="inline-flex items-center gap-2 border border-surface-border text-text font-medium text-[14.5px] rounded-lg px-5 py-3 hover:border-primary/50 transition-colors"
+              href={CONFIG.apiDocs}
             >
               Full reference
+            </a>
+            <a
+              className="inline-flex items-center gap-2 border border-surface-border text-text font-medium text-[14.5px] rounded-lg px-5 py-3 hover:border-primary/50 transition-colors"
+              href={CONFIG.cookbook}
+            >
+              Cookbook: worked use cases
             </a>
           </div>
         </div>

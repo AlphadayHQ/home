@@ -14,8 +14,7 @@ import AllBoards from "../components/dashboards/AllBoards";
 import { FAQData } from "../components/dashboards/faqData";
 import { buildFaqNode } from "../utils/faqJsonLd";
 import { canonicalFor, seoHead } from "../seo/head";
-import { listLandingPages } from "../server/landingPages";
-import { projectIndexState, belongsInSitemap } from "../seo/indexState";
+import { getProjects } from "../server/landingPages";
 
 // The former home page, moved here when / was repositioned to the data layer.
 // Title and description are the copy / used to rank on — keep them here so the
@@ -28,13 +27,9 @@ export const Route = createFileRoute("/dashboards")({
   // Runs on the server for the initial render, so the full project index is in
   // the HTML that a non-JS crawler receives.
   loader: async () => {
-    const pages = await listLandingPages();
-    return {
-      boards: pages
-        .filter((page) => belongsInSitemap(projectIndexState(page)))
-        .map(({ slug, name }) => ({ slug, name }))
-        .sort((a, b) => a.name.localeCompare(b.name)),
-    };
+    // Published pages only, read from the list the research and partner links share.
+    const projects = await getProjects();
+    return { boards: [...projects].sort((a, b) => a.name.localeCompare(b.name)) };
   },
   head: () =>
     seoHead({
@@ -54,7 +49,7 @@ function DashboardsPage() {
       <Navbar />
       <Hero />
       <Workflow />
-      <Partners />
+      <Partners projectSlugs={boards.map((board) => board.slug)} />
       <Backers />
       <Team />
       <BoardLinks />

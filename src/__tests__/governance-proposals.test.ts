@@ -214,7 +214,7 @@ describe("routes", () => {
 describe("the head", () => {
   it("is the post's title and excerpt, with an Article that cites its sources", () => {
     const post = toProposalPost(raw())!;
-    const head = proposalArticleHead({ article: { post, others: [] }, indexable: true });
+    const head = proposalArticleHead({ article: { post, others: [], project: null }, indexable: true });
     const text = JSON.stringify(head);
     expect(text).toContain("Balancer BIP-936: the onchain specs for winding down the protocol | Alphaday");
     expect(text).toContain("https://alphaday.com/research/governance/balancer-bip-936");
@@ -226,7 +226,7 @@ describe("the head", () => {
 
   it("is noindex with no canonical when the section is not promoted", () => {
     const post = toProposalPost(raw())!;
-    const text = JSON.stringify(proposalArticleHead({ article: { post, others: [] }, indexable: false }));
+    const text = JSON.stringify(proposalArticleHead({ article: { post, others: [], project: null }, indexable: false }));
     expect(text).toContain("noindex");
     expect(text).not.toContain("canonical");
   });
@@ -236,6 +236,8 @@ describe("reading the posts", () => {
   let list: Array<Record<string, unknown>>;
   let failing: boolean;
   let seen: string[];
+  /** The project pages the landing-pages read answers. */
+  let projects: Array<Record<string, unknown>>;
 
   beforeEach(async () => {
     list = [
@@ -255,6 +257,7 @@ describe("reading the posts", () => {
     ];
     failing = false;
     seen = [];
+    projects = [];
     const { fetchJsonSoft, fetchWithRetry } = await import("../server/apiFetch");
     vi.mocked(fetchJsonSoft).mockImplementation(async (url: string) => {
       seen.push(url);
@@ -263,12 +266,17 @@ describe("reading the posts", () => {
     vi.mocked(fetchWithRetry).mockImplementation(async (url: string) => {
       seen.push(url);
       if (failing) throw new Error("upstream down");
+      if (url.includes("/ui/landing-pages/")) {
+        return { json: async () => ({ results: projects, links: {} }) } as never;
+      }
       const slug = url.split("/posts/")[1].replace(/\/$/, "");
       const found = list.find((row) => row.slug === slug);
       return (found ? { json: async () => found } : null) as never;
     });
     const { resetProposalList } = await import("../server/governanceProposals");
     resetProposalList();
+    const { resetProjects } = await import("../server/landingPages");
+    resetProjects();
   });
 
   afterEach(() => vi.useRealTimers());
@@ -286,6 +294,17 @@ describe("reading the posts", () => {
       "balancer-bip-934-burn",
       "arbitrum-an-l1-recovery-path",
     ]);
+  });
+
+  it("links the DAO to its project page, and only to a published one", async () => {
+    const { buildProposalArticle } = await import("../server/governanceProposals");
+    const { resetProjects } = await import("../server/landingPages");
+    projects = [{ slug: "arbitrum", name: "Arbitrum" }, { slug: "balancer", name: "Balancer" }];
+    expect((await buildProposalArticle(raw().slug))?.project).toBe("balancer");
+
+    resetProjects();
+    projects = [{ slug: "balancer", name: "Balancer", is_published: false }, { slug: "aave", name: "Aave" }];
+    expect((await buildProposalArticle(raw().slug))?.project).toBeNull();
   });
 
   it("is a 404 for a draft or a missing post, and a 5xx when the API fails", async () => {

@@ -1,8 +1,10 @@
 import React from "react";
 import { partners } from "./partnersData";
 import { Section } from "../../shared";
+import { partnerLink } from "../../data/projectLinks";
 
-function Partners() {
+/** @param {{ projectSlugs?: string[] }} props */
+function Partners({ projectSlugs = [] }) {
   return (
     <Section id="partners" className="bg-surface border-y border-surface-border">
       <div className="mx-auto w-11/12 max-w-7xl py-20 text-center">
@@ -13,9 +15,7 @@ function Partners() {
           {partners.map(({ id, img, partner, slug, size }) => (
             <a
               key={id}
-              target="_blank"
-              rel="noreferrer"
-              href={slug ? `https://app.alphaday.com/b/${slug}` : undefined}
+              {...(slug && partnerLink(slug, projectSlugs))}
               className="transcale flex items-center justify-center"
             >
               <img src={img} className={size} alt={partner} title={partner} />
