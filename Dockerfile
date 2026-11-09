@@ -24,7 +24,9 @@ RUN npm prune --omit=dev
 
 FROM node:22-bookworm-slim AS runtime
 
-ENV NODE_ENV=production \
+ARG API_BASE_URL=https://api.alphaday.com
+ENV API_BASE_URL=$API_BASE_URL \
+    NODE_ENV=production \
     NODE_OPTIONS=--max-old-space-size=320 \
     PORT=3000
 
