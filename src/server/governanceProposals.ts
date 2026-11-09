@@ -12,6 +12,8 @@ import {
   toProposalRow,
 } from "../data/governanceProposals";
 import { pageCount, pageOf } from "../data/trending";
+import { projectSlugFor } from "../data/projectLinks";
+import { readProjectSlugs } from "./landingPages";
 
 /**
  * Governance proposal pages, read from posts. The rules are in
@@ -118,6 +120,8 @@ export interface ProposalArticle {
   post: ProposalPost;
   /** Other proposal pages: the same DAO's first, then the newest. */
   others: ProposalRow[];
+  /** The slug of the DAO's project page, when there is one. */
+  project: string | null;
 }
 
 /**
@@ -127,9 +131,11 @@ export interface ProposalArticle {
  * a 5xx the edge does not cache, rather than as a 404 it does.
  */
 export async function buildProposalArticle(slug: string): Promise<ProposalArticle | null> {
-  const [raw, read] = await Promise.all([
+  const [raw, read, projects] = await Promise.all([
     fetchPost(slug),
     withinMs(readProposalList(), LIST_WAIT_MS),
+    // Only for a link; a cold read leaves the DAO as plain text.
+    withinMs(readProjectSlugs(), LIST_WAIT_MS),
   ]);
   const post = raw ? toProposalPost(raw) : null;
   if (!post) return null;
@@ -138,7 +144,7 @@ export async function buildProposalArticle(slug: string): Promise<ProposalArticl
   const dao = post.meta.dao?.toLowerCase();
   const sameDao = dao ? rows.filter((row) => row.meta.dao?.toLowerCase() === dao) : [];
   const others = [...sameDao, ...rows.filter((row) => !sameDao.includes(row))].slice(0, OTHERS);
-  return { post, others };
+  return { post, others, project: projectSlugFor(post.meta.dao, projects ?? []) };
 }
 
 /** The validator is a boundary: the slug is interpolated into an upstream URL. */

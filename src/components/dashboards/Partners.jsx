@@ -1,8 +1,10 @@
 import React from "react";
 import { partners } from "../home/partnersData";
 import { Section, Div } from "../../shared";
+import { partnerLink } from "../../data/projectLinks";
 
-function Partners() {
+/** @param {{ projectSlugs?: string[] }} props */
+function Partners({ projectSlugs = [] }) {
   return (
     <Section className="bg-eerie">
       <Div className="pb-0">
@@ -20,12 +22,7 @@ function Partners() {
                   className="flex justify-center"
                 >
                   <a
-                    target="_blank"
-                    href={
-                      item.slug
-                        ? `https://app.alphaday.com/b/${item.slug}`
-                        : undefined
-                    }
+                    {...(item.slug && partnerLink(item.slug, projectSlugs))}
                     className="transcale flex items-center"
                   >
                     <img

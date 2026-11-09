@@ -127,6 +127,18 @@ const ApiPage = () => {
               Docs
             </a>
             <a
+              href={CONFIG.mcp}
+              className="text-text-muted tracking-wide hover:text-text transition-colors"
+            >
+              MCP
+            </a>
+            <a
+              href={CONFIG.cookbook}
+              className="text-text-muted tracking-wide hover:text-text transition-colors"
+            >
+              Cookbook
+            </a>
+            <a
               href={githubUrl}
               className="text-text-muted tracking-wide hover:text-text transition-colors"
             >
@@ -501,6 +513,14 @@ const ApiPage = () => {
                     className="min-h-35 flex items-center"
                   />
                 </div>
+                <a
+                  href={CONFIG.mcp}
+                  className="group mt-4 inline-flex items-center gap-2 pl-2 text-sm font-medium text-primary hover:text-primary-hover transition-colors"
+                >
+                  Setup for every MCP client, and every tool the server
+                  exposes
+                  <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                </a>
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center gap-3 mb-4 pl-2">
@@ -519,7 +539,7 @@ const ApiPage = () => {
                 />
                 <a
                   href={docsUrl}
-                  className="group mt-4 inline-flex items-center gap-2 pl-2 text-sm font-semibold text-primary hover:text-primary-hover transition-colors"
+                  className="group mt-4 inline-flex items-center gap-2 pl-2 text-sm font-medium text-primary hover:text-primary-hover transition-colors"
                 >
                   Browse the full reference — every endpoint, parameter &amp;
                   response shape
@@ -625,16 +645,16 @@ const ApiPage = () => {
                 Docs
               </a>
               <a
-                href="#"
+                href={CONFIG.mcp}
                 className="text-text-muted hover:text-primary transition-colors"
               >
-                Status
+                MCP server
               </a>
               <a
-                href="#"
+                href={CONFIG.cookbook}
                 className="text-text-muted hover:text-primary transition-colors"
               >
-                MCP Config
+                Cookbook
               </a>
             </div>
             <div className="flex flex-col gap-3">
@@ -668,16 +688,10 @@ const ApiPage = () => {
                 GitHub
               </a>
               <a
-                href="#"
+                href={CONFIG.dashboards}
                 className="text-text-muted hover:text-primary transition-colors"
               >
-                Changelog
-              </a>
-              <a
-                href="#"
-                className="text-text-muted hover:text-primary transition-colors"
-              >
-                Rate Limits
+                Dashboards
               </a>
             </div>
             <div className="flex flex-col gap-3">
@@ -691,16 +705,24 @@ const ApiPage = () => {
                 Alphaday
               </a>
               <a
-                href="#"
+                href={CONFIG.twitter}
+                target="_blank"
+                rel="noreferrer"
                 className="text-text-muted hover:text-primary transition-colors"
               >
-                Twitter
+                X (Twitter)
               </a>
               <a
-                href="#"
+                href="mailto:hello@alphaday.com"
                 className="text-text-muted hover:text-primary transition-colors"
               >
                 Contact
+              </a>
+              <a
+                href={CONFIG.privacyPolicy}
+                className="text-text-muted hover:text-primary transition-colors"
+              >
+                Privacy Policy
               </a>
             </div>
           </div>

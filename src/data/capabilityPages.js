@@ -303,6 +303,11 @@ export const CAPABILITY_PAGES = {
       curl: `curl ${API_BASE}/items/podcasts/?tags=bitcoin\\&limit=3`,
       mcpTools: ["get_podcasts", "get_podcasts_detail", "get_trending_podcasts"],
     },
+    related: {
+      href: "/research/podcasts",
+      name: "Ideas from crypto podcasts",
+      why: "What this feed is for once a transcript is read: one page per idea worth keeping from an episode, written from the transcript and reviewed, with the episode it came from.",
+    },
     whatItsFor: [
       "A podcast player that does not crawl 118 RSS feeds: every record carries the audio URL (`file_url`) and the episode page (`url`), with `published_at` for the chronological feed.",
       "Discovering which shows covered a story: `?tags=bitcoin` returns 101 episodes, and the `source.slug` per record names the show.",
@@ -446,6 +451,11 @@ export const CAPABILITY_PAGES = {
     getIt: {
       curl: `curl ${API_BASE}/security/exploits/?limit=3`,
       mcpTools: ["get_security_exploits", "get_security_exploits_detail"],
+    },
+    related: {
+      href: "/security/exploits",
+      name: "The exploit analyses",
+      why: "Incidents from this feed, written up one at a time: what happened, the reported loss, the chain, and every source the analysis was written from.",
     },
     whatItsFor: [
       "A risk team that wants every recorded exploit on a protocol — feed `tags=wormhole` into the corpus and pull its incident history, no manual scraper required.",
@@ -1139,6 +1149,11 @@ export const CAPABILITY_PAGES = {
         "get_events", "get_events_detail", "get_trending_events", "get_events_this_week",
       ],
     },
+    related: {
+      href: "/events",
+      name: "The crypto events calendar",
+      why: "This endpoint as a calendar, one page per month: meetups, hackathons and workshops, each labelled by type, with the month's count stated.",
+    },
     whatItsFor: [
       "A filtered calendar without scraping event sites: `item_type` separates hackathons from conferences from meetups, so \"hackathons in the next quarter\" is one call plus a date comparison.",
       "Travel and presence planning: `location` is a real string on 96% of records, so a city or region filter needs no geocoding step.",
@@ -1294,6 +1309,11 @@ export const CAPABILITY_PAGES = {
     getIt: {
       curl: `curl ${API_BASE}/keywords/trending/`,
       mcpTools: ["get_trending_keywords", "get_trending_keywords_detail"],
+    },
+    related: {
+      href: "/research/trending",
+      name: "Trending topics, explained",
+      why: "The topics this endpoint ranks, each written up as a page: what is behind it trending, researched from the original sources and updated each time it trends again.",
     },
     whatItsFor: [
       "Letting the data pick the subject: an agent that starts here finds stories nobody put on a watchlist, which is the loop `/cookbook/crypto-research-agent` runs.",

@@ -80,3 +80,19 @@ describe("cookbook recipes", () => {
     }
   });
 });
+
+describe("the recipe index the capability pages read", () => {
+  it("lists every recipe, and only recipes", async () => {
+    const { RECIPE_INDEX } = await import("../data/capabilityLinks");
+    expect(RECIPE_INDEX.map((r) => r.slug)).toEqual(RECIPES.map((r) => r.slug));
+  });
+
+  it("finds a capability page for every call a recipe makes", async () => {
+    const { capabilityFor } = await import("../data/capabilityLinks");
+    for (const recipe of RECIPES) {
+      for (const use of recipe.uses) {
+        expect(capabilityFor(use), `${recipe.slug}: ${use}`).not.toBeNull();
+      }
+    }
+  });
+});

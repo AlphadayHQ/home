@@ -1,17 +1,22 @@
 import React from "react";
-import { Navbar, Footer } from "../../components";
+import { Footer } from "../../components";
+import HomeNavbar, { SITE_LINKS } from "../../components/navbar/HomeNavbar";
 
 /*
- * The page is laid over the navbar's place, so each page's first section sits
- * under the floating navbar and leaves room for it. The footer goes inside that
- * same layer, after the page: outside it, the footer sat in the flow at the top,
- * beneath the page, where nobody could see it.
+ * The page is laid under the sticky navbar, so each page's first section sits
+ * beneath it and leaves room for it (`pt-24` clears the nav's 66px). The
+ * negative margin pulls the page up by exactly the nav's height; without it
+ * every page would start a nav-height lower than it was designed to.
+ *
+ * The nav is the home page's, with the site-wide links: the orange bar this
+ * replaced offered Discord, X and "Launch app", so an agent builder on an MCP
+ * client page had no way to /api, the docs or the cookbook from the top.
  */
 function Layout({ children }) {
   return (
     <div>
-      <Navbar />
-      <div className="absolute top-0 left-0 w-full">
+      <HomeNavbar links={SITE_LINKS} />
+      <div className="-mt-16.5">
         {children}
         <Footer />
       </div>

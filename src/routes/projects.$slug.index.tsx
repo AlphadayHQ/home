@@ -4,6 +4,7 @@ import {
   LoadingState,
 } from "../components/landing/ProjectLandingPage";
 import { getLandingPage } from "../server/landingPages";
+import { NO_RESEARCH, getProjectResearch } from "../server/projectResearch";
 import { canonicalFor, seoHead } from "../seo/head";
 import { projectIndexState, robotsHeader, isIndexable } from "../seo/indexState";
 import { setRobotsHeader } from "../seo/robotsHeader";
@@ -11,7 +12,12 @@ import CONFIG from "../config";
 
 export const Route = createFileRoute("/projects/$slug/")({
   loader: async ({ params }) => {
-    const data = await getLandingPage({ data: params.slug });
+    // In parallel: the research is matched on the slug alone, so it need not
+    // wait for the page. It is links under the page, never a reason to fail it.
+    const [data, research] = await Promise.all([
+      getLandingPage({ data: params.slug }),
+      getProjectResearch({ data: params.slug }).catch(() => NO_RESEARCH),
+    ]);
     // A missing record is a real 404, not an error state. The SPA rendered the
     // home page's head at HTTP 200 here, which made every unknown slug an
     // indexable near-duplicate of /.
@@ -22,7 +28,7 @@ export const Route = createFileRoute("/projects/$slug/")({
     // reaches a client which never parses the body.
     setRobotsHeader(robotsHeader(state));
 
-    return { data, indexable: isIndexable(state) };
+    return { data, research, indexable: isIndexable(state) };
   },
   head: ({ loaderData }) => {
     if (!loaderData) {
@@ -63,8 +69,8 @@ export const Route = createFileRoute("/projects/$slug/")({
 });
 
 function ProjectPage() {
-  const { data } = Route.useLoaderData();
-  return <ProjectLandingPage data={data} />;
+  const { data, research } = Route.useLoaderData();
+  return <ProjectLandingPage data={data} research={research} />;
 }
 
 function buildJsonLd(

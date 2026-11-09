@@ -14,6 +14,7 @@ import { Rich } from "../components/ui/Rich";
 import CONFIG from "../config";
 import { CAPABILITY_COUNT } from "../data/apiSurface";
 import { CAPABILITY_PAGES_VERIFIED_ON } from "../data/capabilityPages";
+import { recipesUsing } from "../data/capabilityLinks";
 
 /**
  * `/api/data/{slug}` — one page per headline data capability.
@@ -56,6 +57,7 @@ const Wrap = ({ children, className = "" }) => (
 );
 
 const CapabilityPage = ({ page }) => {
+  const recipes = recipesUsing(page.slug);
   return (
     <Layout>
       {/* ---------------------------------------------------------- Hero */}
@@ -238,13 +240,38 @@ const CapabilityPage = ({ page }) => {
             <div className="mt-7 border-l border-surface-border pl-4">
               <a
                 href={page.related.href}
-                className="text-[15px] font-semibold text-text underline decoration-surface-border underline-offset-4 transition-colors hover:decoration-text"
+                className="text-[15px] font-medium text-text underline decoration-surface-border underline-offset-4 transition-colors hover:decoration-text"
               >
                 {page.related.name}
               </a>
               <p className="mt-1 text-[14px] text-text-muted">
                 <Rich>{page.related.why}</Rich>
               </p>
+            </div>
+          )}
+
+          {/*
+            The recipes that call this capability, so the worked code is one
+            click from the data it uses. The cookbook linked here; nothing here
+            linked back to a recipe, only to the cookbook's index.
+          */}
+          {recipes.length > 0 && (
+            <div className="mt-7 border-l border-surface-border pl-4">
+              <p className="text-[12px] font-medium uppercase tracking-widest text-text-muted">
+                Built with this, in the cookbook
+              </p>
+              <ul className="mt-2.5 flex flex-col gap-1.5">
+                {recipes.map((recipe) => (
+                  <li key={recipe.slug}>
+                    <a
+                      href={`${CONFIG.cookbook}/${recipe.slug}`}
+                      className="text-[15px] font-medium text-text underline decoration-surface-border underline-offset-4 transition-colors hover:decoration-text"
+                    >
+                      {recipe.title}
+                    </a>
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
 

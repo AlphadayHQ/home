@@ -21,7 +21,8 @@ const TITLE = "Alphaday — The Crypto Data Layer for Humans, Apps & AI Agents";
 const DESCRIPTION =
   "Alphaday structures every crypto data type — market, on-chain, news, podcasts, video, governance and more — into one queryable layer. Free API & MCP, no signup.";
 
-function HomeContainer() {
+/** @param {{ projectSlugs?: string[] }} props */
+function HomeContainer({ projectSlugs = [] }) {
   return (
     <>
       <HomeNavbar />
@@ -30,7 +31,7 @@ function HomeContainer() {
       <LayerDemo />
       <Builders />
       <Products />
-      <Partners />
+      <Partners projectSlugs={projectSlugs} />
       <Backers />
       <FAQ />
       <FinalCTA />
