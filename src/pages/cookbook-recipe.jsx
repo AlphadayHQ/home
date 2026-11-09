@@ -5,6 +5,7 @@ import { CodeBlock } from "../components/ui/CodeBlock";
 import { Rich } from "../components/ui/Rich";
 import CONFIG from "../config";
 import { RECIPES_VERIFIED_ON, caveatsFor, nextFor } from "../data/cookbook";
+import { capabilityFor, capabilityPagePath } from "../data/capabilityLinks";
 
 /**
  * `/cookbook/{recipe}` — one use case, start to finish.
@@ -75,14 +76,25 @@ const RecipePage = ({ recipe }) => {
           </div>
 
           <div className="flex flex-wrap gap-2 mt-5">
-            {recipe.uses.map((u) => (
-              <span
-                key={u}
-                className="font-mono text-[12.5px] text-text-muted border border-surface-border rounded px-2.5 py-1"
-              >
-                {u}
-              </span>
-            ))}
+            {/* Each call links to its dataset's page, where its limits are. */}
+            {recipe.uses.map((u) => {
+              const capability = capabilityFor(u);
+              const chip =
+                "font-mono text-[12.5px] text-text-muted border border-surface-border rounded px-2.5 py-1";
+              return capability ? (
+                <a
+                  key={u}
+                  href={capabilityPagePath(capability)}
+                  className={`${chip} hover:text-text hover:border-primary/50 transition-colors`}
+                >
+                  {u}
+                </a>
+              ) : (
+                <span key={u} className={chip}>
+                  {u}
+                </span>
+              );
+            })}
           </div>
         </Wrap>
       </Section>

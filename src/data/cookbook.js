@@ -39,6 +39,19 @@
  * sample, because it is the first thing a reader and a model will trust.
  */
 import { API_COMMANDS } from "./apiSurface.js";
+import { RECIPE_INDEX } from "./capabilityLinks.js";
+
+/*
+ * A recipe's slug, title and calls live in `RECIPE_INDEX`, the small half the
+ * capability pages read to link back here without loading every step's code.
+ * Spread in here, so there is one copy of each; a slug missing from the index
+ * throws at import, which fails every test that loads the cookbook.
+ */
+const indexed = (slug) => {
+  const entry = RECIPE_INDEX.find((recipe) => recipe.slug === slug);
+  if (!entry) throw new Error(`cookbook: "${slug}" is not in RECIPE_INDEX`);
+  return entry;
+};
 
 const MCP_URL = API_COMMANDS.mcpUrl;
 const VERIFIED = "2026-09-15";
@@ -85,14 +98,12 @@ export const DATA_CAVEATS = {
 
 export const RECIPES = [
   {
-    slug: "claude-crypto-news",
-    title: "Give Claude live crypto news",
+    ...indexed("claude-crypto-news"),
     query: "give claude live crypto news",
     blurb:
       "The shortest useful thing in this cookbook: one command, no code, and Claude answers from a live feed of ~50 outlets instead of from training data.",
     minutes: 2,
     stack: "No code",
-    uses: ["get_news_summary", "get_trending_news"],
     steps: [
       {
         heading: "Add the server",
@@ -141,14 +152,12 @@ export const RECIPES = [
   },
 
   {
-    slug: "dao-proposal-alerts",
-    title: "Alert on DAO proposals closing soon",
+    ...indexed("dao-proposal-alerts"),
     query: "alert me on new DAO proposals",
     blurb:
       "Governance deadlines are the one crypto event you cannot catch up on afterwards — a vote you missed is simply gone. Forty lines and a cron entry.",
     minutes: 15,
     stack: "Python, stdlib only",
-    uses: ["/items/dao/"],
     steps: [
       {
         heading: "Fetch, then filter on the dates yourself",
@@ -228,14 +237,12 @@ for hours, p in closing_soon(fetch()):
   },
 
   {
-    slug: "crypto-research-agent",
-    title: "Build a crypto research agent",
+    ...indexed("crypto-research-agent"),
     query: "build a crypto research agent",
     blurb:
       "Let the data choose the subject. Read what is trending, then pull every feed that mentions it into one brief — the loop that finds stories nobody told you to look for.",
     minutes: 30,
     stack: "Python, stdlib only",
-    uses: ["/keywords/trending/", "/items/news/", "/items/blogs/", "/items/podcasts/", "/items/dao/"],
     steps: [
       {
         heading: "Start from trending, not from a watchlist",
@@ -316,14 +323,12 @@ Bitcoin  (trendiness 0.59, sentiment 0.11)
   },
 
   {
-    slug: "discord-bot-crypto-data",
-    title: "Crypto data for a Discord bot",
+    ...indexed("discord-bot-crypto-data"),
     query: "crypto data for a discord bot",
     blurb:
       "A slash command that answers from a live feed. The data half is four lines; the rest is Discord's embed format, which is the part people actually get stuck on.",
     minutes: 20,
     stack: "Python, discord.py",
-    uses: ["/items/news/trending/", "/items/news/"],
     steps: [
       {
         heading: "The data call",
@@ -407,14 +412,12 @@ async def crypto(interaction: discord.Interaction, project: str = ""):
   },
 
   {
-    slug: "weekly-ecosystem-digest",
-    title: "Automate a weekly ecosystem digest",
+    ...indexed("weekly-ecosystem-digest"),
     query: "automate a crypto newsletter",
     blurb:
       "Three feeds, one markdown file, no writing. The AI briefing does the prose; news and governance supply the evidence under it.",
     minutes: 25,
     stack: "Python, stdlib only",
-    uses: ["/items/news/summary/", "/items/news/", "/items/dao/"],
     steps: [
       {
         heading: "Compose the three calls",
@@ -495,14 +498,12 @@ news = [n for n in news
   },
 
   {
-    slug: "sentiment-from-podcasts",
-    title: "Analyse crypto podcasts programmatically",
+    ...indexed("sentiment-from-podcasts"),
     query: "analyse crypto podcasts programmatically",
     blurb:
       "118 podcast feeds, tagged by project, each episode carrying a written description. Enough to track what the circuit is saying without transcribing a single minute of audio.",
     minutes: 25,
     stack: "Python, stdlib only",
-    uses: ["/items/podcasts/", "/items/news/"],
     steps: [
       {
         heading: "Be clear about what the API gives you",

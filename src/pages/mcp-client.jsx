@@ -4,6 +4,7 @@ import { Layout, Section } from "../shared";
 import { CodeBlock } from "../components/ui/CodeBlock";
 import { Rich } from "../components/ui/Rich";
 import CONFIG from "../config";
+import { capabilityPagePath } from "../data/capabilityLinks";
 import { CAPABILITY_COUNT, TOOL_COUNT, API_COMMANDS } from "../data/apiSurface";
 import {
   CAPABILITY_COPY,
@@ -382,9 +383,10 @@ const ClientPage = ({ client, guide }) => {
           </Lede>
           <div className="grid sm:grid-cols-2 gap-3.5 mt-7">
             {headlines.map(({ slug, label, copy }) => (
-              <div
+              <a
                 key={slug}
-                className="bg-surface-light border border-surface-border rounded-[10px] px-4.5 py-4"
+                href={capabilityPagePath(slug)}
+                className="block bg-surface-light border border-surface-border rounded-[10px] px-4.5 py-4 hover:border-primary/50 transition-colors"
               >
                 <span className="font-mono text-[13.5px] font-semibold text-primary">
                   {label}
@@ -392,7 +394,7 @@ const ClientPage = ({ client, guide }) => {
                 <p className="text-[14px] text-text-muted leading-relaxed mt-1.5">
                   {copy}
                 </p>
-              </div>
+              </a>
             ))}
           </div>
           <p className="text-text-muted text-[14.5px] mt-5">
@@ -429,16 +431,22 @@ const ClientPage = ({ client, guide }) => {
 
           <div className="flex flex-wrap gap-3.5 mt-8">
             <a
-              className="inline-flex items-center gap-2 border border-surface-border text-text font-bold text-[14.5px] rounded-lg px-5 py-3 hover:border-primary/50 transition-colors"
+              className="inline-flex items-center gap-2 border border-surface-border text-text font-medium text-[14.5px] rounded-lg px-5 py-3 hover:border-primary/50 transition-colors"
               href={CONFIG.mcp}
             >
               Other clients
             </a>
             <a
-              className="inline-flex items-center gap-2 border border-surface-border text-text font-bold text-[14.5px] rounded-lg px-5 py-3 hover:border-primary/50 transition-colors"
+              className="inline-flex items-center gap-2 border border-surface-border text-text font-medium text-[14.5px] rounded-lg px-5 py-3 hover:border-primary/50 transition-colors"
               href={CONFIG.api}
             >
               REST API
+            </a>
+            <a
+              className="inline-flex items-center gap-2 border border-surface-border text-text font-medium text-[14.5px] rounded-lg px-5 py-3 hover:border-primary/50 transition-colors"
+              href={CONFIG.cookbook}
+            >
+              Cookbook: worked use cases
             </a>
           </div>
         </Wrap>

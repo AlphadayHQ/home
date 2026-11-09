@@ -29,12 +29,14 @@ function Footer({ isMobile }) {
     apiDocs,
     alphadayApp,
     blog,
-    blogLinks,
+    cookbook,
     dashboards,
     discord,
     events,
     feedBack,
     linkedin,
+    mcp,
+    mobile,
     pulse,
     recipes,
     research,
@@ -54,8 +56,8 @@ function Footer({ isMobile }) {
       <div
         className={`mx-auto w-11/12 max-w-7xl pb-9 ${isMobile ? "pt-16" : "pt-16"}`}
       >
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-9">
-          <div className="col-span-2 md:col-span-3 lg:col-span-1">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-9">
+          <div className="col-span-2 md:col-span-4 lg:col-span-1">
             <a href="/" aria-label="Alphaday home">
               <img
                 src={alphaday}
@@ -68,17 +70,35 @@ function Footer({ isMobile }) {
             </p>
           </div>
 
+          {/*
+            The pages the site sells, first, in the order of the nav. "API &
+            MCP" used to be one link to /api, so the MCP page — the wedge for
+            the first audience — had no link here at all.
+          */}
+          <div>
+            <ColTitle>Build</ColTitle>
+            <Anchor href={api} target="_self">
+              API
+            </Anchor>
+            <Anchor href={mcp} target="_self">
+              MCP server
+            </Anchor>
+            <Anchor href={apiDocs} target="_self">
+              Docs
+            </Anchor>
+            <Anchor href={cookbook} target="_self">
+              Cookbook
+            </Anchor>
+          </div>
+
           <div>
             <ColTitle>Product</ColTitle>
             <Anchor href={alphadayApp}>Launch app</Anchor>
             <Anchor href={dashboards} target="_self">
               Dashboards
             </Anchor>
-            <Anchor href={api} target="_self">
-              API &amp; MCP
-            </Anchor>
-            <Anchor href={apiDocs} target="_self">
-              Docs
+            <Anchor href={mobile} target="_self">
+              Mobile app
             </Anchor>
             <Anchor href={pulse} target="_self">
               Pulse
@@ -116,24 +136,6 @@ function Footer({ isMobile }) {
             <Anchor href={privacyPolicy} target="_self">
               Privacy Policy
             </Anchor>
-          </div>
-
-          <div>
-            <ColTitle>Crypto 101</ColTitle>
-            {blogLinks["Crypto 101"].map(({ title, link }) => (
-              <Anchor key={link} href={link}>
-                {title}
-              </Anchor>
-            ))}
-          </div>
-
-          <div>
-            <ColTitle>Learn</ColTitle>
-            {blogLinks.learn.map(({ title, link }) => (
-              <Anchor key={link} href={link}>
-                {title}
-              </Anchor>
-            ))}
           </div>
         </div>
 

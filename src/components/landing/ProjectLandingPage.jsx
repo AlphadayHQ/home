@@ -8,6 +8,7 @@ import LandingFooter from "./LandingFooter";
 import LongFormSection from "./LongFormSection";
 import FAQ from "./FAQ";
 import SiblingDashboards from "./SiblingDashboards";
+import ProjectResearch from "./ProjectResearch";
 import { Footer, Navbar } from "../index";
 import { digestEntityFor } from "../../data/digestEntities";
 
@@ -175,7 +176,7 @@ function DigestLink({ slug, name }) {
  * TanStack Start migration needs anyway, where the data arrives from a server
  * loader rather than a `useEffect`.
  */
-export function ProjectLandingPage({ data }) {
+export function ProjectLandingPage({ data, research }) {
   const dashboardUrl = `${config.alphadayApp.replace(/\/$/, "")}/b/${data.slug}`;
 
   return (
@@ -204,6 +205,7 @@ export function ProjectLandingPage({ data }) {
       )}
       <FAQ faqs={data.faqs} projectName={data.name} />
       <BottomCTA projectName={data.name} dashboardUrl={dashboardUrl} />
+      <ProjectResearch research={research} name={data.name} />
       <SiblingDashboards
         siblings={data.sibling_dashboards}
         currentName={data.name}

@@ -258,3 +258,42 @@ describe("linkage from /api", () => {
     ).toBe(true);
   });
 });
+
+describe("links into the capability pages", () => {
+  it("resolve every page's own call and tools back to that page", async () => {
+    const { capabilityForPath, capabilityForTool } = await import("../data/capabilityLinks");
+    for (const [slug, page] of Object.entries(CAPABILITY_PAGES) as Array<[string, (typeof CAPABILITY_PAGES)["news"]]>) {
+      const path = page.getIt.curl.replace(/^curl \S*?api\.alphaday\.com/, "").replace(/\\/g, "");
+      expect(capabilityForPath(path), `${slug}: ${path}`).toBe(slug);
+      for (const tool of page.getIt.mcpTools) {
+        expect(capabilityForTool(tool), `${slug}: ${tool}`).toBe(slug);
+      }
+    }
+  });
+
+  it("send a related link only to a promoted page with a route of its own", async () => {
+    const { createRouter } = await import("@tanstack/react-router");
+    const { routeTree } = await import("../routeTree.gen");
+    const { indexStateFor } = await import("../seo/indexState");
+    const router = createRouter({ routeTree });
+    for (const page of Object.values(CAPABILITY_PAGES) as Array<{ slug: string; related?: { href: string } }>) {
+      if (!page.related) continue;
+      const { href } = page.related;
+      expect(indexStateFor(href), `${page.slug} → ${href}`).toBe("promoted");
+      const matches = router.matchRoutes({ pathname: href, search: {} } as never);
+      expect(matches[matches.length - 1]?.routeId, `${page.slug} → ${href}`).toBe(`${href}/`);
+    }
+  });
+
+  it("are on the docs, once for each capability the docs cover", async () => {
+    const { API_DOCS } = await import("../api/docs-spec.generated");
+    const { capabilityForPath } = await import("../data/capabilityLinks");
+    const covered = new Set(
+      API_DOCS.categories.flatMap((cat: { endpoints: Array<{ path: string }> }) =>
+        cat.endpoints.map((ep) => capabilityForPath(ep.path)),
+      ),
+    );
+    // `projects` is `/search/`, which the OpenAPI spec does not document.
+    expect([...HEADLINE_CAPABILITIES].filter((slug) => !covered.has(slug))).toEqual(["projects"]);
+  });
+});

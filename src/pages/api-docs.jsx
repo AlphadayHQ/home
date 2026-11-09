@@ -26,6 +26,8 @@ import {
 import CONFIG from "../config";
 import alphaday from "../images/logo-notext.webp";
 import { API_DOCS } from "../api/docs-spec.generated";
+import { capabilityForPath, capabilityPagePath } from "../data/capabilityLinks";
+import { CAPABILITY_LABELS } from "../data/mcpCapabilities";
 
 const SWAGGER_URL = "https://api.alphaday.com/docs/";
 
@@ -227,7 +229,7 @@ function ReturnsSummary({ returns }) {
   );
 }
 
-function EndpointBlock({ endpoint }) {
+function EndpointBlock({ endpoint, capability }) {
   return (
     <div className="rounded-2xl border border-surface-border bg-background/40 p-3 sm:p-5">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-3">
@@ -259,12 +261,38 @@ function EndpointBlock({ endpoint }) {
         <ParamTable parameters={endpoint.parameters} />
       </div>
       <ReturnsSummary returns={endpoint.returns} />
+      {capability && (
+        <a
+          href={capabilityPagePath(capability)}
+          className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-text-muted hover:text-primary transition-colors"
+        >
+          {CAPABILITY_LABELS[capability] ?? capability}: a real payload, and what
+          it does not cover <ArrowRight size={13} />
+        </a>
+      )}
     </div>
   );
 }
 
+/*
+ * The endpoint in each category that carries the link to its capability's
+ * page: the first one that reaches it. A category can hold several
+ * capabilities (Market is coins and fear & greed), and linking every one of a
+ * capability's endpoints would print the same link six times in a row.
+ */
+function capabilityLinks(endpoints) {
+  const seen = new Set();
+  return endpoints.map((ep) => {
+    const capability = capabilityForPath(ep.path);
+    if (!capability || seen.has(capability)) return null;
+    seen.add(capability);
+    return capability;
+  });
+}
+
 function CategoryCard({ category, cardRef }) {
   const Icon = ICONS[category.icon] || Blocks;
+  const links = capabilityLinks(category.endpoints);
   return (
     <section
       ref={cardRef}
@@ -286,8 +314,12 @@ function CategoryCard({ category, cardRef }) {
         </p>
       </header>
       <div className="space-y-4">
-        {category.endpoints.map((ep) => (
-          <EndpointBlock key={`${ep.method}-${ep.path}`} endpoint={ep} />
+        {category.endpoints.map((ep, i) => (
+          <EndpointBlock
+            key={`${ep.method}-${ep.path}`}
+            endpoint={ep}
+            capability={links[i]}
+          />
         ))}
       </div>
     </section>
@@ -358,6 +390,18 @@ export default function ApiDocsPage() {
             </a>
           </div>
           <div className="flex items-center gap-4 text-xs sm:text-sm shrink-0">
+            <a
+              href={CONFIG.mcp}
+              className="text-text-muted hover:text-primary transition-colors"
+            >
+              MCP
+            </a>
+            <a
+              href={CONFIG.cookbook}
+              className="text-text-muted hover:text-primary transition-colors hidden sm:inline"
+            >
+              Cookbook
+            </a>
             <a
               href={CONFIG.api}
               className="text-text-muted hover:text-primary transition-colors hidden md:inline"
