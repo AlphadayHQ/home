@@ -22,6 +22,7 @@
 import { resolve, dirname } from "node:path";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { sitemapFetch } from "./sitemapFetch.ts";
 
 import {
   belongsInSitemap,
@@ -73,7 +74,7 @@ async function fetchLandingPages() {
   let next = `${API_BASE}/ui/landing-pages/`;
 
   while (next) {
-    const response = await fetch(next, { headers });
+    const response = await sitemapFetch(next, { headers });
     if (!response.ok) {
       throw new Error(
         `build-sitemap: ${next} returned ${response.status}. Refusing to build ` +
@@ -174,7 +175,7 @@ async function shapedCount(month) {
       `${API_BASE}/items/events/?limit=${EVENT_PAGE_SIZE}&page=${page}` +
       `&starts_at__gte=${from}&starts_at__lte=${to}`;
 
-    const response = await fetch(url, { headers: authHeaders });
+    const response = await sitemapFetch(url, { headers: authHeaders });
     if (!response.ok) {
       throw new Error(
         `build-sitemap: ${url} returned ${response.status}. Refusing to build ` +
