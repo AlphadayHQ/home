@@ -44,12 +44,43 @@ jobs:
       - name: Load backend client credentials
         env:
           ORIGIN_STACK: ${{ inputs.origin_stack }}
-        run: node scripts/load-backend-client.ts
+        shell: bash
+        run: |
+          set +x
+          arn="$(aws cloudformation describe-stacks \
+            --stack-name "$ORIGIN_STACK" \
+            --query "Stacks[0].Outputs[?OutputKey=='BackendClientSecretArn'].OutputValue | [0]" \
+            --output text)"
+          if [ -z "$arn" ] || [ "$arn" = None ]; then
+            echo "No landing client secret configured; using anonymous API requests."
+            exit 0
+          fi
+          if ! credentials="$(aws secretsmanager get-secret-value \
+            --secret-id "$arn" --query SecretString --output text 2>/dev/null)"; then
+            echo "Unable to load backend client credentials" >&2
+            exit 1
+          fi
+          if ! jq -e '
+            type == "object" and
+            ([.API_APP_ID, .API_APP_SECRET] | all(
+              type == "string" and length > 0 and
+              (contains("\r") | not) and
+              (contains("\n") | not) and
+              (contains("\u0000") | not)
+            ))
+          ' <<<"$credentials" >/dev/null 2>&1; then
+            echo "Invalid backend client credential JSON or format" >&2
+            exit 1
+          fi
+          api_app_id="$(jq -r '.API_APP_ID' <<<"$credentials")"
+          api_app_secret="$(jq -r '.API_APP_SECRET' <<<"$credentials")"
+          printf '::add-mask::%s\n' "${api_app_id//%/%25}" "${api_app_secret//%/%25}"
+          printf 'API_APP_ID=%s\nAPI_APP_SECRET=%s\n' \
+            "$api_app_id" "$api_app_secret" >>"$GITHUB_ENV"
 
       - name: Build and test image
         run: |
-          docker build --build-arg API_BASE_URL="$BUILD_API_BASE_URL" --target test --tag alphaday-home:test .
-          docker run --rm alphaday-home:test
+          docker build --build-arg API_BASE_URL="$BUILD_API_BASE_URL" --target build --tag alphaday-home:build .
           docker build --build-arg API_BASE_URL="$BUILD_API_BASE_URL" --tag alphaday-home:runtime .
           docker run --detach \
             --memory "$MEMORY_LIMIT" \
@@ -72,7 +103,7 @@ jobs:
             --workdir /app \
             --env API_APP_ID \
             --env API_APP_SECRET \
-            alphaday-home:test \
+            alphaday-home:build \
             node scripts/verify-ssr.mjs http://127.0.0.1:3000
           docker stop --timeout 10 alphaday-home-runtime
           test "$(docker inspect --format '{{.State.ExitCode}}' alphaday-home-runtime)" = 0
