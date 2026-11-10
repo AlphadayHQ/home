@@ -64,7 +64,8 @@ jobs:
 
       - name: Build and test image
         run: |
-          docker build --build-arg API_BASE_URL="$BUILD_API_BASE_URL" --target build --tag alphaday-home:build .
+          docker build --build-arg API_BASE_URL="$BUILD_API_BASE_URL" --target test --tag alphaday-home:test .
+          docker run --rm alphaday-home:test
           docker build --build-arg API_BASE_URL="$BUILD_API_BASE_URL" --tag alphaday-home:runtime .
           docker run --detach \
             --memory "$MEMORY_LIMIT" \
@@ -87,7 +88,7 @@ jobs:
             --workdir /app \
             --env API_APP_ID \
             --env API_APP_SECRET \
-            alphaday-home:build \
+            alphaday-home:test \
             node scripts/verify-ssr.mjs http://127.0.0.1:3000
           docker stop --timeout 10 alphaday-home-runtime
           test "$(docker inspect --format '{{.State.ExitCode}}' alphaday-home-runtime)" = 0

@@ -10,7 +10,8 @@
     "build-api-docs": "node scripts/build-api-docs.js",
     "build-llms": "node scripts/build-llms.js",
     "build-sitemap": "node --env-file-if-exists=.env.local scripts/build-sitemap.mjs",
-    "start": "node --max-old-space-size=700 server.mjs"
+    "start": "node --max-old-space-size=700 server.mjs",
+    "test": "vitest run"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.170.32",
@@ -36,6 +37,7 @@
     "sharp": "^0.35.4",
     "tailwindcss": "^4.3.0",
     "typescript": "^7.0.2",
-    "vite": "^8.0.0"
+    "vite": "^8.0.0",
+    "vitest": "^5.0.0"
   }
 }

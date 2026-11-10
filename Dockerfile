@@ -14,6 +14,10 @@ ENV API_BASE_URL=$API_BASE_URL
 
 RUN yarn build
 
+FROM build AS test
+
+CMD ["yarn", "test"]
+
 FROM build AS production-deps
 
 RUN npm prune --omit=dev
