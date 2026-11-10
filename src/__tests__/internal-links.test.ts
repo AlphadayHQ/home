@@ -210,3 +210,24 @@ describe("the home page's partner logos", () => {
     expect(page).toContain('href="https://app.alphaday.com/b/iotex"');
   });
 });
+
+describe("the featured boards", () => {
+  it("on the home page, go to a project page only where the backend has one", async () => {
+    const { default: Products } = await import("../components/home/Products");
+    const page = html(Products, { projectSlugs: ["avalanche"] });
+    expect(page).toContain('href="/projects/avalanche"');
+    expect(page).not.toContain('href="/projects/ethereum"');
+    expect(page).toContain('href="https://app.alphaday.com/b/ethereum"');
+    // Nothing read: the row stays, every board on the app.
+    expect(html(Products)).not.toContain('href="/projects/');
+    expect(html(Products)).toContain('href="https://app.alphaday.com/b/avalanche"');
+  });
+
+  it("follow the same rule on /dashboards", async () => {
+    const { default: BoardLinks } = await import("../components/dashboards/BoardLinks");
+    const page = html(BoardLinks, { projectSlugs: ["avalanche"] });
+    expect(page).toContain('href="/projects/avalanche"');
+    expect(page).not.toContain('href="/projects/ethereum"');
+    expect(page).toContain('href="https://app.alphaday.com/b/ethereum"');
+  });
+});
