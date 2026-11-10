@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { API_BASE, fetchWithRetry } from "./apiFetch";
-import { hold, withinMs } from "./hold";
+import { hold, holdByKey, withinMs } from "./hold";
 import { belongsInSitemap, projectIndexState } from "../seo/indexState";
 
 /**
@@ -42,12 +42,7 @@ export interface LandingPage extends LandingPageSummary {
  */
 export const getLandingPage = createServerFn({ method: "GET" })
   .validator((slug: string) => slug)
-  .handler(async ({ data: slug }): Promise<LandingPage | null> => {
-    const res = await fetchWithRetry(
-      `${API_BASE}/ui/landing-pages/${encodeURIComponent(slug)}/`
-    );
-    return res ? ((await res.json()) as LandingPage) : null;
-  });
+  .handler(({ data: slug }): Promise<LandingPage | null> => readLandingPage(slug));
 
 /**
  * Every landing page, following pagination to the end, and whether every page
@@ -86,6 +81,24 @@ export const PROJECTS_FRESH_MS = 10 * 60_000;
 
 /** How long a failed read with nothing behind it is answered before the next walk. */
 export const FAILED_PROJECTS_MS = 30_000;
+
+const landingPages = holdByKey<LandingPage | null>(
+  async (slug) => {
+    const res = await fetchWithRetry(
+      `${API_BASE}/ui/landing-pages/${encodeURIComponent(slug)}/`
+    );
+    return res ? ((await res.json()) as LandingPage) : null;
+  },
+  PROJECTS_FRESH_MS,
+  {
+    keep: (page) => page !== null,
+    failMs: FAILED_PROJECTS_MS,
+    onBackgroundError: (error) => console.error("Refreshing a project page failed", error),
+  }
+);
+
+export const readLandingPage = (slug: string): Promise<LandingPage | null> => landingPages.read(slug);
+export const resetLandingPages = (): void => landingPages.reset();
 
 /*
  * The published project pages, held: the one read behind the `/dashboards`

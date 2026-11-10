@@ -35,6 +35,33 @@ jobs:
     steps:
       - uses: actions/checkout@v6.0.2
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v6.2.3
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ inputs.aws_role }}
+
+      - name: Resolve backend client secret
+        id: backend-client
+        env:
+          ORIGIN_STACK: ${{ inputs.origin_stack }}
+        run: |
+          arn="$(aws cloudformation describe-stacks \
+            --stack-name "$ORIGIN_STACK" \
+            --query "Stacks[0].Outputs[?OutputKey=='BackendClientSecretArn'].OutputValue | [0]" \
+            --output text)"
+          if [ -n "$arn" ] && [ "$arn" != None ]; then
+            echo "arn=$arn" >>"$GITHUB_OUTPUT"
+          fi
+
+      - name: Load backend client credentials
+        if: steps.backend-client.outputs.arn != ''
+        uses: aws-actions/aws-secretsmanager-get-secrets@v3
+        with:
+          secret-ids: |
+            ,${{ steps.backend-client.outputs.arn }}
+          parse-json-secrets: true
+
       - name: Build and test image
         run: |
           docker build --build-arg API_BASE_URL="$BUILD_API_BASE_URL" --target test --tag alphaday-home:test .
@@ -43,6 +70,8 @@ jobs:
           docker run --detach \
             --memory "$MEMORY_LIMIT" \
             --name alphaday-home-runtime \
+            --env API_APP_ID \
+            --env API_APP_SECRET \
             alphaday-home:runtime
           for _ in $(seq 1 30); do
             if [ "$(docker inspect --format '{{.State.Health.Status}}' alphaday-home-runtime)" = healthy ]; then
@@ -57,6 +86,8 @@ jobs:
             --network container:alphaday-home-runtime \
             --volume "$runtime_dist:/app/dist:ro" \
             --workdir /app \
+            --env API_APP_ID \
+            --env API_APP_SECRET \
             alphaday-home:test \
             node scripts/verify-ssr.mjs http://127.0.0.1:3000
           docker stop --timeout 10 alphaday-home-runtime
@@ -75,12 +106,6 @@ jobs:
           deployment_id="${image#*:}"
           printf '%s\n%s\n%s\n%s\n' "$key" "$checksum" "$image" "$deployment_id" >manifest
           printf 'archive=%s\ndeployment_id=%s\nkey=%s\n' "$archive" "$deployment_id" "$key" >>"$GITHUB_OUTPUT"
-
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v6.2.3
-        with:
-          aws-region: ${{ env.AWS_REGION }}
-          role-to-assume: ${{ inputs.aws_role }}
 
       - name: Publish artifact
         env:
