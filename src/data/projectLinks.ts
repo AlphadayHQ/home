@@ -43,9 +43,13 @@ export const projectSlugFor = (
 export const projectPath = (slug: string): string => `/projects/${slug}`;
 
 /**
- * Where a board partner's logo goes: its project page, in this tab, where it
- * has one — the page that explains the board, and link equity kept on the site
- * — and its board in the app otherwise. Shared by the home page and /dashboards.
+ * Where a link to a project's board goes: its project page, in this tab, where
+ * it has one — the page that explains the board, and link equity kept on the
+ * site — and its board in the app otherwise. Shared by the partner logos and the
+ * featured boards (`CONFIG.featuredBoards`), on the home page and /dashboards.
+ *
+ * The featured boards are a hand-kept list, and a backend without one of their
+ * pages (zettaday has only `avalanche`) used to get a link that 404s.
  */
 export const partnerLink = (
   slug: string,

@@ -44,6 +44,25 @@ async function main() {
   const dashboards = await get("/dashboards");
   const missing = await get("/nonexistent-page-xyz-999");
 
+  // The project pages of the backend this build was made against — zettaday
+  // has one where production has 66, so no slug or count is written in here.
+  // The sitemap is that list: built from the same endpoint and gate as
+  // /dashboards (§5.7), and it refuses to build from a partial walk.
+  const projectsXml = join(process.cwd(), "dist/client/sitemaps/projects.xml");
+  const projectSlugs = existsSync(projectsXml)
+    ? [...readFileSync(projectsXml, "utf8").matchAll(/<loc>[^<]*\/projects\/([^</]+)<\/loc>/g)].map(
+        (m) => m[1]
+      )
+    : [];
+  // Production keeps checking the page these checks were written against.
+  const sampleSlug = projectSlugs.includes("ethereum") ? "ethereum" : projectSlugs[0];
+  check(
+    "16",
+    "the backend publishes a project page to check against",
+    Boolean(sampleSlug),
+    `${projectSlugs.length} in the sitemap`
+  );
+
   // 1, 5, 6 — canonical is per-route and never the home page by default.
   const homeCanonical = canonicalOf(home.body);
   for (const [path, page] of [
@@ -126,7 +145,8 @@ async function main() {
   // is no linter in this repo, and asserting it on the rendered HTML is the
   // stronger check anyway — it catches a second h1 arriving from a component
   // the route did not obviously include, which a source rule would miss.
-  const project = await get("/projects/ethereum");
+  const projectPath = `/projects/${sampleSlug}`;
+  const project = sampleSlug ? await get(projectPath) : null;
   for (const [path, page] of [
     ["/", home],
     ["/api", api],
@@ -134,7 +154,7 @@ async function main() {
     ["/mobile", mobile],
     ["/privacy", privacy],
     ["/dashboards", dashboards],
-    ["/projects/ethereum", project],
+    ...(project ? [[projectPath, project]] : []),
   ]) {
     const n = countMatches(page.body, /<h1[\s>]/g);
     check("7", `${path} has exactly one <h1>`, n === 1, `${n} found`);
@@ -147,24 +167,30 @@ async function main() {
   check("15", "/b/{slug} is a real 301", board.status === 301, `got ${board.status}`);
 
   // §3.1 — old root-level project URLs 301 to /projects/{slug}.
-  const legacy = await get("/ethereum");
-  check(
-    "3.1",
-    "/ethereum 301s to /projects/ethereum",
-    legacy.status === 301 &&
-      (legacy.res.headers.get("location") ?? "").endsWith("/projects/ethereum"),
-    `${legacy.status} → ${legacy.res.headers.get("location")}`
-  );
+  if (sampleSlug) {
+    const legacy = await get(`/${sampleSlug}`);
+    check(
+      "3.1",
+      `/${sampleSlug} 301s to ${projectPath}`,
+      legacy.status === 301 &&
+        (legacy.res.headers.get("location") ?? "").endsWith(projectPath),
+      `${legacy.status} → ${legacy.res.headers.get("location")}`
+    );
+  }
 
-  // 16 — every project page reachable from a server-rendered hub link.
+  // 16 — every project page reachable from a server-rendered hub link: every
+  // one the sitemap publishes, so a short /dashboards fails wherever it runs.
   const linked = new Set(
     [...dashboards.body.matchAll(/href="\/projects\/([a-z0-9-]+)"/g)].map((m) => m[1])
   );
+  const unlinked = projectSlugs.filter((slug) => !linked.has(slug));
   check(
     "16",
     "/dashboards links every project page",
-    linked.size >= 60,
-    `${linked.size} project links server-rendered`
+    projectSlugs.length > 0 && unlinked.length === 0,
+    unlinked.length
+      ? `${unlinked.length} of ${projectSlugs.length} unlinked: ${unlinked.slice(0, 8).join(" ")}`
+      : `${projectSlugs.length} of ${projectSlugs.length} linked`
   );
 
   // 18 — Organization + WebSite on the home page, FAQPage where an FAQ renders.
@@ -175,9 +201,15 @@ async function main() {
   // 11 — the discovery root must not link to anything broken, and 16's fix
   // must not have introduced a redirect hop: an internal link that 301s wastes
   // crawl budget on exactly the pages this is trying to get crawled.
+  //
+  // The home page links a project page only once it has the list, and never
+  // waits for it, so the first render after a start links none and this would
+  // pass on nothing. /dashboards, above, waited for that same list: render
+  // the home page again now that it is held, and require it to link something.
+  const warmHome = await get("/");
   const internal = [
     ...new Set(
-      [...home.body.matchAll(/href="(\/projects\/[a-z0-9-]+)"/g)].map((m) => m[1])
+      [...warmHome.body.matchAll(/href="(\/projects\/[a-z0-9-]+)"/g)].map((m) => m[1])
     ),
   ].slice(0, 8);
   const statuses = await Promise.all(
@@ -186,7 +218,7 @@ async function main() {
   check(
     "11,16",
     "internal project links resolve 200 with no redirect hop",
-    statuses.every(([, code]) => code === 200),
+    statuses.length > 0 && statuses.every(([, code]) => code === 200),
     statuses.map(([h, c]) => `${h}:${c}`).join(" ") || "none found"
   );
 
@@ -337,7 +369,6 @@ async function main() {
   // agrees it is indexable. If the gate ever lets a substrate page through,
   // this is what catches it — the two sides are supposed to be incapable of
   // disagreeing, and this is the check that the shared module actually works.
-  const projectsXml = join(process.cwd(), "dist/client/sitemaps/projects.xml");
   if (existsSync(projectsXml)) {
     const locs = [
       ...readFileSync(projectsXml, "utf8").matchAll(/<loc>([^<]+)<\/loc>/g),

@@ -44,15 +44,16 @@ export const Route = createFileRoute("/dashboards")({
 
 function DashboardsPage() {
   const { boards } = Route.useLoaderData();
+  const projectSlugs = boards.map((board) => board.slug);
   return (
     <>
       <Navbar />
       <Hero />
       <Workflow />
-      <Partners projectSlugs={boards.map((board) => board.slug)} />
+      <Partners projectSlugs={projectSlugs} />
       <Backers />
       <Team />
-      <BoardLinks />
+      <BoardLinks projectSlugs={projectSlugs} />
       <AllBoards boards={boards} />
       <FAQ />
       <Getfeatures />
