@@ -19,13 +19,36 @@ export const API_BASE = process.env.API_BASE_URL ?? "https://api.alphaday.com";
 const RETRYABLE_STATUS = new Set([408, 429, 500, 502, 503, 504]);
 const MAX_ATTEMPTS = 3;
 const BASE_DELAY_MS = 400;
-const WAIT_BUDGET_MS = 120_000;
-let requestQueue: Promise<unknown> | undefined;
-let retryAt = 0;
+/*
+ * Ceiling on how long a `Retry-After` can hold a render.
+ *
+ * Note what this does and does not do: a server asking for 60s is retried after
+ * 2s, so the wait is **clamped, not ignored** — on a 429 that means retrying
+ * inside the window the server asked us to stay out of, which compounds the
+ * throttle rather than respecting it. That is a deliberate trade against a
+ * render that cannot wait a minute, and it is survivable here only because these
+ * are unauthenticated reads behind an ISR cache rather than a hot request path.
+ *
+ * If the API ever starts rate-limiting in earnest, the fix is to give up on the
+ * feed for this regeneration — `fetchJsonSoft` already degrades a failed feed to
+ * "unavailable" — rather than to retry sooner than asked.
+ */
+const MAX_RETRY_AFTER_MS = 2000;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-/** Server credentials select the backend's client-app quota. */
+/**
+ * Credentials are optional, and that is deliberate.
+ *
+ * Verified 8 Sep 2026: every endpoint this site reads — `/ui/landing-pages/`
+ * and the item collections — returns 200 anonymously. Only `/ui/views/` demands
+ * auth, and the rebuild does not use it. So the site does not need the
+ * credential at all, and hard-failing without one would turn a missing GitHub
+ * secret into a total outage for no benefit.
+ *
+ * They are still sent when present, so that if the API tightens access later
+ * the fix is setting an env var rather than shipping code.
+ */
 export function authHeaders(): Record<string, string> {
   const id = process.env.API_APP_ID;
   const secret = process.env.API_APP_SECRET;
@@ -35,56 +58,26 @@ export function authHeaders(): Record<string, string> {
 function retryDelay(res: Response, attempt: number): number {
   const backoff = BASE_DELAY_MS * 2 ** (attempt - 1);
   const header = res.headers.get("retry-after");
-  if (!header) return res.status === 429 ? 60_000 : backoff;
+  if (!header) return backoff;
 
   const seconds = Number(header);
   const requested = Number.isFinite(seconds)
     ? seconds * 1000
     : new Date(header).getTime() - Date.now();
 
-  if (!Number.isFinite(requested) || requested < 0) {
-    return res.status === 429 ? 60_000 : backoff;
-  }
-  return Math.max(requested, backoff);
-}
-
-async function request(url: string, deadline: number): Promise<Response> {
-  const pending = (requestQueue ?? Promise.resolve()).then(async () => {
-    const wait = Math.max(0, retryAt - Date.now());
-    if (Date.now() + wait > deadline) {
-      throw new Error(`${url} exceeded the API retry wait budget`);
-    }
-    if (wait > 0) await sleep(wait);
-    const remaining = deadline - Date.now();
-    if (remaining <= 0) throw new Error(`${url} exceeded the API retry wait budget`);
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), Math.min(15_000, remaining));
-    try {
-      const res = await fetch(url, { headers: authHeaders(), signal: controller.signal });
-      if (res.status === 429) {
-        // One caller's throttle pauses every queued backend read.
-        retryAt = Math.max(retryAt, Date.now() + retryDelay(res, 1));
-      }
-      return res;
-    } finally {
-      clearTimeout(timer);
-    }
-  });
-  requestQueue = pending.catch(() => {});
-  return pending;
+  if (!Number.isFinite(requested) || requested <= 0) return backoff;
+  return Math.min(Math.max(requested, backoff), MAX_RETRY_AFTER_MS);
 }
 
 export async function fetchWithRetry(url: string): Promise<Response | null> {
   let lastError: unknown;
-  const deadline = Date.now() + WAIT_BUDGET_MS;
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
     let res: Response;
     try {
-      res = await request(url, deadline);
+      res = await fetch(url, { headers: authHeaders() });
     } catch (err) {
       lastError = err;
-      if (Date.now() >= deadline || retryAt > deadline) throw err;
       if (attempt < MAX_ATTEMPTS) {
         await sleep(BASE_DELAY_MS * 2 ** (attempt - 1));
         continue;
@@ -99,10 +92,7 @@ export async function fetchWithRetry(url: string): Promise<Response | null> {
     if (!RETRYABLE_STATUS.has(res.status) || attempt === MAX_ATTEMPTS) {
       throw lastError;
     }
-    const delay = retryDelay(res, attempt);
-    if (Date.now() + delay > deadline) throw lastError;
-    await res.body?.cancel();
-    if (res.status !== 429) await sleep(delay);
+    await sleep(retryDelay(res, attempt));
   }
 
   throw lastError;
