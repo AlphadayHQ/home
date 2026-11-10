@@ -30,7 +30,7 @@ function HomeContainer({ projectSlugs = [] }) {
       <TrustStrip />
       <LayerDemo />
       <Builders />
-      <Products />
+      <Products projectSlugs={projectSlugs} />
       <Partners projectSlugs={projectSlugs} />
       <Backers />
       <FAQ />

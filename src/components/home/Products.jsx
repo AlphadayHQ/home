@@ -4,8 +4,10 @@ import { Section } from "../../shared";
 import { products } from "./productsData";
 import FlowArrows from "./FlowArrows";
 import CONFIG from "../../config";
+import { partnerLink } from "../../data/projectLinks";
 
-function Products() {
+/** @param {{ projectSlugs?: string[] }} props */
+function Products({ projectSlugs = [] }) {
   const boards = CONFIG.featuredBoards;
 
   return (
@@ -75,7 +77,7 @@ function Products() {
               {boards.map(({ slug, name }) => (
                 <a
                   key={slug}
-                  href={`/projects/${slug}`}
+                  {...partnerLink(slug, projectSlugs)}
                   aria-label={`${name} dashboard`}
                   className="group inline-flex items-center gap-1 bg-surface border border-surface-border rounded-lg px-3.5 py-1.75 font-semibold text-[13px] text-text hover:border-primary transition-colors"
                 >
