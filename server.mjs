@@ -1,20 +1,12 @@
 #!/usr/bin/env node
-/**
- * Production server: a Node adapter around the fetch handler the Start build
- * emits, plus the static tier and the cache policy from §2.3.
- *
- * This is also the only place `Cache-Control` is set for HTML, and it is the
- * one caching configuration in the system (§2.3) — CloudFront honours it and
- * that is what provides the ISR equivalent. There is deliberately no origin
- * cache: the edge already does stale-while-revalidate, and a second cache layer
- * would add a second place for stale content to hide.
- */
+/** Production Node adapter with shared HTML rendering. */
 import { createServer } from "node:http";
 import { createReadStream, statSync, existsSync } from "node:fs";
 import { join, extname, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 import { Readable } from "node:stream";
+import { createHtmlCache } from "./scripts/htmlCache.ts";
 
 const root = dirname(fileURLToPath(import.meta.url));
 const CLIENT_DIR = join(root, "dist/client");
@@ -40,7 +32,10 @@ const { default: handler } = await import("./dist/server/server.mjs");
  * infrastructure change, not one to make in this file.
  */
 const HTML_CACHE_CONTROL =
-  "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=604800";
+  "public, max-age=0, s-maxage=300, stale-while-revalidate=86400, stale-if-error=604800";
+const render = createHtmlCache((request) => handler.fetch(request), {
+  cacheControl: HTML_CACHE_CONTROL,
+});
 
 // Content-hashed filenames are immutable and should never reach the origin
 // twice (§2.5).
@@ -101,12 +96,15 @@ const server = createServer(async (req, res) => {
       duplex: "half",
     });
 
-    const response = await handler.fetch(request);
+    const response = await render(request);
 
     const headers = new Headers(response.headers);
     // Don't cache a redirect or an error the way a page is cached, and never
     // let the edge hold a 404 for its full TTL on a URL that is about to exist.
-    if (!headers.has("Cache-Control") && response.status === 200) {
+    if (url.pathname.startsWith("/_serverFn/") || req.headers.authorization || req.headers.cookie) {
+      headers.set("Cache-Control", "private, no-store");
+    } else if (!headers.has("Cache-Control") && response.status === 200
+      && headers.get("Content-Type")?.startsWith("text/html")) {
       headers.set("Cache-Control", HTML_CACHE_CONTROL);
     }
     /*
