@@ -8,6 +8,7 @@ import { CookieProvider } from "../utils/CookieContext";
 import CookieDisclaimer from "../components/CookieDisclaimer";
 import NotFound from "../components/NotFound";
 import { buildSiteJsonLd } from "../utils/siteJsonLd";
+import { jsonLdScript } from "../seo/head";
 import { indexStateFor, robotsHeader } from "../seo/indexState";
 import { setRobotsHeader } from "../seo/robotsHeader";
 import appCss from "../assets/css/alphaday.css?url";
@@ -45,12 +46,9 @@ export const Route = createRootRoute({
       { rel: "icon", type: "image/svg+xml", href: faviconUrl },
     ],
     scripts: [
-      {
-        type: "application/ld+json",
-        // buildSiteJsonLd already prepends Organization and WebSite; passing
-        // them again emitted each node twice.
-        children: JSON.stringify(buildSiteJsonLd()),
-      },
+      // buildSiteJsonLd already prepends Organization and WebSite; passing
+      // them again emitted each node twice.
+      jsonLdScript(buildSiteJsonLd()),
     ],
   }),
   // §5.2: a real 404 body, served with a real 404 status by the SSR handler.
