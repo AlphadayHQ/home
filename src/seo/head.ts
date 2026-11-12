@@ -70,6 +70,32 @@ export interface HeadOutput {
   scripts: Array<Record<string, string>>;
 }
 
+/*
+ * `JSON.stringify` leaves `<`, `>` and `&` alone, and TanStack writes a route's
+ * `scripts[].children` into the server HTML as-is. A post title containing
+ * `</script>` therefore closed the JSON-LD block and opened a script of its
+ * own. Escaping `<` stops any closing tag (or `<!--`) from forming. `>` and `&`
+ * are escaped for good measure. U+2028 and U+2029 are escaped because older
+ * JavaScript parsers treat them as line breaks. The output is still the same
+ * JSON: each escape decodes back to the original character.
+ */
+const SCRIPT_UNSAFE = /[<>&\u2028\u2029]/g;
+const toUnicodeEscape = (char: string): string =>
+  `\\u${char.charCodeAt(0).toString(16).padStart(4, "0")}`;
+
+/** `value` as JSON that is safe to put inside an inline `<script>` element. */
+export const jsonForScript = (value: unknown): string =>
+  JSON.stringify(value).replace(SCRIPT_UNSAFE, toUnicodeEscape);
+
+/**
+ * A JSON-LD script tag for a route's `head().scripts`. Every JSON-LD block goes
+ * through here, because the body usually holds text the team did not write.
+ */
+export const jsonLdScript = (document: unknown): Record<string, string> => ({
+  type: "application/ld+json",
+  children: jsonForScript(document),
+});
+
 export function seoHead(input: SeoInput): HeadOutput {
   const { title, description, image, jsonLd } = input;
   const canonical = input.index ? input.canonical : undefined;
@@ -109,10 +135,7 @@ export function seoHead(input: SeoInput): HeadOutput {
     const document = Array.isArray(jsonLd)
       ? { "@context": "https://schema.org", "@graph": jsonLd }
       : { "@context": "https://schema.org", ...jsonLd };
-    scripts.push({
-      type: "application/ld+json",
-      children: JSON.stringify(document),
-    });
+    scripts.push(jsonLdScript(document));
   }
 
   return { meta, links, scripts };
