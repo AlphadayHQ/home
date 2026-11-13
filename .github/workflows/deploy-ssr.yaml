@@ -12,6 +12,13 @@ on:
       origin_stack:
         required: true
         type: string
+      # The GitHub environment this deploy runs in. The deployer role trusts
+      # only `repo:AlphadayHQ/home:environment:<name>`, so the environment's
+      # protection rules (reviewers, allowed branches and tags) decide who can
+      # deploy. A ref with an edited workflow can't get past them.
+      environment:
+        required: true
+        type: string
     secrets:
       clarity_project_id:
         required: false
@@ -27,6 +34,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-24.04-arm
+    environment: ${{ inputs.environment }}
     env:
       AWS_REGION: eu-west-1
       BUILD_API_BASE_URL: ${{ inputs.build_api_base_url }}

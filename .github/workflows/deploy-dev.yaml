@@ -1,11 +1,11 @@
 name: Deploy to zettaday
 
+# Deploys what lands on dev. This was `pull_request: closed`, which also fires
+# for PRs closed without merging. Those runs check out the PR's unmerged code,
+# so they must not get the dev environment's AWS role.
 on:
-  pull_request:
-    types:
-      - closed
-    branches:
-      - dev
+  push:
+    branches: [dev]
   workflow_dispatch:
 
 jobs:
@@ -15,6 +15,7 @@ jobs:
       aws_role: arn:aws:iam::402248308880:role/zettaday-landing-home-deployer
       build_api_base_url: https://api.zettaday.com
       origin_stack: zettaday-landing-origin
+      environment: dev
     secrets:
       clarity_project_id: ${{ secrets.DEV__LANDING__CLARITY_PROJECT_ID }}
 
