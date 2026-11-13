@@ -36,13 +36,33 @@ export interface LandingPage extends LandingPageSummary {
 }
 
 /**
- * The trailing slash is required. Without it the API answers `301`, so every
- * landing page render paid a redirect round-trip before it could start — which
- * on a cache miss is latency the user sees.
+ * The shape of a landing-page slug: what Django's `slugify` produces. Routes
+ * check it first, so a malformed path is a plain 404 rather than a validator
+ * error.
+ */
+export const isProjectSlug = (slug: unknown): slug is string =>
+  typeof slug === "string" && /^[a-z0-9_-]{1,100}$/.test(slug);
+
+/**
+ * One landing page, or `null` when the API has none by that slug.
+ *
+ * Only slugs on the held list of landing pages reach the API. A server function
+ * is its own public endpoint, and `/$slug` passes any path segment through. Each
+ * new slug used to cost an upstream request and a slot in the 500-entry page
+ * cache, so a stream of random slugs could hit the backend and push real pages
+ * out of the cache. A page added since the last walk 404s for up to
+ * `PROJECTS_FRESH_MS`, as its links already wait that long to appear.
  */
 export const getLandingPage = createServerFn({ method: "GET" })
-  .validator((slug: string) => slug)
-  .handler(({ data: slug }): Promise<LandingPage | null> => readLandingPage(slug));
+  .validator((slug: string): string => {
+    if (!isProjectSlug(slug)) throw new Error(`getLandingPage: ${String(slug)} is not a project slug`);
+    return slug;
+  })
+  .handler(({ data: slug }) => readListedLandingPage(slug));
+
+/** `getLandingPage`'s handler: the page, if the held list says it exists. */
+export const readListedLandingPage = async (slug: string): Promise<LandingPage | null> =>
+  (await isListedLandingPage(slug)) ? readLandingPage(slug) : null;
 
 /**
  * Every landing page, following pagination to the end, and whether every page
@@ -101,10 +121,10 @@ export const readLandingPage = (slug: string): Promise<LandingPage | null> => la
 export const resetLandingPages = (): void => landingPages.reset();
 
 /*
- * The published project pages, held: the one read behind the `/dashboards`
- * index, the home and hub partner logos, and the research pages' links to a
- * DAO's or chain's project page. Each used to walk the paginated list itself,
- * on every render.
+ * Every landing page, held: the one read behind the `/dashboards` index, the
+ * home and hub partner logos, the research pages' links to a DAO's or chain's
+ * project page, and the check on which slugs `getLandingPage` will fetch. Each
+ * used to walk the paginated list itself, on every render.
  *
  * Only a whole walk is held as good, so a short one never replaces it. A short
  * walk with nothing behind it is still answered, for `FAILED_PROJECTS_MS`: the
@@ -115,27 +135,39 @@ export const resetLandingPages = (): void => landingPages.reset();
  * same endpoint, which is what §5.7 asks for: it is generated from the source
  * that serves the pages, so the two cannot drift.
  */
-const projects = hold(
-  async () => {
-    const { pages, ok } = await walkLandingPages();
-    return {
-      ok,
-      projects: pages
-        .filter((page) => belongsInSitemap(projectIndexState(page)))
-        .map(({ slug, name }): ProjectSummary => ({ slug, name })),
-    };
-  },
+const landingIndex = hold(
+  walkLandingPages,
   PROJECTS_FRESH_MS,
-  { keep: (read) => read.ok && read.projects.length > 0, failMs: FAILED_PROJECTS_MS }
+  { keep: (read) => read.ok && read.pages.length > 0, failMs: FAILED_PROJECTS_MS }
 );
 
-export const readProjects = async (): Promise<ProjectSummary[]> => (await projects.read()).projects;
+/**
+ * Whether `getLandingPage` may fetch `slug`. An unpublished page is still
+ * listed; it renders as `noindex`, so it is checked against every page, not
+ * just the promoted ones. When the walk fails or comes back short, a slug it
+ * lacks is let through: an API hiccup must not 404 every project page, and the
+ * shape check still holds.
+ */
+async function isListedLandingPage(slug: string): Promise<boolean> {
+  try {
+    const { ok, pages } = await landingIndex.read();
+    return !ok || pages.some((page) => page.slug === slug);
+  } catch {
+    return true;
+  }
+}
+
+/** The project pages that link targets and the sitemap promote. */
+export const readProjects = async (): Promise<ProjectSummary[]> =>
+  (await landingIndex.read()).pages
+    .filter((page) => belongsInSitemap(projectIndexState(page)))
+    .map(({ slug, name }): ProjectSummary => ({ slug, name }));
 
 export const readProjectSlugs = async (): Promise<string[]> =>
   (await readProjects()).map((project) => project.slug);
 
 /** For tests: forget the held list. */
-export const resetProjects = (): void => projects.reset();
+export const resetProjects = (): void => landingIndex.reset();
 
 /** Every published project page, for the `/dashboards` index, which waits for it. */
 export const getProjects = createServerFn({ method: "GET" }).handler(readProjects);

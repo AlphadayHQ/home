@@ -48,7 +48,7 @@ export const Route = createFileRoute("/projects/$slug/this-week")({
     const entity = digestEntityFor(params.slug);
     if (!entity) throw notFound();
 
-    const digest = await getDigest({ data: entity.tag });
+    const digest = await getDigest({ data: entity.slug });
 
     const declared = indexStateFor(`/projects/${entity.slug}/this-week`);
     // The gate demotes, never promotes: a thin window cannot be indexed even
