@@ -3,6 +3,9 @@ name: Deploy SSR artifact
 on:
   workflow_call:
     inputs:
+      environment:
+        required: true
+        type: string
       aws_role:
         required: true
         type: string
@@ -27,6 +30,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-24.04-arm
+    environment: ${{ inputs.environment }}
     env:
       AWS_REGION: eu-west-1
       BUILD_API_BASE_URL: ${{ inputs.build_api_base_url }}
