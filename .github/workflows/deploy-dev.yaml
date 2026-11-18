@@ -9,7 +9,20 @@ on:
   workflow_dispatch:
 
 jobs:
+  dispatch:
+    if: github.event_name == 'pull_request' && github.event.pull_request.merged
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Deploy the merged development branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: gh workflow run deploy-dev.yaml --ref dev
+
   deploy:
+    if: github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/deploy-ssr.yaml
     with:
       environment: dev
