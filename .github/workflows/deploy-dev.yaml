@@ -12,6 +12,7 @@ jobs:
   deploy:
     uses: ./.github/workflows/deploy-ssr.yaml
     with:
+      environment: dev
       aws_role: arn:aws:iam::402248308880:role/zettaday-landing-home-deployer
       build_api_base_url: https://api.zettaday.com
       origin_stack: zettaday-landing-origin

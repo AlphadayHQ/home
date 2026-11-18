@@ -6,6 +6,7 @@ jobs:
   deploy:
     uses: ./.github/workflows/deploy-ssr.yaml
     with:
+      environment: production
       aws_role: arn:aws:iam::402248308880:role/alphaday-landing-home-deployer
       build_api_base_url: https://api.alphaday.com
       origin_stack: alphaday-landing-origin
