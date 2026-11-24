@@ -3,7 +3,7 @@ import {
   ProjectLandingPage,
   LoadingState,
 } from "../components/landing/ProjectLandingPage";
-import { getLandingPage } from "../server/landingPages";
+import { getLandingPage, isProjectSlug } from "../server/landingPages";
 import { NO_RESEARCH, getProjectResearch } from "../server/projectResearch";
 import { canonicalFor, seoHead } from "../seo/head";
 import { projectIndexState, robotsHeader, isIndexable } from "../seo/indexState";
@@ -12,6 +12,7 @@ import CONFIG from "../config";
 
 export const Route = createFileRoute("/projects/$slug/")({
   loader: async ({ params }) => {
+    if (!isProjectSlug(params.slug)) throw notFound();
     // In parallel: the research is matched on the slug alone, so it need not
     // wait for the page. It is links under the page, never a reason to fail it.
     const [data, research] = await Promise.all([
