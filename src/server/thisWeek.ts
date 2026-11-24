@@ -7,6 +7,7 @@ import {
   inWindow,
   soonestUpcoming,
 } from "../data/digestWindow";
+import { digestEntityFor } from "../data/digestEntities";
 
 /**
  * The rolling digest behind `/projects/{entity}/this-week` (content doc C3).
@@ -541,18 +542,32 @@ async function loadExploits(asOf: Date): Promise<DigestSection> {
   };
 }
 
+/** `getDigest`'s validator: the upstream tag for a published digest's slug. */
+export function digestTagFor(slug: unknown): string {
+  const entity = digestEntityFor(slug);
+  if (!entity) throw new Error(`getDigest: ${String(slug)} is not a digest entity`);
+  return entity.tag;
+}
+
 /**
- * Build the digest for one tag.
+ * Build the digest for one entity in `DIGEST_ENTITIES`, named by its slug.
  *
- * `tag` is a keyword match rather than a taxonomy slug — `?tags=` searches the
- * keyword bag on each record, which is why `?tags=banana` returns 77 news items.
- * For a high-volume entity that is generous in the right direction; it is also
- * why this page is gated to an allowlist in the route rather than accepting any
- * slug, since a fuzzy match on an obscure term would produce a plausible-looking
- * page built from loosely related rows.
+ * The entity's `tag` is a keyword match rather than a taxonomy slug — `?tags=`
+ * searches the keyword bag on each record, which is why `?tags=banana` returns
+ * 77 news items. For a high-volume entity that is generous in the right
+ * direction; it is also why this page is gated to an allowlist rather than
+ * accepting any slug, since a fuzzy match on an obscure term would produce a
+ * plausible-looking page built from loosely related rows.
+ *
+ * The allowlist is enforced here, not only in the route. A server function is
+ * its own public endpoint, and each digest starts about 20 upstream requests,
+ * so taking a free-form tag let anyone send the backend 20 requests per call,
+ * each with a new tag that missed every cache. It takes the slug, and the tag
+ * comes from the entity record, so a caller can only ask for the digests the
+ * site publishes.
  */
 export const getDigest = createServerFn({ method: "GET" })
-  .validator((tag: string) => tag)
+  .validator(digestTagFor)
   .handler(async ({ data: tag }): Promise<Digest> => {
     const asOf = new Date();
 

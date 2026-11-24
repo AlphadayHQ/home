@@ -1,5 +1,5 @@
 import { createFileRoute, notFound, redirect } from "@tanstack/react-router";
-import { getLandingPage } from "../server/landingPages";
+import { getLandingPage, isProjectSlug } from "../server/landingPages";
 
 /**
  * Migration of the root-level project slugs (§3.1, Appendix C).
@@ -20,6 +20,7 @@ import { getLandingPage } from "../server/landingPages";
  */
 export const Route = createFileRoute("/$slug")({
   loader: async ({ params }) => {
+    if (!isProjectSlug(params.slug)) throw notFound();
     const page = await getLandingPage({ data: params.slug });
     if (!page) throw notFound();
     throw redirect({
