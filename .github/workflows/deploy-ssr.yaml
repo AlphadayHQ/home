@@ -3,9 +3,6 @@ name: Deploy SSR artifact
 on:
   workflow_call:
     inputs:
-      environment:
-        required: true
-        type: string
       aws_role:
         required: true
         type: string
